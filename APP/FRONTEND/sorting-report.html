@@ -1,0 +1,317 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1.0">
+<title>Zippzo Sorting Report</title>
+<style>
+*{box-sizing:border-box}:root{--dark:#111827;--blue:#2563eb;--green:#16a34a;--orange:#ea580c;--red:#dc2626;--purple:#7c3aed;--muted:#64748b;--line:#e2e8f0;--bg:#f4f7fb}
+body{margin:0;background:var(--bg);color:#172033;font-family:Inter,Segoe UI,Arial,sans-serif}
+.top{height:68px;background:var(--dark);color:#fff;display:flex;align-items:center;gap:16px;padding:0 22px;position:sticky;top:0;z-index:20}
+.logo{font-size:25px;font-weight:900;letter-spacing:1px}.title{font-size:14px;color:#cbd5e1}.spacer{flex:1}
+.top button{background:#1f2937;border:1px solid #475569;color:#fff;border-radius:8px;padding:9px 13px;cursor:pointer}
+.layout{display:grid;grid-template-columns:235px 1fr;min-height:calc(100vh - 68px)}
+nav{background:#fff;border-right:1px solid var(--line);padding:14px 10px;position:sticky;top:68px;height:calc(100vh - 68px);overflow:auto}
+nav h4{font-size:10px;color:#94a3b8;text-transform:uppercase;margin:12px}
+nav a{display:block;text-decoration:none;color:#334155;padding:9px 12px;border-radius:8px;font-size:12px;margin:2px 0}
+nav a:hover,nav a.active{background:#eff6ff;color:#1d4ed8;font-weight:700}
+main{padding:22px;min-width:0}
+.head{display:flex;align-items:center;justify-content:space-between;gap:15px;margin-bottom:18px}
+.head h1{font-size:25px;margin:0}.sub{font-size:13px;color:var(--muted);margin-top:5px}
+.actions{display:flex;gap:8px;flex-wrap:wrap}.btn{border:1px solid var(--line);background:#fff;border-radius:8px;padding:9px 13px;cursor:pointer;font-size:12px}
+.btn.primary{background:var(--blue);border-color:var(--blue);color:#fff}
+.kpis{display:grid;grid-template-columns:repeat(8,minmax(110px,1fr));gap:10px}
+.card{background:#fff;border:1px solid var(--line);border-radius:12px;padding:14px;box-shadow:0 1px 2px #00000008}
+.label{font-size:10px;color:var(--muted);text-transform:uppercase}.value{font-size:23px;font-weight:850;margin-top:6px}.note{font-size:10px;color:var(--muted);margin-top:4px}
+.section{margin-top:18px}.section-head{display:flex;align-items:center;justify-content:space-between;gap:10px;margin-bottom:10px}.section-head h2{font-size:16px;margin:0}
+.filters{display:flex;gap:8px;flex-wrap:wrap}.filters input,.filters select{height:37px;border:1px solid var(--line);border-radius:8px;background:#fff;padding:0 10px;font-size:12px;color:#172033}
+.filters .search{min-width:330px}
+.summary{display:grid;grid-template-columns:repeat(7,1fr);gap:10px}.summary strong{display:block;font-size:21px;margin-top:5px}.summary span{font-size:10px;color:var(--muted)}
+.table-wrap{overflow:auto;background:#fff;border:1px solid var(--line);border-radius:10px}
+.table{width:100%;border-collapse:collapse;font-size:12px}.table th{background:#f8fafc;color:#64748b;font-size:10px;text-transform:uppercase;text-align:left;position:sticky;top:0;z-index:2}
+.table th,.table td{padding:10px;border-bottom:1px solid #edf2f7;white-space:nowrap}.table tr:hover td{background:#f8fafc}
+.tag{display:inline-block;border-radius:999px;padding:4px 8px;font-size:10px;font-weight:700;background:#eef2ff;color:#3730a3}
+.tag.good{background:#f0fdf4;color:#15803d}.tag.warn{background:#fff7ed;color:#c2410c}.tag.bad{background:#fef2f2;color:#b91c1c}.tag.info{background:#eff6ff;color:#1d4ed8}
+.muted{color:var(--muted)}.empty{text-align:center;padding:30px;color:#94a3b8}
+.grid2{display:grid;grid-template-columns:1.25fr .75fr;gap:14px}
+.list{background:#fff;border:1px solid var(--line);border-radius:10px;overflow:hidden}.list-row{display:flex;justify-content:space-between;gap:10px;padding:11px 13px;border-bottom:1px solid #edf2f7;font-size:12px}.list-row:last-child{border:0}
+.list-row b{display:block}.progress{height:7px;width:90px;background:#e2e8f0;border-radius:99px;overflow:hidden;display:inline-block;vertical-align:middle}.progress i{display:block;height:100%;background:var(--blue)}
+.pagination{display:flex;justify-content:space-between;align-items:center;padding:11px 2px;font-size:11px;color:var(--muted)}.pager{display:flex;gap:5px}.pager button{border:1px solid var(--line);background:#fff;border-radius:7px;padding:7px 10px;cursor:pointer}.pager button.active{background:var(--blue);border-color:var(--blue);color:#fff}
+.modal{display:none;position:fixed;inset:0;background:#0008;z-index:50;align-items:center;justify-content:center;padding:20px}.modal.show{display:flex}.modal-box{background:#fff;border-radius:14px;width:min(1120px,100%);max-height:90vh;overflow:auto;padding:20px}
+.modal-head{display:flex;justify-content:space-between;align-items:center}.modal-head h2{font-size:18px;margin:0}.close{border:0;background:#f1f5f9;border-radius:8px;padding:7px 10px;cursor:pointer}
+.detail-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:9px;margin-top:15px}.detail{border:1px solid var(--line);border-radius:8px;padding:10px}.detail small{display:block;color:var(--muted);font-size:10px}.detail b{display:block;margin-top:4px;font-size:12px;word-break:break-word}
+.timeline{margin-top:18px;border-left:2px solid #dbeafe;padding-left:18px}.timeline-item{position:relative;margin:0 0 15px}.timeline-item:before{content:"";position:absolute;left:-25px;top:2px;width:10px;height:10px;background:var(--blue);border-radius:50%}.timeline-item b{display:block;font-size:12px}.timeline-item span{font-size:10px;color:var(--muted)}
+.toast{position:fixed;right:20px;bottom:20px;background:#111827;color:#fff;padding:12px 15px;border-radius:8px;display:none;z-index:100;font-size:13px}.loading{opacity:.65;pointer-events:none}
+@media(max-width:1450px){.kpis{grid-template-columns:repeat(4,1fr)}}@media(max-width:1100px){.summary{grid-template-columns:repeat(4,1fr)}}@media(max-width:950px){.layout{grid-template-columns:1fr}nav{display:none}.grid2{grid-template-columns:1fr}.detail-grid{grid-template-columns:repeat(2,1fr)}}@media(max-width:650px){main{padding:13px}.kpis,.summary{grid-template-columns:repeat(2,1fr)}.head{align-items:flex-start;flex-direction:column}.detail-grid{grid-template-columns:1fr}.filters .search{min-width:100%}}
+@media print{.top,nav,.actions,.filters,.pagination,.no-print{display:none!important}.layout{display:block}main{padding:0}.card{box-shadow:none}}
+</style>
+
+<link rel="stylesheet" href="zippzo-standard.css">
+<script src="zippzo-standard.js" defer></script>
+</head>
+<body>
+<header class="top">
+<div class="logo">ZIPPZO</div><div class="title">Sorting Operations Report</div><div class="spacer"></div>
+<span id="userName" class="title">Loading...</span><button onclick="loadAll()">↻ Refresh</button><button onclick="logout()">Logout</button>
+</header>
+<div class="layout">
+<nav id="nav"></nav>
+<main>
+<div class="head">
+<div><h1>Sorting Report</h1><div class="sub">Picking → Sorting → Location Drop → Task Completed → Grid Putaway</div></div>
+<div class="actions"><button class="btn" onclick="printReport()">Print</button><button class="btn" onclick="exportCSV()">Export CSV</button><button class="btn primary" onclick="loadAll()">Refresh Data</button></div>
+</div>
+
+<div class="kpis">
+<div class="card"><div class="label">TOTAL TASKS</div><div class="value" id="kTotal">—</div><div class="note">Sorting workload</div></div>
+<div class="card"><div class="label">PENDING</div><div class="value" id="kPending">—</div><div class="note">Awaiting sorter</div></div>
+<div class="card"><div class="label">ASSIGNED</div><div class="value" id="kAssigned">—</div><div class="note">Sorter assigned</div></div>
+<div class="card"><div class="label">IN SORTING</div><div class="value" id="kIn">—</div><div class="note">Active sorting</div></div>
+<div class="card"><div class="label">SORTED</div><div class="value" id="kSorted">—</div><div class="note">Sorting completed</div></div>
+<div class="card"><div class="label">COMPLETED</div><div class="value" id="kCompleted">—</div><div class="note">Location dropped</div></div>
+<div class="card"><div class="label">REQUIRED UNITS</div><div class="value" id="kRequired">—</div><div class="note">Total units</div></div>
+<div class="card"><div class="label">SORTED UNITS</div><div class="value" id="kUnits">—</div><div class="note">Confirmed units</div></div>
+</div>
+
+<section class="section">
+<div class="card">
+<div class="section-head"><h2>Advanced Sorting Filters</h2><button class="btn" onclick="clearFilters()">Clear Filters</button></div>
+<div class="filters">
+<input class="search" id="search" placeholder="Batch / order / SKU / product / sorter / destination / drop location..." oninput="applyFilters()">
+<select id="status" onchange="applyFilters()"><option value="">All Status</option></select>
+<select id="priority" onchange="applyFilters()"><option value="">All Priority</option></select>
+<select id="sorter" onchange="applyFilters()"><option value="">All Sorters</option></select>
+<select id="location" onchange="applyFilters()"><option value="">All Locations</option></select>
+<select id="scan" onchange="applyFilters()"><option value="">Scan Verification</option><option value="VERIFIED">Fully Verified</option><option value="PENDING">Scan Pending</option></select>
+<select id="completion" onchange="applyFilters()"><option value="">Completion</option><option value="COMPLETE">100%</option><option value="PARTIAL">1–99%</option><option value="ZERO">0%</option></select>
+<input type="date" id="dateFrom" onchange="applyFilters()"><input type="date" id="dateTo" onchange="applyFilters()">
+<select id="pageSize" onchange="applyFilters()"><option>25</option><option>50</option><option>100</option></select>
+</div>
+</div>
+</section>
+
+<section class="section summary">
+<div class="card"><div class="label">FILTERED TASKS</div><strong id="sTasks">0</strong><span>sorting tasks</span></div>
+<div class="card"><div class="label">REQUIRED UNITS</div><strong id="sRequired">0</strong><span>required</span></div>
+<div class="card"><div class="label">SORTED UNITS</div><strong id="sSorted">0</strong><span>sorted</span></div>
+<div class="card"><div class="label">CONFIRMED UNITS</div><strong id="sConfirmed">0</strong><span>location confirmed</span></div>
+<div class="card"><div class="label">COMPLETION</div><strong id="sCompletion">0%</strong><span>sorted / required</span></div>
+<div class="card"><div class="label">VERIFIED SCANS</div><strong id="sVerified">0</strong><span>SKU + location</span></div>
+<div class="card"><div class="label">EXCEPTIONS</div><strong id="sExceptions">0</strong><span>hold / mismatch</span></div>
+</section>
+
+<section class="section grid2">
+<div class="card">
+<div class="section-head"><h2>Sorter Productivity Summary</h2><span class="muted" id="sorterCount">0 sorters</span></div>
+<div class="table-wrap"><table class="table"><thead><tr><th>Sorter</th><th>Tasks</th><th>Units</th><th>Completed</th><th>Rate</th><th>Scan Verified</th></tr></thead><tbody id="sorterBody"></tbody></table></div>
+</div>
+<div class="card">
+<div class="section-head"><h2>Sorting Exceptions</h2><span class="tag warn" id="exceptionCount">0</span></div>
+<div class="list" id="exceptionList"></div>
+</div>
+</section>
+
+<section class="section">
+<div class="section-head"><h2>Detailed Sorting Report</h2><span class="muted" id="resultCount">0 records</span></div>
+<div class="table-wrap">
+<table class="table">
+<thead><tr>
+<th>Task</th><th>Batch</th><th>Order</th><th>Sorter</th><th>SKU</th><th>Product</th><th>Destination Store</th><th>Drop Location</th><th>Required</th><th>Sorted</th><th>Confirmed</th><th>Progress</th><th>SKU Scan</th><th>Location Scan</th><th>Status</th><th>Priority</th><th>Created</th><th>Completed</th><th>Action</th>
+</tr></thead>
+<tbody id="body"></tbody>
+</table>
+</div>
+<div class="pagination"><span id="pageInfo">Page 1</span><div class="pager" id="pager"></div></div>
+</section>
+</main>
+</div>
+
+<div class="modal" id="modal">
+<div class="modal-box">
+<div class="modal-head"><h2>Sorting Task Details</h2><button class="close" onclick="closeModal()">✕</button></div>
+<div id="detail"></div>
+</div>
+</div>
+<div class="toast" id="toast"></div>
+
+<script>
+const API=window.location.origin,TOKEN_KEY="zippzo_session_token";
+let token=localStorage.getItem(TOKEN_KEY),tasks=[],filtered=[],page=1;
+
+const navLinks=[
+["index.html","Dashboard"],["products.html","Products"],["suppliers.html","Suppliers"],["locations.html","Locations"],
+["inventory.html","Inventory"],["stock-movements.html","Stock Movements"],["bins.html","Bins"],
+["purchase-orders.html","Purchase Orders"],["grn.html","GRN"],["grn-report.html","GRN Report"],
+["putaway.html","Putaway"],["putaway-report.html","Putaway Report"],["create-batch.html","Create Batch"],
+["picking.html","Picking"],["picking-report.html","Picking Report"],["picking-ipp.html","Picking IPP"],
+["sorting.html","Sorting"],["sorting-report.html","Sorting Report"],["sorting-ipp.html","Sorting IPP"],
+["grid-putaway.html","Grid Putaway"],["vehicle-arrival.html","Vehicle Arrival"],["dispatch.html","Dispatch"],
+["store-receiving.html","Store Receiving"],["store-receiving-report.html","Receiving Report"],
+["orders.html","Orders"],["order-report.html","Order Report"],["stock-report.html","Stock Report"],
+["access-control.html","Access Control"],["audit-logs.html","Audit Logs"],["system-settings.html","System Settings"]
+];
+
+function esc(v){return String(v??"").replace(/[&<>"']/g,m=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#039;"}[m]))}
+function num(v){return Number(v||0)}
+function arr(d){if(Array.isArray(d))return d;if(Array.isArray(d?.items))return d.items;if(Array.isArray(d?.data))return d.data;if(Array.isArray(d?.results))return d.results;return[]}
+function field(x,...keys){for(const k of keys){if(x?.[k]!==undefined&&x?.[k]!==null&&x?.[k]!=="")return x[k]}return""}
+function toast(s){const x=document.getElementById("toast");x.textContent=s;x.style.display="block";clearTimeout(window.tt);window.tt=setTimeout(()=>x.style.display="none",2800)}
+async function api(path,opt={}){
+ const h={"Content-Type":"application/json",...(opt.headers||{})};if(token)h.Authorization="Bearer "+token;
+ const r=await fetch(API+path,{...opt,headers:h});if(r.status===401){localStorage.removeItem(TOKEN_KEY);localStorage.removeItem("zippzo_user");location.href="index.html";throw Error("Session expired")}
+ const t=await r.text();let d={};try{d=t?JSON.parse(t):{}}catch{}
+ if(!r.ok)throw Error(d.detail||d.message||"Request failed");return d
+}
+async function tryApi(paths){let e;for(const p of paths){try{return await api(p)}catch(x){e=x}}throw e||Error("API unavailable")}
+function nav(){document.getElementById("nav").innerHTML="<h4>Operations</h4>"+navLinks.map(x=>`<a href="${x[0]}" class="${location.pathname.endsWith(x[0])?"active":""}">${x[1]}</a>`).join("")}
+function statusClass(s){s=String(s||"").toUpperCase();if(["COMPLETED","SORTED"].includes(s))return"good";if(["HOLD","CANCELLED","FAILED"].includes(s))return"bad";if(["PENDING","ASSIGNED","IN_PROGRESS","SORTING"].includes(s))return"warn";return"info"}
+function statusOf(x){return String(field(x,"status","task_status")||"").toUpperCase()}
+function required(x){return num(field(x,"required_quantity","quantity","required_qty","planned_quantity"))}
+function sorted(x){return num(field(x,"sorted_quantity","sorted_qty","processed_quantity","confirmed_quantity"))}
+function confirmed(x){return num(field(x,"confirmed_quantity","location_confirmed_quantity","drop_confirmed_quantity"))}
+function sku(x){return String(field(x,"sku","product_sku","item_sku")||"—")}
+function product(x){return String(field(x,"product_name","product","item_name")||"—")}
+function sorter(x){return String(field(x,"sorter_name","employee_name","assigned_employee_name","sorter")||field(x,"assigned_employee_id")||"Unassigned")}
+function batch(x){return String(field(x,"batch_number","batch_no","batch_id")||"—")}
+function order(x){return String(field(x,"order_number","order_no")||"—")}
+function destination(x){return String(field(x,"destination_store","destination_store_name","store_name","destination")||"—")}
+function dropLocation(x){return String(field(x,"drop_location","location_name","destination_location","drop_bin","drop_location_code")||"—")}
+function priority(x){return String(field(x,"priority")||"NORMAL").toUpperCase()}
+function created(x){return String(field(x,"created_at","created_date","assigned_at","started_at")||"—")}
+function completed(x){return String(field(x,"completed_at","sorted_at","updated_at")||"—")}
+function skuVerified(x){const v=field(x,"sku_scan_verified","sku_verified","scanned_sku","sku_scan");return v===true||String(v).toUpperCase()==="VERIFIED"||String(v).toUpperCase()===sku(x).toUpperCase()}
+function locationVerified(x){const v=field(x,"location_scan_verified","location_verified","scanned_location","scanned_drop_location","location_scan");return v===true||String(v).toUpperCase()==="VERIFIED"||String(v).toUpperCase()===dropLocation(x).toUpperCase()}
+function progress(x){const r=required(x);return r?Math.min(100,Math.round(sorted(x)/r*100)):0}
+function fullyVerified(x){return skuVerified(x)&&locationVerified(x)}
+function exception(x){const s=statusOf(x);return ["HOLD","FAILED","CANCELLED"].includes(s)||String(field(x,"exception","exception_reason","remarks")||"").trim()!==""}
+
+async function loadAll(){
+ document.body.classList.add("loading");
+ try{
+  tasks=arr(await tryApi(["/api/sorting"]));
+  try{const me=await api("/api/auth/me");document.getElementById("userName").textContent=me.employee?.name||me.name||me.user?.name||"Zippzo User"}catch{}
+  buildFilters();page=1;applyFilters();toast("Sorting report refreshed");
+ }catch(e){toast(e.message||"Unable to load sorting report")}
+ finally{document.body.classList.remove("loading")}
+}
+function fill(id,values,label){
+ const el=document.getElementById(id),old=el.value;
+ el.innerHTML=`<option value="">${label}</option>`+values.map(v=>`<option value="${esc(v)}">${esc(v)}</option>`).join("");
+ if(values.includes(old))el.value=old
+}
+function buildFilters(){
+ fill("status",[...new Set(tasks.map(statusOf).filter(Boolean))].sort(),"All Status");
+ fill("priority",[...new Set(tasks.map(priority).filter(Boolean))].sort(),"All Priority");
+ fill("sorter",[...new Set(tasks.map(sorter).filter(Boolean))].sort(),"All Sorters");
+ fill("location",[...new Set(tasks.map(destination).filter(Boolean))].sort(),"All Locations");
+}
+function applyFilters(){
+ const q=document.getElementById("search").value.toLowerCase().trim();
+ const st=document.getElementById("status").value,pr=document.getElementById("priority").value;
+ const so=document.getElementById("sorter").value,loc=document.getElementById("location").value;
+ const scan=document.getElementById("scan").value,comp=document.getElementById("completion").value;
+ const from=document.getElementById("dateFrom").value,to=document.getElementById("dateTo").value;
+ filtered=tasks.filter(x=>{
+  const blob=JSON.stringify(x).toLowerCase(),p=progress(x),dt=created(x).slice(0,10);
+  return (!q||blob.includes(q))&&(!st||statusOf(x)===st)&&(!pr||priority(x)===pr)&&(!so||sorter(x)===so)&&(!loc||destination(x)===loc)&&
+  (!scan||(scan==="VERIFIED"&&fullyVerified(x))||(scan==="PENDING"&&!fullyVerified(x)))&&
+  (!comp||(comp==="COMPLETE"&&p===100)||(comp==="PARTIAL"&&p>0&&p<100)||(comp==="ZERO"&&p===0))&&
+  (!from||dt>=from)&&(!to||dt<=to)
+ });
+ page=1;render();
+}
+function render(){
+ const c={PENDING:0,ASSIGNED:0,IN_PROGRESS:0,SORTING:0,SORTED:0,COMPLETED:0};
+ tasks.forEach(x=>{const s=statusOf(x);if(c[s]!==undefined)c[s]++});
+ const inSorting=c.IN_PROGRESS+c.SORTING;
+ const req=tasks.reduce((n,x)=>n+required(x),0),srt=tasks.reduce((n,x)=>n+sorted(x),0);
+ [["kTotal",tasks.length],["kPending",c.PENDING],["kAssigned",c.ASSIGNED],["kIn",inSorting],["kSorted",c.SORTED],["kCompleted",c.COMPLETED],["kRequired",req],["kUnits",srt]].forEach(([id,v])=>document.getElementById(id).textContent=v.toLocaleString("en-IN"));
+ const fr=filtered.reduce((n,x)=>n+required(x),0),fs=filtered.reduce((n,x)=>n+sorted(x),0),fc=filtered.reduce((n,x)=>n+confirmed(x),0),fv=filtered.filter(fullyVerified).length,fe=filtered.filter(exception).length;
+ document.getElementById("sTasks").textContent=filtered.length.toLocaleString("en-IN");
+ document.getElementById("sRequired").textContent=fr.toLocaleString("en-IN");
+ document.getElementById("sSorted").textContent=fs.toLocaleString("en-IN");
+ document.getElementById("sConfirmed").textContent=fc.toLocaleString("en-IN");
+ document.getElementById("sCompletion").textContent=(fr?((fs/fr)*100).toFixed(1):"0")+"%";
+ document.getElementById("sVerified").textContent=fv.toLocaleString("en-IN");
+ document.getElementById("sExceptions").textContent=fe.toLocaleString("en-IN");
+ document.getElementById("resultCount").textContent=filtered.length.toLocaleString("en-IN")+" records";
+ renderSorters();renderExceptions();renderTable();renderPager();
+}
+function renderSorters(){
+ const map=new Map();
+ filtered.forEach(x=>{const k=sorter(x);if(!map.has(k))map.set(k,{tasks:0,units:0,completed:0,verified:0});const z=map.get(k);z.tasks++;z.units+=sorted(x);if(statusOf(x)==="COMPLETED")z.completed++;if(fullyVerified(x))z.verified++});
+ const rows=[...map.entries()].sort((a,b)=>b[1].units-a[1].units);
+ document.getElementById("sorterCount").textContent=rows.length+" sorters";
+ document.getElementById("sorterBody").innerHTML=rows.length?rows.map(([k,v])=>`<tr><td><b>${esc(k)}</b></td><td>${v.tasks}</td><td>${v.units}</td><td>${v.completed}</td><td>${v.tasks?Math.round(v.completed/v.tasks*100):0}%</td><td>${v.verified}/${v.tasks}</td></tr>`).join(""):`<tr><td colspan="6" class="empty">No sorter data.</td></tr>`;
+}
+function renderExceptions(){
+ const ex=filtered.filter(exception).slice(0,15);
+ document.getElementById("exceptionCount").textContent=filtered.filter(exception).length;
+ document.getElementById("exceptionList").innerHTML=ex.length?ex.map(x=>`<div class="list-row"><div><b>${esc(field(x,"task_number","task_no")||"#"+x.id)}</b><span class="muted">${esc(sku(x))} · ${esc(destination(x))}</span></div><span class="tag ${statusClass(statusOf(x))}">${esc(statusOf(x)||"EXCEPTION")}</span></div>`).join(""):`<div class="empty">No sorting exceptions.</div>`;
+}
+function renderTable(){
+ const size=Number(document.getElementById("pageSize").value||25),pages=Math.max(1,Math.ceil(filtered.length/size));
+ if(page>pages)page=pages;
+ const rows=filtered.slice((page-1)*size,page*size);
+ document.getElementById("body").innerHTML=rows.length?rows.map((x,i)=>{
+  const p=progress(x);
+  return `<tr>
+  <td><b>${esc(field(x,"task_number","task_no")||"#"+x.id)}</b></td>
+  <td>${esc(batch(x))}</td><td>${esc(order(x))}</td><td>${esc(sorter(x))}</td><td>${esc(sku(x))}</td><td>${esc(product(x))}</td>
+  <td>${esc(destination(x))}</td><td>${esc(dropLocation(x))}</td><td>${required(x)}</td><td>${sorted(x)}</td><td>${confirmed(x)}</td>
+  <td><span class="progress"><i style="width:${p}%"></i></span> ${p}%</td>
+  <td><span class="tag ${skuVerified(x)?"good":"warn"}">${skuVerified(x)?"VERIFIED":"PENDING"}</span></td>
+  <td><span class="tag ${locationVerified(x)?"good":"warn"}">${locationVerified(x)?"VERIFIED":"PENDING"}</span></td>
+  <td><span class="tag ${statusClass(statusOf(x))}">${esc(statusOf(x)||"—")}</span></td>
+  <td><span class="tag ${priority(x)==="URGENT"||priority(x)==="HIGH"?"warn":"info"}">${esc(priority(x))}</span></td>
+  <td>${esc(created(x))}</td><td>${esc(completed(x))}</td>
+  <td><button class="btn" onclick="details(${(page-1)*size+i})">View</button></td></tr>`
+ }).join(""):`<tr><td colspan="19" class="empty">No sorting tasks match the selected filters.</td></tr>`;
+}
+function renderPager(){
+ const size=Number(document.getElementById("pageSize").value||25),pages=Math.max(1,Math.ceil(filtered.length/size));
+ document.getElementById("pageInfo").textContent=`Page ${page} of ${pages} · ${filtered.length.toLocaleString("en-IN")} records`;
+ let b="";const s=Math.max(1,page-2),e=Math.min(pages,s+4);
+ if(page>1)b+=`<button onclick="gotoPage(${page-1})">‹</button>`;
+ for(let p=s;p<=e;p++)b+=`<button class="${p===page?"active":""}" onclick="gotoPage(${p})">${p}</button>`;
+ if(page<pages)b+=`<button onclick="gotoPage(${page+1})">›</button>`;
+ document.getElementById("pager").innerHTML=b;
+}
+function gotoPage(p){page=p;renderTable();renderPager();window.scrollTo({top:document.querySelector(".section:last-of-type").offsetTop-80,behavior:"smooth"})}
+function details(index){
+ const x=filtered[index];if(!x)return;
+ const p=progress(x);
+ document.getElementById("detail").innerHTML=`
+ <div class="detail-grid">
+ ${D("Task Number",field(x,"task_number","task_no")||x.id)}${D("Batch",batch(x))}${D("Order",order(x))}${D("Sorter",sorter(x))}
+ ${D("SKU",sku(x))}${D("Product",product(x))}${D("Destination Store",destination(x))}${D("Drop Location",dropLocation(x))}
+ ${D("Required Quantity",required(x))}${D("Sorted Quantity",sorted(x))}${D("Confirmed Quantity",confirmed(x))}${D("Progress",p+"%")}
+ ${D("SKU Scan",skuVerified(x)?"Verified":"Pending")}${D("Location Scan",locationVerified(x)?"Verified":"Pending")}${D("Status",statusOf(x))}${D("Priority",priority(x))}
+ ${D("Created",created(x))}${D("Assigned",field(x,"assigned_at"))}${D("Started",field(x,"started_at"))}${D("Completed",completed(x))}
+ ${D("Remarks",field(x,"remarks","notes")||"—")}${D("Exception",field(x,"exception","exception_reason")||"—")}
+ </div>
+ <div class="timeline">
+ <div class="timeline-item"><b>Sorting Task Created</b><span>${esc(created(x))}</span></div>
+ <div class="timeline-item"><b>SKU Verification</b><span>${skuVerified(x)?"Verified":"Pending"}</span></div>
+ <div class="timeline-item"><b>Location Drop Verification</b><span>${locationVerified(x)?"Verified":"Pending"}</span></div>
+ <div class="timeline-item"><b>Sorting Progress</b><span>${sorted(x)} / ${required(x)} units · ${p}%</span></div>
+ <div class="timeline-item"><b>Task Status</b><span>${esc(statusOf(x)||"—")}</span></div>
+ </div>`;
+ document.getElementById("modal").classList.add("show");
+}
+function D(a,b){return`<div class="detail"><small>${esc(a)}</small><b>${esc(b??"—")}</b></div>`}
+function closeModal(){document.getElementById("modal").classList.remove("show")}
+function clearFilters(){["search","dateFrom","dateTo"].forEach(id=>document.getElementById(id).value="");["status","priority","sorter","location","scan","completion"].forEach(id=>document.getElementById(id).value="");document.getElementById("pageSize").value="25";applyFilters()}
+function exportCSV(){
+ const h=["Task","Batch","Order","Sorter","SKU","Product","Destination Store","Drop Location","Required","Sorted","Confirmed","Progress","SKU Scan","Location Scan","Status","Priority","Created","Completed"];
+ const rows=filtered.map(x=>[field(x,"task_number","task_no")||x.id,batch(x),order(x),sorter(x),sku(x),product(x),destination(x),dropLocation(x),required(x),sorted(x),confirmed(x),progress(x)+"%",skuVerified(x)?"VERIFIED":"PENDING",locationVerified(x)?"VERIFIED":"PENDING",statusOf(x),priority(x),created(x),completed(x)]);
+ const csv=[h,...rows].map(r=>r.map(v=>`"${String(v??"").replaceAll('"','""')}"`).join(",")).join("\n");
+ const a=document.createElement("a");a.href=URL.createObjectURL(new Blob([csv],{type:"text/csv;charset=utf-8"}));a.download="zippzo_sorting_report.csv";a.click();
+}
+function printReport(){window.print()}
+async function logout(){try{if(token)await api("/api/auth/logout",{method:"POST",body:JSON.stringify({session_token:token})})}catch{}localStorage.removeItem(TOKEN_KEY);localStorage.removeItem("zippzo_user");location.href="index.html"}
+document.getElementById("modal").addEventListener("click",e=>{if(e.target.id==="modal")closeModal()});
+(async()=>{nav();await loadAll()})();
+</script>
+</body>
+</html>

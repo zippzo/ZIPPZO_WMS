@@ -1,0 +1,211 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1.0">
+<title>Zippzo Vehicle Arrival Report</title>
+<style>
+*{box-sizing:border-box}:root{--dark:#111827;--blue:#2563eb;--green:#16a34a;--orange:#ea580c;--red:#dc2626;--purple:#7c3aed;--muted:#64748b;--line:#e2e8f0;--bg:#f4f7fb}
+body{margin:0;background:var(--bg);color:#172033;font-family:Inter,Segoe UI,Arial,sans-serif}.top{height:68px;background:var(--dark);color:#fff;display:flex;align-items:center;gap:16px;padding:0 22px;position:sticky;top:0;z-index:20}.logo{font-size:25px;font-weight:900;letter-spacing:1px}.title{font-size:14px;color:#cbd5e1}.spacer{flex:1}.top button{background:#1f2937;border:1px solid #475569;color:#fff;border-radius:8px;padding:9px 13px;cursor:pointer}
+.layout{display:grid;grid-template-columns:235px 1fr;min-height:calc(100vh - 68px)}nav{background:#fff;border-right:1px solid var(--line);padding:14px 10px;position:sticky;top:68px;height:calc(100vh - 68px);overflow:auto}nav h4{font-size:10px;color:#94a3b8;text-transform:uppercase;margin:12px}nav a{display:block;text-decoration:none;color:#334155;padding:9px 12px;border-radius:8px;font-size:12px;margin:2px 0}nav a:hover,nav a.active{background:#eff6ff;color:#1d4ed8;font-weight:700}
+main{padding:22px;min-width:0}.head{display:flex;align-items:center;justify-content:space-between;gap:15px;margin-bottom:18px}.head h1{font-size:25px;margin:0}.sub{font-size:13px;color:var(--muted);margin-top:5px}.actions{display:flex;gap:8px;flex-wrap:wrap}.btn{border:1px solid var(--line);background:#fff;border-radius:8px;padding:9px 13px;cursor:pointer;font-size:12px}.btn.primary{background:var(--blue);border-color:var(--blue);color:#fff}
+.kpis{display:grid;grid-template-columns:repeat(8,1fr);gap:10px}.card{background:#fff;border:1px solid var(--line);border-radius:12px;padding:14px;box-shadow:0 1px 2px #00000008}.label{font-size:10px;color:var(--muted);text-transform:uppercase}.value{font-size:23px;font-weight:850;margin-top:6px}.note{font-size:10px;color:var(--muted);margin-top:4px}
+.section{margin-top:18px}.section-head{display:flex;align-items:center;justify-content:space-between;gap:10px;margin-bottom:10px}.section-head h2{font-size:16px;margin:0}.filters{display:flex;gap:8px;flex-wrap:wrap}.filters input,.filters select{height:37px;border:1px solid var(--line);border-radius:8px;background:#fff;padding:0 10px;font-size:12px;color:#172033}.filters .search{min-width:330px}
+.summary{display:grid;grid-template-columns:repeat(7,1fr);gap:10px}.summary strong{display:block;font-size:21px;margin-top:5px}.summary span{font-size:10px;color:var(--muted)}
+.table-wrap{overflow:auto;background:#fff;border:1px solid var(--line);border-radius:10px}.table{width:100%;border-collapse:collapse;font-size:12px}.table th{background:#f8fafc;color:#64748b;font-size:10px;text-transform:uppercase;text-align:left;position:sticky;top:0;z-index:2}.table th,.table td{padding:10px;border-bottom:1px solid #edf2f7;white-space:nowrap}.table tr:hover td{background:#f8fafc}
+.tag{display:inline-block;border-radius:999px;padding:4px 8px;font-size:10px;font-weight:700;background:#eef2ff;color:#3730a3}.tag.good{background:#f0fdf4;color:#15803d}.tag.warn{background:#fff7ed;color:#c2410c}.tag.bad{background:#fef2f2;color:#b91c1c}.tag.info{background:#eff6ff;color:#1d4ed8}.muted{color:var(--muted)}.empty{text-align:center;padding:30px;color:#94a3b8}
+.grid2{display:grid;grid-template-columns:1.25fr .75fr;gap:14px}.list{background:#fff;border:1px solid var(--line);border-radius:10px;overflow:hidden}.list-row{display:flex;justify-content:space-between;gap:10px;padding:11px 13px;border-bottom:1px solid #edf2f7;font-size:12px}.list-row:last-child{border:0}.list-row b{display:block}
+.progress{height:7px;width:90px;background:#e2e8f0;border-radius:99px;overflow:hidden;display:inline-block;vertical-align:middle}.progress i{display:block;height:100%;background:var(--blue)}
+.pagination{display:flex;justify-content:space-between;align-items:center;padding:11px 2px;font-size:11px;color:var(--muted)}.pager{display:flex;gap:5px}.pager button{border:1px solid var(--line);background:#fff;border-radius:7px;padding:7px 10px;cursor:pointer}.pager button.active{background:var(--blue);border-color:var(--blue);color:#fff}
+.modal{display:none;position:fixed;inset:0;background:#0008;z-index:50;align-items:center;justify-content:center;padding:20px}.modal.show{display:flex}.modal-box{background:#fff;border-radius:14px;width:min(1150px,100%);max-height:90vh;overflow:auto;padding:20px}.modal-head{display:flex;justify-content:space-between;align-items:center}.modal-head h2{font-size:18px;margin:0}.close{border:0;background:#f1f5f9;border-radius:8px;padding:7px 10px;cursor:pointer}.detail-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:9px;margin-top:15px}.detail{border:1px solid var(--line);border-radius:8px;padding:10px}.detail small{display:block;color:var(--muted);font-size:10px}.detail b{display:block;margin-top:4px;font-size:12px;word-break:break-word}.timeline{margin-top:18px;border-left:2px solid #dbeafe;padding-left:18px}.timeline-item{position:relative;margin:0 0 15px}.timeline-item:before{content:"";position:absolute;left:-25px;top:2px;width:10px;height:10px;background:var(--blue);border-radius:50%}.timeline-item b{display:block;font-size:12px}.timeline-item span{font-size:10px;color:var(--muted)}
+.toast{position:fixed;right:20px;bottom:20px;background:#111827;color:#fff;padding:12px 15px;border-radius:8px;display:none;z-index:100;font-size:13px}.loading{opacity:.65;pointer-events:none}
+@media(max-width:1450px){.kpis{grid-template-columns:repeat(4,1fr)}}@media(max-width:1100px){.summary{grid-template-columns:repeat(4,1fr)}}@media(max-width:950px){.layout{grid-template-columns:1fr}nav{display:none}.grid2{grid-template-columns:1fr}.detail-grid{grid-template-columns:repeat(2,1fr)}}@media(max-width:650px){main{padding:13px}.kpis,.summary{grid-template-columns:repeat(2,1fr)}.head{align-items:flex-start;flex-direction:column}.detail-grid{grid-template-columns:1fr}.filters .search{min-width:100%}}@media print{.top,nav,.actions,.filters,.pagination,.no-print{display:none!important}.layout{display:block}main{padding:0}.card{box-shadow:none}}
+</style>
+
+<style id="zippzo-master-theme">
+/* ZIPPZO MASTER FRONTEND THEME — visual layer only */
+:root{
+ --z-purple:#331084;--z-dark:#24085F;--z-yellow:#FEB103;
+ --z-bg:#F5F6FB;--z-card:#FFFFFF;--z-text:#171A4A;--z-muted:#69708F;
+ --z-line:#E6E8F0;--z-shadow:0 5px 18px rgba(36,8,95,.07);
+}
+html,body{background:var(--z-bg)!important;color:var(--z-text)!important}
+body{font-family:Inter,Segoe UI,Arial,sans-serif!important}
+.topbar,.header,.top-header,.top-nav,.app-header{
+ background:linear-gradient(90deg,var(--z-dark),var(--z-purple))!important;
+ color:#fff!important;border-color:transparent!important;
+}
+.sidebar,.side-nav,.left-sidebar,.navigation{
+ background:linear-gradient(180deg,#25105F,#180743)!important;
+ color:#fff!important;border-color:transparent!important;
+}
+.brand{color:#fff!important}
+.sidebar .nav-button,.sidebar button,.side-nav button,.left-sidebar button,
+.navigation button,.nav-button{
+ color:#fff!important;background:transparent!important;border-radius:8px!important;
+ border-color:transparent!important;
+}
+.sidebar .nav-button:hover,.sidebar button:hover,.side-nav button:hover,
+.left-sidebar button:hover,.navigation button:hover,.nav-button:hover{
+ background:rgba(255,255,255,.09)!important;
+}
+.sidebar .nav-button.active,.sidebar .nav-button[aria-current="page"],
+.nav-button.active,.nav-button.selected,.nav-button.current{
+ background:var(--z-yellow)!important;color:#15112F!important;font-weight:900!important;
+}
+.sidebar-title,.section-title,.nav-section{
+ color:#B9A9E8!important;letter-spacing:.7px!important;font-weight:900!important;
+}
+.content,.main-content,.page-content,.workspace{background:var(--z-bg)!important}
+.card,.panel,.table-card,.summary-card,.kpi-card,.stat-card,.form-card,
+.modal-content,.toolbar,.filter-bar,.table-container{
+ background:#fff!important;border-color:var(--z-line)!important;
+ box-shadow:var(--z-shadow)!important;border-radius:12px!important;
+}
+.btn-primary,.primary-btn,.button-primary,.add-btn,.save-btn{
+ background:var(--z-yellow)!important;color:#17113B!important;border-color:var(--z-yellow)!important;
+}
+.btn-secondary,.secondary-btn{background:#fff!important;color:var(--z-text)!important;border-color:var(--z-line)!important}
+input,select,textarea{
+ border-color:#DFE2EB!important;border-radius:8px!important;background:#fff!important;color:var(--z-text)!important;
+}
+input:focus,select:focus,textarea:focus{
+ border-color:var(--z-purple)!important;box-shadow:0 0 0 3px rgba(51,16,132,.08)!important;
+}
+table{background:#fff!important}
+thead th{background:#F7F8FC!important;color:#626987!important}
+tbody td{border-color:#EDF0F5!important}
+tbody tr:hover td{background:#FAFAFF!important}
+.badge,.status-badge{border-radius:999px!important}
+.page-title,h1,h2{color:var(--z-text)!important}
+.muted,.subtitle,.page-subtitle,.help-text{color:var(--z-muted)!important}
+</style>
+
+
+<link rel="stylesheet" href="zippzo-standard.css">
+<script src="zippzo-standard.js" defer></script>
+</head>
+<body>
+<header class="top"><div class="logo">ZIPPZO</div><div class="title">Vehicle Arrival Report</div><div class="spacer"></div><span id="userName" class="title">Loading...</span><button onclick="loadAll()">↻ Refresh</button><button onclick="logout()">Logout</button></header>
+<div class="layout"><nav id="nav"></nav><main>
+<div class="head"><div><h1>Vehicle Arrival Report</h1><div class="sub">Grid Putaway → Vehicle Arrival → Vehicle Details → LPN Loading → Verification → Ready for Dispatch</div></div><div class="actions"><button class="btn" onclick="printReport()">Print</button><button class="btn" onclick="exportCSV()">Export CSV</button><button class="btn primary" onclick="loadAll()">Refresh Data</button></div></div>
+
+<div class="kpis">
+<div class="card"><div class="label">TOTAL ARRIVALS</div><div class="value" id="kTotal">—</div><div class="note">Vehicle arrival records</div></div>
+<div class="card"><div class="label">EXPECTED</div><div class="value" id="kExpected">—</div><div class="note">Awaiting arrival</div></div>
+<div class="card"><div class="label">ARRIVED</div><div class="value" id="kArrived">—</div><div class="note">Vehicle on site</div></div>
+<div class="card"><div class="label">LOADING</div><div class="value" id="kLoading">—</div><div class="note">LPN loading active</div></div>
+<div class="card"><div class="label">VERIFIED</div><div class="value" id="kVerified">—</div><div class="note">Loading verified</div></div>
+<div class="card"><div class="label">READY</div><div class="value" id="kReady">—</div><div class="note">Ready for dispatch</div></div>
+<div class="card"><div class="label">DISPATCHED</div><div class="value" id="kDispatched">—</div><div class="note">Vehicle departed</div></div>
+<div class="card"><div class="label">EXCEPTIONS</div><div class="value" id="kExceptions">—</div><div class="note">Seal/quantity/issues</div></div>
+</div>
+
+<section class="section"><div class="card"><div class="section-head"><h2>Vehicle Arrival Filters</h2><button class="btn" onclick="clearFilters()">Clear Filters</button></div>
+<div class="filters">
+<input class="search" id="search" placeholder="Vehicle / driver / store / dispatch / seal / LPN..." oninput="applyFilters()">
+<select id="status" onchange="applyFilters()"><option value="">All Status</option></select>
+<select id="store" onchange="applyFilters()"><option value="">All Stores</option></select>
+<select id="vehicle" onchange="applyFilters()"><option value="">All Vehicles</option></select>
+<select id="driver" onchange="applyFilters()"><option value="">All Drivers</option></select>
+<select id="verification" onchange="applyFilters()"><option value="">Loading Verification</option><option value="VERIFIED">Verified</option><option value="PENDING">Pending</option></select>
+<select id="exceptionFilter" onchange="applyFilters()"><option value="">Exceptions</option><option value="YES">Exceptions Only</option><option value="NO">No Exceptions</option></select>
+<input type="date" id="dateFrom" onchange="applyFilters()"><input type="date" id="dateTo" onchange="applyFilters()">
+<select id="pageSize" onchange="applyFilters()"><option>25</option><option>50</option><option>100</option></select>
+</div></div></section>
+
+<section class="section summary">
+<div class="card"><div class="label">FILTERED ARRIVALS</div><strong id="sTotal">0</strong><span>vehicles</span></div>
+<div class="card"><div class="label">LPNs</div><strong id="sLpns">0</strong><span>loaded / expected</span></div>
+<div class="card"><div class="label">CARTONS</div><strong id="sCartons">0</strong><span>cartons</span></div>
+<div class="card"><div class="label">UNITS</div><strong id="sUnits">0</strong><span>SKU units</span></div>
+<div class="card"><div class="label">VERIFIED</div><strong id="sVerified">0</strong><span>arrival records</span></div>
+<div class="card"><div class="label">READY</div><strong id="sReady">0</strong><span>dispatch ready</span></div>
+<div class="card"><div class="label">EXCEPTIONS</div><strong id="sExceptions">0</strong><span>issues</span></div>
+</section>
+
+<section class="section grid2">
+<div class="card"><div class="section-head"><h2>Arrival Status Summary</h2><span class="muted" id="storeCount">0 stores</span></div><div class="table-wrap"><table class="table"><thead><tr><th>Store</th><th>Arrivals</th><th>Units</th><th>LPNs</th><th>Verified</th><th>Ready</th><th>Exceptions</th></tr></thead><tbody id="storeBody"></tbody></table></div></div>
+<div class="card"><div class="section-head"><h2>Vehicle Exceptions</h2><span class="tag warn" id="exceptionCount">0</span></div><div class="list" id="exceptionList"></div></div>
+</section>
+
+<section class="section"><div class="section-head"><h2>Detailed Vehicle Arrival Report</h2><span class="muted" id="resultCount">0 records</span></div>
+<div class="table-wrap"><table class="table"><thead><tr>
+<th>Arrival</th><th>Dispatch</th><th>Vehicle</th><th>Driver</th><th>Source</th><th>Destination Store</th><th>Arrival Time</th><th>Seal</th><th>LPNs</th><th>Cartons</th><th>Units</th><th>Verification</th><th>Status</th><th>Ready</th><th>Departed</th><th>Action</th>
+</tr></thead><tbody id="body"></tbody></table></div><div class="pagination"><span id="pageInfo">Page 1</span><div class="pager" id="pager"></div></div></section>
+</main></div>
+
+<div class="modal" id="modal"><div class="modal-box"><div class="modal-head"><h2>Vehicle Arrival Details</h2><button class="close" onclick="closeModal()">✕</button></div><div id="detail"></div></div></div>
+<div class="toast" id="toast"></div>
+<script>
+const API=window.location.origin,TOKEN_KEY="zippzo_session_token";let token=localStorage.getItem(TOKEN_KEY),rows=[],filtered=[],page=1;
+const navLinks=[["index.html","Dashboard"],["products.html","Products"],["suppliers.html","Suppliers"],["locations.html","Locations"],["inventory.html","Inventory"],["stock-movements.html","Stock Movements"],["bins.html","Bins"],["purchase-orders.html","Purchase Orders"],["grn.html","GRN"],["grn-report.html","GRN Report"],["putaway.html","Putaway"],["putaway-report.html","Putaway Report"],["create-batch.html","Create Batch"],["picking.html","Picking"],["picking-report.html","Picking Report"],["picking-ipp.html","Picking IPP"],["sorting.html","Sorting"],["sorting-report.html","Sorting Report"],["sorting-ipp.html","Sorting IPP"],["grid-putaway.html","Grid Putaway"],["grid-putaway-report.html","Grid Putaway Report"],["vehicle-arrival.html","Vehicle Arrival"],["vehicle-arrival-report.html","Vehicle Arrival Report"],["dispatch.html","Dispatch"],["store-receiving.html","Store Receiving"],["store-receiving-report.html","Receiving Report"],["orders.html","Orders"],["order-report.html","Order Report"],["stock-report.html","Stock Report"],["access-control.html","Access Control"],["audit-logs.html","Audit Logs"],["system-settings.html","System Settings"]];
+function esc(v){return String(v??"").replace(/[&<>"']/g,m=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#039;"}[m]))}
+function num(v){return Number(v||0)}function arr(d){if(Array.isArray(d))return d;if(Array.isArray(d?.items))return d.items;if(Array.isArray(d?.data))return d.data;if(Array.isArray(d?.results))return d.results;return[]}
+function field(x,...keys){for(const k of keys)if(x?.[k]!==undefined&&x?.[k]!==null&&x?.[k]!=="")return x[k];return""}
+function toast(s){const x=document.getElementById("toast");x.textContent=s;x.style.display="block";clearTimeout(window.tt);window.tt=setTimeout(()=>x.style.display="none",2800)}
+async function api(path,opt={}){const h={"Content-Type":"application/json",...(opt.headers||{})};if(token)h.Authorization="Bearer "+token;const r=await fetch(API+path,{...opt,headers:h});if(r.status===401){localStorage.removeItem(TOKEN_KEY);localStorage.removeItem("zippzo_user");location.href="index.html";throw Error("Session expired")}const t=await r.text();let d={};try{d=t?JSON.parse(t):{}}catch{}if(!r.ok)throw Error(d.detail||d.message||"Request failed");return d}
+async function tryApi(paths){let e;for(const p of paths){try{return await api(p)}catch(x){e=x}}throw e||Error("API unavailable")}
+function nav(){document.getElementById("nav").innerHTML="<h4>Operations</h4>"+navLinks.map(x=>`<a href="${x[0]}" class="${location.pathname.endsWith(x[0])?"active":""}">${x[1]}</a>`).join("")}
+function statusOf(x){return String(field(x,"status","arrival_status")||"").toUpperCase()}
+function arrivalNo(x){return String(field(x,"arrival_number","arrival_no","vehicle_arrival_number")||"#"+x.id)}
+function dispatchNo(x){return String(field(x,"dispatch_number","dispatch_no")||"—")}
+function vehicle(x){return String(field(x,"vehicle_number","vehicle_no","vehicle","registration_number")||"—")}
+function driver(x){return String(field(x,"driver_name","driver","driver_full_name")||"—")}
+function source(x){return String(field(x,"source_location","source","origin","from_location")||"—")}
+function store(x){return String(field(x,"destination_store","store_name","destination_store_name","destination")||"—")}
+function arrivalTime(x){return String(field(x,"arrival_time","arrived_at","vehicle_arrival_time")||"—")}
+function seal(x){return String(field(x,"seal_number","seal_no","seal")||"—")}
+function lpns(x){return num(field(x,"lpn_count","lpns_count","total_lpns"))||(Array.isArray(x.lpns)?x.lpns.length:0)}
+function cartons(x){return num(field(x,"carton_count","cartons","total_cartons"))}
+function units(x){return num(field(x,"unit_count","units","total_units","sku_units"))}
+function readyAt(x){return String(field(x,"ready_at","dispatch_ready_at","ready_date")||"—")}
+function departedAt(x){return String(field(x,"departed_at","departure_time","dispatched_at")||"—")}
+function verified(x){const v=field(x,"loading_verified","verification_status","verified","loading_verification");return v===true||["VERIFIED","COMPLETE","COMPLETED"].includes(String(v).toUpperCase())}
+function exception(x){return ["HOLD","FAILED","EXCEPTION","MISMATCH"].includes(statusOf(x))||String(field(x,"exception","exception_reason","remarks","seal_exception","quantity_exception")||"").trim()!==""}
+function statusClass(s){s=String(s||"").toUpperCase();if(["VERIFIED","READY","DISPATCHED","COMPLETED"].includes(s))return"good";if(["HOLD","FAILED","EXCEPTION","MISMATCH","CANCELLED"].includes(s))return"bad";if(["EXPECTED","ARRIVED","LOADING","PENDING"].includes(s))return"warn";return"info"}
+
+async function loadAll(){document.body.classList.add("loading");try{rows=arr(await tryApi(["/api/vehicle-arrivals","/api/vehicle-arrival","/api/dispatch/vehicles"]));try{const me=await api("/api/auth/me");document.getElementById("userName").textContent=me.employee?.name||me.name||me.user?.name||"Zippzo User"}catch{}buildFilters();page=1;applyFilters();toast("Vehicle Arrival report refreshed")}catch(e){toast(e.message||"Unable to load Vehicle Arrival report")}finally{document.body.classList.remove("loading")}}
+function fill(id,values,label){const el=document.getElementById(id),old=el.value;el.innerHTML=`<option value="">${label}</option>`+values.map(v=>`<option value="${esc(v)}">${esc(v)}</option>`).join("");if(values.includes(old))el.value=old}
+function buildFilters(){fill("status",[...new Set(rows.map(statusOf).filter(Boolean))].sort(),"All Status");fill("store",[...new Set(rows.map(store).filter(x=>x!=="—"))].sort(),"All Stores");fill("vehicle",[...new Set(rows.map(vehicle).filter(x=>x!=="—"))].sort(),"All Vehicles");fill("driver",[...new Set(rows.map(driver).filter(x=>x!=="—"))].sort(),"All Drivers")}
+function applyFilters(){const q=document.getElementById("search").value.toLowerCase().trim(),st=document.getElementById("status").value,so=document.getElementById("store").value,ve=document.getElementById("vehicle").value,dr=document.getElementById("driver").value,vr=document.getElementById("verification").value,ex=document.getElementById("exceptionFilter").value,from=document.getElementById("dateFrom").value,to=document.getElementById("dateTo").value;
+filtered=rows.filter(x=>{const blob=JSON.stringify(x).toLowerCase(),dt=arrivalTime(x).slice(0,10);return(!q||blob.includes(q))&&(!st||statusOf(x)===st)&&(!so||store(x)===so)&&(!ve||vehicle(x)===ve)&&(!dr||driver(x)===dr)&&(!vr||(vr==="VERIFIED"&&verified(x))||(vr==="PENDING"&&!verified(x)))&&(!ex||(ex==="YES"&&exception(x))||(ex==="NO"&&!exception(x)))&&(!from||dt>=from)&&(!to||dt<=to)});page=1;render()}
+function render(){const c={EXPECTED:0,ARRIVED:0,LOADING:0,VERIFIED:0,READY:0,DISPATCHED:0};rows.forEach(x=>{const s=statusOf(x);if(c[s]!==undefined)c[s]++});[["kTotal",rows.length],["kExpected",c.EXPECTED],["kArrived",c.ARRIVED],["kLoading",c.LOADING],["kVerified",c.VERIFIED],["kReady",c.READY],["kDispatched",c.DISPATCHED],["kExceptions",rows.filter(exception).length]].forEach(([id,v])=>document.getElementById(id).textContent=v.toLocaleString("en-IN"));
+document.getElementById("sTotal").textContent=filtered.length.toLocaleString("en-IN");document.getElementById("sLpns").textContent=filtered.reduce((n,x)=>n+lpns(x),0).toLocaleString("en-IN");document.getElementById("sCartons").textContent=filtered.reduce((n,x)=>n+cartons(x),0).toLocaleString("en-IN");document.getElementById("sUnits").textContent=filtered.reduce((n,x)=>n+units(x),0).toLocaleString("en-IN");document.getElementById("sVerified").textContent=filtered.filter(verified).length;document.getElementById("sReady").textContent=filtered.filter(x=>statusOf(x)==="READY").length;document.getElementById("sExceptions").textContent=filtered.filter(exception).length;document.getElementById("resultCount").textContent=filtered.length.toLocaleString("en-IN")+" records";renderStores();renderExceptions();renderTable();renderPager()}
+function renderStores(){const map=new Map();filtered.forEach(x=>{const k=store(x);if(!map.has(k))map.set(k,{a:0,u:0,l:0,v:0,r:0,e:0});const z=map.get(k);z.a++;z.u+=units(x);z.l+=lpns(x);if(verified(x))z.v++;if(statusOf(x)==="READY")z.r++;if(exception(x))z.e++});const rows=[...map.entries()].sort((a,b)=>b[1].u-a[1].u);document.getElementById("storeCount").textContent=rows.length+" stores";document.getElementById("storeBody").innerHTML=rows.length?rows.map(([k,v])=>`<tr><td><b>${esc(k)}</b></td><td>${v.a}</td><td>${v.u}</td><td>${v.l}</td><td>${v.v}</td><td>${v.r}</td><td>${v.e}</td></tr>`).join(""):`<tr><td colspan="7" class="empty">No store arrival data.</td></tr>`}
+function renderExceptions(){const ex=filtered.filter(exception).slice(0,15);document.getElementById("exceptionCount").textContent=filtered.filter(exception).length;document.getElementById("exceptionList").innerHTML=ex.length?ex.map(x=>`<div class="list-row"><div><b>${esc(arrivalNo(x))}</b><span class="muted">${esc(vehicle(x))} · ${esc(store(x))}</span></div><span class="tag ${statusClass(statusOf(x))}">${esc(statusOf(x)||"EXCEPTION")}</span></div>`).join(""):`<div class="empty">No vehicle exceptions.</div>`}
+function renderTable(){const size=Number(document.getElementById("pageSize").value||25),pages=Math.max(1,Math.ceil(filtered.length/size));if(page>pages)page=pages;const data=filtered.slice((page-1)*size,page*size);document.getElementById("body").innerHTML=data.length?data.map((x,i)=>`<tr><td><b>${esc(arrivalNo(x))}</b></td><td>${esc(dispatchNo(x))}</td><td>${esc(vehicle(x))}</td><td>${esc(driver(x))}</td><td>${esc(source(x))}</td><td>${esc(store(x))}</td><td>${esc(arrivalTime(x))}</td><td>${esc(seal(x))}</td><td>${lpns(x)}</td><td>${cartons(x)}</td><td>${units(x)}</td><td><span class="tag ${verified(x)?"good":"warn"}">${verified(x)?"VERIFIED":"PENDING"}</span></td><td><span class="tag ${statusClass(statusOf(x))}">${esc(statusOf(x)||"—")}</span></td><td>${esc(readyAt(x))}</td><td>${esc(departedAt(x))}</td><td><button class="btn" onclick="details(${(page-1)*size+i})">View</button></td></tr>`).join(""):`<tr><td colspan="16" class="empty">No vehicle arrival records match the selected filters.</td></tr>`}
+function renderPager(){const size=Number(document.getElementById("pageSize").value||25),pages=Math.max(1,Math.ceil(filtered.length/size));document.getElementById("pageInfo").textContent=`Page ${page} of ${pages} · ${filtered.length.toLocaleString("en-IN")} records`;let b="";const s=Math.max(1,page-2),e=Math.min(pages,s+4);if(page>1)b+=`<button onclick="gotoPage(${page-1})">‹</button>`;for(let p=s;p<=e;p++)b+=`<button class="${p===page?"active":""}" onclick="gotoPage(${p})">${p}</button>`;if(page<pages)b+=`<button onclick="gotoPage(${page+1})">›</button>`;document.getElementById("pager").innerHTML=b}
+function gotoPage(p){page=p;renderTable();renderPager();window.scrollTo({top:document.querySelector(".section:last-of-type").offsetTop-80,behavior:"smooth"})}
+function D(a,b){return`<div class="detail"><small>${esc(a)}</small><b>${esc(b??"—")}</b></div>`}
+function details(i){const x=filtered[i];if(!x)return;document.getElementById("detail").innerHTML=`<div class="detail-grid">${D("Arrival Number",arrivalNo(x))}${D("Dispatch Number",dispatchNo(x))}${D("Vehicle",vehicle(x))}${D("Driver",driver(x))}${D("Source",source(x))}${D("Destination Store",store(x))}${D("Arrival Time",arrivalTime(x))}${D("Seal Number",seal(x))}${D("LPN Count",lpns(x))}${D("Cartons",cartons(x))}${D("Units",units(x))}${D("Loading Verification",verified(x)?"Verified":"Pending")}${D("Status",statusOf(x))}${D("Ready For Dispatch",readyAt(x))}${D("Departed",departedAt(x))}${D("Exception",field(x,"exception","exception_reason")||"—")}${D("Remarks",field(x,"remarks","notes")||"—")}</div><div class="timeline"><div class="timeline-item"><b>Vehicle Arrival Record</b><span>${esc(arrivalTime(x))}</span></div><div class="timeline-item"><b>Vehicle / Driver Verification</b><span>${esc(vehicle(x))} · ${esc(driver(x))}</span></div><div class="timeline-item"><b>Seal Verification</b><span>${esc(seal(x))}</span></div><div class="timeline-item"><b>LPN Loading</b><span>${lpns(x)} LPNs · ${cartons(x)} cartons · ${units(x)} units</span></div><div class="timeline-item"><b>Loading Verification</b><span>${verified(x)?"Verified":"Pending"}</span></div><div class="timeline-item"><b>Dispatch Readiness</b><span>${esc(readyAt(x))}</span></div></div>`;document.getElementById("modal").classList.add("show")}
+function closeModal(){document.getElementById("modal").classList.remove("show")}
+function clearFilters(){["search","dateFrom","dateTo"].forEach(id=>document.getElementById(id).value="");["status","store","vehicle","driver","verification","exceptionFilter"].forEach(id=>document.getElementById(id).value="");document.getElementById("pageSize").value="25";applyFilters()}
+function exportCSV(){const h=["Arrival","Dispatch","Vehicle","Driver","Source","Destination Store","Arrival Time","Seal","LPNs","Cartons","Units","Verification","Status","Ready","Departed"];const data=filtered.map(x=>[arrivalNo(x),dispatchNo(x),vehicle(x),driver(x),source(x),store(x),arrivalTime(x),seal(x),lpns(x),cartons(x),units(x),verified(x)?"VERIFIED":"PENDING",statusOf(x),readyAt(x),departedAt(x)]);const csv=[h,...data].map(r=>r.map(v=>`"${String(v??"").replaceAll('"','""')}"`).join(",")).join("\n");const a=document.createElement("a");a.href=URL.createObjectURL(new Blob([csv],{type:"text/csv;charset=utf-8"}));a.download="zippzo_vehicle_arrival_report.csv";a.click()}
+function printReport(){window.print()}
+async function logout(){try{if(token)await api("/api/auth/logout",{method:"POST",body:JSON.stringify({session_token:token})})}catch{}localStorage.removeItem(TOKEN_KEY);localStorage.removeItem("zippzo_user");location.href="index.html"}
+document.getElementById("modal").addEventListener("click",e=>{if(e.target.id==="modal")closeModal()});(async()=>{nav();await loadAll()})();
+</script>
+
+<script id="zippzo-master-frontend">
+document.addEventListener("DOMContentLoaded", function(){
+  // Hide the retired Dropping module everywhere.
+  document.querySelectorAll("a,button").forEach(function(el){
+    const t=(el.textContent||"").trim().toLowerCase();
+    if(t==="dropping" || t.includes("dropping")) el.style.display="none";
+  });
+
+  // Use the real Zippzo logo wherever a common brand element exists.
+  document.querySelectorAll(".brand,.logo,.brand-logo").forEach(function(el){
+    if(!el.querySelector("img")){
+      const img=document.createElement("img");
+      img.src="zippzo-logo.jpg";
+      img.alt="Zippzo";
+      img.style.cssText="width:148px;max-height:55px;object-fit:contain;object-position:left center;";
+      el.prepend(img);
+    }
+  });
+});
+</script>
+
+</body>
+</html>

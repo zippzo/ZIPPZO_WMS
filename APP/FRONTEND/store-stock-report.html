@@ -1,0 +1,135 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1.0">
+<title>Zippzo Store Stock Report</title>
+<style>
+*{box-sizing:border-box}:root{--dark:#111827;--blue:#2563eb;--green:#16a34a;--orange:#ea580c;--red:#dc2626;--muted:#64748b;--line:#e2e8f0;--bg:#f4f7fb}
+body{margin:0;background:var(--bg);color:#172033;font-family:Inter,Segoe UI,Arial,sans-serif}.top{height:68px;background:var(--dark);color:#fff;display:flex;align-items:center;gap:16px;padding:0 22px;position:sticky;top:0;z-index:20}.logo{font-size:25px;font-weight:900;letter-spacing:1px}.title{font-size:14px;color:#cbd5e1}.spacer{flex:1}.top button{background:#1f2937;border:1px solid #475569;color:#fff;border-radius:8px;padding:9px 13px;cursor:pointer}
+.layout{display:grid;grid-template-columns:235px 1fr;min-height:calc(100vh - 68px)}nav{background:#fff;border-right:1px solid var(--line);padding:14px 10px;position:sticky;top:68px;height:calc(100vh - 68px);overflow:auto}nav h4{font-size:10px;color:#94a3b8;text-transform:uppercase;margin:12px}nav a{display:block;text-decoration:none;color:#334155;padding:9px 12px;border-radius:8px;font-size:12px;margin:2px 0}nav a:hover,nav a.active{background:#eff6ff;color:#1d4ed8;font-weight:700}
+main{padding:22px;min-width:0}.head{display:flex;align-items:center;justify-content:space-between;gap:15px;margin-bottom:18px}.head h1{font-size:25px;margin:0}.sub{font-size:13px;color:var(--muted);margin-top:5px}.actions{display:flex;gap:8px;flex-wrap:wrap}.btn{border:1px solid var(--line);background:#fff;border-radius:8px;padding:9px 13px;cursor:pointer;font-size:12px}.btn.primary{background:var(--blue);border-color:var(--blue);color:#fff}
+.kpis{display:grid;grid-template-columns:repeat(8,1fr);gap:10px}.card{background:#fff;border:1px solid var(--line);border-radius:12px;padding:14px;box-shadow:0 1px 2px #00000008}.label{font-size:10px;color:var(--muted);text-transform:uppercase}.value{font-size:23px;font-weight:850;margin-top:6px}.note{font-size:10px;color:var(--muted);margin-top:4px}
+.section{margin-top:18px}.section-head{display:flex;align-items:center;justify-content:space-between;gap:10px;margin-bottom:10px}.section-head h2{font-size:16px;margin:0}.filters{display:flex;gap:8px;flex-wrap:wrap}.filters input,.filters select{height:37px;border:1px solid var(--line);border-radius:8px;background:#fff;padding:0 10px;font-size:12px;color:#172033}.filters .search{min-width:330px}
+.summary{display:grid;grid-template-columns:repeat(8,1fr);gap:10px}.summary strong{display:block;font-size:21px;margin-top:5px}.summary span{font-size:10px;color:var(--muted)}
+.table-wrap{overflow:auto;background:#fff;border:1px solid var(--line);border-radius:10px}.table{width:100%;border-collapse:collapse;font-size:12px}.table th{background:#f8fafc;color:#64748b;font-size:10px;text-transform:uppercase;text-align:left;position:sticky;top:0;z-index:2}.table th,.table td{padding:10px;border-bottom:1px solid #edf2f7;white-space:nowrap}.table tr:hover td{background:#f8fafc}
+.tag{display:inline-block;border-radius:999px;padding:4px 8px;font-size:10px;font-weight:700;background:#eef2ff;color:#3730a3}.tag.good{background:#f0fdf4;color:#15803d}.tag.warn{background:#fff7ed;color:#c2410c}.tag.bad{background:#fef2f2;color:#b91c1c}.tag.info{background:#eff6ff;color:#1d4ed8}.muted{color:var(--muted)}.empty{text-align:center;padding:30px;color:#94a3b8}
+.grid2{display:grid;grid-template-columns:1.15fr .85fr;gap:14px}.list{background:#fff;border:1px solid var(--line);border-radius:10px;overflow:hidden}.list-row{display:flex;justify-content:space-between;gap:10px;padding:11px 13px;border-bottom:1px solid #edf2f7;font-size:12px}.list-row:last-child{border:0}.list-row b{display:block}
+.progress{height:7px;width:90px;background:#e2e8f0;border-radius:99px;overflow:hidden;display:inline-block;vertical-align:middle}.progress i{display:block;height:100%;background:var(--blue)}
+.pagination{display:flex;justify-content:space-between;align-items:center;padding:11px 2px;font-size:11px;color:var(--muted)}.pager{display:flex;gap:5px}.pager button{border:1px solid var(--line);background:#fff;border-radius:7px;padding:7px 10px;cursor:pointer}.pager button.active{background:var(--blue);border-color:var(--blue);color:#fff}
+.modal{display:none;position:fixed;inset:0;background:#0008;z-index:50;align-items:center;justify-content:center;padding:20px}.modal.show{display:flex}.modal-box{background:#fff;border-radius:14px;width:min(1150px,100%);max-height:90vh;overflow:auto;padding:20px}.modal-head{display:flex;justify-content:space-between;align-items:center}.modal-head h2{font-size:18px;margin:0}.close{border:0;background:#f1f5f9;border-radius:8px;padding:7px 10px;cursor:pointer}.detail-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:9px;margin-top:15px}.detail{border:1px solid var(--line);border-radius:8px;padding:10px}.detail small{display:block;color:var(--muted);font-size:10px}.detail b{display:block;margin-top:4px;font-size:12px;word-break:break-word}.timeline{margin-top:18px;border-left:2px solid #dbeafe;padding-left:18px}.timeline-item{position:relative;margin:0 0 15px}.timeline-item:before{content:"";position:absolute;left:-25px;top:2px;width:10px;height:10px;background:var(--blue);border-radius:50%}.timeline-item b{display:block;font-size:12px}.timeline-item span{font-size:10px;color:var(--muted)}
+.toast{position:fixed;right:20px;bottom:20px;background:#111827;color:#fff;padding:12px 15px;border-radius:8px;display:none;z-index:100;font-size:13px}.loading{opacity:.65;pointer-events:none}
+@media(max-width:1450px){.kpis{grid-template-columns:repeat(4,1fr)}.summary{grid-template-columns:repeat(4,1fr)}}@media(max-width:950px){.layout{grid-template-columns:1fr}nav{display:none}.grid2{grid-template-columns:1fr}.detail-grid{grid-template-columns:repeat(2,1fr)}}@media(max-width:650px){main{padding:13px}.kpis,.summary{grid-template-columns:repeat(2,1fr)}.head{align-items:flex-start;flex-direction:column}.detail-grid{grid-template-columns:1fr}.filters .search{min-width:100%}}@media print{.top,nav,.actions,.filters,.pagination,.no-print{display:none!important}.layout{display:block}main{padding:0}.card{box-shadow:none}}
+</style>
+
+<link rel="stylesheet" href="zippzo-standard.css">
+<script src="zippzo-standard.js" defer></script>
+</head>
+<body>
+<header class="top"><div class="logo">ZIPPZO</div><div class="title">Store Stock Report</div><div class="spacer"></div><span id="userName" class="title">Loading...</span><button onclick="loadAll()">↻ Refresh</button><button onclick="logout()">Logout</button></header>
+<div class="layout"><nav id="nav"></nav><main>
+<div class="head"><div><h1>Store Stock Report</h1><div class="sub">Store Receipt → Store Stock → Available / Reserved / Picked / Damaged / Quarantine</div></div><div class="actions"><button class="btn" onclick="printReport()">Print</button><button class="btn" onclick="exportCSV()">Export CSV</button><button class="btn primary" onclick="loadAll()">Refresh Data</button></div></div>
+
+<div class="kpis">
+<div class="card"><div class="label">SKUs</div><div class="value" id="kSku">—</div><div class="note">Unique store SKUs</div></div>
+<div class="card"><div class="label">STORE LOCATIONS</div><div class="value" id="kStores">—</div><div class="note">Active stock locations</div></div>
+<div class="card"><div class="label">AVAILABLE</div><div class="value" id="kAvailable">—</div><div class="note">Sellable stock</div></div>
+<div class="card"><div class="label">RESERVED</div><div class="value" id="kReserved">—</div><div class="note">Reserved units</div></div>
+<div class="card"><div class="label">PICKED</div><div class="value" id="kPicked">—</div><div class="note">Picked units</div></div>
+<div class="card"><div class="label">DAMAGED</div><div class="value" id="kDamaged">—</div><div class="note">Damaged stock</div></div>
+<div class="card"><div class="label">QUARANTINE</div><div class="value" id="kQuarantine">—</div><div class="note">Quarantine stock</div></div>
+<div class="card"><div class="label">LOW / OUT</div><div class="value" id="kLow">—</div><div class="note">Replenishment alerts</div></div>
+</div>
+
+<section class="section"><div class="card"><div class="section-head"><h2>Store Stock Filters</h2><button class="btn" onclick="clearFilters()">Clear Filters</button></div>
+<div class="filters">
+<input class="search" id="search" placeholder="SKU / barcode / product / store / bin..." oninput="applyFilters()">
+<select id="store" onchange="applyFilters()"><option value="">All Stores</option></select>
+<select id="status" onchange="applyFilters()"><option value="">All Stock Status</option><option value="IN_STOCK">In Stock</option><option value="LOW">Low Stock</option><option value="OUT">Out of Stock</option><option value="RESERVED">Reserved</option><option value="DAMAGED">Damaged</option><option value="QUARANTINE">Quarantine</option></select>
+<select id="category" onchange="applyFilters()"><option value="">All Categories</option></select>
+<select id="bin" onchange="applyFilters()"><option value="">All Bins</option></select>
+<select id="sort" onchange="applyFilters()"><option value="available_desc">Available ↓</option><option value="available_asc">Available ↑</option><option value="reserved_desc">Reserved ↓</option><option value="product_asc">Product A-Z</option><option value="store_asc">Store A-Z</option></select>
+<select id="pageSize" onchange="applyFilters()"><option>25</option><option>50</option><option>100</option></select>
+</div></div></section>
+
+<section class="section summary">
+<div class="card"><div class="label">FILTERED SKUs</div><strong id="sSku">0</strong><span>stock records</span></div>
+<div class="card"><div class="label">AVAILABLE</div><strong id="sAvailable">0</strong><span>sellable units</span></div>
+<div class="card"><div class="label">RESERVED</div><strong id="sReserved">0</strong><span>reserved units</span></div>
+<div class="card"><div class="label">PICKED</div><strong id="sPicked">0</strong><span>picked units</span></div>
+<div class="card"><div class="label">DAMAGED</div><strong id="sDamaged">0</strong><span>damaged units</span></div>
+<div class="card"><div class="label">QUARANTINE</div><strong id="sQuarantine">0</strong><span>quarantine units</span></div>
+<div class="card"><div class="label">LOW STOCK</div><strong id="sLow">0</strong><span>records</span></div>
+<div class="card"><div class="label">OUT OF STOCK</div><strong id="sOut">0</strong><span>records</span></div>
+</section>
+
+<section class="section grid2">
+<div class="card"><div class="section-head"><h2>Store Stock Summary</h2><span class="muted" id="storeCount">0 stores</span></div>
+<div class="table-wrap"><table class="table"><thead><tr><th>Store</th><th>SKUs</th><th>Available</th><th>Reserved</th><th>Picked</th><th>Damaged</th><th>Quarantine</th><th>Low/Out</th></tr></thead><tbody id="storeBody"></tbody></table></div></div>
+<div class="card"><div class="section-head"><h2>Replenishment Alerts</h2><span class="tag warn" id="alertCount">0</span></div><div class="list" id="alertList"></div></div>
+</section>
+
+<section class="section"><div class="section-head"><h2>Detailed Store Stock</h2><span class="muted" id="resultCount">0 records</span></div>
+<div class="table-wrap"><table class="table"><thead><tr>
+<th>Store</th><th>SKU</th><th>Product</th><th>Category</th><th>Bin</th><th>Available</th><th>Reserved</th><th>Picked</th><th>Damaged</th><th>Quarantine</th><th>Reorder</th><th>Status</th><th>Action</th>
+</tr></thead><tbody id="body"></tbody></table></div><div class="pagination"><span id="pageInfo">Page 1</span><div class="pager" id="pager"></div></div></section>
+</main></div>
+
+<div class="modal" id="modal"><div class="modal-box"><div class="modal-head"><h2>Store Stock Details</h2><button class="close" onclick="closeModal()">✕</button></div><div id="detail"></div></div></div>
+<div class="toast" id="toast"></div>
+<script>
+const API=window.location.origin,TOKEN_KEY="zippzo_session_token";let token=localStorage.getItem(TOKEN_KEY),rows=[],filtered=[],page=1;
+const navLinks=[["index.html","Dashboard"],["products.html","Products"],["suppliers.html","Suppliers"],["locations.html","Locations"],["inventory.html","Inventory"],["stock-movements.html","Stock Movements"],["bins.html","Bins"],["purchase-orders.html","Purchase Orders"],["grn.html","GRN"],["grn-report.html","GRN Report"],["putaway.html","Putaway"],["putaway-report.html","Putaway Report"],["create-batch.html","Create Batch"],["picking.html","Picking"],["picking-report.html","Picking Report"],["picking-ipp.html","Picking IPP"],["sorting.html","Sorting"],["sorting-report.html","Sorting Report"],["sorting-ipp.html","Sorting IPP"],["grid-putaway.html","Grid Putaway"],["grid-putaway-report.html","Grid Putaway Report"],["vehicle-arrival.html","Vehicle Arrival"],["vehicle-arrival-report.html","Vehicle Arrival Report"],["dispatch.html","Dispatch"],["dispatch-report.html","Dispatch Report"],["store-receiving.html","Store Receiving"],["store-receiving-report.html","Receiving Report"],["store-stock-report.html","Store Stock Report"],["orders.html","Orders"],["order-report.html","Order Report"],["stock-report.html","Stock Report"],["access-control.html","Access Control"],["audit-logs.html","Audit Logs"],["system-settings.html","System Settings"]];
+function esc(v){return String(v??"").replace(/[&<>"']/g,m=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#039;"}[m]))}
+function num(v){return Number(v||0)}
+function arr(d){if(Array.isArray(d))return d;if(Array.isArray(d?.items))return d.items;if(Array.isArray(d?.data))return d.data;if(Array.isArray(d?.results))return d.results;return[]}
+function field(x,...keys){for(const k of keys)if(x?.[k]!==undefined&&x?.[k]!==null&&x?.[k]!=="")return x[k];return""}
+function toast(s){const x=document.getElementById("toast");x.textContent=s;x.style.display="block";clearTimeout(window.tt);window.tt=setTimeout(()=>x.style.display="none",2800)}
+async function api(path,opt={}){const h={"Content-Type":"application/json",...(opt.headers||{})};if(token)h.Authorization="Bearer "+token;const r=await fetch(API+path,{...opt,headers:h});if(r.status===401){localStorage.removeItem(TOKEN_KEY);localStorage.removeItem("zippzo_user");location.href="index.html";throw Error("Session expired")}const t=await r.text();let d={};try{d=t?JSON.parse(t):{}}catch{}if(!r.ok)throw Error(d.detail||d.message||"Request failed");return d}
+async function tryApi(paths){let e;for(const p of paths){try{return await api(p)}catch(x){e=x}}throw e||Error("API unavailable")}
+function nav(){document.getElementById("nav").innerHTML="<h4>Operations</h4>"+navLinks.map(x=>`<a href="${x[0]}" class="${location.pathname.endsWith(x[0])?"active":""}">${x[1]}</a>`).join("")}
+function store(x){return String(field(x,"location_name","store_name","location","store","location_code")||"—")}
+function sku(x){return String(field(x,"sku","SKU","product_sku")||"—")}
+function product(x){return String(field(x,"product_name","name","product")||"—")}
+function category(x){return String(field(x,"category","product_category")||"—")}
+function bin(x){return String(field(x,"bin_code","bin_name","bin")||"—")}
+function available(x){return num(field(x,"available_qty","available_quantity","qty_available"))}
+function reserved(x){return num(field(x,"reserved_qty","reserved_quantity"))}
+function picked(x){return num(field(x,"picked_qty","picked_quantity"))}
+function damaged(x){return num(field(x,"damaged_qty","damaged_quantity"))}
+function quarantine(x){return num(field(x,"quarantine_qty","quarantine_quantity"))}
+function reorder(x){return num(field(x,"reorder_level","minimum_stock","min_stock"))}
+function stockStatus(x){const a=available(x),q=reorder(x);if(quarantine(x)>0&&a===0)return"QUARANTINE";if(damaged(x)>0&&a===0)return"DAMAGED";if(a===0)return"OUT";if(q>0&&a<=q)return"LOW";if(reserved(x)>0&&a===0)return"RESERVED";return"IN_STOCK"}
+function statusClass(s){if(s==="IN_STOCK")return"good";if(s==="LOW"||s==="RESERVED")return"warn";if(["OUT","DAMAGED","QUARANTINE"].includes(s))return"bad";return"info"}
+
+async function loadAll(){document.body.classList.add("loading");try{
+let d=await tryApi(["/api/store-stock","/api/store-inventory","/api/bin-inventory","/api/inventory"]);rows=arr(d);
+try{const me=await api("/api/auth/me");document.getElementById("userName").textContent=me.employee?.name||me.name||me.user?.name||"Zippzo User"}catch{}
+buildFilters();page=1;applyFilters();toast("Store Stock report refreshed")
+}catch(e){toast(e.message||"Unable to load Store Stock report")}finally{document.body.classList.remove("loading")}}
+function fill(id,values,label){const el=document.getElementById(id),old=el.value;el.innerHTML=`<option value="">${label}</option>`+values.map(v=>`<option value="${esc(v)}">${esc(v)}</option>`).join("");if(values.includes(old))el.value=old}
+function buildFilters(){fill("store",[...new Set(rows.map(store).filter(x=>x!=="—"))].sort(),"All Stores");fill("category",[...new Set(rows.map(category).filter(x=>x!=="—"))].sort(),"All Categories");fill("bin",[...new Set(rows.map(bin).filter(x=>x!=="—"))].sort(),"All Bins")}
+function applyFilters(){const q=document.getElementById("search").value.toLowerCase().trim(),so=document.getElementById("store").value,st=document.getElementById("status").value,ca=document.getElementById("category").value,bi=document.getElementById("bin").value;
+filtered=rows.filter(x=>{const blob=JSON.stringify(x).toLowerCase();return(!q||blob.includes(q))&&(!so||store(x)===so)&&(!st||stockStatus(x)===st)&&(!ca||category(x)===ca)&&(!bi||bin(x)===bi)});
+const sort=document.getElementById("sort").value;filtered.sort((a,b)=>sort==="available_desc"?available(b)-available(a):sort==="available_asc"?available(a)-available(b):sort==="reserved_desc"?reserved(b)-reserved(a):sort==="product_asc"?product(a).localeCompare(product(b)):store(a).localeCompare(store(b)));
+page=1;render()}
+function render(){const totals={a:0,r:0,p:0,d:0,q:0};rows.forEach(x=>{totals.a+=available(x);totals.r+=reserved(x);totals.p+=picked(x);totals.d+=damaged(x);totals.q+=quarantine(x)});
+document.getElementById("kSku").textContent=new Set(rows.map(sku)).size.toLocaleString("en-IN");document.getElementById("kStores").textContent=new Set(rows.map(store)).size.toLocaleString("en-IN");document.getElementById("kAvailable").textContent=totals.a.toLocaleString("en-IN");document.getElementById("kReserved").textContent=totals.r.toLocaleString("en-IN");document.getElementById("kPicked").textContent=totals.p.toLocaleString("en-IN");document.getElementById("kDamaged").textContent=totals.d.toLocaleString("en-IN");document.getElementById("kQuarantine").textContent=totals.q.toLocaleString("en-IN");document.getElementById("kLow").textContent=rows.filter(x=>["LOW","OUT"].includes(stockStatus(x))).length.toLocaleString("en-IN");
+const f={a:0,r:0,p:0,d:0,q:0};filtered.forEach(x=>{f.a+=available(x);f.r+=reserved(x);f.p+=picked(x);f.d+=damaged(x);f.q+=quarantine(x)});document.getElementById("sSku").textContent=new Set(filtered.map(sku)).size;document.getElementById("sAvailable").textContent=f.a;document.getElementById("sReserved").textContent=f.r;document.getElementById("sPicked").textContent=f.p;document.getElementById("sDamaged").textContent=f.d;document.getElementById("sQuarantine").textContent=f.q;document.getElementById("sLow").textContent=filtered.filter(x=>stockStatus(x)==="LOW").length;document.getElementById("sOut").textContent=filtered.filter(x=>stockStatus(x)==="OUT").length;document.getElementById("resultCount").textContent=filtered.length.toLocaleString("en-IN")+" records";
+renderStores();renderAlerts();renderTable();renderPager()}
+function renderStores(){const m=new Map();filtered.forEach(x=>{const k=store(x);if(!m.has(k))m.set(k,{sku:0,a:0,r:0,p:0,d:0,q:0,lo:0});const z=m.get(k);z.sku++;z.a+=available(x);z.r+=reserved(x);z.p+=picked(x);z.d+=damaged(x);z.q+=quarantine(x);if(["LOW","OUT"].includes(stockStatus(x)))z.lo++});const data=[...m.entries()].sort((a,b)=>b[1].a-a[1].a);document.getElementById("storeCount").textContent=data.length+" stores";document.getElementById("storeBody").innerHTML=data.length?data.map(([k,v])=>`<tr><td><b>${esc(k)}</b></td><td>${v.sku}</td><td>${v.a}</td><td>${v.r}</td><td>${v.p}</td><td>${v.d}</td><td>${v.q}</td><td><span class="tag ${v.lo?"warn":"good"}">${v.lo}</span></td></tr>`).join(""):`<tr><td colspan="8" class="empty">No store stock data.</td></tr>`}
+function renderAlerts(){const ex=filtered.filter(x=>["LOW","OUT"].includes(stockStatus(x))).sort((a,b)=>available(a)-available(b)).slice(0,15);document.getElementById("alertCount").textContent=filtered.filter(x=>["LOW","OUT"].includes(stockStatus(x))).length;document.getElementById("alertList").innerHTML=ex.length?ex.map(x=>`<div class="list-row"><div><b>${esc(product(x))}</b><span class="muted">${esc(store(x))} · ${esc(sku(x))}</span></div><span class="tag ${statusClass(stockStatus(x))}">${available(x)} / ${reorder(x)}</span></div>`).join(""):`<div class="empty">No replenishment alerts.</div>`}
+function renderTable(){const size=Number(document.getElementById("pageSize").value||25),pages=Math.max(1,Math.ceil(filtered.length/size));if(page>pages)page=pages;const data=filtered.slice((page-1)*size,page*size);document.getElementById("body").innerHTML=data.length?data.map((x,i)=>{const st=stockStatus(x),rq=reorder(x),pct=rq?Math.min(100,available(x)/rq*100):100;return`<tr><td>${esc(store(x))}</td><td><b>${esc(sku(x))}</b></td><td>${esc(product(x))}</td><td>${esc(category(x))}</td><td>${esc(bin(x))}</td><td><b>${available(x)}</b> <span class="progress"><i style="width:${pct}%"></i></span></td><td>${reserved(x)}</td><td>${picked(x)}</td><td>${damaged(x)}</td><td>${quarantine(x)}</td><td>${rq||"—"}</td><td><span class="tag ${statusClass(st)}">${st.replace("_"," ")}</span></td><td><button class="btn" onclick="details(${(page-1)*size+i})">View</button></td></tr>`}).join(""):`<tr><td colspan="13" class="empty">No store stock records match the selected filters.</td></tr>`}
+function renderPager(){const size=Number(document.getElementById("pageSize").value||25),pages=Math.max(1,Math.ceil(filtered.length/size));document.getElementById("pageInfo").textContent=`Page ${page} of ${pages} · ${filtered.length.toLocaleString("en-IN")} records`;let b="";const s=Math.max(1,page-2),e=Math.min(pages,s+4);if(page>1)b+=`<button onclick="gotoPage(${page-1})">‹</button>`;for(let p=s;p<=e;p++)b+=`<button class="${p===page?"active":""}" onclick="gotoPage(${p})">${p}</button>`;if(page<pages)b+=`<button onclick="gotoPage(${page+1})">›</button>`;document.getElementById("pager").innerHTML=b}
+function gotoPage(p){page=p;renderTable();renderPager();window.scrollTo({top:document.querySelector(".section:last-of-type").offsetTop-80,behavior:"smooth"})}
+function D(a,b){return`<div class="detail"><small>${esc(a)}</small><b>${esc(b??"—")}</b></div>`}
+function details(i){const x=filtered[i];if(!x)return;const st=stockStatus(x);document.getElementById("detail").innerHTML=`<div class="detail-grid">${D("Store",store(x))}${D("SKU",sku(x))}${D("Product",product(x))}${D("Category",category(x))}${D("Barcode",field(x,"barcode","bar_code")||"—")}${D("Bin",bin(x))}${D("Available",available(x))}${D("Reserved",reserved(x))}${D("Picked",picked(x))}${D("Damaged",damaged(x))}${D("Quarantine",quarantine(x))}${D("Reorder Level",reorder(x)||"—")}${D("Status",st)}${D("Product ID",field(x,"product_id","id")||"—")}${D("Location ID",field(x,"location_id")||"—")}${D("Updated",field(x,"updated_at","updated_on")||"—")}${D("Remarks",field(x,"remarks","notes")||"—")}</div><div class="timeline"><div class="timeline-item"><b>Store Stock Position</b><span>${esc(store(x))} · ${esc(product(x))}</span></div><div class="timeline-item"><b>Available Stock</b><span>${available(x)} units available for store operations</span></div><div class="timeline-item"><b>Reserved / Picked</b><span>${reserved(x)} reserved · ${picked(x)} picked</span></div><div class="timeline-item"><b>Exceptions</b><span>${damaged(x)} damaged · ${quarantine(x)} quarantine</span></div><div class="timeline-item"><b>Current Status</b><span>${st.replace("_"," ")}</span></div></div>`;document.getElementById("modal").classList.add("show")}
+function closeModal(){document.getElementById("modal").classList.remove("show")}
+function clearFilters(){document.getElementById("search").value="";["store","status","category","bin"].forEach(id=>document.getElementById(id).value="");document.getElementById("sort").value="available_desc";document.getElementById("pageSize").value="25";applyFilters()}
+function exportCSV(){const h=["Store","SKU","Product","Category","Bin","Available","Reserved","Picked","Damaged","Quarantine","Reorder Level","Status"];const data=filtered.map(x=>[store(x),sku(x),product(x),category(x),bin(x),available(x),reserved(x),picked(x),damaged(x),quarantine(x),reorder(x),stockStatus(x)]);const csv=[h,...data].map(r=>r.map(v=>`"${String(v??"").replaceAll('"','""')}"`).join(",")).join("\n");const a=document.createElement("a");a.href=URL.createObjectURL(new Blob([csv],{type:"text/csv;charset=utf-8"}));a.download="zippzo_store_stock_report.csv";a.click()}
+function printReport(){window.print()}
+async function logout(){try{if(token)await api("/api/auth/logout",{method:"POST",body:JSON.stringify({session_token:token})})}catch{}localStorage.removeItem(TOKEN_KEY);localStorage.removeItem("zippzo_user");location.href="index.html"}
+document.getElementById("modal").addEventListener("click",e=>{if(e.target.id==="modal")closeModal()});(async()=>{nav();await loadAll()})();
+</script>
+</body>
+</html>

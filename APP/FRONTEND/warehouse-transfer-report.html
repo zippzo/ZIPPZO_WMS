@@ -1,0 +1,134 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1.0">
+<title>Zippzo Warehouse Transfer Report</title>
+<style>
+*{box-sizing:border-box}:root{--dark:#111827;--blue:#2563eb;--green:#16a34a;--orange:#ea580c;--red:#dc2626;--purple:#7c3aed;--muted:#64748b;--line:#e2e8f0;--bg:#f4f7fb}
+body{margin:0;background:var(--bg);color:#172033;font-family:Inter,Segoe UI,Arial,sans-serif}.top{height:68px;background:var(--dark);color:#fff;display:flex;align-items:center;gap:16px;padding:0 22px;position:sticky;top:0;z-index:20}.logo{font-size:25px;font-weight:900;letter-spacing:1px}.title{font-size:14px;color:#cbd5e1}.spacer{flex:1}.top button{background:#1f2937;border:1px solid #475569;color:#fff;border-radius:8px;padding:9px 13px;cursor:pointer}
+.layout{display:grid;grid-template-columns:235px 1fr;min-height:calc(100vh - 68px)}nav{background:#fff;border-right:1px solid var(--line);padding:14px 10px;position:sticky;top:68px;height:calc(100vh - 68px);overflow:auto}nav h4{font-size:10px;color:#94a3b8;text-transform:uppercase;margin:12px}nav a{display:block;text-decoration:none;color:#334155;padding:9px 12px;border-radius:8px;font-size:12px;margin:2px 0}nav a:hover,nav a.active{background:#eff6ff;color:#1d4ed8;font-weight:700}
+main{padding:22px;min-width:0}.head{display:flex;align-items:center;justify-content:space-between;gap:15px;margin-bottom:18px}.head h1{font-size:25px;margin:0}.sub{font-size:13px;color:var(--muted);margin-top:5px}.actions{display:flex;gap:8px;flex-wrap:wrap}.btn{border:1px solid var(--line);background:#fff;border-radius:8px;padding:9px 13px;cursor:pointer;font-size:12px}.btn.primary{background:var(--blue);border-color:var(--blue);color:#fff}
+.kpis{display:grid;grid-template-columns:repeat(8,1fr);gap:10px}.card{background:#fff;border:1px solid var(--line);border-radius:12px;padding:14px;box-shadow:0 1px 2px #00000008}.label{font-size:10px;color:var(--muted);text-transform:uppercase}.value{font-size:23px;font-weight:850;margin-top:6px}.note{font-size:10px;color:var(--muted);margin-top:4px}
+.section{margin-top:18px}.section-head{display:flex;align-items:center;justify-content:space-between;gap:10px;margin-bottom:10px}.section-head h2{font-size:16px;margin:0}.filters{display:flex;gap:8px;flex-wrap:wrap}.filters input,.filters select{height:37px;border:1px solid var(--line);border-radius:8px;background:#fff;padding:0 10px;font-size:12px;color:#172033}.filters .search{min-width:330px}
+.summary{display:grid;grid-template-columns:repeat(8,1fr);gap:10px}.summary strong{display:block;font-size:21px;margin-top:5px}.summary span{font-size:10px;color:var(--muted)}
+.table-wrap{overflow:auto;background:#fff;border:1px solid var(--line);border-radius:10px}.table{width:100%;border-collapse:collapse;font-size:12px}.table th{background:#f8fafc;color:#64748b;font-size:10px;text-transform:uppercase;text-align:left;position:sticky;top:0;z-index:2}.table th,.table td{padding:10px;border-bottom:1px solid #edf2f7;white-space:nowrap}.table tr:hover td{background:#f8fafc}
+.tag{display:inline-block;border-radius:999px;padding:4px 8px;font-size:10px;font-weight:700;background:#eef2ff;color:#3730a3}.tag.good{background:#f0fdf4;color:#15803d}.tag.warn{background:#fff7ed;color:#c2410c}.tag.bad{background:#fef2f2;color:#b91c1c}.tag.info{background:#eff6ff;color:#1d4ed8}.tag.purple{background:#f5f3ff;color:#6d28d9}.muted{color:var(--muted)}.empty{text-align:center;padding:30px;color:#94a3b8}
+.grid2{display:grid;grid-template-columns:1.15fr .85fr;gap:14px}.list{background:#fff;border:1px solid var(--line);border-radius:10px;overflow:hidden}.list-row{display:flex;justify-content:space-between;gap:10px;padding:11px 13px;border-bottom:1px solid #edf2f7;font-size:12px}.list-row:last-child{border:0}.list-row b{display:block}.progress{height:7px;width:90px;background:#e2e8f0;border-radius:99px;overflow:hidden;display:inline-block;vertical-align:middle}.progress i{display:block;height:100%;background:var(--blue)}
+.pagination{display:flex;justify-content:space-between;align-items:center;padding:11px 2px;font-size:11px;color:var(--muted)}.pager{display:flex;gap:5px}.pager button{border:1px solid var(--line);background:#fff;border-radius:7px;padding:7px 10px;cursor:pointer}.pager button.active{background:var(--blue);border-color:var(--blue);color:#fff}
+.modal{display:none;position:fixed;inset:0;background:#0008;z-index:50;align-items:center;justify-content:center;padding:20px}.modal.show{display:flex}.modal-box{background:#fff;border-radius:14px;width:min(1180px,100%);max-height:90vh;overflow:auto;padding:20px}.modal-head{display:flex;justify-content:space-between;align-items:center}.modal-head h2{font-size:18px;margin:0}.close{border:0;background:#f1f5f9;border-radius:8px;padding:7px 10px;cursor:pointer}.detail-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:9px;margin-top:15px}.detail{border:1px solid var(--line);border-radius:8px;padding:10px}.detail small{display:block;color:var(--muted);font-size:10px}.detail b{display:block;margin-top:4px;font-size:12px;word-break:break-word}.timeline{margin-top:18px;border-left:2px solid #dbeafe;padding-left:18px}.timeline-item{position:relative;margin:0 0 15px}.timeline-item:before{content:"";position:absolute;left:-25px;top:2px;width:10px;height:10px;background:var(--blue);border-radius:50%}.timeline-item b{display:block;font-size:12px}.timeline-item span{font-size:10px;color:var(--muted)}
+.toast{position:fixed;right:20px;bottom:20px;background:#111827;color:#fff;padding:12px 15px;border-radius:8px;display:none;z-index:100;font-size:13px}.loading{opacity:.65;pointer-events:none}
+@media(max-width:1450px){.kpis{grid-template-columns:repeat(4,1fr)}.summary{grid-template-columns:repeat(4,1fr)}}@media(max-width:950px){.layout{grid-template-columns:1fr}nav{display:none}.grid2{grid-template-columns:1fr}.detail-grid{grid-template-columns:repeat(2,1fr)}}@media(max-width:650px){main{padding:13px}.kpis,.summary{grid-template-columns:repeat(2,1fr)}.head{align-items:flex-start;flex-direction:column}.detail-grid{grid-template-columns:1fr}.filters .search{min-width:100%}}@media print{.top,nav,.actions,.filters,.pagination,.no-print{display:none!important}.layout{display:block}main{padding:0}.card{box-shadow:none}}
+</style>
+
+<link rel="stylesheet" href="zippzo-standard.css">
+<script src="zippzo-standard.js" defer></script>
+</head>
+<body>
+<header class="top"><div class="logo">ZIPPZO</div><div class="title">Warehouse Transfer Report</div><div class="spacer"></div><span id="userName" class="title">Loading...</span><button onclick="loadAll()">↻ Refresh</button><button onclick="logout()">Logout</button></header>
+<div class="layout"><nav id="nav"></nav><main>
+<div class="head"><div><h1>Warehouse Transfer Report</h1><div class="sub">Replenishment Requirement → Warehouse Stock → Transfer Request → Dispatch → Store Receipt</div></div><div class="actions"><button class="btn" onclick="printReport()">Print</button><button class="btn" onclick="exportCSV()">Export CSV</button><button class="btn primary" onclick="loadAll()">Refresh Data</button></div></div>
+
+<div class="kpis">
+<div class="card"><div class="label">TRANSFER RECORDS</div><div class="value" id="kTotal">—</div><div class="note">Warehouse-to-store movements</div></div>
+<div class="card"><div class="label">REQUESTED</div><div class="value" id="kRequested">—</div><div class="note">Transfer requests</div></div>
+<div class="card"><div class="label">APPROVED</div><div class="value" id="kApproved">—</div><div class="note">Approved transfers</div></div>
+<div class="card"><div class="label">PICKING</div><div class="value" id="kPicking">—</div><div class="note">Warehouse picking</div></div>
+<div class="card"><div class="label">IN TRANSIT</div><div class="value" id="kTransit">—</div><div class="note">Dispatched transfers</div></div>
+<div class="card"><div class="label">RECEIVED</div><div class="value" id="kReceived">—</div><div class="note">Store received</div></div>
+<div class="card"><div class="label">UNITS</div><div class="value" id="kUnits">—</div><div class="note">Transferred units</div></div>
+<div class="card"><div class="label">EXCEPTIONS</div><div class="value" id="kExceptions">—</div><div class="note">Short/damaged/failed</div></div>
+</div>
+
+<section class="section"><div class="card"><div class="section-head"><h2>Warehouse Transfer Filters</h2><button class="btn" onclick="clearFilters()">Clear Filters</button></div>
+<div class="filters">
+<input class="search" id="search" placeholder="Transfer / SKU / product / warehouse / store / vehicle..." oninput="applyFilters()">
+<select id="status" onchange="applyFilters()"><option value="">All Status</option></select>
+<select id="store" onchange="applyFilters()"><option value="">All Destination Stores</option></select>
+<select id="source" onchange="applyFilters()"><option value="">All Source Warehouses</option></select>
+<select id="priority" onchange="applyFilters()"><option value="">All Priorities</option><option value="CRITICAL">Critical</option><option value="HIGH">High</option><option value="NORMAL">Normal</option></select>
+<select id="exception" onchange="applyFilters()"><option value="">All Records</option><option value="YES">Exceptions Only</option><option value="NO">No Exceptions</option></select>
+<select id="sort" onchange="applyFilters()"><option value="need_desc">Quantity ↓</option><option value="date_desc">Latest First</option><option value="store_asc">Store A-Z</option><option value="status_asc">Status A-Z</option></select>
+<select id="pageSize" onchange="applyFilters()"><option>25</option><option>50</option><option>100</option></select>
+</div></div></section>
+
+<section class="section summary">
+<div class="card"><div class="label">FILTERED RECORDS</div><strong id="sRecords">0</strong><span>transfers</span></div>
+<div class="card"><div class="label">REQUESTED UNITS</div><strong id="sRequested">0</strong><span>requested</span></div>
+<div class="card"><div class="label">APPROVED UNITS</div><strong id="sApproved">0</strong><span>approved</span></div>
+<div class="card"><div class="label">DISPATCHED UNITS</div><strong id="sDispatched">0</strong><span>in transit</span></div>
+<div class="card"><div class="label">RECEIVED UNITS</div><strong id="sReceived">0</strong><span>store received</span></div>
+<div class="card"><div class="label">SHORT UNITS</div><strong id="sShort">0</strong><span>short</span></div>
+<div class="card"><div class="label">DAMAGED UNITS</div><strong id="sDamaged">0</strong><span>damaged</span></div>
+<div class="card"><div class="label">ACCURACY</div><strong id="sAccuracy">0%</strong><span>received / requested</span></div>
+</section>
+
+<section class="section grid2">
+<div class="card"><div class="section-head"><h2>Store Transfer Summary</h2><span class="muted" id="storeCount">0 stores</span></div>
+<div class="table-wrap"><table class="table"><thead><tr><th>Store</th><th>Transfers</th><th>Requested</th><th>Dispatched</th><th>Received</th><th>Short</th><th>Damaged</th></tr></thead><tbody id="storeBody"></tbody></table></div></div>
+<div class="card"><div class="section-head"><h2>Transfer Exceptions</h2><span class="tag bad" id="exceptionCount">0</span></div><div class="list" id="exceptionList"></div></div>
+</section>
+
+<section class="section"><div class="section-head"><h2>Detailed Warehouse Transfer Report</h2><span class="muted" id="resultCount">0 records</span></div>
+<div class="table-wrap"><table class="table"><thead><tr>
+<th>Transfer</th><th>Priority</th><th>Source</th><th>Destination</th><th>SKU</th><th>Product</th><th>Requested</th><th>Approved</th><th>Dispatched</th><th>Received</th><th>Short</th><th>Damaged</th><th>Vehicle</th><th>Status</th><th>Action</th>
+</tr></thead><tbody id="body"></tbody></table></div><div class="pagination"><span id="pageInfo">Page 1</span><div class="pager" id="pager"></div></div></section>
+</main></div>
+
+<div class="modal" id="modal"><div class="modal-box"><div class="modal-head"><h2>Warehouse Transfer Details</h2><button class="close" onclick="closeModal()">✕</button></div><div id="detail"></div></div></div>
+<div class="toast" id="toast"></div>
+<script>
+const API=window.location.origin,TOKEN_KEY="zippzo_session_token";let token=localStorage.getItem(TOKEN_KEY),rows=[],filtered=[],page=1;
+const navLinks=[["index.html","Dashboard"],["products.html","Products"],["suppliers.html","Suppliers"],["locations.html","Locations"],["inventory.html","Inventory"],["stock-movements.html","Stock Movements"],["bins.html","Bins"],["purchase-orders.html","Purchase Orders"],["grn.html","GRN"],["grn-report.html","GRN Report"],["putaway.html","Putaway"],["putaway-report.html","Putaway Report"],["create-batch.html","Create Batch"],["picking.html","Picking"],["picking-report.html","Picking Report"],["picking-ipp.html","Picking IPP"],["sorting.html","Sorting"],["sorting-report.html","Sorting Report"],["sorting-ipp.html","Sorting IPP"],["grid-putaway.html","Grid Putaway"],["grid-putaway-report.html","Grid Putaway Report"],["vehicle-arrival.html","Vehicle Arrival"],["vehicle-arrival-report.html","Vehicle Arrival Report"],["dispatch.html","Dispatch"],["dispatch-report.html","Dispatch Report"],["store-receiving.html","Store Receiving"],["store-receiving-report.html","Receiving Report"],["store-stock-report.html","Store Stock Report"],["replenishment-report.html","Replenishment Report"],["warehouse-transfer-report.html","Warehouse Transfer Report"],["orders.html","Orders"],["order-report.html","Order Report"],["stock-report.html","Stock Report"],["access-control.html","Access Control"],["audit-logs.html","Audit Logs"],["system-settings.html","System Settings"]];
+function esc(v){return String(v??"").replace(/[&<>"']/g,m=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#039;"}[m]))}
+function num(v){return Number(v||0)}function arr(d){if(Array.isArray(d))return d;if(Array.isArray(d?.items))return d.items;if(Array.isArray(d?.data))return d.data;if(Array.isArray(d?.results))return d.results;return[]}
+function field(x,...keys){for(const k of keys)if(x?.[k]!==undefined&&x?.[k]!==null&&x?.[k]!=="")return x[k];return""}
+function toast(s){const x=document.getElementById("toast");x.textContent=s;x.style.display="block";clearTimeout(window.tt);window.tt=setTimeout(()=>x.style.display="none",2800)}
+async function api(path,opt={}){const h={"Content-Type":"application/json",...(opt.headers||{})};if(token)h.Authorization="Bearer "+token;const r=await fetch(API+path,{...opt,headers:h});if(r.status===401){localStorage.removeItem(TOKEN_KEY);localStorage.removeItem("zippzo_user");location.href="index.html";throw Error("Session expired")}const t=await r.text();let d={};try{d=t?JSON.parse(t):{}}catch{}if(!r.ok)throw Error(d.detail||d.message||"Request failed");return d}
+async function tryApi(paths){let e;for(const p of paths){try{return await api(p)}catch(x){e=x}}throw e||Error("API unavailable")}
+function nav(){document.getElementById("nav").innerHTML="<h4>Operations</h4>"+navLinks.map(x=>`<a href="${x[0]}" class="${location.pathname.endsWith(x[0])?"active":""}">${x[1]}</a>`).join("")}
+function transferNo(x){return String(field(x,"transfer_number","transfer_no","request_number","id")||"—")}
+function source(x){return String(field(x,"source_location_name","source_warehouse","source_name","from_location","from_warehouse")||"—")}
+function dest(x){return String(field(x,"destination_location_name","destination_store","destination_store_name","to_location","to_store")||"—")}
+function sku(x){return String(field(x,"sku","SKU","product_sku")||"—")}
+function product(x){return String(field(x,"product_name","name","product")||"—")}
+function vehicle(x){return String(field(x,"vehicle_number","vehicle_no","vehicle")||"—")}
+function priority(x){return String(field(x,"priority")||"NORMAL").toUpperCase()}
+function status(x){return String(field(x,"status","transfer_status")||"REQUESTED").toUpperCase()}
+function requested(x){return num(field(x,"requested_quantity","requested_qty","quantity","qty"))}
+function approved(x){return num(field(x,"approved_quantity","approved_qty"))}
+function dispatched(x){return num(field(x,"dispatched_quantity","dispatched_qty","loaded_quantity"))}
+function received(x){return num(field(x,"received_quantity","received_qty","accepted_quantity"))}
+function shortQty(x){return num(field(x,"short_quantity","short_qty","shortage_quantity"))}
+function damaged(x){return num(field(x,"damaged_quantity","damaged_qty"))}
+function exception(x){return shortQty(x)>0||damaged(x)>0||["FAILED","CANCELLED","HOLD","EXCEPTION","MISMATCH"].includes(status(x))}
+function statusClass(s){if(["RECEIVED","COMPLETED","COMPLETE"].includes(s))return"good";if(["REQUESTED","PENDING","PICKING","PARTIAL"].includes(s))return"warn";if(["FAILED","CANCELLED","HOLD","EXCEPTION","MISMATCH"].includes(s))return"bad";return"info"}
+
+async function loadAll(){document.body.classList.add("loading");try{
+rows=arr(await tryApi(["/api/warehouse-transfers","/api/stock-transfers","/api/inventory-transfers","/api/transfers"]));
+try{const me=await api("/api/auth/me");document.getElementById("userName").textContent=me.employee?.name||me.name||me.user?.name||"Zippzo User"}catch{}
+buildFilters();page=1;applyFilters();toast("Warehouse Transfer report refreshed")
+}catch(e){toast(e.message||"Warehouse Transfer API is not available yet. Report is ready for the supported endpoint.")}finally{document.body.classList.remove("loading")}}
+function fill(id,values,label){const el=document.getElementById(id),old=el.value;el.innerHTML=`<option value="">${label}</option>`+values.map(v=>`<option value="${esc(v)}">${esc(v)}</option>`).join("");if(values.includes(old))el.value=old}
+function buildFilters(){fill("status",[...new Set(rows.map(status).filter(Boolean))].sort(),"All Status");fill("store",[...new Set(rows.map(dest).filter(x=>x!=="—"))].sort(),"All Destination Stores");fill("source",[...new Set(rows.map(source).filter(x=>x!=="—"))].sort(),"All Source Warehouses")}
+function applyFilters(){const q=document.getElementById("search").value.toLowerCase().trim(),st=document.getElementById("status").value,so=document.getElementById("store").value,sr=document.getElementById("source").value,pr=document.getElementById("priority").value,ex=document.getElementById("exception").value;
+filtered=rows.filter(x=>{const blob=JSON.stringify(x).toLowerCase();return(!q||blob.includes(q))&&(!st||status(x)===st)&&(!so||dest(x)===so)&&(!sr||source(x)===sr)&&(!pr||priority(x)===pr)&&(!ex||(ex==="YES"&&exception(x))||(ex==="NO"&&!exception(x)))});
+const sort=document.getElementById("sort").value;filtered.sort((a,b)=>sort==="need_desc"?requested(b)-requested(a):sort==="date_desc"?String(field(b,"created_at","requested_at","transfer_date")||"").localeCompare(String(field(a,"created_at","requested_at","transfer_date")||"")):sort==="store_asc"?dest(a).localeCompare(dest(b)):status(a).localeCompare(status(b)));page=1;render()}
+function render(){const cnt=s=>rows.filter(x=>status(x)===s).length;document.getElementById("kTotal").textContent=rows.length;document.getElementById("kRequested").textContent=cnt("REQUESTED")+cnt("PENDING");document.getElementById("kApproved").textContent=cnt("APPROVED");document.getElementById("kPicking").textContent=cnt("PICKING");document.getElementById("kTransit").textContent=cnt("DISPATCHED")+cnt("IN_TRANSIT");document.getElementById("kReceived").textContent=cnt("RECEIVED")+cnt("COMPLETED");document.getElementById("kUnits").textContent=rows.reduce((s,x)=>s+dispatched(x),0).toLocaleString("en-IN");document.getElementById("kExceptions").textContent=rows.filter(exception).length;
+const rq=filtered.reduce((s,x)=>s+requested(x),0),ap=filtered.reduce((s,x)=>s+approved(x),0),ds=filtered.reduce((s,x)=>s+dispatched(x),0),rc=filtered.reduce((s,x)=>s+received(x),0),sh=filtered.reduce((s,x)=>s+shortQty(x),0),dm=filtered.reduce((s,x)=>s+damaged(x),0);document.getElementById("sRecords").textContent=filtered.length;document.getElementById("sRequested").textContent=rq;document.getElementById("sApproved").textContent=ap;document.getElementById("sDispatched").textContent=ds;document.getElementById("sReceived").textContent=rc;document.getElementById("sShort").textContent=sh;document.getElementById("sDamaged").textContent=dm;document.getElementById("sAccuracy").textContent=(rq?rc/rq*100:0).toFixed(1)+"%";document.getElementById("resultCount").textContent=filtered.length+" records";renderStores();renderExceptions();renderTable();renderPager()}
+function renderStores(){const m=new Map();filtered.forEach(x=>{const k=dest(x);if(!m.has(k))m.set(k,{t:0,r:0,d:0,rc:0,s:0,dm:0});const z=m.get(k);z.t++;z.r+=requested(x);z.d+=dispatched(x);z.rc+=received(x);z.s+=shortQty(x);z.dm+=damaged(x)});const d=[...m.entries()].sort((a,b)=>b[1].r-a[1].r);document.getElementById("storeCount").textContent=d.length+" stores";document.getElementById("storeBody").innerHTML=d.length?d.map(([k,v])=>`<tr><td><b>${esc(k)}</b></td><td>${v.t}</td><td>${v.r}</td><td>${v.d}</td><td>${v.rc}</td><td>${v.s}</td><td>${v.dm}</td></tr>`).join(""):`<tr><td colspan="7" class="empty">No warehouse transfer data.</td></tr>`}
+function renderExceptions(){const d=filtered.filter(exception).slice(0,15);document.getElementById("exceptionCount").textContent=filtered.filter(exception).length;document.getElementById("exceptionList").innerHTML=d.length?d.map(x=>`<div class="list-row"><div><b>${esc(transferNo(x))}</b><span class="muted">${esc(dest(x))} · ${esc(sku(x))}</span></div><span class="tag bad">Short ${shortQty(x)} / Damaged ${damaged(x)}</span></div>`).join(""):`<div class="empty">No transfer exceptions.</div>`}
+function renderTable(){const size=Number(document.getElementById("pageSize").value||25),pages=Math.max(1,Math.ceil(filtered.length/size));if(page>pages)page=pages;const d=filtered.slice((page-1)*size,page*size);document.getElementById("body").innerHTML=d.length?d.map((x,i)=>`<tr><td><b>${esc(transferNo(x))}</b></td><td><span class="tag ${priority(x)==="CRITICAL"?"bad":priority(x)==="HIGH"?"warn":"info"}">${esc(priority(x))}</span></td><td>${esc(source(x))}</td><td>${esc(dest(x))}</td><td>${esc(sku(x))}</td><td>${esc(product(x))}</td><td>${requested(x)}</td><td>${approved(x)}</td><td>${dispatched(x)}</td><td>${received(x)}</td><td>${shortQty(x)}</td><td>${damaged(x)}</td><td>${esc(vehicle(x))}</td><td><span class="tag ${statusClass(status(x))}">${esc(status(x))}</span></td><td><button class="btn" onclick="details(${(page-1)*size+i})">View</button></td></tr>`).join(""):`<tr><td colspan="15" class="empty">No transfer records match the selected filters.</td></tr>`}
+function renderPager(){const size=Number(document.getElementById("pageSize").value||25),pages=Math.max(1,Math.ceil(filtered.length/size));document.getElementById("pageInfo").textContent=`Page ${page} of ${pages} · ${filtered.length} records`;let b="",s=Math.max(1,page-2),e=Math.min(pages,s+4);if(page>1)b+=`<button onclick="gotoPage(${page-1})">‹</button>`;for(let p=s;p<=e;p++)b+=`<button class="${p===page?"active":""}" onclick="gotoPage(${p})">${p}</button>`;if(page<pages)b+=`<button onclick="gotoPage(${page+1})">›</button>`;document.getElementById("pager").innerHTML=b}
+function gotoPage(p){page=p;renderTable();renderPager();window.scrollTo({top:document.querySelector(".section:last-of-type").offsetTop-80,behavior:"smooth"})}
+function D(a,b){return`<div class="detail"><small>${esc(a)}</small><b>${esc(b??"—")}</b></div>`}
+function details(i){const x=filtered[i];if(!x)return;document.getElementById("detail").innerHTML=`<div class="detail-grid">${D("Transfer Number",transferNo(x))}${D("Priority",priority(x))}${D("Source",source(x))}${D("Destination",dest(x))}${D("SKU",sku(x))}${D("Product",product(x))}${D("Requested",requested(x))}${D("Approved",approved(x))}${D("Dispatched",dispatched(x))}${D("Received",received(x))}${D("Short",shortQty(x))}${D("Damaged",damaged(x))}${D("Vehicle",vehicle(x))}${D("Status",status(x))}${D("Created",field(x,"created_at","requested_at","transfer_date")||"—")}${D("Completed",field(x,"completed_at","received_at")||"—")}${D("Remarks",field(x,"remarks","notes","exception_reason")||"—")}</div><div class="timeline"><div class="timeline-item"><b>Transfer Requested</b><span>${esc(field(x,"created_at","requested_at","transfer_date")||"—")}</span></div><div class="timeline-item"><b>Warehouse Approval</b><span>Approved quantity: ${approved(x)}</span></div><div class="timeline-item"><b>Warehouse Dispatch</b><span>Dispatched quantity: ${dispatched(x)} · Vehicle ${esc(vehicle(x))}</span></div><div class="timeline-item"><b>Store Receipt</b><span>Received ${received(x)} · Short ${shortQty(x)} · Damaged ${damaged(x)}</span></div><div class="timeline-item"><b>Current Status</b><span>${esc(status(x))}</span></div></div>`;document.getElementById("modal").classList.add("show")}
+function closeModal(){document.getElementById("modal").classList.remove("show")}
+function clearFilters(){document.getElementById("search").value="";["status","store","source","priority","exception"].forEach(id=>document.getElementById(id).value="");document.getElementById("sort").value="need_desc";document.getElementById("pageSize").value="25";applyFilters()}
+function exportCSV(){const h=["Transfer","Priority","Source","Destination","SKU","Product","Requested","Approved","Dispatched","Received","Short","Damaged","Vehicle","Status"];const d=filtered.map(x=>[transferNo(x),priority(x),source(x),dest(x),sku(x),product(x),requested(x),approved(x),dispatched(x),received(x),shortQty(x),damaged(x),vehicle(x),status(x)]);const csv=[h,...d].map(r=>r.map(v=>`"${String(v??"").replaceAll('"','""')}"`).join(",")).join("\n");const a=document.createElement("a");a.href=URL.createObjectURL(new Blob([csv],{type:"text/csv;charset=utf-8"}));a.download="zippzo_warehouse_transfer_report.csv";a.click()}
+function printReport(){window.print()}
+async function logout(){try{if(token)await api("/api/auth/logout",{method:"POST",body:JSON.stringify({session_token:token})})}catch{}localStorage.removeItem(TOKEN_KEY);localStorage.removeItem("zippzo_user");location.href="index.html"}
+document.getElementById("modal").addEventListener("click",e=>{if(e.target.id==="modal")closeModal()});(async()=>{nav();await loadAll()})();
+</script>
+</body>
+</html>

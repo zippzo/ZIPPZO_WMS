@@ -1,0 +1,1776 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>Zippzo WMS - Stock Movements</title>
+
+    <!-- ZIPPZO MASTER CSS -->
+    <link rel="stylesheet" href="style.css">
+
+    <style>
+        /* =========================================================
+           STOCK MOVEMENTS PAGE
+           Page-specific styling only
+           ========================================================= */
+
+        .movement-summary {
+            display: grid;
+            grid-template-columns: repeat(5, minmax(0, 1fr));
+            gap: 15px;
+            margin-bottom: 20px;
+        }
+
+        .movement-stat {
+            background: #ffffff;
+            border: 1px solid #e5e7eb;
+            border-radius: 10px;
+            padding: 18px;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.03);
+        }
+
+        .movement-stat-label {
+            font-size: 12px;
+            color: #6b7280;
+            margin-bottom: 8px;
+            font-weight: 600;
+        }
+
+        .movement-stat-value {
+            font-size: 26px;
+            font-weight: 800;
+            color: #111827;
+        }
+
+        .movement-filter-section {
+            background: #ffffff;
+            border: 1px solid #e5e7eb;
+            border-radius: 12px;
+            padding: 20px;
+            margin-bottom: 20px;
+        }
+
+        .movement-filter-title {
+            margin: 0 0 15px;
+            font-size: 16px;
+            font-weight: 700;
+            color: #111827;
+        }
+
+        .movement-filter-grid {
+            display: grid;
+            grid-template-columns:
+                minmax(220px, 2fr)
+                minmax(180px, 1fr)
+                minmax(150px, 1fr)
+                minmax(150px, 1fr);
+            gap: 12px;
+        }
+
+        .movement-filter-grid input,
+        .movement-filter-grid select {
+            width: 100%;
+            height: 42px;
+            border: 1px solid #d1d5db;
+            border-radius: 7px;
+            padding: 0 11px;
+            background: #ffffff;
+            color: #172033;
+            outline: none;
+            font-size: 13px;
+        }
+
+        .movement-filter-grid input:focus,
+        .movement-filter-grid select:focus {
+            border-color: #111827;
+            box-shadow: 0 0 0 3px rgba(17, 24, 39, 0.08);
+        }
+
+        .movement-info {
+            background: #f8f9fb;
+            border-left: 4px solid #111827;
+            padding: 12px 15px;
+            margin-bottom: 20px;
+            border-radius: 6px;
+            color: #374151;
+            font-size: 13px;
+            line-height: 1.5;
+        }
+
+        .movement-table-section {
+            background: #ffffff;
+            border: 1px solid #e5e7eb;
+            border-radius: 12px;
+            padding: 20px;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.02);
+        }
+
+        .movement-table-title {
+            margin: 0 0 15px;
+            font-size: 17px;
+            font-weight: 700;
+            color: #111827;
+        }
+
+        .movement-table-wrapper {
+            width: 100%;
+            overflow-x: auto;
+        }
+
+        .movement-table {
+            width: 100%;
+            min-width: 1050px;
+            border-collapse: collapse;
+        }
+
+        .movement-table thead {
+            background: #111827;
+            color: #ffffff;
+        }
+
+        .movement-table th {
+            padding: 12px;
+            text-align: left;
+            font-size: 12px;
+            font-weight: 700;
+            white-space: nowrap;
+        }
+
+        .movement-table td {
+            padding: 12px;
+            border-bottom: 1px solid #e5e7eb;
+            font-size: 13px;
+            vertical-align: middle;
+            white-space: nowrap;
+        }
+
+        .movement-table tbody tr:hover {
+            background: #f9fafb;
+        }
+
+        .movement-table tbody tr:last-child td {
+            border-bottom: none;
+        }
+
+        .movement-badge {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            padding: 5px 9px;
+            border-radius: 20px;
+            font-size: 11px;
+            font-weight: 700;
+            white-space: nowrap;
+        }
+
+        .movement-in {
+            background: #dcfce7;
+            color: #166534;
+        }
+
+        .movement-out {
+            background: #fee2e2;
+            color: #991b1b;
+        }
+
+        .movement-transfer {
+            background: #dbeafe;
+            color: #1e40af;
+        }
+
+        .movement-adjustment {
+            background: #fef3c7;
+            color: #92400e;
+        }
+
+        .movement-other {
+            background: #e5e7eb;
+            color: #374151;
+        }
+
+        .quantity-positive {
+            color: #166534;
+            font-weight: 800;
+        }
+
+        .quantity-negative {
+            color: #991b1b;
+            font-weight: 800;
+        }
+
+        .movement-empty {
+            text-align: center;
+            padding: 35px !important;
+            color: #6b7280;
+        }
+
+        .movement-error {
+            text-align: center;
+            padding: 30px !important;
+            color: #991b1b;
+            background: #fef2f2;
+        }
+
+        @media (max-width: 1200px) {
+            .movement-summary {
+                grid-template-columns: repeat(3, minmax(0, 1fr));
+            }
+
+            .movement-filter-grid {
+                grid-template-columns: repeat(2, minmax(0, 1fr));
+            }
+        }
+
+        @media (max-width: 700px) {
+            .movement-summary {
+                grid-template-columns: repeat(2, minmax(0, 1fr));
+            }
+
+            .movement-filter-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        @media (max-width: 450px) {
+            .movement-summary {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+
+<link rel="stylesheet" href="zippzo-standard.css">
+<script src="zippzo-standard.js" defer></script>
+</head>
+
+<body>
+
+    <!-- =========================================================
+         TOP BAR
+         ========================================================= -->
+
+    <header class="topbar">
+
+        <div class="brand">
+            ZIPPZO WMS
+        </div>
+
+        <div class="top-user">
+
+            <div class="user-info">
+                <div class="user-name" id="topUserName">
+                    Zippzo User
+                </div>
+
+                <div class="user-role" id="topUserRole">
+                    Warehouse Management
+                </div>
+            </div>
+
+            <button
+                type="button"
+                class="logout-button"
+                onclick="logout()"
+            >
+                Logout
+            </button>
+
+        </div>
+
+    </header>
+
+
+    <!-- =========================================================
+         MAIN LAYOUT
+         ========================================================= -->
+
+    <div class="layout">
+
+        <!-- =====================================================
+             SIDEBAR
+             ===================================================== -->
+
+        <aside class="sidebar">
+
+            <!-- MAIN -->
+
+            <div class="sidebar-title">
+                Main
+            </div>
+
+            <button
+                class="nav-button"
+                onclick="openPage('index.html')"
+            >
+                Dashboard
+            </button>
+
+
+            <!-- MASTER DATA -->
+
+            <div class="sidebar-title">
+                Master Data
+            </div>
+
+            <button
+                class="nav-button"
+                onclick="openPage('products.html')"
+            >
+                Products
+            </button>
+
+            <button
+                class="nav-button"
+                onclick="openPage('suppliers.html')"
+            >
+                Suppliers
+            </button>
+
+            <button
+                class="nav-button"
+                onclick="openPage('locations.html')"
+            >
+                Locations
+            </button>
+
+            <button
+                class="nav-button"
+                onclick="openPage('hr-dashboard.html')"
+            >
+                HR Dashboard
+            </button>
+
+            <button
+                class="nav-button"
+                onclick="openPage('hr-live.html')"
+            >
+                HR Live
+            </button>
+
+            <button
+                class="nav-button"
+                onclick="openPage('employees.html')"
+            >
+                Employees
+            </button>
+
+
+            <!-- WAREHOUSE -->
+
+            <div class="sidebar-title">
+                Warehouse
+            </div>
+
+            <button
+                class="nav-button"
+                onclick="openPage('inventory.html')"
+            >
+                Inventory
+            </button>
+
+            <button
+                class="nav-button"
+                onclick="openPage('bins.html')"
+            >
+                Bins
+            </button>
+
+            <button
+                class="nav-button active"
+                onclick="openPage('stock-movements.html')"
+            >
+                Stock Movements
+            </button>
+
+
+            <!-- INBOUND -->
+
+            <div class="sidebar-title">
+                Inbound
+            </div>
+
+            <button
+                class="nav-button"
+                onclick="openPage('purchase-orders.html')"
+            >
+                Purchase Orders
+            </button>
+
+            <button
+                class="nav-button"
+                onclick="openPage('grn.html')"
+            >
+                GRN
+            </button>
+
+            <button
+                class="nav-button"
+                onclick="openPage('putaway.html')"
+            >
+                Putaway
+            </button>
+
+
+            <!-- ORDERS -->
+
+            <div class="sidebar-title">
+                Orders
+            </div>
+
+            <button
+                class="nav-button"
+                onclick="openPage('orders.html')"
+            >
+                Orders
+            </button>
+
+            <button
+                class="nav-button"
+                onclick="openPage('create-batch.html')"
+            >
+                Create Batch
+            </button>
+
+            <button
+                class="nav-button"
+                onclick="openPage('picking.html')"
+            >
+                Picking
+            </button>
+
+            <button
+                class="nav-button"
+                onclick="openPage('sorting.html')"
+            >
+                Sorting
+            </button>
+
+            <button
+                class="nav-button"
+                onclick="openPage('dropping.html')"
+            >
+                Dropping
+            </button>
+
+            <button
+                class="nav-button"
+                onclick="openPage('grid-putaway.html')"
+            >
+                Grid Putaway
+            </button>
+
+            <button
+                class="nav-button"
+                onclick="openPage('dispatch.html')"
+            >
+                Dispatch
+            </button>
+
+
+            <!-- DELIVERY -->
+
+            <div class="sidebar-title">
+                Delivery
+            </div>
+
+            <button
+                class="nav-button"
+                onclick="openPage('riders.html')"
+            >
+                Riders — Dark Store
+            </button>
+
+
+            <!-- REPORTS -->
+
+            <div class="sidebar-title">
+                Reports
+            </div>
+
+            <button
+                class="nav-button"
+                onclick="openPage('stock-report.html')"
+            >
+                Stock Report
+            </button>
+
+            <button
+                class="nav-button"
+                onclick="openPage('grn-report.html')"
+            >
+                GRN Report
+            </button>
+
+            <button
+                class="nav-button"
+                onclick="openPage('putaway-report.html')"
+            >
+                Putaway Report
+            </button>
+
+            <button
+                class="nav-button"
+                onclick="openPage('order-report.html')"
+            >
+                Order Report
+            </button>
+
+            <button
+                class="nav-button"
+                onclick="openPage('picking-report.html')"
+            >
+                Picking Report
+            </button>
+
+            <button
+                class="nav-button"
+                onclick="openPage('sorting-report.html')"
+            >
+                Sorting Report
+            </button>
+
+            <button
+                class="nav-button"
+                onclick="openPage('picking-ipp.html')"
+            >
+                Picking IPP
+            </button>
+
+            <button
+                class="nav-button"
+                onclick="openPage('sorting-ipp.html')"
+            >
+                Sorting IPP
+            </button>
+
+            <button
+                class="nav-button"
+                onclick="openPage('delivery-report.html')"
+            >
+                Delivery Report
+            </button>
+
+        </aside>
+
+
+        <!-- =====================================================
+             CONTENT
+             ===================================================== -->
+
+        <main class="content">
+
+            <!-- PAGE HEADER -->
+
+            <div class="page-header">
+
+                <div>
+
+                    <h1 class="page-title">
+                        Stock Movements
+                    </h1>
+
+                    <p class="page-subtitle">
+                        Inventory movement and audit history.
+                    </p>
+
+                </div>
+
+                <div class="page-actions">
+
+                    <button
+                        type="button"
+                        class="btn btn-primary"
+                        onclick="loadMovements()"
+                    >
+                        Refresh
+                    </button>
+
+                </div>
+
+            </div>
+
+
+            <!-- INFORMATION -->
+
+            <div class="movement-info">
+
+                Every inventory movement should have a
+                movement type, quantity, product, location
+                and reference number for audit tracking.
+
+            </div>
+
+
+            <!-- SUMMARY -->
+
+            <div class="movement-summary">
+
+                <div class="movement-stat">
+
+                    <div class="movement-stat-label">
+                        Total Movements
+                    </div>
+
+                    <div
+                        class="movement-stat-value"
+                        id="totalMovements"
+                    >
+                        0
+                    </div>
+
+                </div>
+
+
+                <div class="movement-stat">
+
+                    <div class="movement-stat-label">
+                        Stock In
+                    </div>
+
+                    <div
+                        class="movement-stat-value"
+                        id="stockIn"
+                    >
+                        0
+                    </div>
+
+                </div>
+
+
+                <div class="movement-stat">
+
+                    <div class="movement-stat-label">
+                        Stock Out
+                    </div>
+
+                    <div
+                        class="movement-stat-value"
+                        id="stockOut"
+                    >
+                        0
+                    </div>
+
+                </div>
+
+
+                <div class="movement-stat">
+
+                    <div class="movement-stat-label">
+                        Transfers
+                    </div>
+
+                    <div
+                        class="movement-stat-value"
+                        id="transfers"
+                    >
+                        0
+                    </div>
+
+                </div>
+
+
+                <div class="movement-stat">
+
+                    <div class="movement-stat-label">
+                        Adjustments
+                    </div>
+
+                    <div
+                        class="movement-stat-value"
+                        id="adjustments"
+                    >
+                        0
+                    </div>
+
+                </div>
+
+            </div>
+
+
+            <!-- FILTERS -->
+
+            <section class="movement-filter-section">
+
+                <h2 class="movement-filter-title">
+                    Search & Filter
+                </h2>
+
+                <div class="movement-filter-grid">
+
+                    <input
+                        type="text"
+                        id="searchInput"
+                        placeholder="Search product, location, reference..."
+                        oninput="filterMovements()"
+                    >
+
+
+                    <select
+                        id="movementFilter"
+                        onchange="filterMovements()"
+                    >
+
+                        <option value="">
+                            All Movement Types
+                        </option>
+
+                        <option value="STOCK_IN">
+                            Stock In
+                        </option>
+
+                        <option value="STOCK_OUT">
+                            Stock Out
+                        </option>
+
+                        <option value="TRANSFER">
+                            Transfer
+                        </option>
+
+                        <option value="ADJUSTMENT">
+                            Adjustment
+                        </option>
+
+                        <option value="PICKING">
+                            Picking
+                        </option>
+
+                        <option value="PACKING">
+                            Packing
+                        </option>
+
+                        <option value="DISPATCH">
+                            Dispatch
+                        </option>
+
+                        <option value="RETURN">
+                            Return
+                        </option>
+
+                        <option value="DAMAGE">
+                            Damage
+                        </option>
+
+                    </select>
+
+
+                    <input
+                        type="number"
+                        id="productFilter"
+                        placeholder="Product ID"
+                        oninput="filterMovements()"
+                    >
+
+
+                    <input
+                        type="number"
+                        id="locationFilter"
+                        placeholder="Location ID"
+                        oninput="filterMovements()"
+                    >
+
+                </div>
+
+            </section>
+
+
+            <!-- MOVEMENT HISTORY -->
+
+            <section class="movement-table-section">
+
+                <h2 class="movement-table-title">
+                    Movement History
+                </h2>
+
+                <div class="movement-table-wrapper">
+
+                    <table class="movement-table">
+
+                        <thead>
+
+                            <tr>
+
+                                <th>
+                                    ID
+                                </th>
+
+                                <th>
+                                    Product ID
+                                </th>
+
+                                <th>
+                                    Location ID
+                                </th>
+
+                                <th>
+                                    Movement Type
+                                </th>
+
+                                <th>
+                                    Quantity
+                                </th>
+
+                                <th>
+                                    Reference
+                                </th>
+
+                                <th>
+                                    Remarks
+                                </th>
+
+                                <th>
+                                    Created At
+                                </th>
+
+                            </tr>
+
+                        </thead>
+
+
+                        <tbody id="movementsTable">
+
+                            <tr>
+
+                                <td
+                                    colspan="8"
+                                    class="movement-empty"
+                                >
+                                    Loading movements...
+                                </td>
+
+                            </tr>
+
+                        </tbody>
+
+                    </table>
+
+                </div>
+
+            </section>
+
+        </main>
+
+    </div>
+
+
+    <!-- =========================================================
+         SCRIPT
+         ========================================================= -->
+
+    <script>
+
+        const API_BASE = window.location.origin;
+
+        const TOKEN_KEY =
+            "zippzo_session_token";
+
+        let movementsData = [];
+
+
+        /* =====================================================
+           AUTH
+           ===================================================== */
+
+        function getToken() {
+
+            return localStorage.getItem(
+                TOKEN_KEY
+            );
+
+        }
+
+
+        function authHeaders() {
+
+            const token =
+                getToken();
+
+            const headers = {};
+
+            if (token) {
+
+                headers[
+                    "Authorization"
+                ] =
+                    `Bearer ${token}`;
+
+            }
+
+            return headers;
+
+        }
+
+
+        async function apiRequest(
+            path,
+            options = {}
+        ) {
+
+            const response =
+                await fetch(
+                    `${API_BASE}${path}`,
+                    {
+                        ...options,
+
+                        headers: {
+                            ...authHeaders(),
+
+                            ...(options.headers || {})
+                        }
+                    }
+                );
+
+
+            if (
+                response.status === 401
+            ) {
+
+                console.warn(
+                    "Zippzo session expired."
+                );
+
+            }
+
+
+            return response;
+
+        }
+
+
+        /* =====================================================
+           USER
+           ===================================================== */
+
+        async function loadCurrentUser() {
+
+            try {
+
+                const response =
+                    await apiRequest(
+                        "/api/auth/me"
+                    );
+
+
+                if (!response.ok) {
+
+                    return;
+
+                }
+
+
+                const user =
+                    await response.json();
+
+
+                const nameElement =
+                    document.getElementById(
+                        "topUserName"
+                    );
+
+
+                const roleElement =
+                    document.getElementById(
+                        "topUserRole"
+                    );
+
+
+                if (nameElement) {
+
+                    nameElement.textContent =
+                        user.full_name ||
+                        user.name ||
+                        user.employee_id ||
+                        "Zippzo User";
+
+                }
+
+
+                if (roleElement) {
+
+                    roleElement.textContent =
+                        user.role ||
+                        user.designation ||
+                        "Warehouse Management";
+
+                }
+
+            }
+
+            catch (error) {
+
+                console.warn(
+                    "Unable to load current user:",
+                    error
+                );
+
+            }
+
+        }
+
+
+        /* =====================================================
+           NAVIGATION
+           ===================================================== */
+
+        function openPage(page) {
+
+            window.location.href =
+                page;
+
+        }
+
+
+        async function logout() {
+
+            const token =
+                getToken();
+
+
+            try {
+
+                if (token) {
+
+                    await fetch(
+                        `${API_BASE}/api/auth/logout`,
+                        {
+                            method: "POST",
+
+                            headers: {
+                                "Content-Type":
+                                    "application/json",
+
+                                "Authorization":
+                                    `Bearer ${token}`
+                            },
+
+                            body: JSON.stringify({
+                                session_token:
+                                    token
+                            })
+                        }
+                    );
+
+                }
+
+            }
+
+            catch (error) {
+
+                console.warn(
+                    "Logout request error:",
+                    error
+                );
+
+            }
+
+            finally {
+
+                localStorage.removeItem(
+                    TOKEN_KEY
+                );
+
+                localStorage.removeItem(
+                    "zippzo_user"
+                );
+
+                window.location.href =
+                    "index.html";
+
+            }
+
+        }
+
+
+        /* =====================================================
+           LOAD MOVEMENTS
+           ===================================================== */
+
+        async function loadMovements() {
+
+            const table =
+                document.getElementById(
+                    "movementsTable"
+                );
+
+
+            table.innerHTML = `
+
+                <tr>
+
+                    <td
+                        colspan="8"
+                        class="movement-empty"
+                    >
+                        Loading movements...
+                    </td>
+
+                </tr>
+
+            `;
+
+
+            try {
+
+                const response =
+                    await apiRequest(
+                        "/api/stock-movements"
+                    );
+
+
+                if (!response.ok) {
+
+                    throw new Error(
+                        `Stock movement API error: ${response.status}`
+                    );
+
+                }
+
+
+                const data =
+                    await response.json();
+
+
+                movementsData =
+                    Array.isArray(data)
+                        ? data
+                        : (
+                            Array.isArray(
+                                data.items
+                            )
+                                ? data.items
+                                : []
+                        );
+
+
+                updateSummary();
+
+                renderMovements(
+                    movementsData
+                );
+
+            }
+
+            catch (error) {
+
+                console.error(
+                    "Stock Movement Error:",
+                    error
+                );
+
+
+                movementsData = [];
+
+
+                updateSummary();
+
+
+                table.innerHTML = `
+
+                    <tr>
+
+                        <td
+                            colspan="8"
+                            class="movement-error"
+                        >
+                            Unable to load stock movements.
+                            Please check the Zippzo WMS server
+                            and your login session.
+                        </td>
+
+                    </tr>
+
+                `;
+
+            }
+
+        }
+
+
+        /* =====================================================
+           SUMMARY
+           ===================================================== */
+
+        function updateSummary() {
+
+            const total =
+                movementsData.length;
+
+
+            const stockIn =
+                movementsData.filter(
+                    item =>
+                        isStockIn(
+                            item.movement_type
+                        )
+                ).length;
+
+
+            const stockOut =
+                movementsData.filter(
+                    item =>
+                        isStockOut(
+                            item.movement_type
+                        )
+                ).length;
+
+
+            const transfers =
+                movementsData.filter(
+                    item =>
+                        normalizeType(
+                            item.movement_type
+                        ) === "TRANSFER"
+                ).length;
+
+
+            const adjustments =
+                movementsData.filter(
+                    item =>
+                        normalizeType(
+                            item.movement_type
+                        ) === "ADJUSTMENT"
+                ).length;
+
+
+            document.getElementById(
+                "totalMovements"
+            ).textContent =
+                total;
+
+
+            document.getElementById(
+                "stockIn"
+            ).textContent =
+                stockIn;
+
+
+            document.getElementById(
+                "stockOut"
+            ).textContent =
+                stockOut;
+
+
+            document.getElementById(
+                "transfers"
+            ).textContent =
+                transfers;
+
+
+            document.getElementById(
+                "adjustments"
+            ).textContent =
+                adjustments;
+
+        }
+
+
+        /* =====================================================
+           NORMALIZE MOVEMENT TYPE
+           ===================================================== */
+
+        function normalizeType(type) {
+
+            return String(
+                type || ""
+            )
+                .trim()
+                .toUpperCase()
+                .replace(
+                    /[\s-]+/g,
+                    "_"
+                );
+
+        }
+
+
+        /* =====================================================
+           STOCK IN
+           ===================================================== */
+
+        function isStockIn(type) {
+
+            const value =
+                normalizeType(type);
+
+
+            return [
+
+                "STOCK_IN",
+
+                "IN",
+
+                "PURCHASE",
+
+                "GRN",
+
+                "RECEIPT",
+
+                "RECEIVED",
+
+                "RETURN_IN",
+
+                "OPENING_STOCK"
+
+            ].includes(value);
+
+        }
+
+
+        /* =====================================================
+           STOCK OUT
+           ===================================================== */
+
+        function isStockOut(type) {
+
+            const value =
+                normalizeType(type);
+
+
+            return [
+
+                "STOCK_OUT",
+
+                "OUT",
+
+                "SALE",
+
+                "DISPATCH",
+
+                "PICKING",
+
+                "DAMAGE",
+
+                "RETURN_OUT"
+
+            ].includes(value);
+
+        }
+
+
+        /* =====================================================
+           FILTER
+           ===================================================== */
+
+        function filterMovements() {
+
+            const search =
+                document.getElementById(
+                    "searchInput"
+                )
+                .value
+                .toLowerCase()
+                .trim();
+
+
+            const movementType =
+                document.getElementById(
+                    "movementFilter"
+                ).value;
+
+
+            const productId =
+                document.getElementById(
+                    "productFilter"
+                ).value;
+
+
+            const locationId =
+                document.getElementById(
+                    "locationFilter"
+                ).value;
+
+
+            const filtered =
+                movementsData.filter(
+                    item => {
+
+                        const searchableText = `
+
+                            ${item.id || ""}
+
+                            ${item.product_id || ""}
+
+                            ${item.location_id || ""}
+
+                            ${item.movement_type || ""}
+
+                            ${item.reference_number || ""}
+
+                            ${item.remarks || ""}
+
+                        `
+                            .toLowerCase();
+
+
+                        if (
+                            search &&
+                            !searchableText.includes(
+                                search
+                            )
+                        ) {
+
+                            return false;
+
+                        }
+
+
+                        if (
+                            movementType &&
+                            normalizeType(
+                                item.movement_type
+                            ) !==
+                            movementType
+                        ) {
+
+                            return false;
+
+                        }
+
+
+                        if (
+                            productId &&
+                            String(
+                                item.product_id
+                            ) !==
+                            String(
+                                productId
+                            )
+                        ) {
+
+                            return false;
+
+                        }
+
+
+                        if (
+                            locationId &&
+                            String(
+                                item.location_id
+                            ) !==
+                            String(
+                                locationId
+                            )
+                        ) {
+
+                            return false;
+
+                        }
+
+
+                        return true;
+
+                    }
+                );
+
+
+            renderMovements(
+                filtered
+            );
+
+        }
+
+
+        /* =====================================================
+           MOVEMENT BADGE
+           ===================================================== */
+
+        function getMovementBadge(
+            type
+        ) {
+
+            const value =
+                normalizeType(type);
+
+
+            let className =
+                "movement-other";
+
+
+            if (
+                isStockIn(value)
+            ) {
+
+                className =
+                    "movement-in";
+
+            }
+
+            else if (
+                isStockOut(value)
+            ) {
+
+                className =
+                    "movement-out";
+
+            }
+
+            else if (
+                value ===
+                "TRANSFER"
+            ) {
+
+                className =
+                    "movement-transfer";
+
+            }
+
+            else if (
+                value ===
+                "ADJUSTMENT"
+            ) {
+
+                className =
+                    "movement-adjustment";
+
+            }
+
+
+            return `
+
+                <span
+                    class="
+                        movement-badge
+                        ${className}
+                    "
+                >
+                    ${escapeHtml(
+                        type || "UNKNOWN"
+                    )}
+                </span>
+
+            `;
+
+        }
+
+
+        /* =====================================================
+           QUANTITY
+           ===================================================== */
+
+        function getQuantityDisplay(
+            quantity,
+            type
+        ) {
+
+            const value =
+                Number(
+                    quantity || 0
+                );
+
+
+            const movement =
+                normalizeType(type);
+
+
+            if (
+                isStockIn(
+                    movement
+                )
+            ) {
+
+                return `
+
+                    <span
+                        class="quantity-positive"
+                    >
+                        +${value}
+                    </span>
+
+                `;
+
+            }
+
+
+            if (
+                isStockOut(
+                    movement
+                )
+            ) {
+
+                return `
+
+                    <span
+                        class="quantity-negative"
+                    >
+                        -${value}
+                    </span>
+
+                `;
+
+            }
+
+
+            return value;
+
+        }
+
+
+        /* =====================================================
+           HTML SAFETY
+           ===================================================== */
+
+        function escapeHtml(
+            value
+        ) {
+
+            return String(
+                value ?? ""
+            )
+                .replace(
+                    /&/g,
+                    "&amp;"
+                )
+                .replace(
+                    /</g,
+                    "&lt;"
+                )
+                .replace(
+                    />/g,
+                    "&gt;"
+                )
+                .replace(
+                    /"/g,
+                    "&quot;"
+                )
+                .replace(
+                    /'/g,
+                    "&#039;"
+                );
+
+        }
+
+
+        /* =====================================================
+           RENDER TABLE
+           ===================================================== */
+
+        function renderMovements(
+            data
+        ) {
+
+            const table =
+                document.getElementById(
+                    "movementsTable"
+                );
+
+
+            if (
+                !data ||
+                !data.length
+            ) {
+
+                table.innerHTML = `
+
+                    <tr>
+
+                        <td
+                            colspan="8"
+                            class="movement-empty"
+                        >
+                            No stock movements found.
+                        </td>
+
+                    </tr>
+
+                `;
+
+                return;
+
+            }
+
+
+            table.innerHTML =
+                data
+                    .map(
+                        item => `
+
+                            <tr>
+
+                                <td>
+                                    ${escapeHtml(
+                                        item.id ?? "-"
+                                    )}
+                                </td>
+
+                                <td>
+                                    ${escapeHtml(
+                                        item.product_id ?? "-"
+                                    )}
+                                </td>
+
+                                <td>
+                                    ${escapeHtml(
+                                        item.location_id ?? "-"
+                                    )}
+                                </td>
+
+                                <td>
+                                    ${getMovementBadge(
+                                        item.movement_type
+                                    )}
+                                </td>
+
+                                <td>
+                                    ${getQuantityDisplay(
+                                        item.quantity,
+                                        item.movement_type
+                                    )}
+                                </td>
+
+                                <td>
+                                    ${escapeHtml(
+                                        item.reference_number ?? "-"
+                                    )}
+                                </td>
+
+                                <td>
+                                    ${escapeHtml(
+                                        item.remarks ?? "-"
+                                    )}
+                                </td>
+
+                                <td>
+                                    ${escapeHtml(
+                                        item.created_at ?? "-"
+                                    )}
+                                </td>
+
+                            </tr>
+
+                        `
+                    )
+                    .join("");
+
+        }
+
+
+        /* =====================================================
+           INITIAL LOAD
+           ===================================================== */
+
+        document.addEventListener(
+            "DOMContentLoaded",
+            async function () {
+
+                await loadCurrentUser();
+
+                await loadMovements();
+
+            }
+        );
+
+
+        /* =====================================================
+           AUTO REFRESH
+           ===================================================== */
+
+        setInterval(
+            loadMovements,
+            10000
+        );
+
+    </script>
+
+</body>
+
+</html>

@@ -1,0 +1,2018 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<title>Zippzo - Putaway Management</title>
+
+<style>
+
+* {
+    box-sizing: border-box;
+}
+
+body {
+    margin: 0;
+    font-family: Arial, Helvetica, sans-serif;
+    background: #f4f6f8;
+    color: #172033;
+}
+
+.header {
+    height: 70px;
+    background: #111827;
+    color: white;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 0 25px;
+}
+
+.brand {
+    font-size: 25px;
+    font-weight: 800;
+}
+
+.subtitle {
+    font-size: 12px;
+    color: #cbd5e1;
+    margin-top: 4px;
+}
+
+.user-area {
+    display: flex;
+    align-items: center;
+    gap: 15px;
+}
+
+.user-name {
+    font-size: 13px;
+    font-weight: 700;
+}
+
+button {
+    border: none;
+    border-radius: 7px;
+    padding: 10px 15px;
+    font-weight: 700;
+    cursor: pointer;
+}
+
+.refresh {
+    background: white;
+    color: #111827;
+}
+
+.logout {
+    background: #ef4444;
+    color: white;
+}
+
+.container {
+    max-width: 1500px;
+    margin: auto;
+    padding: 25px;
+}
+
+.cards {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 18px;
+    margin-bottom: 25px;
+}
+
+.card {
+    background: white;
+    border: 1px solid #e5e7eb;
+    border-radius: 12px;
+    padding: 20px;
+}
+
+.card-title {
+    color: #6b7280;
+    font-size: 12px;
+    font-weight: 700;
+    margin-bottom: 10px;
+}
+
+.card-value {
+    font-size: 30px;
+    font-weight: 800;
+}
+
+.section {
+    background: white;
+    border: 1px solid #e5e7eb;
+    border-radius: 12px;
+    padding: 22px;
+    margin-bottom: 25px;
+}
+
+.section-title {
+    font-size: 19px;
+    font-weight: 800;
+    margin-bottom: 18px;
+}
+
+.form-grid {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 16px;
+}
+
+.field label {
+    display: block;
+    font-size: 12px;
+    font-weight: 700;
+    margin-bottom: 7px;
+}
+
+input,
+select,
+textarea {
+    width: 100%;
+    padding: 11px;
+    border: 1px solid #d1d5db;
+    border-radius: 7px;
+    font-size: 14px;
+    background: white;
+}
+
+textarea {
+    min-height: 70px;
+    resize: vertical;
+}
+
+.full {
+    grid-column: span 4;
+}
+
+.actions {
+    display: flex;
+    gap: 10px;
+    margin-top: 18px;
+}
+
+.primary {
+    background: #111827;
+    color: white;
+}
+
+.secondary {
+    background: #e5e7eb;
+    color: #111827;
+}
+
+.message {
+    display: none;
+    margin-top: 15px;
+    padding: 12px;
+    border-radius: 7px;
+    font-size: 13px;
+    font-weight: 600;
+}
+
+.message.success {
+    display: block;
+    background: #dcfce7;
+    color: #166534;
+}
+
+.message.error {
+    display: block;
+    background: #fee2e2;
+    color: #991b1b;
+}
+
+.table-wrap {
+    overflow-x: auto;
+}
+
+table {
+    width: 100%;
+    border-collapse: collapse;
+    min-width: 1200px;
+}
+
+th {
+    background: #f1f5f9;
+    padding: 12px;
+    text-align: left;
+    font-size: 12px;
+}
+
+td {
+    padding: 12px;
+    border-top: 1px solid #e5e7eb;
+    font-size: 12px;
+}
+
+.badge {
+    padding: 5px 9px;
+    border-radius: 20px;
+    font-size: 10px;
+    font-weight: 800;
+}
+
+.pending {
+    background: #fef3c7;
+    color: #92400e;
+}
+
+.assigned {
+    background: #dbeafe;
+    color: #1d4ed8;
+}
+
+.progress {
+    background: #ede9fe;
+    color: #6d28d9;
+}
+
+.completed {
+    background: #dcfce7;
+    color: #166534;
+}
+
+.small {
+    padding: 6px 9px;
+    font-size: 10px;
+    margin: 2px;
+}
+
+.assign {
+    background: #2563eb;
+    color: white;
+}
+
+.start {
+    background: #f59e0b;
+    color: white;
+}
+
+.complete {
+    background: #16a34a;
+    color: white;
+}
+
+.empty {
+    text-align: center;
+    padding: 25px;
+    color: #6b7280;
+}
+
+#loading {
+    position: fixed;
+    inset: 0;
+    background: rgba(255,255,255,.95);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 9999;
+    font-weight: 800;
+}
+
+@media(max-width:1000px) {
+
+    .cards {
+        grid-template-columns: repeat(2,1fr);
+    }
+
+    .form-grid {
+        grid-template-columns: repeat(2,1fr);
+    }
+
+    .full {
+        grid-column: span 2;
+    }
+}
+
+@media(max-width:600px) {
+
+    .cards {
+        grid-template-columns: 1fr;
+    }
+
+    .form-grid {
+        grid-template-columns: 1fr;
+    }
+
+    .full {
+        grid-column: span 1;
+    }
+
+    .container {
+        padding: 12px;
+    }
+}
+
+</style>
+
+<style id="zippzo-master-theme">
+/* ZIPPZO MASTER FRONTEND THEME — visual layer only */
+:root{
+ --z-purple:#331084;--z-dark:#24085F;--z-yellow:#FEB103;
+ --z-bg:#F5F6FB;--z-card:#FFFFFF;--z-text:#171A4A;--z-muted:#69708F;
+ --z-line:#E6E8F0;--z-shadow:0 5px 18px rgba(36,8,95,.07);
+}
+html,body{background:var(--z-bg)!important;color:var(--z-text)!important}
+body{font-family:Inter,Segoe UI,Arial,sans-serif!important}
+.topbar,.header,.top-header,.top-nav,.app-header{
+ background:linear-gradient(90deg,var(--z-dark),var(--z-purple))!important;
+ color:#fff!important;border-color:transparent!important;
+}
+.sidebar,.side-nav,.left-sidebar,.navigation{
+ background:linear-gradient(180deg,#25105F,#180743)!important;
+ color:#fff!important;border-color:transparent!important;
+}
+.brand{color:#fff!important}
+.sidebar .nav-button,.sidebar button,.side-nav button,.left-sidebar button,
+.navigation button,.nav-button{
+ color:#fff!important;background:transparent!important;border-radius:8px!important;
+ border-color:transparent!important;
+}
+.sidebar .nav-button:hover,.sidebar button:hover,.side-nav button:hover,
+.left-sidebar button:hover,.navigation button:hover,.nav-button:hover{
+ background:rgba(255,255,255,.09)!important;
+}
+.sidebar .nav-button.active,.sidebar .nav-button[aria-current="page"],
+.nav-button.active,.nav-button.selected,.nav-button.current{
+ background:var(--z-yellow)!important;color:#15112F!important;font-weight:900!important;
+}
+.sidebar-title,.section-title,.nav-section{
+ color:#B9A9E8!important;letter-spacing:.7px!important;font-weight:900!important;
+}
+.content,.main-content,.page-content,.workspace{background:var(--z-bg)!important}
+.card,.panel,.table-card,.summary-card,.kpi-card,.stat-card,.form-card,
+.modal-content,.toolbar,.filter-bar,.table-container{
+ background:#fff!important;border-color:var(--z-line)!important;
+ box-shadow:var(--z-shadow)!important;border-radius:12px!important;
+}
+.btn-primary,.primary-btn,.button-primary,.add-btn,.save-btn{
+ background:var(--z-yellow)!important;color:#17113B!important;border-color:var(--z-yellow)!important;
+}
+.btn-secondary,.secondary-btn{background:#fff!important;color:var(--z-text)!important;border-color:var(--z-line)!important}
+input,select,textarea{
+ border-color:#DFE2EB!important;border-radius:8px!important;background:#fff!important;color:var(--z-text)!important;
+}
+input:focus,select:focus,textarea:focus{
+ border-color:var(--z-purple)!important;box-shadow:0 0 0 3px rgba(51,16,132,.08)!important;
+}
+table{background:#fff!important}
+thead th{background:#F7F8FC!important;color:#626987!important}
+tbody td{border-color:#EDF0F5!important}
+tbody tr:hover td{background:#FAFAFF!important}
+.badge,.status-badge{border-radius:999px!important}
+.page-title,h1,h2{color:var(--z-text)!important}
+.muted,.subtitle,.page-subtitle,.help-text{color:var(--z-muted)!important}
+</style>
+
+
+<link rel="stylesheet" href="zippzo-standard.css">
+<script src="zippzo-standard.js" defer></script>
+</head>
+
+<body>
+
+<div id="loading">
+    Checking Zippzo login...
+</div>
+
+<header class="header">
+
+    <div>
+        <div class="brand">ZIPPZO</div>
+        <div class="subtitle">
+            Warehouse Management System • Putaway
+        </div>
+    </div>
+
+    <div class="user-area">
+
+        <span
+            class="user-name"
+            id="userName"
+        >
+            User
+        </span>
+
+        <button
+            class="refresh"
+            onclick="loadAll()"
+        >
+            Refresh
+        </button>
+
+        <button
+            class="logout"
+            onclick="logout()"
+        >
+            Logout
+        </button>
+
+    </div>
+
+</header>
+
+
+<main class="container">
+
+
+<!-- SUMMARY -->
+
+<div class="cards">
+
+    <div class="card">
+        <div class="card-title">
+            TOTAL TASKS
+        </div>
+
+        <div
+            class="card-value"
+            id="totalTasks"
+        >
+            0
+        </div>
+    </div>
+
+
+    <div class="card">
+        <div class="card-title">
+            PENDING
+        </div>
+
+        <div
+            class="card-value"
+            id="pendingTasks"
+        >
+            0
+        </div>
+    </div>
+
+
+    <div class="card">
+        <div class="card-title">
+            IN PROGRESS
+        </div>
+
+        <div
+            class="card-value"
+            id="progressTasks"
+        >
+            0
+        </div>
+    </div>
+
+
+    <div class="card">
+        <div class="card-title">
+            COMPLETED
+        </div>
+
+        <div
+            class="card-value"
+            id="completedTasks"
+        >
+            0
+        </div>
+    </div>
+
+</div>
+
+
+<!-- CREATE -->
+
+<section class="section">
+
+    <div class="section-title">
+        Create Putaway Task
+    </div>
+
+    <div class="form-grid">
+
+        <div class="field">
+
+            <label>
+                Location
+            </label>
+
+            <select id="location">
+                <option value="">
+                    Select Location
+                </option>
+            </select>
+
+        </div>
+
+
+        <div class="field">
+
+            <label>
+                Product
+            </label>
+
+            <select id="product">
+                <option value="">
+                    Select Product
+                </option>
+            </select>
+
+        </div>
+
+
+        <div class="field">
+
+            <label>
+                Quantity
+            </label>
+
+            <input
+                id="quantity"
+                type="number"
+                min="1"
+                placeholder="Enter quantity"
+            >
+
+        </div>
+
+
+        <div class="field">
+
+            <label>
+                Priority
+            </label>
+
+            <select id="priority">
+
+                <option value="NORMAL">
+                    NORMAL
+                </option>
+
+                <option value="HIGH">
+                    HIGH
+                </option>
+
+                <option value="URGENT">
+                    URGENT
+                </option>
+
+            </select>
+
+        </div>
+
+
+        <div class="field">
+
+            <label>
+    Putaway Employee
+</label>
+
+<select id="employeeId">
+    <option value="">
+        Select Employee
+    </option>
+</select>
+
+        </div>
+
+
+        <div class="field">
+
+           <label>
+    Putaway Bin
+</label>
+
+<select id="binId">
+    <option value="">
+        Select Bin
+    </option>
+</select>
+
+        </div>
+
+
+        <div class="field full">
+
+            <label>
+                Remarks
+            </label>
+
+            <textarea
+                id="remarks"
+                placeholder="Putaway remarks"
+            ></textarea>
+
+        </div>
+
+    </div>
+
+
+    <div class="actions">
+
+        <button
+            class="primary"
+            onclick="createTask()"
+        >
+            + Create Putaway Task
+        </button>
+
+        <button
+            class="secondary"
+            onclick="clearForm()"
+        >
+            Clear
+        </button>
+
+    </div>
+
+
+    <div
+        id="message"
+        class="message"
+    ></div>
+
+</section>
+
+
+<!-- TASKS -->
+
+<section class="section">
+
+    <div class="section-title">
+        Putaway Tasks
+    </div>
+
+    <div class="table-wrap">
+
+        <table>
+
+            <thead>
+
+                <tr>
+
+                    <th>
+                        Task No.
+                    </th>
+
+                    <th>
+                        Location
+                    </th>
+
+                    <th>
+                        Product
+                    </th>
+
+                    <th>
+                        SKU
+                    </th>
+
+                    <th>
+                        Qty
+                    </th>
+
+                    <th>
+                        Confirmed
+                    </th>
+
+                    <th>
+                        Employee
+                    </th>
+
+                    <th>
+                        Bin
+                    </th>
+
+                    <th>
+                        Priority
+                    </th>
+
+                    <th>
+                        Status
+                    </th>
+
+                    <th>
+                        Actions
+                    </th>
+
+                </tr>
+
+            </thead>
+
+            <tbody id="taskTable">
+
+                <tr>
+                    <td
+                        colspan="11"
+                        class="empty"
+                    >
+                        Loading...
+                    </td>
+                </tr>
+
+            </tbody>
+
+        </table>
+
+    </div>
+
+</section>
+
+</main>
+
+
+<script>
+
+const API = window.location.origin;
+
+const TOKEN_KEY =
+    "zippzo_session_token";
+
+const USER_KEY =
+    "zippzo_user";
+
+
+// =====================================================
+// AUTH
+// =====================================================
+
+function getToken() {
+
+    return localStorage.getItem(
+        TOKEN_KEY
+    );
+
+}
+
+
+function getSavedUser() {
+
+    try {
+
+        return JSON.parse(
+            localStorage.getItem(USER_KEY)
+        );
+
+    } catch {
+
+        return null;
+
+    }
+
+}
+
+
+// =====================================================
+// API
+// =====================================================
+
+async function api(
+    url,
+    options = {}
+) {
+
+    const token =
+        getToken();
+
+
+    if (!token) {
+
+        window.location.href =
+            "index.html";
+
+        throw new Error(
+            "Login required"
+        );
+
+    }
+
+
+    const headers = {
+
+        "Content-Type":
+            "application/json",
+
+        ...(options.headers || {})
+
+    };
+
+
+    headers["Authorization"] =
+        "Bearer " + token;
+
+
+    const response =
+        await fetch(
+            API + url,
+            {
+                ...options,
+                headers
+            }
+        );
+
+
+    if (
+        response.status === 401
+    ) {
+
+        localStorage.removeItem(
+            TOKEN_KEY
+        );
+
+        localStorage.removeItem(
+            USER_KEY
+        );
+
+        window.location.href =
+            "index.html";
+
+        throw new Error(
+            "Session expired"
+        );
+
+    }
+
+
+    if (!response.ok) {
+
+        let message =
+            "Request failed";
+
+
+        try {
+
+            const error =
+                await response.json();
+
+            message =
+                error.detail ||
+                error.message ||
+                message;
+
+        } catch {}
+
+
+        throw new Error(
+            message
+        );
+
+    }
+
+
+    return response.json();
+
+}
+
+
+// =====================================================
+// AUTH CHECK
+// =====================================================
+
+async function checkAuthentication() {
+
+    const token = getToken();
+
+    const loading = document.getElementById("loading");
+
+    if (!token) {
+        if (loading) loading.style.display = "none";
+        window.location.replace("index.html");
+        return false;
+    }
+
+    try {
+
+        const controller = new AbortController();
+        const timeout = setTimeout(() => controller.abort(), 10000);
+
+        const response = await fetch(
+            API + "/api/auth/me",
+            {
+                method: "GET",
+                headers: {
+                    "Authorization": "Bearer " + token
+                },
+                signal: controller.signal
+            }
+        );
+
+        clearTimeout(timeout);
+
+        if (!response.ok) {
+            localStorage.removeItem(TOKEN_KEY);
+            localStorage.removeItem(USER_KEY);
+            if (loading) loading.style.display = "none";
+            window.location.replace("index.html");
+            return false;
+        }
+
+        const data = await response.json();
+        const user = data.user || data;
+
+        document.getElementById("userName").textContent =
+            user.full_name || user.name || user.employee_id || "User";
+
+        return true;
+
+    } catch (error) {
+
+        console.error("Authentication check failed:", error);
+
+        localStorage.removeItem(TOKEN_KEY);
+        localStorage.removeItem(USER_KEY);
+
+        if (loading) loading.style.display = "none";
+
+        window.location.replace("index.html");
+        return false;
+    }
+}
+
+
+// =====================================================
+// LOCATIONS
+// =====================================================
+
+async function loadLocations() {
+
+    const data =
+        await api(
+            "/api/locations"
+        );
+
+
+    const select =
+        document.getElementById(
+            "location"
+        );
+
+
+    select.innerHTML =
+        `<option value="">
+            Select Location
+        </option>`;
+
+
+    data.forEach(
+        location => {
+
+            const option =
+                document.createElement(
+                    "option"
+                );
+
+
+            option.value =
+                location.id;
+
+
+            option.textContent =
+                `${location.code} - ${location.name}`;
+
+
+            select.appendChild(
+                option
+            );
+
+        }
+    );
+
+}
+
+
+// =====================================================
+// PRODUCTS
+// =====================================================
+
+async function loadProducts() {
+
+    const data =
+        await api(
+            "/api/products"
+        );
+
+
+    const select =
+        document.getElementById(
+            "product"
+        );
+
+
+    select.innerHTML =
+        `<option value="">
+            Select Product
+        </option>`;
+
+
+    data.forEach(
+        product => {
+
+            const option =
+                document.createElement(
+                    "option"
+                );
+
+
+            option.value =
+                product.id;
+
+
+            option.textContent =
+                `${product.sku} - ${product.name}`;
+
+
+            select.appendChild(
+                option
+            );
+
+        }
+    );
+
+}
+
+
+// =====================================================
+// TASKS
+// =====================================================
+
+async function loadTasks() {
+
+    const tasks =
+        await api(
+            "/api/putaway"
+        );
+
+
+    document.getElementById(
+        "totalTasks"
+    ).textContent =
+        tasks.length;
+
+
+    document.getElementById(
+        "pendingTasks"
+    ).textContent =
+        tasks.filter(
+            t =>
+                t.status ===
+                "PENDING"
+        ).length;
+
+
+    document.getElementById(
+        "progressTasks"
+    ).textContent =
+        tasks.filter(
+            t =>
+                t.status ===
+                "ASSIGNED" ||
+                t.status ===
+                "IN_PROGRESS"
+        ).length;
+
+
+    document.getElementById(
+        "completedTasks"
+    ).textContent =
+        tasks.filter(
+            t =>
+                t.status ===
+                "COMPLETED"
+        ).length;
+
+
+    renderTasks(
+        tasks
+    );
+
+}
+
+
+// =====================================================
+// RENDER
+// =====================================================
+
+function renderTasks(
+    tasks
+) {
+
+    const table =
+        document.getElementById(
+            "taskTable"
+        );
+
+
+    table.innerHTML = "";
+
+
+    if (!tasks.length) {
+
+        table.innerHTML = `
+            <tr>
+                <td
+                    colspan="11"
+                    class="empty"
+                >
+                    No putaway tasks found.
+                </td>
+            </tr>
+        `;
+
+        return;
+
+    }
+
+
+    tasks.forEach(
+        task => {
+
+            const row =
+                document.createElement(
+                    "tr"
+                );
+
+
+            row.innerHTML = `
+
+                <td>
+                    ${task.task_number || ""}
+                </td>
+
+                <td>
+                    ${task.location_name || ""}
+                </td>
+
+                <td>
+                    ${task.product_name || ""}
+                </td>
+
+                <td>
+                    ${task.sku || ""}
+                </td>
+
+                <td>
+                    ${task.quantity || 0}
+                </td>
+
+                <td>
+                    ${task.confirmed_quantity || 0}
+                </td>
+
+                <td>
+                    ${task.employee_name || "-"}
+                </td>
+
+                <td>
+                    ${task.bin_code || "-"}
+                </td>
+
+                <td>
+                    ${task.priority || ""}
+                </td>
+
+                <td>
+                    <span class="badge ${
+                        statusClass(
+                            task.status
+                        )
+                    }">
+                        ${task.status || ""}
+                    </span>
+                </td>
+
+                <td>
+
+                    ${
+                        task.status ===
+                        "PENDING"
+
+                        ? `
+                        <button
+                            class="small assign"
+                            onclick="assignTask(${task.id})"
+                        >
+                            Assign
+                        </button>
+                        `
+                        : ""
+                    }
+
+
+                    ${
+                        task.status ===
+                        "ASSIGNED"
+
+                        ? `
+                        <button
+                            class="small start"
+                            onclick="startTask(${task.id})"
+                        >
+                            Start
+                        </button>
+                        `
+                        : ""
+                    }
+
+
+                    ${
+                        task.status ===
+                        "ASSIGNED" ||
+                        task.status ===
+                        "IN_PROGRESS"
+
+                        ? `
+                        <button
+                            class="small complete"
+                            onclick="completeTask(${task.id})"
+                        >
+                            Complete
+                        </button>
+                        `
+                        : ""
+                    }
+
+                </td>
+
+            `;
+
+
+            table.appendChild(
+                row
+            );
+
+        }
+    );
+
+}
+
+
+// =====================================================
+// STATUS
+// =====================================================
+
+function statusClass(
+    status
+) {
+
+    if (
+        status === "PENDING"
+    )
+        return "pending";
+
+
+    if (
+        status === "ASSIGNED"
+    )
+        return "assigned";
+
+
+    if (
+        status === "IN_PROGRESS"
+    )
+        return "progress";
+
+
+    if (
+        status === "COMPLETED"
+    )
+        return "completed";
+
+
+    return "";
+
+}
+
+
+// =====================================================
+// CREATE
+// =====================================================
+
+async function createTask() {
+
+    try {
+
+        const locationId =
+            Number(
+                document.getElementById(
+                    "location"
+                ).value
+            );
+
+
+        const productId =
+            Number(
+                document.getElementById(
+                    "product"
+                ).value
+            );
+
+
+        const quantity =
+            Number(
+                document.getElementById(
+                    "quantity"
+                ).value
+            );
+
+
+        if (!locationId) {
+
+            showMessage(
+                "Select a location.",
+                true
+            );
+
+            return;
+
+        }
+
+
+        if (!productId) {
+
+            showMessage(
+                "Select a product.",
+                true
+            );
+
+            return;
+
+        }
+
+
+        if (
+            !quantity ||
+            quantity <= 0
+        ) {
+
+            showMessage(
+                "Enter a valid quantity.",
+                true
+            );
+
+            return;
+
+        }
+
+
+        const payload = {
+
+            location_id:
+                locationId,
+
+            product_id:
+                productId,
+
+            quantity:
+                quantity,
+
+            priority:
+                document.getElementById(
+                    "priority"
+                ).value,
+
+            remarks:
+                document.getElementById(
+                    "remarks"
+                ).value ||
+                null
+
+        };
+
+
+        const employee =
+            document.getElementById(
+                "employeeId"
+            ).value;
+
+
+        const bin =
+            document.getElementById(
+                "binId"
+            ).value;
+
+
+        if (employee) {
+
+            payload.assigned_employee_id =
+                Number(employee);
+
+        }
+
+
+        if (bin) {
+
+            payload.assigned_bin_id =
+                Number(bin);
+
+        }
+
+
+        await api(
+            "/api/putaway",
+            {
+                method: "POST",
+
+                body:
+                    JSON.stringify(
+                        payload
+                    )
+            }
+        );
+
+
+        showMessage(
+            "Putaway task created successfully.",
+            false
+        );
+
+
+        clearForm();
+
+        await loadTasks();
+
+    } catch (error) {
+
+        showMessage(
+            error.message,
+            true
+        );
+
+    }
+
+}
+
+
+// =====================================================
+// ASSIGN
+// =====================================================
+
+async function assignTask(taskId) {
+
+    try {
+        const task = await api(`/api/putaway/${taskId}`);
+
+        const employees = await api("/api/employees");
+        const activeEmployees = employees.filter(employee =>
+            !employee.status || String(employee.status).toUpperCase() === "ACTIVE"
+        );
+
+        if (!activeEmployees.length) {
+            showMessage("No active Putaway Employees found.", true);
+            return;
+        }
+
+        const bins = await api("/api/bins");
+        const activeBins = bins.filter(bin =>
+            Number(bin.location_id) === Number(task.location_id) &&
+            (!bin.status || String(bin.status).toUpperCase() === "ACTIVE")
+        );
+
+        if (!activeBins.length) {
+            showMessage("No active Putaway Bin found for this task location.", true);
+            return;
+        }
+
+        const employeeList = activeEmployees.map((employee, index) =>
+            `${index + 1}. ${employee.employee_id || employee.id} - ${employee.full_name || employee.name || "Employee"}`
+        ).join("\n");
+
+        const employeeChoice = prompt(
+            "SELECT PUTAWAY EMPLOYEE\n\n" + employeeList +
+            "\n\nEnter NUMBER or Employee ID (example: 1 or ZLL000-02):"
+        );
+
+        if (employeeChoice === null) return;
+
+        const employeeInput = String(employeeChoice).trim();
+        let selectedEmployee = null;
+
+        if (/^\d+$/.test(employeeInput)) {
+            const n = Number(employeeInput);
+            selectedEmployee = activeEmployees[n - 1] ||
+                activeEmployees.find(e => Number(e.id) === n) || null;
+        }
+
+        if (!selectedEmployee) {
+            selectedEmployee = activeEmployees.find(e =>
+                String(e.employee_id || "").trim().toUpperCase() === employeeInput.toUpperCase()
+            ) || null;
+        }
+
+        if (!selectedEmployee || !selectedEmployee.id) {
+            showMessage("Invalid employee selection. Enter 1 or the Employee ID shown in the list.", true);
+            return;
+        }
+
+        const binList = activeBins.map((bin, index) =>
+            `${index + 1}. ${bin.bin_code} - ${bin.bin_type || "STORAGE"}`
+        ).join("\n");
+
+        const binChoice = prompt(
+            "SELECT PUTAWAY BIN\n\n" + binList +
+            "\n\nEnter NUMBER or Bin Code (example: 1 or BIN-A01-R01-S01):"
+        );
+
+        if (binChoice === null) return;
+
+        const binInput = String(binChoice).trim();
+        let selectedBin = null;
+
+        if (/^\d+$/.test(binInput)) {
+            const n = Number(binInput);
+            selectedBin = activeBins[n - 1] ||
+                activeBins.find(b => Number(b.id) === n) || null;
+        }
+
+        if (!selectedBin) {
+            selectedBin = activeBins.find(b =>
+                String(b.bin_code || "").trim().toUpperCase() === binInput.toUpperCase()
+            ) || null;
+        }
+
+        if (!selectedBin || !selectedBin.id) {
+            showMessage("Invalid bin selection. Enter 1 or the Bin Code shown in the list.", true);
+            return;
+        }
+
+        await api(`/api/putaway/${taskId}/assign`, {
+            method: "PUT",
+            body: JSON.stringify({
+                employee_id: Number(selectedEmployee.id),
+                bin_id: Number(selectedBin.id)
+            })
+        });
+
+        showMessage(
+            `Task ${task.task_number} assigned to ${selectedEmployee.full_name || selectedEmployee.name} / ${selectedBin.bin_code}.`,
+            false
+        );
+
+        await loadTasks();
+
+    } catch (error) {
+        console.error("Assign Putaway Error:", error);
+        showMessage(error.message || "Unable to assign putaway task.", true);
+    }
+
+}
+
+// =====================================================
+// START
+// =====================================================
+
+async function startTask(
+    taskId
+) {
+
+    try {
+
+        await api(
+            `/api/putaway/${taskId}/start`,
+            {
+                method: "PUT"
+            }
+        );
+
+
+        showMessage(
+            "Putaway task started.",
+            false
+        );
+
+
+        await loadTasks();
+
+    } catch (error) {
+
+        showMessage(
+            error.message,
+            true
+        );
+
+    }
+
+}
+
+
+// =====================================================
+// COMPLETE
+// =====================================================
+
+async function completeTask(
+    taskId
+) {
+
+    const sku =
+        prompt(
+            "Scan / enter SKU:"
+        );
+
+
+    if (!sku)
+        return;
+
+
+    const bin =
+        prompt(
+            "Scan / enter Bin Code:"
+        );
+
+
+    if (!bin)
+        return;
+
+
+    const quantity =
+        prompt(
+            "Enter confirmed quantity:"
+        );
+
+
+    if (!quantity)
+        return;
+
+
+    try {
+
+        await api(
+            `/api/putaway/${taskId}/complete`,
+            {
+
+                method: "POST",
+
+                body:
+                    JSON.stringify({
+
+                        scanned_sku:
+                            sku,
+
+                        scanned_bin_code:
+                            bin,
+
+                        confirmed_quantity:
+                            Number(
+                                quantity
+                            )
+
+                    })
+
+            }
+        );
+
+
+        showMessage(
+            "Putaway completed successfully.",
+            false
+        );
+
+
+        await loadTasks();
+
+    } catch (error) {
+
+        showMessage(
+            error.message,
+            true
+        );
+
+    }
+
+}
+
+
+// =====================================================
+// CLEAR
+// =====================================================
+
+function clearForm() {
+
+    document.getElementById(
+        "location"
+    ).value = "";
+
+
+    document.getElementById(
+        "product"
+    ).value = "";
+
+
+    document.getElementById(
+        "quantity"
+    ).value = "";
+
+
+    document.getElementById(
+        "priority"
+    ).value = "NORMAL";
+
+
+    document.getElementById(
+        "employeeId"
+    ).value = "";
+
+
+    document.getElementById(
+        "binId"
+    ).value = "";
+
+
+    document.getElementById(
+        "remarks"
+    ).value = "";
+
+}
+
+
+// =====================================================
+// MESSAGE
+// =====================================================
+
+function showMessage(
+    message,
+    error
+) {
+
+    const box =
+        document.getElementById(
+            "message"
+        );
+
+
+    box.textContent =
+        message;
+
+
+    box.className =
+        error
+            ? "message error"
+            : "message success";
+
+
+    setTimeout(
+        () => {
+            box.className =
+                "message";
+        },
+        4000
+    );
+
+}
+
+
+// =====================================================
+// LOGOUT
+// =====================================================
+
+async function logout() {
+
+    const token =
+        getToken();
+
+
+    try {
+
+        if (token) {
+
+            await fetch(
+                API +
+                "/api/auth/logout",
+                {
+
+                    method: "POST",
+
+                    headers: {
+
+                        "Content-Type":
+                            "application/json",
+
+                        "Authorization":
+                            "Bearer " +
+                            token
+
+                    },
+
+                    body:
+                        JSON.stringify({
+
+                            session_token:
+                                token
+
+                        })
+
+                }
+            );
+
+        }
+
+    } catch (error) {
+
+        console.log(
+            "Logout error",
+            error
+        );
+
+    }
+
+
+    localStorage.removeItem(
+        TOKEN_KEY
+    );
+
+
+    localStorage.removeItem(
+        USER_KEY
+    );
+
+
+    window.location.href =
+        "index.html";
+
+}
+
+
+// =====================================================
+// LOAD EVERYTHING
+// =====================================================
+
+async function loadAll() {
+
+    try {
+
+        await Promise.all([
+            loadLocations(),
+            loadProducts(),
+            loadEmployees(),
+            loadTasks()
+        ]);
+
+        await loadPutawayBins();
+    } catch (error) {
+
+        showMessage(
+            error.message,
+            true
+        );
+
+    }
+
+}
+
+
+// =====================================================
+// START
+// =====================================================
+
+async function init() {
+
+    const authenticated =
+        await checkAuthentication();
+
+
+    if (!authenticated) {
+
+        return;
+
+    }
+
+
+    await loadAll();
+
+
+    document.getElementById(
+        "loading"
+    ).style.display =
+        "none";
+
+}
+
+
+init();
+// =====================================================
+// LOAD PUTAWAY EMPLOYEES
+// =====================================================
+
+async function loadEmployees() {
+
+    const employees = await api(
+        "/api/employees"
+    );
+
+    const select =
+        document.getElementById("employeeId");
+
+    select.innerHTML = `
+        <option value="">
+            Select Employee
+        </option>
+    `;
+
+    employees.forEach(employee => {
+
+        if (
+            employee.status &&
+            employee.status.toUpperCase() !== "ACTIVE"
+        ) {
+            return;
+        }
+
+        const option =
+            document.createElement("option");
+
+        option.value = employee.id;
+
+        option.textContent =
+            `${employee.employee_id} - ${employee.full_name}`;
+
+        select.appendChild(option);
+
+    });
+}
+
+
+// =====================================================
+// LOAD ACTIVE BINS FOR SELECTED LOCATION
+// =====================================================
+
+async function loadPutawayBins() {
+
+    const locationId =
+        document.getElementById("location").value;
+
+    const select =
+        document.getElementById("binId");
+
+    select.innerHTML = `
+        <option value="">
+            Select Bin
+        </option>
+    `;
+
+    if (!locationId) {
+        return;
+    }
+
+    const bins = await api(
+        "/api/bins"
+    );
+
+    bins
+        .filter(bin =>
+            Number(bin.location_id) ===
+            Number(locationId)
+        )
+        .filter(bin =>
+            !bin.status ||
+            bin.status.toUpperCase() === "ACTIVE"
+        )
+        .forEach(bin => {
+
+            const option =
+                document.createElement("option");
+
+            option.value = bin.id;
+
+            option.textContent =
+                `${bin.bin_code} | ${bin.bin_type || "STORAGE"} | Capacity: ${bin.capacity || 0}`;
+
+            select.appendChild(option);
+
+        });
+}
+
+
+// =====================================================
+// LOCATION CHANGE
+// =====================================================
+
+document
+    .getElementById("location")
+    .addEventListener(
+        "change",
+        loadPutawayBins
+    );
+</script>
+
+
+<script id="zippzo-master-frontend">
+document.addEventListener("DOMContentLoaded", function(){
+  // Hide the retired Dropping module everywhere.
+  document.querySelectorAll("a,button").forEach(function(el){
+    const t=(el.textContent||"").trim().toLowerCase();
+    if(t==="dropping" || t.includes("dropping")) el.style.display="none";
+  });
+
+  // Use the real Zippzo logo wherever a common brand element exists.
+  document.querySelectorAll(".brand,.logo,.brand-logo").forEach(function(el){
+    if(!el.querySelector("img")){
+      const img=document.createElement("img");
+      img.src="zippzo-logo.jpg";
+      img.alt="Zippzo";
+      img.style.cssText="width:148px;max-height:55px;object-fit:contain;object-position:left center;";
+      el.prepend(img);
+    }
+  });
+});
+</script>
+
+</body>
+</html>

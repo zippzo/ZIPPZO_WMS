@@ -1,0 +1,183 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1.0">
+<title>Zippzo WMS — Sorting</title>
+<link rel="stylesheet" href="/style.css">
+<style>
+:root{--blue:#0b63f6;--green:#16a34a;--orange:#f59e0b;--red:#dc2626;--purple:#7c3aed;--muted:#64748b;--line:#e5e7eb;--bg:#f5f7fb}
+body{background:var(--bg)}.page{display:grid;gap:16px}.kpis{display:grid;grid-template-columns:repeat(8,1fr);gap:10px}.kpi,.panel,.slot{background:#fff;border:1px solid var(--line);border-radius:14px;box-shadow:0 2px 8px #00000008}.kpi{padding:13px}.kpi small{color:var(--muted);font-size:11px}.kpi b{display:block;font-size:24px;margin-top:4px}.blue{color:var(--blue)}.green{color:var(--green)}.orange{color:var(--orange)}.red{color:var(--red)}.purple{color:var(--purple)}
+.panel{padding:16px}.toolbar{display:grid;grid-template-columns:2fr repeat(5,1fr) auto;gap:9px}input,select,textarea{width:100%;box-sizing:border-box;padding:10px 11px;border:1px solid #d7dee9;border-radius:9px;background:#fff}.btn{border:0;border-radius:9px;padding:9px 13px;font-weight:700;cursor:pointer}.primary{background:var(--blue);color:#fff}.greenbtn{background:var(--green);color:#fff}.orangebtn{background:var(--orange);color:#fff}.purplebtn{background:var(--purple);color:#fff}.light{background:#eef3f9;color:#172033}.danger{background:var(--red);color:#fff}
+.main{display:grid;grid-template-columns:1.6fr .8fr;gap:16px}.table-scroll{overflow:auto;max-height:540px}table{width:100%;border-collapse:collapse}th,td{padding:10px;border-bottom:1px solid #edf0f5;text-align:left;font-size:12px}th{background:#f8fafc;position:sticky;top:0;z-index:1}.check{width:18px;height:18px}.badge{display:inline-block;padding:4px 8px;border-radius:999px;font-size:10px;font-weight:800}.pending{background:#dbeafe;color:#1d4ed8}.sorting{background:#fff7ed;color:#c2410c}.sorted{background:#ede9fe;color:#6d28d9}.ready{background:#dcfce7;color:#15803d}.hold{background:#fee2e2;color:#991b1b}.notice{padding:11px 14px;border-radius:10px;background:#eff6ff;color:#1e40af;font-size:12px}.error{background:#fef2f2;color:#991b1b}
+.grid{display:grid;grid-template-columns:repeat(4,1fr);gap:9px}.slot{padding:12px}.slot b{display:block}.slot small{color:var(--muted)}.slot.occupied{border-color:#93c5fd;background:#eff6ff}.slot.ready{border-color:#86efac;background:#f0fdf4}.slot.hold{border-color:#fecaca;background:#fef2f2}
+.form-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:9px}.full{grid-column:1/-1}.summary{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-top:12px}.summary div{background:#f8fafc;padding:10px;border-radius:9px}.summary small{display:block;color:var(--muted);font-size:10px}.summary b{font-size:18px}.scan{background:#f8fafc;border:1px solid var(--line);border-radius:11px;padding:12px;margin-top:12px}.scanrow{display:grid;grid-template-columns:1.4fr 1fr 1fr auto;gap:8px}.progressbar{height:9px;background:#e8edf4;border-radius:99px;overflow:hidden}.progressbar div{height:100%;background:var(--purple);width:0}.empty{text-align:center;padding:30px;color:var(--muted)}
+.modal{display:none;position:fixed;inset:0;background:#0008;z-index:1000;align-items:center;justify-content:center}.modal.open{display:flex}.modal-card{width:min(1000px,94vw);max-height:90vh;overflow:auto;background:#fff;border-radius:16px;padding:20px}.detail{display:flex;justify-content:space-between;border-bottom:1px solid #edf0f5;padding:9px 0;font-size:12px}.detail span{color:var(--muted)}
+@media(max-width:1200px){.kpis{grid-template-columns:repeat(4,1fr)}.toolbar{grid-template-columns:repeat(3,1fr)}.main{grid-template-columns:1fr}.grid{grid-template-columns:repeat(3,1fr)}}@media(max-width:700px){.kpis{grid-template-columns:repeat(2,1fr)}.toolbar,.form-grid,.scanrow{grid-template-columns:1fr}.grid{grid-template-columns:1fr 1fr}.full{grid-column:auto}.summary{grid-template-columns:1fr}}
+</style>
+
+<style id="zippzo-master-theme">
+/* ZIPPZO MASTER FRONTEND THEME — visual layer only */
+:root{
+ --z-purple:#331084;--z-dark:#24085F;--z-yellow:#FEB103;
+ --z-bg:#F5F6FB;--z-card:#FFFFFF;--z-text:#171A4A;--z-muted:#69708F;
+ --z-line:#E6E8F0;--z-shadow:0 5px 18px rgba(36,8,95,.07);
+}
+html,body{background:var(--z-bg)!important;color:var(--z-text)!important}
+body{font-family:Inter,Segoe UI,Arial,sans-serif!important}
+.topbar,.header,.top-header,.top-nav,.app-header{
+ background:linear-gradient(90deg,var(--z-dark),var(--z-purple))!important;
+ color:#fff!important;border-color:transparent!important;
+}
+.sidebar,.side-nav,.left-sidebar,.navigation{
+ background:linear-gradient(180deg,#25105F,#180743)!important;
+ color:#fff!important;border-color:transparent!important;
+}
+.brand{color:#fff!important}
+.sidebar .nav-button,.sidebar button,.side-nav button,.left-sidebar button,
+.navigation button,.nav-button{
+ color:#fff!important;background:transparent!important;border-radius:8px!important;
+ border-color:transparent!important;
+}
+.sidebar .nav-button:hover,.sidebar button:hover,.side-nav button:hover,
+.left-sidebar button:hover,.navigation button:hover,.nav-button:hover{
+ background:rgba(255,255,255,.09)!important;
+}
+.sidebar .nav-button.active,.sidebar .nav-button[aria-current="page"],
+.nav-button.active,.nav-button.selected,.nav-button.current{
+ background:var(--z-yellow)!important;color:#15112F!important;font-weight:900!important;
+}
+.sidebar-title,.section-title,.nav-section{
+ color:#B9A9E8!important;letter-spacing:.7px!important;font-weight:900!important;
+}
+.content,.main-content,.page-content,.workspace{background:var(--z-bg)!important}
+.card,.panel,.table-card,.summary-card,.kpi-card,.stat-card,.form-card,
+.modal-content,.toolbar,.filter-bar,.table-container{
+ background:#fff!important;border-color:var(--z-line)!important;
+ box-shadow:var(--z-shadow)!important;border-radius:12px!important;
+}
+.btn-primary,.primary-btn,.button-primary,.add-btn,.save-btn{
+ background:var(--z-yellow)!important;color:#17113B!important;border-color:var(--z-yellow)!important;
+}
+.btn-secondary,.secondary-btn{background:#fff!important;color:var(--z-text)!important;border-color:var(--z-line)!important}
+input,select,textarea{
+ border-color:#DFE2EB!important;border-radius:8px!important;background:#fff!important;color:var(--z-text)!important;
+}
+input:focus,select:focus,textarea:focus{
+ border-color:var(--z-purple)!important;box-shadow:0 0 0 3px rgba(51,16,132,.08)!important;
+}
+table{background:#fff!important}
+thead th{background:#F7F8FC!important;color:#626987!important}
+tbody td{border-color:#EDF0F5!important}
+tbody tr:hover td{background:#FAFAFF!important}
+.badge,.status-badge{border-radius:999px!important}
+.page-title,h1,h2{color:var(--z-text)!important}
+.muted,.subtitle,.page-subtitle,.help-text{color:var(--z-muted)!important}
+</style>
+
+
+<link rel="stylesheet" href="zippzo-standard.css">
+<script src="zippzo-standard.js" defer></script>
+</head>
+<body>
+<div class="topbar"><div class="brand"><strong>ZIPPZO</strong><span>Warehouse Management System</span></div><div class="top-user"><span id="userName">Loading...</span><button class="btn light" onclick="logout()">Logout</button></div></div>
+<div class="layout">
+<aside class="sidebar">
+<div class="sidebar-title">WMS CONTROL</div><button class="nav-button" onclick="go('index.html')">Dashboard</button>
+<div class="sidebar-title">MASTER DATA</div><button class="nav-button" onclick="go('products.html')">Products</button><button class="nav-button" onclick="go('suppliers.html')">Suppliers</button><button class="nav-button" onclick="go('locations.html')">Locations</button><button class="nav-button" onclick="go('employees.html')">Employees</button>
+<div class="sidebar-title">WAREHOUSE</div><button class="nav-button" onclick="go('inventory.html')">Inventory</button><button class="nav-button" onclick="go('bins.html')">Bins</button><button class="nav-button" onclick="go('stock-movements.html')">Stock Movements</button>
+<div class="sidebar-title">INBOUND</div><button class="nav-button" onclick="go('purchase-orders.html')">Purchase Orders</button><button class="nav-button" onclick="go('grn.html')">GRN</button><button class="nav-button" onclick="go('putaway.html')">Putaway</button>
+<div class="sidebar-title">STORE ORDER FLOW</div><button class="nav-button" onclick="go('orders.html')">Orders</button><button class="nav-button" onclick="go('create-batch.html')">Create Batch</button><button class="nav-button" onclick="go('picking.html')">Picking</button><button class="nav-button active">Sorting</button><button class="nav-button" onclick="go('grid-putaway.html')">Grid Putaway</button><button class="nav-button" onclick="go('vehicle-arrival.html')">Vehicle Arrival</button><button class="nav-button" onclick="go('dispatch.html')">Dispatch</button>
+<div class="sidebar-title">STORE</div><button class="nav-button" onclick="go('store-receiving.html')">Store Receiving</button><button class="nav-button" onclick="go('riders.html')">Vehicles / Riders</button>
+<div class="sidebar-title">REPORTS</div><button class="nav-button" onclick="go('order-report.html')">Order Report</button><button class="nav-button" onclick="go('picking-report.html')">Picking Report</button><button class="nav-button" onclick="go('sorting-report.html')">Sorting Report</button><button class="nav-button" onclick="go('sorting-ipp.html')">Sorting IPP</button>
+</aside>
+<main class="content">
+<div class="page-header"><div><div class="page-title">Sorting Control Tower</div><div class="page-subtitle">Picked stock → Order/store sorting → tote/grid assignment → handoff to Dropping</div></div><div style="display:flex;gap:8px"><button class="btn light" onclick="loadAll()">Refresh</button><button class="btn greenbtn" onclick="completeSelected()">Complete Selected</button></div></div>
+<div id="notice" class="notice">Sort picked units by order/store destination, verify SKU and quantity, assign a tote or sorting slot, then release completed work to Dropping.</div>
+<div class="page">
+<section class="kpis">
+<div class="kpi blue"><small>Sorting Tasks</small><b id="kTasks">0</b></div><div class="kpi orange"><small>Pending</small><b id="kPending">0</b></div><div class="kpi"><small>In Sorting</small><b id="kSorting">0</b></div><div class="kpi purple"><small>Sorted</small><b id="kSorted">0</b></div><div class="kpi green"><small>Ready for Dropping</small><b id="kReady">0</b></div><div class="kpi"><small>Units</small><b id="kUnits">0</b></div><div class="kpi"><small>Sorted Units</small><b id="kSortedUnits">0</b></div><div class="kpi red"><small>Exceptions</small><b id="kExceptions">0</b></div>
+</section>
+<section class="panel"><div class="toolbar">
+<input id="search" placeholder="Search batch / order / SKU / product / store / tote">
+<select id="status"><option value="">All Status</option><option>PENDING</option><option>IN_SORTING</option><option>SORTED</option><option>READY</option><option>HOLD</option></select>
+<select id="destination"><option value="">All Destinations</option></select>
+<select id="sorter"><option value="">All Sorters</option></select>
+<select id="priority"><option value="">All Priority</option><option>URGENT</option><option>HIGH</option><option>NORMAL</option></select>
+<select id="sort"><option value="oldest">Oldest</option><option value="newest">Newest</option><option value="destination">Destination</option><option value="priority">Priority</option></select>
+<button class="btn primary" onclick="render()">Apply</button>
+</div></section>
+<div class="main">
+<section class="panel"><div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:10px"><strong>Sorting Queue</strong><div style="display:flex;gap:6px"><button class="btn light" onclick="selectAll()">Select All</button><button class="btn light" onclick="clearSelected()">Clear</button></div></div>
+<div class="table-scroll"><table><thead><tr><th></th><th>Batch</th><th>Order</th><th>Destination</th><th>SKU / Product</th><th>Picked</th><th>Sorted</th><th>Tote / Slot</th><th>Sorter</th><th>Status</th><th>Action</th></tr></thead><tbody id="body"></tbody></table></div></section>
+<section class="panel"><strong>Sorting Workbench</strong>
+<div class="form-grid" style="margin-top:12px">
+<select id="destinationEdit"><option value="">Destination / Store</option></select>
+<input id="slot" placeholder="Sorting Slot / Tote / Grid ID">
+<select id="sorterEdit"><option value="">Assign Sorter</option></select>
+<select id="priorityEdit"><option>NORMAL</option><option>HIGH</option><option>URGENT</option></select>
+<input id="remarks" class="full" placeholder="Sorting remarks / exception">
+</div>
+<div class="scan"><strong>Scan & Verify</strong><div class="scanrow" style="margin-top:8px"><input id="scanSku" placeholder="Scan SKU / barcode"><input id="scanOrder" placeholder="Order number"><input id="scanQty" type="number" min="1" placeholder="Qty"><button class="btn purplebtn" onclick="scanSelected()">Verify</button></div></div>
+<div class="summary"><div><small>Selected Tasks</small><b id="sTasks">0</b></div><div><small>Selected Units</small><b id="sUnits">0</b></div><div><small>Orders</small><b id="sOrders">0</b></div></div>
+<div style="margin-top:14px"><div class="progressbar"><div id="workProgress"></div></div><small id="progressText" style="color:#64748b">Select a task to begin.</small></div>
+<div style="display:flex;gap:7px;flex-wrap:wrap;margin-top:14px"><button class="btn orangebtn" onclick="startSelected()">Start Sorting</button><button class="btn purplebtn" onclick="assignSelected()">Assign Slot</button><button class="btn greenbtn" onclick="completeSelected()">Complete Sorting</button><button class="btn danger" onclick="holdSelected()">Hold</button></div>
+</section>
+</div>
+<section class="panel"><div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:10px"><strong>Sorting Slot / Tote Board</strong><span class="badge sorted" id="slotCount">0</span></div><div id="slotGrid" class="grid"></div></section>
+</div>
+</main></div>
+<div id="modal" class="modal" onclick="if(event.target===this)closeModal()"><div class="modal-card"><div style="display:flex;justify-content:space-between;align-items:center"><h3 id="modalTitle">Sorting Task</h3><button class="btn light" onclick="closeModal()">Close</button></div><div id="modalBody"></div></div></div>
+<script>
+const API=window.location.origin,TOKEN_KEY="zippzo_session_token";let tasks=[],employees=[],selected=new Set(),locations=[];
+const $=id=>document.getElementById(id);
+function token(){return localStorage.getItem(TOKEN_KEY)}function headers(json=false){const h={};if(json)h["Content-Type"]="application/json";if(token())h.Authorization=`Bearer ${token()}`;return h}
+async function api(path,opt={}){const r=await fetch(API+path,{...opt,headers:{...headers(!!opt.body),...(opt.headers||{})}});if(r.status===401){location.href="index.html";throw Error("Unauthorized")}if(!r.ok){let d={};try{d=await r.json()}catch{}throw Error(d.detail||`API ${r.status}`)}return r}
+async function getAny(paths){for(const p of paths){try{return await(await api(p)).json()}catch(e){if(!String(e.message).startsWith("API 404"))throw e}}return []}
+function arr(x){return Array.isArray(x)?x:(x?.items||x?.data||x?.results||x?.tasks||x?.sorting_tasks||[])}function esc(v){return String(v??"").replace(/[&<>"']/g,m=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[m]))}
+function go(p){location.href=p}function logout(){localStorage.removeItem(TOKEN_KEY);localStorage.removeItem("zippzo_user");go("index.html")}
+function st(t){return String(t.status||"PENDING").toUpperCase()}function picked(t){return Number(t.picked_quantity??t.quantity??t.qty??0)}function sorted(t){return Number(t.sorted_quantity??t.confirmed_quantity??t.sorted_qty??0)}function destination(t){return t.destination_name||t.store_name||t.destination_store||t.location_name||t.destination||"—"}function sorter(t){return t.sorter_name||t.employee_name||employees.find(e=>Number(e.id)===Number(t.employee_id??t.sorter_id))?.name||"Unassigned"}function rank(x){return ({URGENT:0,HIGH:1,NORMAL:2})[String(x||"NORMAL").toUpperCase()]??3}
+async function loadAll(){try{const u=await(await api("/api/auth/me")).json();$("userName").textContent=u.full_name||u.name||u.employee_name||u.identifier||"Zippzo User";tasks=arr(await getAny(["/api/sorting","/api/sorting/tasks","/api/sorting-tasks"]));try{employees=arr(await getAny(["/api/employees"]))}catch{}try{locations=arr(await getAny(["/api/locations"]))}catch{}renderFilters();render();renderSlots()}catch(e){$("notice").textContent=e.message;$("notice").classList.add("error")}}
+function renderFilters(){const dest=[...new Set(tasks.map(destination).filter(x=>x&&x!=="—"))];$("destination").innerHTML='<option value="">All Destinations</option>'+dest.map(x=>`<option>${esc(x)}</option>`).join("");$("destinationEdit").innerHTML='<option value="">Destination / Store</option>'+dest.map(x=>`<option>${esc(x)}</option>`).join("");const emp=employees.map(e=>`<option value="${e.id}">${esc(e.name||e.full_name||e.employee_name||"Employee "+e.id)}</option>`).join("");$("sorter").innerHTML='<option value="">All Sorters</option>'+emp;$("sorterEdit").innerHTML='<option value="">Assign Sorter</option>'+emp}
+function filtered(){const q=$("search").value.toLowerCase(),s=$("status").value,d=$("destination").value,p=$("priority").value;let a=tasks.filter(t=>(!q||[t.batch_number,t.batch_no,t.order_number,t.sku,t.product_name,t.store_name,t.destination_name,t.tote_number,t.slot_code,t.sorting_slot].join(" ").toLowerCase().includes(q))&&(!s||st(t)===s)&&(!d||destination(t)===d)&&(!p||String(t.priority||"NORMAL").toUpperCase()===p)&&(!$("sorter").value||String(t.employee_id??t.sorter_id??"")===String($("sorter").value)));const so=$("sort").value;if(so==="oldest")a.sort((x,y)=>String(x.created_at||"").localeCompare(String(y.created_at||"")));if(so==="newest")a.sort((x,y)=>String(y.created_at||"").localeCompare(String(x.created_at||"")));if(so==="destination")a.sort((x,y)=>destination(x).localeCompare(destination(y)));if(so==="priority")a.sort((x,y)=>rank(x.priority)-rank(y.priority));return a}
+function render(){const a=tasks,d=filtered(),count=x=>a.filter(t=>st(t)===x).length;$("kTasks").textContent=a.length;$("kPending").textContent=count("PENDING");$("kSorting").textContent=count("IN_SORTING");$("kSorted").textContent=count("SORTED");$("kReady").textContent=count("READY");$("kUnits").textContent=a.reduce((s,t)=>s+picked(t),0);$("kSortedUnits").textContent=a.reduce((s,t)=>s+sorted(t),0);$("kExceptions").textContent=a.filter(t=>["HOLD","EXCEPTION","SHORT"].includes(st(t))).length;$("body").innerHTML=d.map(t=>{const id=t.id,s=st(t),c=s==="READY"?"ready":s==="SORTED"?"sorted":s==="IN_SORTING"?"sorting":s==="HOLD"?"hold":"pending";return `<tr><td><input class="check" type="checkbox" ${selected.has(Number(id))?"checked":""} onchange="toggle(${id},this.checked)"></td><td><b>${esc(t.batch_number||t.batch_no||t.batch_id||"—")}</b></td><td>${esc(t.order_number||t.order_id||"—")}</td><td>${esc(destination(t))}</td><td><b>${esc(t.sku||"")}</b><br>${esc(t.product_name||t.product||"")}</td><td>${picked(t)}</td><td>${sorted(t)}</td><td>${esc(t.tote_number||t.slot_code||t.sorting_slot||"—")}</td><td>${esc(sorter(t))}</td><td><span class="badge ${c}">${esc(s)}</span></td><td><button class="btn light" onclick="openTask(${id})">Open</button></td></tr>`}).join("")||'<tr><td colspan="11" class="empty">No sorting tasks found.</td></tr>';renderSummary();renderProgress()}
+function toggle(id,on){on?selected.add(Number(id)):selected.delete(Number(id));renderSummary();renderProgress()}function selectAll(){filtered().forEach(t=>selected.add(Number(t.id)));render()}function clearSelected(){selected.clear();render()}
+function selectedTasks(){return [...selected].map(id=>tasks.find(t=>Number(t.id)===id)).filter(Boolean)}
+function renderSummary(){const a=selectedTasks();$("sTasks").textContent=a.length;$("sUnits").textContent=a.reduce((s,t)=>s+picked(t),0);$("sOrders").textContent=new Set(a.map(t=>t.order_id||t.order_number).filter(Boolean)).size}
+function renderProgress(){const a=selectedTasks(),p=a.length?a.reduce((s,t)=>s+(picked(t)?Math.min(100,sorted(t)/picked(t)*100):0),0)/a.length:0;$("workProgress").style.width=p+"%";$("progressText").textContent=a.length?`Selected sorting progress: ${p.toFixed(0)}%`:"Select a task to begin."}
+function renderSlots(){const map={};tasks.forEach(t=>{const slot=t.tote_number||t.slot_code||t.sorting_slot;if(slot){if(!map[slot])map[slot]={slot,units:0,destination:destination(t),status:st(t)};map[slot].units+=sorted(t)}});const a=Object.values(map);$("slotCount").textContent=a.length;$("slotGrid").innerHTML=a.map(x=>`<div class="slot ${x.status==="READY"?"ready":x.status==="HOLD"?"hold":"occupied"}"><b>${esc(x.slot)}</b><small>${esc(x.destination)}</small><div style="margin-top:7px">${x.units} units</div><span class="badge ${x.status==="READY"?"ready":"sorted"}" style="margin-top:7px">${esc(x.status)}</span></div>`).join("")||'<div class="empty" style="grid-column:1/-1">No sorting slots assigned yet.</div>'}
+async function action(id,kind,payload={}){const map={start:[`/api/sorting/${id}/start`,`/api/sorting/tasks/${id}/start`],assign:[`/api/sorting/${id}/assign`,`/api/sorting/tasks/${id}/assign`],scan:[`/api/sorting/${id}/scan`,`/api/sorting/tasks/${id}/scan`,`/api/sorting/${id}/confirm`],complete:[`/api/sorting/${id}/complete`,`/api/sorting/tasks/${id}/complete`],hold:[`/api/sorting/${id}/hold`,`/api/sorting/tasks/${id}/hold`]};let last="";for(const p of map[kind]){try{await api(p,{method:"PUT",body:JSON.stringify(payload)});return}catch(e){last=e.message;if(!String(e.message).startsWith("API 404"))throw e}}throw Error(last)}
+async function startSelected(){const a=selectedTasks();if(!a.length)return alert("Select sorting tasks first.");for(const t of a)try{await action(t.id,"start")}catch(e){console.warn(e.message)}await loadAll()}
+async function assignSelected(){const a=selectedTasks();if(!a.length)return alert("Select sorting tasks first.");const slot=$("slot").value.trim(),dest=$("destinationEdit").value,emp=Number($("sorterEdit").value)||null;if(!slot){alert("Enter a sorting slot/tote/grid ID.");return}for(const t of a)try{await action(t.id,"assign",{slot_code:slot,sorting_slot:slot,tote_number:slot,destination:dest||destination(t),employee_id:emp,sorter_id:emp,priority:$("priorityEdit").value,remarks:$("remarks").value})}catch(e){console.warn(e.message)}await loadAll()}
+async function scanSelected(){const a=selectedTasks(),sku=$("scanSku").value.trim(),order=$("scanOrder").value.trim(),qty=Number($("scanQty").value);if(!a.length)return alert("Select a sorting task.");if(!sku||!qty)return alert("Enter SKU and quantity.");for(const t of a.slice(0,1))try{await action(t.id,"scan",{sku,scanned_sku:sku,order_number:order,picked_quantity:qty,sorted_quantity:qty,confirmed_quantity:qty})}catch(e){return alert(e.message)}await loadAll()}
+async function completeSelected(){const a=selectedTasks();if(!a.length)return alert("Select sorting tasks first.");for(const t of a)try{await action(t.id,"complete",{remarks:$("remarks").value})}catch(e){console.warn(e.message)}await loadAll()}
+async function holdSelected(){const a=selectedTasks();if(!a.length)return alert("Select sorting tasks first.");const reason=prompt("Reason for sorting hold:");if(!reason)return;for(const t of a)try{await action(t.id,"hold",{reason})}catch(e){console.warn(e.message)}await loadAll()}
+function openTask(id){const t=tasks.find(x=>Number(x.id)===Number(id));if(!t)return;$("modalTitle").textContent=`Sorting Task #${id}`;$("modalBody").innerHTML=`<div class="detail"><span>Batch</span><b>${esc(t.batch_number||t.batch_no||t.batch_id||"—")}</b></div><div class="detail"><span>Order</span><b>${esc(t.order_number||t.order_id||"—")}</b></div><div class="detail"><span>Destination</span><b>${esc(destination(t))}</b></div><div class="detail"><span>SKU</span><b>${esc(t.sku||"—")}</b></div><div class="detail"><span>Product</span><b>${esc(t.product_name||t.product||"—")}</b></div><div class="detail"><span>Picked</span><b>${picked(t)}</b></div><div class="detail"><span>Sorted</span><b>${sorted(t)}</b></div><div class="detail"><span>Slot/Tote</span><b>${esc(t.tote_number||t.slot_code||t.sorting_slot||"Not assigned")}</b></div><div class="detail"><span>Sorter</span><b>${esc(sorter(t))}</b></div><div class="detail"><span>Status</span><b>${esc(st(t))}</b></div><div class="progressbar" style="margin-top:12px"><div style="width:${picked(t)?Math.min(100,sorted(t)/picked(t)*100):0}%"></div></div><div style="display:flex;gap:7px;flex-wrap:wrap;margin-top:14px"><button class="btn orangebtn" onclick="one(${id},'start')">Start</button><button class="btn purplebtn" onclick="one(${id},'assign')">Assign Slot</button><button class="btn greenbtn" onclick="one(${id},'complete')">Complete</button><button class="btn danger" onclick="one(${id},'hold')">Hold</button></div>`;$("modal").classList.add("open")}
+async function one(id,kind){try{if(kind==="assign"){const slot=prompt("Enter sorting slot / tote / grid ID:");if(!slot)return;await action(id,"assign",{slot_code:slot,sorting_slot:slot,tote_number:slot})}else if(kind==="hold"){const reason=prompt("Reason:");if(!reason)return;await action(id,"hold",{reason})}else await action(id,kind);closeModal();await loadAll()}catch(e){alert(e.message)}}
+function closeModal(){$("modal").classList.remove("open")}
+$("search").addEventListener("input",render);["status","destination","sorter","priority","sort"].forEach(x=>$(x).addEventListener("change",render));loadAll();setInterval(loadAll,10000);
+</script>
+
+<script id="zippzo-master-frontend">
+document.addEventListener("DOMContentLoaded", function(){
+  // Hide the retired Dropping module everywhere.
+  document.querySelectorAll("a,button").forEach(function(el){
+    const t=(el.textContent||"").trim().toLowerCase();
+    if(t==="dropping" || t.includes("dropping")) el.style.display="none";
+  });
+
+  // Use the real Zippzo logo wherever a common brand element exists.
+  document.querySelectorAll(".brand,.logo,.brand-logo").forEach(function(el){
+    if(!el.querySelector("img")){
+      const img=document.createElement("img");
+      img.src="zippzo-logo.jpg";
+      img.alt="Zippzo";
+      img.style.cssText="width:148px;max-height:55px;object-fit:contain;object-position:left center;";
+      el.prepend(img);
+    }
+  });
+});
+</script>
+
+</body>
+</html>

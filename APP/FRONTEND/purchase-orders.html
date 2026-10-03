@@ -1,0 +1,170 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1.0">
+<title>Zippzo WMS - Purchase Orders</title>
+<!-- ZIPPZO STANDARDIZED TEST VERSION: existing business logic preserved -->
+<style>
+:root{
+ --z-purple:#331084;--z-yellow:#FEB103;--z-dark:#24085F;
+ --z-bg:#f6f4fb;--z-card:#fff;--z-border:#e8e2f2;--z-text:#211936;
+ --z-muted:#766f88;--z-shadow:0 6px 22px rgba(51,16,132,.08)
+}
+*{box-sizing:border-box}
+body{margin:0;font-family:Inter,Arial,Helvetica,sans-serif;background:var(--z-bg);color:var(--z-text)}
+.app{display:flex;min-height:100vh}
+.sidebar{width:255px;background:linear-gradient(180deg,var(--z-dark),var(--z-purple));color:#fff;position:fixed;inset:0 auto 0 0;padding:18px 12px;overflow:auto;z-index:30}
+.brand{display:flex;align-items:center;gap:10px;padding:4px 10px 18px;border-bottom:1px solid rgba(255,255,255,.14);margin-bottom:10px}
+.brand img{width:42px;height:42px;border-radius:10px;object-fit:contain;background:#fff;padding:4px}
+.logo{font-size:22px;font-weight:900;letter-spacing:.5px;padding:0}.logo-sub{color:#d8d0ee;font-size:11px;margin-top:2px}
+.menu-title{color:#c7bce0;font-size:10px;font-weight:800;padding:13px 12px 6px;text-transform:uppercase;letter-spacing:.7px}
+.nav{display:flex;align-items:center;color:#eee9f8;text-decoration:none;padding:9px 12px;border-radius:9px;margin:2px 0;font-size:12px;font-weight:600}
+.nav:hover{background:rgba(255,255,255,.10);color:#fff}.nav.active{background:var(--z-yellow);color:var(--z-dark);font-weight:800;box-shadow:0 3px 10px rgba(0,0,0,.12)}
+.main{margin-left:255px;width:calc(100% - 255px)}
+.topbar{height:70px;background:#fff;border-bottom:1px solid var(--z-border);display:flex;align-items:center;justify-content:space-between;padding:0 26px;position:sticky;top:0;z-index:20;box-shadow:0 2px 10px rgba(51,16,132,.04)}
+.page-title{font-size:20px;font-weight:900;color:var(--z-dark)}.page-subtitle{font-size:11px;color:var(--z-muted);margin-top:2px}
+.system{display:flex;gap:8px;align-items:center;font-size:12px;color:#5f5870}.dot{width:9px;height:9px;background:#22c55e;border-radius:50%}.user{font-weight:800;color:var(--z-dark)}
+.content{padding:24px}.kpis{display:grid;grid-template-columns:repeat(6,1fr);gap:14px;margin-bottom:20px}
+.card,.panel{background:var(--z-card);border:1px solid var(--z-border);border-radius:14px;box-shadow:var(--z-shadow)}
+.card{padding:17px}.label{font-size:11px;color:var(--z-muted);font-weight:700}.value{font-size:24px;font-weight:900;margin-top:7px;color:var(--z-dark)}.small{font-size:10px;color:#9b93aa;margin-top:5px}
+.panel{overflow:hidden;margin-bottom:20px}.toolbar{padding:15px;display:flex;gap:9px;align-items:center;flex-wrap:wrap;border-bottom:1px solid var(--z-border);background:#fff}.search{flex:1;min-width:220px}
+input,select{height:40px;border:1px solid #dcd5e8;border-radius:8px;padding:0 11px;background:#fff;outline:none;color:var(--z-text)}
+input:focus,select:focus{border-color:var(--z-purple);box-shadow:0 0 0 3px rgba(51,16,132,.08)}
+.btn{border:0;border-radius:8px;padding:10px 14px;font-weight:800;cursor:pointer}.primary{background:var(--z-purple);color:#fff}.primary:hover{background:var(--z-dark)}
+.light{background:#f0ecf8;color:var(--z-dark)}.light:hover{background:#e5def2}.danger{background:#fee2e2;color:#b91c1c}
+.table-wrap{overflow:auto}table{width:100%;border-collapse:collapse;min-width:1180px}
+th{background:#f4f0fa;color:var(--z-dark);font-size:10px;text-align:left;padding:13px 14px;border-bottom:1px solid var(--z-border);white-space:nowrap;font-weight:900}
+td{padding:13px 14px;border-bottom:1px solid #eeeaf4;font-size:12px;white-space:nowrap}tr:hover td{background:#fbfaff}
+.po{font-weight:900;color:var(--z-purple)}.status{display:inline-block;padding:5px 9px;border-radius:20px;font-size:10px;font-weight:900}
+.pending{background:#fff3d6;color:#9a6500}.approved{background:#eee8ff;color:var(--z-purple)}.open{background:#e7f8ef;color:#047857}.received{background:#eeeef2;color:#514b5d}.cancelled{background:#fee2e2;color:#b91c1c}
+.actions{display:flex;gap:5px}.action{padding:7px 9px;border:1px solid #ddd5e9;border-radius:7px;background:#f5f2fa;color:var(--z-dark);cursor:pointer;font-size:11px;font-weight:800}.action:hover{background:var(--z-yellow)}
+.section-title{font-size:15px;font-weight:900;padding:16px 18px 0;color:var(--z-dark)}.empty{text-align:center;padding:38px;color:#978fa6}
+.modal-bg{display:none;position:fixed;inset:0;background:rgba(36,8,95,.62);z-index:100;align-items:center;justify-content:center;padding:18px}.modal-bg.show{display:flex}
+.modal{background:#fff;width:100%;max-width:1100px;max-height:94vh;overflow:auto;border-radius:16px;box-shadow:0 20px 60px rgba(36,8,95,.25)}
+.modal-head{padding:18px 22px;border-bottom:1px solid var(--z-border);display:flex;justify-content:space-between;align-items:center}.modal-title{font-size:19px;font-weight:900;color:var(--z-dark)}
+.close{border:0;background:#f0ecf8;color:var(--z-dark);border-radius:8px;width:36px;height:36px;font-size:20px;cursor:pointer}.modal-body{padding:22px}
+.grid{display:grid;grid-template-columns:repeat(4,1fr);gap:13px}.group{display:flex;flex-direction:column;gap:6px}.group label{font-size:11px;font-weight:800;color:#5d566c}.full{grid-column:1/-1}
+.items-head{display:flex;justify-content:space-between;align-items:center;margin:25px 0 10px;font-weight:900;color:var(--z-dark)}.item-wrap{overflow:auto;border:1px solid var(--z-border);border-radius:9px}.item-table{min-width:850px}
+.total{margin:18px 0 0 auto;width:320px}.total div{display:flex;justify-content:space-between;padding:6px 0;font-size:13px;color:#625b70}.total .grand{border-top:1px solid #dcd5e8;margin-top:5px;padding-top:11px;font-size:18px;font-weight:900;color:var(--z-dark)}
+.footer{padding:17px 22px;border-top:1px solid var(--z-border);display:flex;justify-content:flex-end;gap:9px}
+.detail-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:12px}.detail{background:#f6f2fb;border-radius:9px;padding:12px}.detail b{display:block;font-size:11px;color:#766f88;margin-bottom:5px}.detail span{font-weight:800;font-size:13px;color:var(--z-dark)}
+.notice{padding:11px 14px;background:#f0ebfa;color:var(--z-purple);border-left:4px solid var(--z-yellow);border-radius:8px;font-size:12px;margin-bottom:14px}
+@media(max-width:1100px){.kpis{grid-template-columns:repeat(3,1fr)}.grid{grid-template-columns:repeat(2,1fr)}}
+@media(max-width:700px){.sidebar{width:70px;padding:12px 7px}.brand{justify-content:center}.brand img{width:38px;height:38px}.brand-text,.logo-sub,.menu-title{display:none}.nav{font-size:0;justify-content:center}.nav::first-letter{font-size:18px}.main{margin-left:70px;width:calc(100% - 70px)}.content{padding:13px}.kpis{grid-template-columns:1fr}.grid,.detail-grid{grid-template-columns:1fr}.topbar{padding:0 14px}.system{display:none}}
+</style>
+
+<link rel="stylesheet" href="zippzo-standard.css">
+<script src="zippzo-standard.js" defer></script>
+</head>
+<body>
+<div class="app">
+<aside class="sidebar">
+<div class="brand">
+  <img src="zippzo-logo.jpg" alt="Zippzo Logo" onerror="this.style.display='none'">
+  <div class="brand-text"><div class="logo">ZIPPZO</div><div class="logo-sub">Warehouse Management System</div></div>
+</div>
+<div class="menu-title">Main</div>
+<a class="nav" href="/">Dashboard</a>
+<div class="menu-title">Master Data</div>
+<a class="nav" href="/products.html">Products</a><a class="nav" href="/suppliers.html">Suppliers</a><a class="nav" href="/locations.html">Locations</a>
+<div class="menu-title">Warehouse</div>
+<a class="nav" href="/inventory.html">Inventory</a><a class="nav" href="/bins.html">Bins</a><a class="nav" href="/stock-movements.html">Stock Movements</a>
+<div class="menu-title">Inbound</div>
+<a class="nav active" href="/purchase-orders.html">Purchase Orders</a><a class="nav" href="/grn.html">GRN</a><a class="nav" href="/putaway.html">Putaway</a><a class="nav" href="/grid-putaway.html">Grid Putaway</a>
+<div class="menu-title">Orders</div>
+<a class="nav" href="/orders.html">Orders</a><a class="nav" href="/create-batch.html">Create Batch</a><a class="nav" href="/picking.html">Picking</a><a class="nav" href="/sorting.html">Sorting</a>
+<div class="menu-title">Delivery</div>
+<a class="nav" href="/vehicle-arrival.html">Vehicle Arrival</a><a class="nav" href="/dispatch.html">Dispatch</a><a class="nav" href="/store-receiving.html">Store Receiving</a>
+<div class="menu-title">Reports</div>
+<a class="nav" href="/stock-report.html">Stock Report</a><a class="nav" href="/grn-report.html">GRN Report</a><a class="nav" href="/putaway-report.html">Putaway Report</a><a class="nav" href="/order-report.html">Order Report</a><a class="nav" href="/picking-report.html">Picking Report</a><a class="nav" href="/sorting-report.html">Sorting Report</a>
+<a class="nav" href="/grid-putaway-report.html">Grid Putaway</a><a class="nav" href="/vehicle-arrival-report.html">Vehicle Arrival</a><a class="nav" href="/dispatch-report.html">Dispatch</a><a class="nav" href="/store-receiving-report.html">Store Receiving</a>
+<div class="menu-title">Admin</div>
+<a class="nav" href="/access-control.html">Access Control</a><a class="nav" href="/audit-logs.html">Audit Logs</a><a class="nav" href="/system-settings.html">System Settings</a>
+</aside>
+<main class="main">
+<header class="topbar"><div><div class="page-title">Purchase Orders</div><div class="page-subtitle">Zippzo Procurement &amp; Supplier Order Management</div></div><div class="system"><span class="dot"></span><span>System Online</span><span id="currentUser" class="user"></span></div></header>
+<section class="content">
+<div class="kpis">
+<div class="card"><div class="label">TOTAL PO</div><div class="value" id="totalPO">0</div><div class="small">All purchase orders</div></div>
+<div class="card"><div class="label">PENDING</div><div class="value" id="pendingPO">0</div><div class="small">Awaiting approval</div></div>
+<div class="card"><div class="label">APPROVED</div><div class="value" id="approvedPO">0</div><div class="small">Approved POs</div></div>
+<div class="card"><div class="label">OPEN</div><div class="value" id="openPO">0</div><div class="small">In progress</div></div>
+<div class="card"><div class="label">RECEIVED</div><div class="value" id="receivedPO">0</div><div class="small">Received POs</div></div>
+<div class="card"><div class="label">TOTAL VALUE</div><div class="value" id="purchaseValue">₹0</div><div class="small">PO grand value</div></div>
+</div>
+<div class="panel">
+<div class="toolbar">
+<div class="search"><input id="searchInput" placeholder="Search PO, supplier, location, SKU..." oninput="renderTable()"></div>
+<select id="statusFilter" onchange="renderTable()"><option value="">All Status</option><option>PENDING</option><option>APPROVED</option><option>OPEN</option><option>RECEIVED</option><option>CANCELLED</option></select>
+<select id="supplierFilter" onchange="renderTable()"><option value="">All Suppliers</option></select>
+<select id="locationFilter" onchange="renderTable()"><option value="">All Locations</option></select>
+<button class="btn light" onclick="loadAll()">↻ Refresh</button><button class="btn light" onclick="exportCSV()">Export CSV</button><button class="btn primary" onclick="openModal()">+ Create Purchase Order</button>
+</div>
+<div class="section-title">Purchase Order Register</div>
+<div class="table-wrap"><table><thead><tr><th>PO NUMBER</th><th>SUPPLIER</th><th>LOCATION</th><th>PO DATE</th><th>EXPECTED</th><th>TERMS</th><th>ITEMS</th><th>VALUE</th><th>STATUS</th><th>ACTIONS</th></tr></thead><tbody id="poTable"></tbody></table></div>
+</div>
+</section>
+</main>
+</div>
+
+<div class="modal-bg" id="modal">
+<div class="modal">
+<div class="modal-head"><div class="modal-title" id="modalTitle">Create Purchase Order</div><button class="close" onclick="closeModal()">×</button></div>
+<div class="modal-body">
+<div class="notice">Purchase Orders use live supplier, location and product records from your existing Zippzo database. No sample records are inserted.</div>
+<div class="grid">
+<div class="group"><label>PO NUMBER</label><input id="poNumber" readonly value="Auto-generated"></div>
+<div class="group"><label>SUPPLIER</label><select id="poSupplier"><option value="">Select Supplier</option></select></div>
+<div class="group"><label>WAREHOUSE / STORE</label><select id="poWarehouse"><option value="">Select Location</option></select></div>
+<div class="group"><label>PO DATE</label><input type="date" id="poDate"></div>
+<div class="group"><label>EXPECTED DELIVERY</label><input type="date" id="expectedDate"></div>
+<div class="group"><label>PAYMENT TERMS</label><select id="paymentTerms"><option>Cash</option><option>7 Days Credit</option><option>15 Days Credit</option><option>30 Days Credit</option><option>45 Days Credit</option><option>60 Days Credit</option></select></div>
+<div class="group"><label>STATUS</label><select id="poStatus"><option>PENDING</option><option>APPROVED</option><option>OPEN</option></select></div>
+<div class="group"><label>REFERENCE / NOTES</label><input id="poNotes" placeholder="Optional"></div>
+</div>
+<div class="items-head"><span>Purchase Order Items</span><button class="btn light" onclick="addItem()">+ Add Item</button></div>
+<div class="item-wrap"><table class="item-table"><thead><tr><th>PRODUCT</th><th>SKU</th><th>QTY</th><th>PURCHASE PRICE</th><th>GST %</th><th>DISCOUNT %</th><th>TOTAL</th><th></th></tr></thead><tbody id="itemRows"></tbody></table></div>
+<div class="total"><div><span>Subtotal</span><strong id="subtotal">₹0.00</strong></div><div><span>GST</span><strong id="gstTotal">₹0.00</strong></div><div><span>Discount</span><strong id="discountTotal">₹0.00</strong></div><div class="grand"><span>Grand Total</span><strong id="grandTotal">₹0.00</strong></div></div>
+</div>
+<div class="footer"><button class="btn light" onclick="closeModal()">Cancel</button><button class="btn primary" onclick="savePO()">Save Purchase Order</button></div>
+</div>
+</div>
+
+<div class="modal-bg" id="detailModal"><div class="modal"><div class="modal-head"><div class="modal-title">Purchase Order Details</div><button class="close" onclick="closeDetail()">×</button></div><div class="modal-body" id="detailBody"></div><div class="footer"><button class="btn light" onclick="closeDetail()">Close</button></div></div></div>
+
+<script>
+const API=window.location.origin,TOKEN_KEY="zippzo_session_token",USER_KEY="zippzo_user";
+let purchaseOrders=[],suppliers=[],locations=[],products=[],editingId=null;
+const token=()=>localStorage.getItem(TOKEN_KEY);
+async function api(path,options={}){const headers={...(options.headers||{})};if(options.body)headers["Content-Type"]="application/json";if(token())headers.Authorization=`Bearer ${token()}`;const r=await fetch(API+path,{...options,headers});if(r.status===401){alert("Session expired. Please log in again.");localStorage.removeItem(TOKEN_KEY);localStorage.removeItem(USER_KEY);location.href="/";throw new Error("Unauthorized")}const text=await r.text();let data={};try{data=text?JSON.parse(text):{}}catch{data={detail:text}}if(!r.ok)throw new Error(data.detail||`Request failed: ${r.status}`);return data}
+function money(v){return "₹"+Number(v||0).toLocaleString("en-IN",{minimumFractionDigits:2,maximumFractionDigits:2})}
+function date(v){if(!v)return "-";return new Date(v+"T00:00:00").toLocaleDateString("en-IN")}
+function esc(v){return String(v??"").replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]))}
+function badge(s){const x=String(s||"").toUpperCase();const c=x==="PENDING"?"pending":x==="APPROVED"?"approved":x==="OPEN"?"open":x==="RECEIVED"?"received":"cancelled";return `<span class="status ${c}">${esc(x||"UNKNOWN")}</span>`}
+async function loadSuppliers(){try{suppliers=await api("/api/suppliers")}catch(e){console.error(e);suppliers=[]}populateSuppliers()}
+async function loadLocations(){try{locations=await api("/api/locations")}catch(e){console.error(e);locations=[]}populateLocations()}
+async function loadProducts(){try{products=await api("/api/products")}catch(e){console.error(e);products=[]}}
+async function loadPOs(){purchaseOrders=await api("/api/purchase-orders");renderFilters();renderTable()}
+function populateSuppliers(){const s=document.getElementById("poSupplier");s.innerHTML='<option value="">Select Supplier</option>';suppliers.forEach(x=>{const o=document.createElement("option");o.value=x.id;o.textContent=x.company_name||x.name||`Supplier ${x.id}`;s.appendChild(o)})}
+function populateLocations(){const s=document.getElementById("poWarehouse");s.innerHTML='<option value="">Select Location</option>';locations.forEach(x=>{const o=document.createElement("option");o.value=x.id;o.textContent=x.name||x.location_name||x.code||`Location ${x.id}`;s.appendChild(o)})}
+function renderFilters(){const sf=document.getElementById("supplierFilter"),lf=document.getElementById("locationFilter");sf.innerHTML='<option value="">All Suppliers</option>';lf.innerHTML='<option value="">All Locations</option>';[...new Set(purchaseOrders.map(x=>x.supplier_name).filter(Boolean))].forEach(v=>sf.innerHTML+=`<option>${esc(v)}</option>`);[...new Set(purchaseOrders.map(x=>x.location_name).filter(Boolean))].forEach(v=>lf.innerHTML+=`<option>${esc(v)}</option>`)}
+function normalize(po){return {id:po.id,number:po.po_number||`PO-${po.id}`,supplier:po.supplier_name||"Not Selected",supplierId:po.supplier_id,location:po.location_name||"Not Selected",locationId:po.location_id,date:po.order_date,expected:po.expected_date,terms:po.payment_terms||"-",status:po.status||"PENDING",value:Number(po.total_amount||0),subtotal:Number(po.subtotal||0),gst:Number(po.gst_amount||0),discount:Number(po.discount_amount||0),notes:po.notes||"",items:po.items||po.purchase_order_items||[]}}
+function renderTable(){const q=document.getElementById("searchInput").value.toLowerCase().trim(),st=document.getElementById("statusFilter").value,sup=document.getElementById("supplierFilter").value,loc=document.getElementById("locationFilter").value;const rows=purchaseOrders.map(normalize).filter(po=>{const hay=[po.number,po.supplier,po.location,po.terms,po.status,...po.items.map(i=>i.sku||i.product_name||"")].join(" ").toLowerCase();return(!q||hay.includes(q))&&(!st||po.status===st)&&(!sup||po.supplier===sup)&&(!loc||po.location===loc)});document.getElementById("poTable").innerHTML=rows.length?rows.map(po=>`<tr><td><span class="po">${esc(po.number)}</span></td><td>${esc(po.supplier)}</td><td>${esc(po.location)}</td><td>${date(po.date)}</td><td>${date(po.expected)}</td><td>${esc(po.terms)}</td><td>${po.items.length||"-"}</td><td><b>${money(po.value)}</b></td><td>${badge(po.status)}</td><td><div class="actions"><button class="action" onclick="viewPO(${po.id})">View</button><button class="action" onclick="editPO(${po.id})">Edit</button></div></td></tr>`).join(""):`<tr><td colspan="10" class="empty">No Purchase Orders found in the database.</td></tr>`;updateSummary()}
+function updateSummary(){const n=purchaseOrders.map(normalize);document.getElementById("totalPO").textContent=n.length;document.getElementById("pendingPO").textContent=n.filter(x=>x.status==="PENDING").length;document.getElementById("approvedPO").textContent=n.filter(x=>x.status==="APPROVED").length;document.getElementById("openPO").textContent=n.filter(x=>x.status==="OPEN").length;document.getElementById("receivedPO").textContent=n.filter(x=>x.status==="RECEIVED").length;document.getElementById("purchaseValue").textContent=money(n.reduce((a,x)=>a+x.value,0))}
+function productOptions(){return '<option value="">Select Product</option>'+products.map(p=>`<option value="${p.id}">${esc(p.name||p.product_name||p.sku)}</option>`).join("")}
+function addItem(){const tr=document.createElement("tr");tr.innerHTML=`<td><select class="product" onchange="productChanged(this)">${productOptions()}</select></td><td><input class="sku" placeholder="SKU"></td><td><input class="qty" type="number" min="1" value="1" oninput="calculateTotals()"></td><td><input class="price" type="number" min="0" value="0" oninput="calculateTotals()"></td><td><input class="gst" type="number" min="0" value="0" oninput="calculateTotals()"></td><td><input class="discount" type="number" min="0" value="0" oninput="calculateTotals()"></td><td><b class="line-total">₹0.00</b></td><td><button class="btn danger" onclick="this.closest('tr').remove();calculateTotals()">×</button></td>`;document.getElementById("itemRows").appendChild(tr)}
+function productChanged(s){const p=products.find(x=>Number(x.id)===Number(s.value)),r=s.closest("tr");if(!p)return;r.querySelector(".sku").value=p.sku||"";r.querySelector(".price").value=p.purchase_price||0;r.querySelector(".gst").value=p.gst_percent||0;calculateTotals()}
+function calculateTotals(){let sub=0,gst=0,disc=0;document.querySelectorAll("#itemRows tr").forEach(r=>{const q=+r.querySelector(".qty").value||0,p=+r.querySelector(".price").value||0,g=+r.querySelector(".gst").value||0,d=+r.querySelector(".discount").value||0,b=q*p,da=b*d/100,t=b-da,ga=t*g/100;sub+=b;disc+=da;gst+=ga;r.querySelector(".line-total").textContent=money(t+ga)});document.getElementById("subtotal").textContent=money(sub);document.getElementById("gstTotal").textContent=money(gst);document.getElementById("discountTotal").textContent=money(disc);document.getElementById("grandTotal").textContent=money(sub-disc+gst)}
+function openModal(){editingId=null;document.getElementById("modalTitle").textContent="Create Purchase Order";document.getElementById("poNumber").value="Auto-generated by database";document.getElementById("poDate").value=new Date().toISOString().slice(0,10);document.getElementById("expectedDate").value="";document.getElementById("poSupplier").value="";document.getElementById("poWarehouse").value="";document.getElementById("paymentTerms").value="30 Days Credit";document.getElementById("poStatus").value="PENDING";document.getElementById("poNotes").value="";document.getElementById("itemRows").innerHTML="";addItem();document.getElementById("modal").classList.add("show")}
+function closeModal(){document.getElementById("modal").classList.remove("show")}
+async function savePO(){const supplierId=+document.getElementById("poSupplier").value||null,locationId=+document.getElementById("poWarehouse").value||null;if(!supplierId)return alert("Please select a supplier.");if(!locationId)return alert("Please select a warehouse/store.");const items=[];let subtotal=0,gst=0,discount=0;document.querySelectorAll("#itemRows tr").forEach(r=>{const productId=+r.querySelector(".product").value||null,product=products.find(p=>Number(p.id)===productId),qty=+r.querySelector(".qty").value||0,price=+r.querySelector(".price").value||0,g=+r.querySelector(".gst").value||0,d=+r.querySelector(".discount").value||0;if(qty<=0)return;const base=qty*price,da=base*d/100,t=base-da,ga=t*g/100;subtotal+=base;discount+=da;gst+=ga;items.push({product_id:productId,sku:r.querySelector(".sku").value||product?.sku||"",product_name:product?.name||product?.product_name||"Custom Product",quantity:qty,purchase_price:price,gst_percent:g,gst_amount:ga,discount_percent:d,discount_amount:da,line_total:t+ga})});if(!items.length)return alert("Please add at least one item.");const payload={supplier_id:supplierId,location_id:locationId,order_date:document.getElementById("poDate").value,expected_date:document.getElementById("expectedDate").value||null,status:document.getElementById("poStatus").value,payment_terms:document.getElementById("paymentTerms").value,subtotal:+subtotal.toFixed(2),gst_amount:+gst.toFixed(2),discount_amount:+discount.toFixed(2),total_amount:+(subtotal-discount+gst).toFixed(2),notes:document.getElementById("poNotes").value||null,items};try{const result=await api("/api/purchase-orders",{method:"POST",body:JSON.stringify(payload)});closeModal();await loadPOs();alert(`Purchase Order ${result.po_number||""} created successfully.`)}catch(e){alert("Failed to save Purchase Order:\n\n"+e.message)}}
+async function viewPO(id){try{const po=normalize(await api("/api/purchase-orders/"+id));document.getElementById("detailBody").innerHTML=`<div class="detail-grid"><div class="detail"><b>PO NUMBER</b><span>${esc(po.number)}</span></div><div class="detail"><b>SUPPLIER</b><span>${esc(po.supplier)}</span></div><div class="detail"><b>LOCATION</b><span>${esc(po.location)}</span></div><div class="detail"><b>PO DATE</b><span>${date(po.date)}</span></div><div class="detail"><b>EXPECTED DATE</b><span>${date(po.expected)}</span></div><div class="detail"><b>STATUS</b><span>${badge(po.status)}</span></div><div class="detail"><b>PAYMENT TERMS</b><span>${esc(po.terms)}</span></div><div class="detail"><b>SUBTOTAL</b><span>${money(po.subtotal)}</span></div><div class="detail"><b>GRAND TOTAL</b><span>${money(po.value)}</span></div></div><h3>Items</h3><div class="item-wrap"><table><thead><tr><th>PRODUCT</th><th>SKU</th><th>QTY</th><th>PURCHASE PRICE</th><th>GST</th><th>DISCOUNT</th><th>TOTAL</th></tr></thead><tbody>${po.items.length?po.items.map(i=>`<tr><td>${esc(i.product_name||i.name||"-")}</td><td>${esc(i.sku||"-")}</td><td>${i.quantity??i.ordered_quantity??0}</td><td>${money(i.purchase_price)}</td><td>${i.gst_percent??0}%</td><td>${i.discount_percent??0}%</td><td>${money(i.line_total)}</td></tr>`).join(""):`<tr><td colspan="7" class="empty">No item details returned by API.</td></tr>`}</tbody></table></div><p><b>Notes:</b> ${esc(po.notes||"-")}</p>`;document.getElementById("detailModal").classList.add("show")}catch(e){alert(e.message)}}
+function closeDetail(){document.getElementById("detailModal").classList.remove("show")}
+async function editPO(id){try{const po=normalize(await api("/api/purchase-orders/"+id));alert("The current backend exposes Purchase Order creation and detail retrieval. Full editing will be connected after the backend update stage; existing records have not been changed.")}catch(e){alert(e.message)}}
+function exportCSV(){const rows=purchaseOrders.map(normalize);let csv="PO Number,Supplier,Location,PO Date,Expected Date,Payment Terms,Status,Item Count,Value\n";rows.forEach(p=>csv+=`"${[p.number,p.supplier,p.location,p.date,p.expected,p.terms,p.status,p.items.length,p.value].map(v=>String(v??"").replace(/"/g,'""')).join('","')}"\n`);const a=document.createElement("a");a.href=URL.createObjectURL(new Blob([csv],{type:"text/csv"}));a.download="Zippzo_Purchase_Orders.csv";a.click();URL.revokeObjectURL(a.href)}
+async function loadAll(){try{await Promise.all([loadSuppliers(),loadLocations(),loadProducts()]);await loadPOs();const me=await api("/api/auth/me");document.getElementById("currentUser").textContent=me.name||me.employee_id||me.email||""}catch(e){console.error(e);document.getElementById("poTable").innerHTML=`<tr><td colspan="10" class="empty">Unable to load Purchase Orders: ${esc(e.message)}</td></tr>`}}
+loadAll();setInterval(loadAll,10000);
+</script>
+</body>
+</html>

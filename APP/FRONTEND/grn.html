@@ -1,0 +1,123 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1.0">
+<title>Zippzo WMS - GRN</title>
+<style>
+*{box-sizing:border-box}body{margin:0;font-family:Arial,Helvetica,sans-serif;background:#f4f7fb;color:#172033}
+.app{display:flex;min-height:100vh}.sidebar{width:245px;background:#101827;color:#fff;position:fixed;inset:0 auto 0 0;padding:20px 12px;overflow:auto}.logo{font-size:27px;font-weight:800;padding:0 14px}.logo-sub{color:#9ca9bd;font-size:12px;padding:3px 14px 18px}.menu-title{color:#6f7d93;font-size:11px;font-weight:700;padding:14px;text-transform:uppercase}.nav{display:block;color:#cbd5e1;text-decoration:none;padding:10px 14px;border-radius:9px;margin:2px 0;font-size:13px}.nav:hover{background:#1b2638;color:#fff}.nav.active{background:#2563eb;color:#fff;font-weight:700}
+.main{margin-left:245px;width:calc(100% - 245px)}.topbar{height:70px;background:#fff;border-bottom:1px solid #e5eaf0;display:flex;align-items:center;justify-content:space-between;padding:0 28px;position:sticky;top:0;z-index:10}.title{font-size:21px;font-weight:800}.right{display:flex;align-items:center;gap:14px;font-size:12px;color:#64748b}.dot{width:9px;height:9px;background:#22c55e;border-radius:50%}.user{font-weight:700;color:#334155}
+.content{padding:24px}.kpis{display:grid;grid-template-columns:repeat(6,1fr);gap:13px;margin-bottom:20px}.card,.panel{background:#fff;border:1px solid #e5eaf0;border-radius:14px;box-shadow:0 2px 8px rgba(15,23,42,.04)}.card{padding:16px}.label{font-size:11px;color:#64748b}.value{font-size:24px;font-weight:800;margin-top:7px}.small{font-size:11px;color:#94a3b8;margin-top:4px}
+.panel{padding:20px;margin-bottom:20px}.panel h2{margin:0 0 18px;font-size:16px}.grid{display:grid;grid-template-columns:repeat(4,1fr);gap:13px}.group{display:flex;flex-direction:column;gap:6px}.group label{font-size:11px;font-weight:700;color:#475569}.full{grid-column:1/-1}input,select,textarea{width:100%;border:1px solid #d7dee8;border-radius:8px;padding:10px;background:#fff;outline:none;font-size:13px}input:focus,select:focus,textarea:focus{border-color:#2563eb}textarea{resize:vertical}
+.notice{padding:11px 13px;border-radius:8px;background:#eff6ff;color:#1d4ed8;font-size:12px;margin-bottom:16px}.message{display:none;padding:11px 13px;border-radius:8px;margin-bottom:15px;font-size:12px}.success{background:#dcfce7;color:#166534}.error{background:#fee2e2;color:#991b1b}
+.toolbar{display:flex;gap:9px;align-items:center;flex-wrap:wrap;margin-bottom:14px}.search{flex:1;min-width:220px}.btn{border:0;border-radius:8px;padding:10px 14px;font-weight:700;cursor:pointer}.primary{background:#2563eb;color:#fff}.secondary{background:#eef2f7;color:#334155}.danger{background:#fee2e2;color:#b91c1c}.success-btn{background:#16a34a;color:#fff}
+.table-wrap{overflow:auto}table{width:100%;border-collapse:collapse;min-width:1200px}th{background:#101827;color:#fff;text-align:left;font-size:11px;padding:12px;white-space:nowrap}td{border-bottom:1px solid #edf0f4;padding:10px;font-size:12px;white-space:nowrap}tr:hover td{background:#fafcff}
+.badge{display:inline-block;padding:5px 9px;border-radius:20px;font-size:10px;font-weight:800}.draft{background:#f1f5f9;color:#475569}.received{background:#dcfce7;color:#166534}.pending{background:#fff7ed;color:#c2410c}.passed{background:#dcfce7;color:#166534}.failed{background:#fee2e2;color:#b91c1c}
+.summary{display:grid;grid-template-columns:repeat(6,1fr);gap:12px}.summary-card{background:#f8fafc;border-radius:10px;padding:13px}.summary-card b{display:block;font-size:20px;margin-top:5px}.summary-card span{font-size:11px;color:#64748b}
+.row-actions{display:flex;gap:5px}.mini{padding:7px 9px;border:0;border-radius:7px;background:#eef2f7;cursor:pointer;font-size:11px;font-weight:700}
+.modal-bg{display:none;position:fixed;inset:0;background:rgba(15,23,42,.62);z-index:100;align-items:center;justify-content:center;padding:18px}.modal-bg.show{display:flex}.modal{background:#fff;width:100%;max-width:1100px;max-height:94vh;overflow:auto;border-radius:16px}.modal-head{padding:18px 22px;border-bottom:1px solid #e5eaf0;display:flex;justify-content:space-between;align-items:center}.modal-title{font-size:19px;font-weight:800}.close{border:0;background:#f1f5f9;border-radius:8px;width:36px;height:36px;font-size:20px;cursor:pointer}.modal-body{padding:22px}.modal-foot{padding:17px 22px;border-top:1px solid #e5eaf0;display:flex;justify-content:flex-end;gap:9px}.detail-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:12px}.detail{background:#f8fafc;border-radius:9px;padding:12px}.detail b{display:block;color:#64748b;font-size:10px;margin-bottom:5px}.detail span{font-size:13px;font-weight:700}.filter{max-width:180px}
+@media(max-width:1150px){.kpis,.summary{grid-template-columns:repeat(3,1fr)}.grid{grid-template-columns:repeat(2,1fr)}}
+@media(max-width:700px){.sidebar{width:70px;padding:12px 7px}.logo{font-size:17px;padding-left:8px}.logo-sub,.menu-title{display:none}.nav{font-size:0;text-align:center}.nav::first-letter{font-size:18px}.main{margin-left:70px;width:calc(100% - 70px)}.content{padding:13px}.kpis,.summary,.grid,.detail-grid{grid-template-columns:1fr}.system-time{display:none}}
+</style>
+
+<link rel="stylesheet" href="zippzo-standard.css">
+<script src="zippzo-standard.js" defer></script>
+</head>
+<body>
+<div class="app">
+<aside class="sidebar">
+<div class="logo">ZIPPZO</div><div class="logo-sub">Warehouse Management System</div>
+<div class="menu-title">Main</div>
+<a class="nav" href="/">Dashboard</a><a class="nav" href="/products.html">Products</a><a class="nav" href="/suppliers.html">Suppliers</a><a class="nav" href="/locations.html">Locations</a><a class="nav" href="/bins.html">Bins</a><a class="nav" href="/inventory.html">Inventory</a><a class="nav" href="/stock-movements.html">Stock Movements</a>
+<div class="menu-title">Inbound</div>
+<a class="nav" href="/purchase-orders.html">Purchase Orders</a><a class="nav active" href="/grn.html">GRN</a><a class="nav" href="/putaway.html">Putaway</a><a class="nav" href="/grid-putaway.html">Grid Putaway</a>
+<div class="menu-title">Orders</div>
+<a class="nav" href="/orders.html">Orders</a><a class="nav" href="/create-batch.html">Create Batch</a><a class="nav" href="/picking.html">Picking</a><a class="nav" href="/sorting.html">Sorting</a><a class="nav" href="/dispatch.html">Dispatch</a>
+<div class="menu-title">Delivery</div><a class="nav" href="/riders.html">Riders</a>
+<div class="menu-title">Reports</div><a class="nav" href="/stock-report.html">Stock Report</a><a class="nav" href="/grn-report.html">GRN Report</a><a class="nav" href="/putaway-report.html">Putaway Report</a><a class="nav" href="/order-report.html">Order Report</a><a class="nav" href="/delivery-report.html">Delivery Report</a>
+</aside>
+<main class="main">
+<header class="topbar"><div class="title">Goods Receipt Note</div><div class="right"><span class="dot"></span><span>System Online</span><span class="system-time" id="clock"></span><span class="user" id="currentUser"></span></div></header>
+<section class="content">
+<div id="successMessage" class="message success"></div><div id="errorMessage" class="message error"></div>
+<div class="kpis">
+<div class="card"><div class="label">TOTAL GRNs</div><div class="value" id="totalGRN">0</div><div class="small">All receipt records</div></div>
+<div class="card"><div class="label">RECEIVED</div><div class="value" id="receivedGRN">0</div><div class="small">Completed receipts</div></div>
+<div class="card"><div class="label">DRAFT</div><div class="value" id="draftGRN">0</div><div class="small">Draft receipts</div></div>
+<div class="card"><div class="label">QC PASSED</div><div class="value" id="qcPassed">0</div><div class="small">GRN QC passed</div></div>
+<div class="card"><div class="label">ACCEPTED UNITS</div><div class="value" id="acceptedUnits">0</div><div class="small">Accepted quantity</div></div>
+<div class="card"><div class="label">DAMAGED UNITS</div><div class="value" id="damagedUnits">0</div><div class="small">Damaged quantity</div></div>
+</div>
+
+<div class="panel">
+<h2>GRN Information</h2>
+<div class="notice">GRN flow: <b>Purchase Order → Receipt → QC → Accepted / Damaged → Putaway Task</b>. Creating a GRN uses the existing authenticated backend and does not reset inventory.</div>
+<div class="grid">
+<div class="group"><label>GRN NUMBER</label><input id="grnNumber" value="AUTO GENERATED" readonly></div>
+<div class="group"><label>PURCHASE ORDER</label><select id="purchaseOrder"><option value="">Select Purchase Order</option></select></div>
+<div class="group"><label>SUPPLIER</label><input id="supplier" readonly placeholder="Auto from PO"></div>
+<div class="group"><label>LOCATION / STORE</label><select id="location"><option value="">Select Location</option></select></div>
+<div class="group"><label>RECEIVED DATE</label><input id="receivedDate" type="date"></div>
+<div class="group"><label>RECEIVED TIME</label><input id="receivedTime" type="time" step="1"></div>
+<div class="group"><label>STATUS</label><select id="status"><option>DRAFT</option><option>RECEIVED</option></select></div>
+<div class="group"><label>QC STATUS</label><select id="qcStatus"><option>PENDING</option><option>PASSED</option><option>FAILED</option></select></div>
+<div class="group full"><label>NOTES</label><textarea id="notes" rows="2" placeholder="Enter GRN notes..."></textarea></div>
+</div>
+</div>
+
+<div class="panel">
+<div class="toolbar"><h2 style="margin:0;flex:1">Received Products</h2><button class="btn secondary" onclick="addEmptyRow()">+ Add Product</button><button class="btn secondary" onclick="loadSelectedPO()">↻ Reload PO</button></div>
+<div class="table-wrap"><table><thead><tr><th>SKU</th><th>PRODUCT</th><th>ORDERED</th><th>RECEIVED</th><th>DAMAGED</th><th>ACCEPTED</th><th>PURCHASE PRICE</th><th>BATCH</th><th>EXPIRY</th><th>QC</th><th>ACTION</th></tr></thead><tbody id="itemsBody"></tbody></table></div>
+</div>
+
+<div class="panel">
+<h2>GRN Summary</h2>
+<div class="summary">
+<div class="summary-card"><span>Products</span><b id="totalProducts">0</b></div><div class="summary-card"><span>Ordered Qty</span><b id="totalOrdered">0</b></div><div class="summary-card"><span>Received Qty</span><b id="totalReceived">0</b></div><div class="summary-card"><span>Damaged Qty</span><b id="totalDamaged">0</b></div><div class="summary-card"><span>Accepted Qty</span><b id="totalAccepted">0</b></div><div class="summary-card"><span>Pending Putaway</span><b id="pendingPutaway">0</b></div>
+</div>
+<div style="margin-top:16px;display:flex;gap:9px"><button class="btn primary" onclick="createGRN()">Create GRN</button><button class="btn danger" onclick="clearForm()">Clear</button></div>
+</div>
+
+<div class="panel">
+<div class="toolbar"><h2 style="margin:0;flex:1">GRN History</h2><input class="search" id="historySearch" placeholder="Search GRN / PO..." oninput="renderHistory()"><select class="filter" id="historyStatus" onchange="renderHistory()"><option value="">All Status</option><option>RECEIVED</option><option>DRAFT</option></select><button class="btn secondary" onclick="loadHistory()">↻ Refresh</button><button class="btn secondary" onclick="exportHistory()">Export CSV</button></div>
+<div class="table-wrap"><table><thead><tr><th>ID</th><th>GRN NUMBER</th><th>PO</th><th>RECEIVED DATE</th><th>STATUS</th><th>QC</th><th>ACTION</th></tr></thead><tbody id="grnHistory"></tbody></table></div>
+</div>
+</section>
+</main>
+</div>
+
+<div class="modal-bg" id="detailModal"><div class="modal"><div class="modal-head"><div class="modal-title">GRN Details</div><button class="close" onclick="closeDetail()">×</button></div><div class="modal-body" id="detailBody"></div><div class="modal-foot"><button class="btn secondary" onclick="closeDetail()">Close</button></div></div></div>
+
+<script>
+const API=window.location.origin,TOKEN_KEY="zippzo_session_token",USER_KEY="zippzo_user";
+let historyData=[],locations=[],purchaseOrders=[];
+const token=()=>localStorage.getItem(TOKEN_KEY);
+async function api(path,options={}){const headers={...(options.headers||{})};if(options.body)headers["Content-Type"]="application/json";if(token())headers.Authorization=`Bearer ${token()}`;const r=await fetch(API+path,{...options,headers});if(r.status===401){localStorage.removeItem(TOKEN_KEY);localStorage.removeItem(USER_KEY);alert("Session expired. Please log in again.");location.href="/";throw new Error("Unauthorized")}const t=await r.text();let d={};try{d=t?JSON.parse(t):{}}catch{d={detail:t}}if(!r.ok)throw new Error(d.detail||`Request failed: ${r.status}`);return d}
+function esc(v){return String(v??"").replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]))}
+function badge(v){const x=String(v||"").toUpperCase();let c=x==="RECEIVED"?"received":x==="DRAFT"?"draft":x==="PASSED"?"passed":x==="FAILED"?"failed":"pending";return `<span class="badge ${c}">${esc(x||"UNKNOWN")}</span>`}
+function showSuccess(m){const x=document.getElementById("successMessage");x.textContent=m;x.style.display="block";document.getElementById("errorMessage").style.display="none"}
+function showError(m){const x=document.getElementById("errorMessage");x.textContent=m;x.style.display="block";document.getElementById("successMessage").style.display="none"}
+function hideMessages(){document.getElementById("successMessage").style.display="none";document.getElementById("errorMessage").style.display="none"}
+function setClock(){const d=new Date();document.getElementById("clock").textContent=d.toLocaleString("en-IN",{hour12:false})}
+function setDateTime(){const d=new Date();document.getElementById("receivedDate").value=d.toISOString().slice(0,10);document.getElementById("receivedTime").value=[d.getHours(),d.getMinutes(),d.getSeconds()].map((x,i)=>String(x).padStart(2,"0")).join(":")}
+async function loadPOs(){purchaseOrders=await api("/api/purchase-orders");const s=document.getElementById("purchaseOrder");s.innerHTML='<option value="">Select Purchase Order</option>';purchaseOrders.filter(x=>String(x.status||"").toUpperCase()!=="RECEIVED").forEach(po=>{const o=document.createElement("option");o.value=po.id;o.textContent=`${po.po_number} | ${po.status||"-"}`;s.appendChild(o)})}
+async function loadLocations(){locations=await api("/api/locations");const s=document.getElementById("location");s.innerHTML='<option value="">Select Location</option>';locations.forEach(x=>{const o=document.createElement("option");o.value=x.id;o.textContent=x.name||x.location_name||x.code||`Location ${x.id}`;s.appendChild(o)})}
+async function loadSelectedPO(){const id=document.getElementById("purchaseOrder").value;if(!id)return showError("Please select a Purchase Order.");try{const d=await api(`/api/purchase-orders/${id}/grn-data`);document.getElementById("supplier").value=d.supplier?.company_name||"";if(d.location?.id)document.getElementById("location").value=d.location.id;document.getElementById("itemsBody").innerHTML="";(d.items||[]).forEach(addRow);if(!(d.items||[]).length)addEmptyRow();updateSummary()}catch(e){showError(e.message)}}
+document.getElementById("purchaseOrder").addEventListener("change",loadSelectedPO);
+function addEmptyRow(){addRow({sku:"",product_name:"",ordered_quantity:0,purchase_price:0})}
+function addRow(item){const tr=document.createElement("tr");tr.innerHTML=`<td><input class="sku" value="${esc(item.sku||"")}"></td><td><input class="productName" value="${esc(item.product_name||"")}"></td><td><input class="orderedQty" type="number" min="0" value="${item.ordered_quantity??item.quantity??0}" oninput="updateSummary()"></td><td><input class="receivedQty" type="number" min="0" value="0" oninput="calculateAccepted(this)"></td><td><input class="damagedQty" type="number" min="0" value="0" oninput="calculateAccepted(this)"></td><td><input class="acceptedQty" type="number" min="0" value="0" oninput="updateSummary()"></td><td><input class="purchasePrice" type="number" min="0" step=".01" value="${item.purchase_price||0}"></td><td><input class="batchNumber" placeholder="Batch"></td><td><input class="expiryDate" type="date"></td><td><select class="itemQc"><option>PENDING</option><option>PASSED</option><option>FAILED</option></select></td><td><button class="btn danger" onclick="this.closest('tr').remove();updateSummary()">Remove</button></td>`;document.getElementById("itemsBody").appendChild(tr);updateSummary()}
+function calculateAccepted(el){const r=el.closest("tr"),received=+r.querySelector(".receivedQty").value||0,damaged=+r.querySelector(".damagedQty").value||0;r.querySelector(".acceptedQty").value=Math.max(received-damaged,0);updateSummary()}
+function updateSummary(){const rows=[...document.querySelectorAll("#itemsBody tr")];let o=0,r=0,d=0,a=0;rows.forEach(x=>{o+=+x.querySelector(".orderedQty")?.value||0;r+=+x.querySelector(".receivedQty")?.value||0;d+=+x.querySelector(".damagedQty")?.value||0;a+=+x.querySelector(".acceptedQty")?.value||0});document.getElementById("totalProducts").textContent=rows.length;document.getElementById("totalOrdered").textContent=o;document.getElementById("totalReceived").textContent=r;document.getElementById("totalDamaged").textContent=d;document.getElementById("totalAccepted").textContent=a;document.getElementById("acceptedUnits").textContent=a;document.getElementById("damagedUnits").textContent=d}
+async function createGRN(){hideMessages();const poId=+document.getElementById("purchaseOrder").value||0,locationId=+document.getElementById("location").value||0;if(!poId)return showError("Please select a Purchase Order.");if(!locationId)return showError("Please select a Location / Store.");const rows=[...document.querySelectorAll("#itemsBody tr")];const items=[];for(const row of rows){const name=row.querySelector(".productName").value.trim();if(!name)continue;const received=+row.querySelector(".receivedQty").value||0,damaged=+row.querySelector(".damagedQty").value||0;let accepted=+row.querySelector(".acceptedQty").value||0;if(accepted<=0&&received>0)accepted=Math.max(received-damaged,0);items.push({purchase_order_item_id:null,product_id:null,sku:row.querySelector(".sku").value.trim()||null,product_name:name,ordered_quantity:+row.querySelector(".orderedQty").value||0,received_quantity:received,damaged_quantity:damaged,accepted_quantity:accepted,purchase_price:+row.querySelector(".purchasePrice").value||0,batch_number:row.querySelector(".batchNumber").value||null,expiry_date:row.querySelector(".expiryDate").value||null,qc_status:row.querySelector(".itemQc").value,notes:null})}if(!items.length)return showError("Please enter at least one product.");try{const result=await api("/api/grn",{method:"POST",body:JSON.stringify({purchase_order_id:poId,supplier_id:null,location_id:locationId,received_date:document.getElementById("receivedDate").value,received_time:document.getElementById("receivedTime").value,status:document.getElementById("status").value,qc_status:document.getElementById("qcStatus").value,notes:document.getElementById("notes").value||null,items})});showSuccess(`GRN ${result.grn_number||""} created successfully. Accepted stock has been routed to Putaway according to the current backend flow.`);await loadHistory();await loadPOs();}catch(e){showError(e.message)}}
+async function loadHistory(){try{historyData=await api("/api/grn");renderHistory();updateGRNKPIs()}catch(e){showError(e.message)}}
+function renderHistory(){const q=document.getElementById("historySearch").value.toLowerCase().trim(),s=document.getElementById("historyStatus").value;const rows=historyData.filter(g=>(!q||[g.grn_number,g.po_number,g.status,g.qc_status].join(" ").toLowerCase().includes(q))&&(!s||g.status===s));document.getElementById("grnHistory").innerHTML=rows.length?rows.map(g=>`<tr><td>${g.id}</td><td><b>${esc(g.grn_number)}</b></td><td>${esc(g.po_number||"-")}</td><td>${esc(g.received_date||"-")}</td><td>${badge(g.status)}</td><td>${badge(g.qc_status)}</td><td><button class="mini" onclick="viewGRN(${g.id})">View</button></td></tr>`).join(""):`<tr><td colspan="7" style="text-align:center;padding:35px;color:#94a3b8">No GRNs found</td></tr>`}
+function updateGRNKPIs(){const d=historyData;document.getElementById("totalGRN").textContent=d.length;document.getElementById("receivedGRN").textContent=d.filter(x=>x.status==="RECEIVED").length;document.getElementById("draftGRN").textContent=d.filter(x=>x.status==="DRAFT").length;document.getElementById("qcPassed").textContent=d.filter(x=>x.qc_status==="PASSED").length;document.getElementById("pendingPutaway").textContent=d.filter(x=>x.status==="RECEIVED").length}
+async function viewGRN(id){try{const d=await api(`/api/grn/${id}`);const items=d.items||d.grn_items||[];document.getElementById("detailBody").innerHTML=`<div class="detail-grid"><div class="detail"><b>GRN NUMBER</b><span>${esc(d.grn_number)}</span></div><div class="detail"><b>PO NUMBER</b><span>${esc(d.po_number||"-")}</span></div><div class="detail"><b>SUPPLIER</b><span>${esc(d.supplier_name||d.supplier?.company_name||"-")}</span></div><div class="detail"><b>LOCATION</b><span>${esc(d.location_name||d.location?.name||"-")}</span></div><div class="detail"><b>RECEIVED DATE</b><span>${esc(d.received_date||"-")}</span></div><div class="detail"><b>STATUS</b><span>${badge(d.status)}</span></div><div class="detail"><b>QC</b><span>${badge(d.qc_status)}</span></div></div><h3>Received Items</h3><div class="table-wrap"><table><thead><tr><th>SKU</th><th>PRODUCT</th><th>ORDERED</th><th>RECEIVED</th><th>DAMAGED</th><th>ACCEPTED</th><th>QC</th></tr></thead><tbody>${items.length?items.map(i=>`<tr><td>${esc(i.sku||"-")}</td><td>${esc(i.product_name||"-")}</td><td>${i.ordered_quantity??0}</td><td>${i.received_quantity??0}</td><td>${i.damaged_quantity??0}</td><td>${i.accepted_quantity??0}</td><td>${badge(i.qc_status)}</td></tr>`).join(""):`<tr><td colspan="7">No item details returned.</td></tr>`}</tbody></table></div><p><b>Notes:</b> ${esc(d.notes||"-")}</p>`;document.getElementById("detailModal").classList.add("show")}catch(e){showError(e.message)}}
+function closeDetail(){document.getElementById("detailModal").classList.remove("show")}
+function clearForm(){document.getElementById("purchaseOrder").value="";document.getElementById("supplier").value="";document.getElementById("location").value="";document.getElementById("notes").value="";document.getElementById("itemsBody").innerHTML="";document.getElementById("status").value="DRAFT";document.getElementById("qcStatus").value="PENDING";setDateTime();addEmptyRow();updateSummary();hideMessages()}
+function exportHistory(){let csv="ID,GRN Number,PO,Received Date,Status,QC\\n";historyData.forEach(g=>csv+=`"${[g.id,g.grn_number,g.po_number,g.received_date,g.status,g.qc_status].map(v=>String(v??"").replace(/"/g,'""')).join('","')}"\\n`);const a=document.createElement("a");a.href=URL.createObjectURL(new Blob([csv],{type:"text/csv"}));a.download="Zippzo_GRN_History.csv";a.click();URL.revokeObjectURL(a.href)}
+async function initialize(){try{const me=await api("/api/auth/me");document.getElementById("currentUser").textContent=me.name||me.employee_id||me.email||"";setDateTime();await Promise.all([loadPOs(),loadLocations(),loadHistory()]);addEmptyRow()}catch(e){showError(e.message)}}initialize();setInterval(setClock,1000);setInterval(loadHistory,10000);setClock();
+</script>
+</body>
+</html>

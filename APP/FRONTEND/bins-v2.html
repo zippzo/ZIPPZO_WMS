@@ -1,0 +1,337 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1.0">
+<title>Zippzo WMS | Bin Management V2</title>
+<style>
+:root{--p:#331084;--d:#24085F;--y:#FEB103;--bg:#f5f6fa;--muted:#737783;--border:#e7e7ef;--green:#16a34a;--red:#dc2626;--orange:#d97706}
+*{box-sizing:border-box}body{margin:0;font-family:Inter,Segoe UI,Arial,sans-serif;background:var(--bg);color:#202124}.app{display:flex;min-height:100vh}
+.sidebar{position:fixed;left:0;top:0;bottom:0;width:255px;background:var(--d);color:#fff;padding:18px 14px;overflow:auto}.brand{display:flex;gap:11px;align-items:center;padding:8px 10px 22px;border-bottom:1px solid #ffffff20}.brand img{width:42px;height:42px;object-fit:contain;background:#fff;border-radius:10px;padding:4px}.brand b{font-size:21px}.brand small{display:block;color:#cfc7e5;font-size:10px}.nav-title{font-size:10px;color:#a99bc7;padding:15px 12px 7px;text-transform:uppercase;letter-spacing:1px}.nav a{display:flex;gap:11px;padding:11px 12px;margin:3px 0;border-radius:9px;color:#eee9f7;text-decoration:none;font-size:13px}.nav a:hover,.nav a.active{background:var(--y);color:#241300;font-weight:700}
+.main{margin-left:255px;width:calc(100% - 255px)}.top{height:70px;background:var(--p);display:flex;align-items:center;padding:0 26px;gap:20px;color:#fff;position:sticky;top:0;z-index:5}.search{flex:1;max-width:620px}.search input{width:100%;padding:12px 16px;border:0;border-radius:9px;background:#ffffff18;color:#fff;outline:0}.search input::placeholder{color:#ddd5ef}.user{margin-left:auto;display:flex;align-items:center;gap:10px}.avatar{width:38px;height:38px;background:var(--y);color:#241300;border-radius:50%;display:grid;place-items:center;font-weight:800}.content{padding:26px}.head{display:flex;justify-content:space-between;align-items:center;margin-bottom:20px}.head h1{margin:0;color:var(--d);font-size:27px}.head p{margin:5px 0;color:var(--muted);font-size:13px}.actions{display:flex;gap:9px}.btn{border:0;border-radius:8px;padding:10px 14px;font-weight:700;cursor:pointer}.yellow{background:var(--y);color:#241300}.light{background:#fff;color:var(--d);border:1px solid var(--border)}
+.card{background:#fff;border:1px solid var(--border);border-radius:12px;box-shadow:0 8px 25px #24085f10}.stats{display:grid;grid-template-columns:repeat(5,1fr);gap:14px;margin-bottom:18px}.stat{padding:17px}.stat small{color:var(--muted);font-size:10px}.stat strong{display:block;color:var(--d);font-size:24px;margin-top:6px}.toolbar{padding:16px;display:flex;gap:10px;flex-wrap:wrap}.toolbar input,.toolbar select{padding:10px;border:1px solid var(--border);border-radius:8px;outline:0;background:#fff}.toolbar input{min-width:270px}.table-wrap{overflow:auto}.table-wrap table{width:100%;border-collapse:collapse}.table-wrap th,.table-wrap td{padding:12px 10px;border-bottom:1px solid var(--border);text-align:left;font-size:12px;white-space:nowrap}.table-wrap th{font-size:10px;color:var(--muted);text-transform:uppercase;background:#fafafd}.badge{padding:5px 8px;border-radius:20px;font-size:10px;font-weight:800}.available{background:#eaf8ee;color:var(--green)}.inactive{background:#feecec;color:var(--red)}.occupied{background:#fff4d6;color:#946b00}.empty{background:#eee9ff;color:var(--p)}.hold{background:#fef0e6;color:var(--orange)}
+.grid{display:grid;grid-template-columns:2fr 1fr;gap:18px;margin-top:18px}.panel{padding:18px}.panel h3{margin:0 0 14px;color:var(--d);font-size:16px}.mini{display:flex;justify-content:space-between;align-items:center;padding:11px 0;border-bottom:1px solid var(--border);font-size:12px}.mini:last-child{border-bottom:0}.mini small{display:block;color:var(--muted);margin-top:3px}.progress{height:7px;background:#eee;border-radius:10px;overflow:hidden;margin-top:8px}.progress i{display:block;height:100%;background:var(--p)}
+.modal-bg{position:fixed;inset:0;background:#0008;display:none;align-items:center;justify-content:center;z-index:20}.modal{width:min(680px,94vw);background:#fff;border-radius:14px;padding:24px;max-height:92vh;overflow:auto}.modal h2{margin:0;color:var(--d)}.form{display:grid;grid-template-columns:1fr 1fr;gap:13px;margin-top:18px}.form label{display:block;font-size:11px;font-weight:700;margin-bottom:5px}.form input,.form select{width:100%;padding:10px;border:1px solid var(--border);border-radius:8px}.full{grid-column:1/-1}.modal-actions{display:flex;justify-content:flex-end;gap:9px;margin-top:20px}.msg{font-size:12px;color:var(--red);margin-top:8px}
+.login{position:fixed;inset:0;background:linear-gradient(135deg,var(--d),var(--p));display:none;align-items:center;justify-content:center;z-index:50}.login-box{width:390px;background:#fff;border-radius:16px;padding:32px}.login-box img{width:70px;display:block;margin:auto}.login-box h2{text-align:center;color:var(--d)}.login-box p{text-align:center;color:var(--muted);font-size:12px}.field{margin-top:13px}.field label{font-size:11px;font-weight:700}.field input{width:100%;padding:11px;margin-top:6px;border:1px solid var(--border);border-radius:8px}.login-box button{width:100%;margin-top:18px;padding:12px;border:0;border-radius:8px;background:var(--y);font-weight:800}.error{text-align:center;color:var(--red);font-size:12px;margin-top:8px}
+@media(max-width:1100px){.stats{grid-template-columns:repeat(3,1fr)}.grid{grid-template-columns:1fr}}@media(max-width:900px){.sidebar{width:70px}.brand b,.brand small,.nav-title,.nav a span{display:none}.brand{justify-content:center}.main{margin-left:70px;width:calc(100% - 70px)}.stats{grid-template-columns:1fr 1fr}.form{grid-template-columns:1fr}.full{grid-column:auto}}
+</style>
+</head>
+<body>
+
+<div id="login" class="login"><div class="login-box">
+<img src="zippzo-logo.jpg"><h2>Zippzo WMS</h2><p>Bin Management</p>
+<div class="field"><label>Employee ID / Email / Mobile</label><input id="li"></div>
+<div class="field"><label>Password</label><input id="lp" type="password"></div>
+<div id="le" class="error"></div><button onclick="login()">LOGIN</button>
+</div></div>
+
+<div class="app">
+<aside class="sidebar">
+<div class="brand"><img src="zippzo-logo.jpg"><div><b>ZIPPZO</b><small>WAREHOUSE MANAGEMENT</small></div></div>
+<nav class="nav">
+<div class="nav-title">Main</div>
+<a href="index.html">▣ <span>Dashboard</span></a><a href="products.html">▦ <span>Products</span></a><a href="suppliers.html">♜ <span>Suppliers</span></a><a href="locations.html">⌖ <span>Locations</span></a><a href="inventory.html">▤ <span>Inventory</span></a>
+<div class="nav-title">Warehouse</div>
+<a href="purchase-orders.html">▣ <span>Purchase Orders</span></a><a href="grn.html">✓ <span>GRN</span></a><a href="putaway.html">⇩ <span>Putaway</span></a><a class="active" href="bins.html">▥ <span>Bins</span></a><a href="stock-movements.html">↔ <span>Stock Movements</span></a>
+<div class="nav-title">Fulfilment</div>
+<a href="orders.html">▱ <span>Orders</span></a><a href="picking-report.html">⌁ <span>Picking</span></a><a href="sorting.html">⇄ <span>Sorting</span></a><a href="dispatch.html">➜ <span>Dispatch</span></a><a href="riders.html">♟ <span>Riders</span></a>
+<div class="nav-title">Reports & Admin</div>
+<a href="stock-report.html">▥ <span>Stock Report</span></a><a href="order-report.html">▤ <span>Order Report</span></a><a href="audit-logs.html">◷ <span>Audit Logs</span></a><a href="access-control.html">⚿ <span>Access Control</span></a><a href="system-settings.html">⚙ <span>Settings</span></a>
+</nav>
+</aside>
+
+<main class="main">
+<header class="top">
+<div class="search"><input id="global" placeholder="Search bin code, location, zone, aisle..." oninput="render()"></div>
+<div class="user"><div><b id="uname">Zippzo Admin</b><br><small id="urole">Administrator</small></div><div class="avatar" id="avatar">ZA</div><button class="btn light" onclick="logout()">Logout</button></div>
+</header>
+
+<section class="content">
+<div class="head">
+<div><h1>Bin Management</h1><p>Control storage bins, locations, capacity and bin occupancy for Zippzo warehouse operations.</p></div>
+<div class="actions"><button class="btn light" onclick="loadAll()">↻ Refresh</button><button class="btn yellow" onclick="openAdd()">＋ Add Bin</button></div>
+</div>
+
+<div class="stats">
+<div class="card stat"><small>TOTAL BINS</small><strong id="total">0</strong></div>
+<div class="card stat"><small>ACTIVE BINS</small><strong id="active">0</strong></div>
+<div class="card stat"><small>OCCUPIED</small><strong id="occupied">0</strong></div>
+<div class="card stat"><small>EMPTY</small><strong id="empty">0</strong></div>
+<div class="card stat"><small>CAPACITY</small><strong id="capacity">0</strong></div>
+</div>
+
+<div class="card">
+<div class="toolbar">
+<input id="search" placeholder="Filter bin / location / zone / aisle..." oninput="render()">
+<select id="locationFilter" onchange="render()"><option value="">All Locations</option></select>
+<select id="statusFilter" onchange="render()"><option value="">All Status</option><option value="active">Active</option><option value="inactive">Inactive</option></select>
+<select id="occupancyFilter" onchange="render()"><option value="">All Occupancy</option><option value="occupied">Occupied</option><option value="empty">Empty</option></select>
+<button class="btn light" onclick="exportCSV()">Export CSV</button>
+</div>
+<div class="table-wrap">
+<table>
+<thead><tr><th>ID</th><th>Bin Code</th><th>Location</th><th>Zone</th><th>Aisle</th><th>Rack</th><th>Level</th><th>Position</th><th>Capacity</th><th>Occupied Qty</th><th>Status</th></tr></thead>
+<tbody id="tbody"><tr><td colspan="11">Loading...</td></tr></tbody>
+</table>
+</div>
+</div>
+
+<div class="grid">
+<div class="card panel"><h3>Bin Utilisation by Location</h3><div id="locationSummary"></div></div>
+<div class="card panel"><h3>Bin Health</h3><div id="healthSummary"></div></div>
+</div>
+</section>
+</main>
+</div>
+
+<div id="modalBg" class="modal-bg"><div class="modal">
+<h2>Add Bin</h2>
+<div class="form">
+<div><label>Location *</label><select id="location_id"></select></div>
+<div><label>Bin Code *</label><input id="bin_code" placeholder="BIN-A01-R01-S01"></div>
+<div><label>Zone</label><input id="zone" placeholder="A"></div>
+<div><label>Aisle</label><input id="aisle" placeholder="A01"></div>
+<div><label>Rack</label><input id="rack" placeholder="R01"></div>
+<div><label>Level</label><input id="level" placeholder="01"></div>
+<div><label>Position</label><input id="position" placeholder="S01"></div>
+<div><label>Capacity</label><input id="capacity_input" type="number" min="0"></div>
+<div><label>Status</label><select id="active_input"><option value="true">Active</option><option value="false">Inactive</option></select></div>
+<div class="full"><label>Remarks</label><input id="remarks"></div>
+</div>
+<div id="formError" class="msg"></div>
+<div class="modal-actions"><button class="btn light" onclick="closeModal()">Cancel</button><button class="btn yellow" onclick="saveBin()">Save Bin</button></div>
+</div></div>
+
+<script>
+const API=window.location.origin;
+const TOKEN_KEY="zippzo_session_token";
+const USER_KEY="zippzo_user";
+let bins=[],locations=[],binInventory=[];
+
+function tok(){return localStorage.getItem(TOKEN_KEY)}
+
+async function api(path,opt={}){
+ const h={"Content-Type":"application/json",...(opt.headers||{})};
+ if(tok())h.Authorization="Bearer "+tok();
+ const r=await fetch(API+path,{...opt,headers:h});
+ let d={};try{d=await r.json()}catch{}
+ if(r.status===401){
+   localStorage.removeItem(TOKEN_KEY);
+   localStorage.removeItem(USER_KEY);
+   document.getElementById("login").style.display="flex";
+   throw Error("Session expired");
+ }
+ if(!r.ok)throw Error(d.detail||"Request failed");
+ return d;
+}
+
+async function login(){
+ const e=document.getElementById("le");e.textContent="";
+ try{
+  const r=await fetch(API+"/api/auth/login",{
+   method:"POST",
+   headers:{"Content-Type":"application/json"},
+   body:JSON.stringify({identifier:document.getElementById("li").value.trim(),password:document.getElementById("lp").value})
+  });
+  const d=await r.json();
+  if(!r.ok)throw Error(d.detail||"Login failed");
+  localStorage.setItem(TOKEN_KEY,d.session_token);
+  localStorage.setItem(USER_KEY,JSON.stringify(d.user));
+  document.getElementById("login").style.display="none";
+  applyUser(d.user);
+  loadAll();
+ }catch(x){e.textContent=x.message}
+}
+
+function applyUser(u){
+ document.getElementById("uname").textContent=u.full_name||"Zippzo Admin";
+ document.getElementById("urole").textContent=u.role||u.department||"Administrator";
+ document.getElementById("avatar").textContent=(u.full_name||"ZA").split(" ").map(x=>x[0]).slice(0,2).join("").toUpperCase();
+}
+
+async function logout(){
+ try{if(tok())await api("/api/auth/logout",{method:"POST",body:JSON.stringify({session_token:tok()})})}catch{}
+ localStorage.removeItem(TOKEN_KEY);
+ localStorage.removeItem(USER_KEY);
+ document.getElementById("login").style.display="flex";
+}
+
+const esc=s=>String(s??"").replace(/[&<>"']/g,m=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#039;"}[m]));
+
+function occupiedQty(bin){
+ const rows=binInventory.filter(x=>Number(x.bin_id)===Number(bin.id));
+ return rows.reduce((a,x)=>a+Number(x.available_qty||0)+Number(x.reserved_qty||0)+Number(x.picked_qty||0),0);
+}
+
+async function loadAll(){
+ try{
+  [bins,locations,binInventory]=await Promise.all([
+   api("/api/bins"),
+   api("/api/locations"),
+   api("/api/bin-inventory").catch(()=>[])
+  ]);
+  updateStats();
+  populateFilters();
+  render();
+ }catch(e){
+  document.getElementById("tbody").innerHTML=`<tr><td colspan="11">${esc(e.message)}</td></tr>`;
+ }
+}
+
+function updateStats(){
+ const activeBins=bins.filter(b=>b.active!==false);
+ const occupied=bins.filter(b=>occupiedQty(b)>0);
+ const cap=bins.reduce((a,b)=>a+Number(b.capacity||0),0);
+ document.getElementById("total").textContent=bins.length;
+ document.getElementById("active").textContent=activeBins.length;
+ document.getElementById("occupied").textContent=occupied.length;
+ document.getElementById("empty").textContent=Math.max(0,bins.length-occupied.length);
+ document.getElementById("capacity").textContent=cap.toLocaleString("en-IN");
+}
+
+function populateFilters(){
+ const select=document.getElementById("locationFilter");
+ const old=select.value;
+ select.innerHTML='<option value="">All Locations</option>'+
+ locations.map(l=>`<option value="${l.id}">${esc(l.location_name||l.name||l.location_code||l.code)}</option>`).join("");
+ select.value=old;
+
+ const loc=document.getElementById("location_id");
+ loc.innerHTML='<option value="">Select Location</option>'+
+ locations.map(l=>`<option value="${l.id}">${esc(l.location_name||l.name||l.location_code||l.code)}</option>`).join("");
+}
+
+function render(){
+ const q=(document.getElementById("global").value+" "+document.getElementById("search").value).toLowerCase().trim();
+ const lid=document.getElementById("locationFilter").value;
+ const st=document.getElementById("statusFilter").value;
+ const occ=document.getElementById("occupancyFilter").value;
+
+ const rows=bins.filter(b=>{
+  const hay=[b.bin_code,b.code,b.location_name,b.zone,b.aisle,b.rack,b.level,b.position].join(" ").toLowerCase();
+  const active=b.active!==false;
+  const oq=occupiedQty(b)>0;
+  return (!q||hay.includes(q)) &&
+         (!lid||String(b.location_id)===lid) &&
+         (!st||(st==="active"?active:!active)) &&
+         (!occ||(occ==="occupied"?oq:!oq));
+ });
+
+ document.getElementById("tbody").innerHTML=rows.map(b=>{
+  const qty=occupiedQty(b);
+  const cap=Number(b.capacity||0);
+  const status=b.active===false?"inactive":"available";
+  return `<tr>
+   <td>${b.id}</td>
+   <td><b>${esc(b.bin_code||b.code||"—")}</b></td>
+   <td>${esc(b.location_name||b.location||"—")}</td>
+   <td>${esc(b.zone||"—")}</td>
+   <td>${esc(b.aisle||"—")}</td>
+   <td>${esc(b.rack||"—")}</td>
+   <td>${esc(b.level||"—")}</td>
+   <td>${esc(b.position||"—")}</td>
+   <td>${cap.toLocaleString("en-IN")}</td>
+   <td><span class="badge ${qty>0?"occupied":"empty"}">${qty.toLocaleString("en-IN")}</span></td>
+   <td><span class="badge ${status}">${b.active===false?"INACTIVE":"ACTIVE"}</span></td>
+  </tr>`;
+ }).join("")||'<tr><td colspan="11">No bins found.</td></tr>';
+
+ renderSummaries();
+}
+
+function renderSummaries(){
+ const map={};
+ bins.forEach(b=>{
+  const id=b.location_id;
+  if(!map[id])map[id]={name:b.location_name||"Unknown",bins:0,occupied:0,capacity:0};
+  map[id].bins++;
+  map[id].capacity+=Number(b.capacity||0);
+  if(occupiedQty(b)>0)map[id].occupied++;
+ });
+ document.getElementById("locationSummary").innerHTML=Object.values(map).map(x=>{
+  const pct=x.bins?Math.round(x.occupied/x.bins*100):0;
+  return `<div class="mini"><div><b>${esc(x.name)}</b><small>${x.occupied} occupied / ${x.bins} bins</small><div class="progress"><i style="width:${pct}%"></i></div></div><b>${pct}%</b></div>`;
+ }).join("")||'<div class="mini">No bin data</div>';
+
+ const total=bins.length;
+ const active=bins.filter(b=>b.active!==false).length;
+ const occupied=bins.filter(b=>occupiedQty(b)>0).length;
+ const empty=Math.max(0,total-occupied);
+
+ document.getElementById("healthSummary").innerHTML=
+  `<div class="mini"><span>Active bins</span><b>${active}</b></div>
+   <div class="mini"><span>Inactive bins</span><b>${total-active}</b></div>
+   <div class="mini"><span>Occupied bins</span><b>${occupied}</b></div>
+   <div class="mini"><span>Empty bins</span><b>${empty}</b></div>`;
+}
+
+function openAdd(){
+ document.getElementById("location_id").value="";
+ document.getElementById("bin_code").value="";
+ document.getElementById("zone").value="";
+ document.getElementById("aisle").value="";
+ document.getElementById("rack").value="";
+ document.getElementById("level").value="";
+ document.getElementById("position").value="";
+ document.getElementById("capacity_input").value="";
+ document.getElementById("active_input").value="true";
+ document.getElementById("remarks").value="";
+ document.getElementById("formError").textContent="";
+ document.getElementById("modalBg").style.display="flex";
+}
+
+function closeModal(){document.getElementById("modalBg").style.display="none"}
+
+async function saveBin(){
+ const e=document.getElementById("formError");
+ e.textContent="";
+
+ const data={
+  location_id:+document.getElementById("location_id").value,
+  bin_code:document.getElementById("bin_code").value.trim(),
+  zone:document.getElementById("zone").value.trim()||null,
+  aisle:document.getElementById("aisle").value.trim()||null,
+  rack:document.getElementById("rack").value.trim()||null,
+  level:document.getElementById("level").value.trim()||null,
+  position:document.getElementById("position").value.trim()||null,
+  capacity:+document.getElementById("capacity_input").value||0,
+  active:document.getElementById("active_input").value==="true",
+  remarks:document.getElementById("remarks").value.trim()||null
+ };
+
+ if(!data.location_id||!data.bin_code){
+  e.textContent="Location and Bin Code are required.";
+  return;
+ }
+
+ try{
+  await api("/api/bins",{method:"POST",body:JSON.stringify(data)});
+  closeModal();
+  await loadAll();
+ }catch(x){e.textContent=x.message}
+}
+
+function exportCSV(){
+ const h=["ID","Bin Code","Location","Zone","Aisle","Rack","Level","Position","Capacity","Occupied Qty","Active"];
+ const rows=bins.map(b=>[
+  b.id,b.bin_code||b.code,b.location_name,b.zone,b.aisle,b.rack,b.level,b.position,
+  b.capacity,occupiedQty(b),b.active
+ ]);
+ const csv=[h,...rows].map(r=>r.map(x=>`"${String(x??"").replace(/"/g,'""')}"`).join(",")).join("\n");
+ const a=document.createElement("a");
+ a.href=URL.createObjectURL(new Blob([csv],{type:"text/csv"}));
+ a.download="zippzo-bins.csv";
+ a.click();
+}
+
+(async()=>{
+ if(!tok()){document.getElementById("login").style.display="flex";return}
+ try{
+  const m=await api("/api/auth/me");
+  applyUser(m.user);
+  await loadAll();
+ }catch{document.getElementById("login").style.display="flex"}
+})();
+</script>
+</body>
+</html>

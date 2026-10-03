@@ -1,0 +1,245 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Zippzo WMS - Bin Control</title>
+<link rel="stylesheet" href="/style.css">
+<style>
+:root{--line:#e7ebf0;--muted:#667085;--panel:#fff;--bg:#f5f7fb;--shadow:0 8px 24px rgba(16,24,40,.06)}
+body{background:var(--bg)}
+.layout{min-height:100vh}
+.content{padding:24px}
+.hero{display:flex;justify-content:space-between;gap:18px;align-items:flex-start;margin-bottom:20px}
+.hero h1{margin:0 0 6px;font-size:28px}.hero p{margin:0;color:var(--muted)}
+.actions{display:flex;gap:10px;flex-wrap:wrap}
+.kpis{display:grid;grid-template-columns:repeat(6,minmax(140px,1fr));gap:12px;margin-bottom:18px}
+.kpi{background:var(--panel);border:1px solid var(--line);border-radius:14px;padding:16px;box-shadow:var(--shadow)}
+.kpi span{display:block;color:var(--muted);font-size:12px;font-weight:700;text-transform:uppercase;letter-spacing:.04em}
+.kpi strong{display:block;font-size:25px;margin-top:7px}.kpi small{color:var(--muted)}
+.toolbar,.panel{background:var(--panel);border:1px solid var(--line);border-radius:14px;box-shadow:var(--shadow)}
+.toolbar{padding:14px;margin-bottom:16px}.filters{display:grid;grid-template-columns:2.2fr 1fr 1fr 1fr auto;gap:10px}
+.filters input,.filters select{width:100%;box-sizing:border-box;padding:11px 12px;border:1px solid #d7dce3;border-radius:9px;background:#fff}
+.panel{overflow:hidden}.panel-head{padding:16px 18px;border-bottom:1px solid var(--line);display:flex;justify-content:space-between;gap:10px;align-items:center}.panel-head h2{font-size:17px;margin:0}.panel-head span{color:var(--muted);font-size:13px}
+.table-wrap{overflow:auto}table{width:100%;min-width:1150px;border-collapse:collapse}th,td{padding:12px 11px;border-bottom:1px solid var(--line);text-align:left;white-space:nowrap}th{background:#f8fafc;font-size:12px;color:#475467;text-transform:uppercase;letter-spacing:.03em;position:sticky;top:0;z-index:1}td{font-size:13px}.bin{font-weight:800}.muted{color:var(--muted)}
+.badge{display:inline-flex;align-items:center;padding:4px 9px;border-radius:999px;font-size:11px;font-weight:800}.active{background:#e8f7ee;color:#087443}.inactive{background:#feeceb;color:#b42318}.other{background:#fff3d6;color:#8a5b00}
+.progress{width:120px;height:7px;background:#edf0f3;border-radius:99px;overflow:hidden}.progress i{display:block;height:100%;background:#475467}.capacity-cell{display:flex;align-items:center;gap:8px}
+.empty{text-align:center;padding:35px;color:var(--muted)}.error{padding:14px;color:#b42318;background:#fff1f0;border-bottom:1px solid #ffd6d2}
+.modal-backdrop{position:fixed;inset:0;background:rgba(15,23,42,.45);display:none;align-items:center;justify-content:center;padding:20px;z-index:50}.modal-backdrop.show{display:flex}.modal{width:min(720px,100%);background:#fff;border-radius:16px;box-shadow:0 20px 60px rgba(0,0,0,.2);overflow:hidden}.modal-head{padding:18px;border-bottom:1px solid var(--line);display:flex;justify-content:space-between;align-items:center}.modal-head h3{margin:0}.modal-body{padding:18px}.detail-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:12px}.detail{padding:12px;background:#f8fafc;border-radius:10px}.detail label{display:block;color:var(--muted);font-size:11px;font-weight:700;text-transform:uppercase}.detail strong{display:block;margin-top:5px}.close{border:0;background:#f2f4f7;border-radius:8px;padding:8px 11px;cursor:pointer}
+@media(max-width:1200px){.kpis{grid-template-columns:repeat(3,1fr)}.filters{grid-template-columns:1fr 1fr}.filters button{width:100%}}
+@media(max-width:700px){.content{padding:14px}.hero{flex-direction:column}.kpis{grid-template-columns:1fr 1fr}.filters{grid-template-columns:1fr}.detail-grid{grid-template-columns:1fr 1fr}}
+</style>
+
+<link rel="stylesheet" href="zippzo-standard.css">
+<script src="zippzo-standard.js" defer></script>
+</head>
+<body>
+<div class="topbar">
+  <div class="brand"><strong>ZIPPZO</strong><span>Warehouse Management System</span></div>
+  <div class="top-user"><span id="userName">Loading...</span><button class="btn btn-secondary" onclick="logout()">Logout</button></div>
+</div>
+
+<div class="layout">
+<aside class="sidebar">
+  <div class="sidebar-title">WMS CONTROL</div>
+  <button class="nav-button" onclick="go('/')">Dashboard</button>
+  <div class="sidebar-title">MASTER DATA</div>
+  <button class="nav-button" onclick="go('/products.html')">Products</button>
+  <button class="nav-button" onclick="go('/suppliers.html')">Suppliers</button>
+  <button class="nav-button" onclick="go('/locations.html')">Locations</button>
+  <button class="nav-button active" onclick="go('/bins.html')">Bins</button>
+  <button class="nav-button" onclick="go('/employees.html')">Employees</button>
+  <div class="sidebar-title">WAREHOUSE</div>
+  <button class="nav-button" onclick="go('/inventory.html')">Inventory</button>
+  <button class="nav-button" onclick="go('/stock-movements.html')">Stock Movements</button>
+  <div class="sidebar-title">INBOUND</div>
+  <button class="nav-button" onclick="go('/purchase-orders.html')">Purchase Orders</button>
+  <button class="nav-button" onclick="go('/grn.html')">GRN</button>
+  <button class="nav-button" onclick="go('/putaway.html')">Putaway</button>
+  <button class="nav-button" onclick="go('/grid-putaway.html')">Grid Putaway</button>
+  <div class="sidebar-title">ORDERS</div>
+  <button class="nav-button" onclick="go('/orders.html')">Orders</button>
+  <button class="nav-button" onclick="go('/create-batch.html')">Create Batch</button>
+  <button class="nav-button" onclick="go('/picking.html')">Picking</button>
+  <button class="nav-button" onclick="go('/sorting.html')">Sorting</button>
+  <button class="nav-button" onclick="go('/dropping.html')">Dropping</button>
+  <button class="nav-button" onclick="go('/dispatch.html')">Dispatch</button>
+  <div class="sidebar-title">DELIVERY</div>
+  <button class="nav-button" onclick="go('/riders.html')">Riders</button>
+  <div class="sidebar-title">REPORTS</div>
+  <button class="nav-button" onclick="go('/stock-report.html')">Stock Report</button>
+  <button class="nav-button" onclick="go('/grn-report.html')">GRN Report</button>
+  <button class="nav-button" onclick="go('/putaway-report.html')">Putaway Report</button>
+  <button class="nav-button" onclick="go('/order-report.html')">Order Report</button>
+</aside>
+
+<main class="content">
+  <section class="hero">
+    <div><h1>Bin Control Tower</h1><p>Live warehouse and dark-store bin master, capacity and bin-level inventory visibility.</p></div>
+    <div class="actions"><button class="btn btn-primary" onclick="refreshAll()">↻ Refresh</button><button class="btn btn-secondary" onclick="exportCSV()">Export CSV</button></div>
+  </section>
+
+  <section class="kpis">
+    <div class="kpi"><span>Total Bins</span><strong id="kTotal">0</strong><small>All configured bins</small></div>
+    <div class="kpi"><span>Active</span><strong id="kActive">0</strong><small>Operational bins</small></div>
+    <div class="kpi"><span>Inactive</span><strong id="kInactive">0</strong><small>Not operational</small></div>
+    <div class="kpi"><span>Storage</span><strong id="kStorage">0</strong><small>Storage bin type</small></div>
+    <div class="kpi"><span>Capacity</span><strong id="kCapacity">0</strong><small>Total configured capacity</small></div>
+    <div class="kpi"><span>Bin Stock Units</span><strong id="kStock">0</strong><small>Available + reserved + picked</small></div>
+  </section>
+
+  <section class="toolbar">
+    <div class="filters">
+      <input id="search" placeholder="Search bin, location, zone, aisle, rack, shelf..." oninput="applyFilters()">
+      <select id="locationFilter" onchange="applyFilters()"><option value="">All Locations</option></select>
+      <select id="typeFilter" onchange="applyFilters()"><option value="">All Types</option></select>
+      <select id="statusFilter" onchange="applyFilters()"><option value="">All Status</option></select>
+      <button class="btn btn-secondary" onclick="clearFilters()">Clear</button>
+    </div>
+  </section>
+
+  <section class="panel">
+    <div class="panel-head"><h2>Bin Master & Capacity</h2><span id="resultCount">0 bins</span></div>
+    <div id="errorBox" class="error" style="display:none"></div>
+    <div class="table-wrap">
+      <table>
+        <thead><tr>
+          <th>Bin</th><th>Location</th><th>Zone</th><th>Aisle</th><th>Rack</th><th>Shelf</th>
+          <th>Type</th><th>Capacity</th><th>Bin Stock</th><th>Status</th><th>Created</th><th>Action</th>
+        </tr></thead>
+        <tbody id="rows"><tr><td colspan="12" class="empty">Loading bins...</td></tr></tbody>
+      </table>
+    </div>
+  </section>
+</main>
+</div>
+
+<div id="modalBackdrop" class="modal-backdrop" onclick="if(event.target===this)closeModal()">
+ <div class="modal">
+  <div class="modal-head"><h3 id="modalTitle">Bin Details</h3><button class="close" onclick="closeModal()">Close</button></div>
+  <div class="modal-body"><div id="modalBody"></div></div>
+ </div>
+</div>
+
+<script>
+const API_BASE=window.location.origin;
+const TOKEN_KEY="zippzo_session_token";
+const USER_KEY="zippzo_user";
+let bins=[], locations=[], binInventory=[], filtered=[];
+
+function token(){return localStorage.getItem(TOKEN_KEY)||""}
+function headers(json=false){const h={}; if(json)h["Content-Type"]="application/json"; const t=token(); if(t)h.Authorization=`Bearer ${t}`; return h}
+async function api(path){
+  const r=await fetch(API_BASE+path,{headers:headers()});
+  if(r.status===401){localStorage.removeItem(TOKEN_KEY);localStorage.removeItem(USER_KEY);window.location.href="/";throw new Error("Session expired")}
+  if(!r.ok)throw new Error(`${path} returned ${r.status}`);
+  return r.json();
+}
+function go(path){window.location.href=path}
+function esc(v){return String(v??"").replace(/[&<>"']/g,m=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[m]))}
+function num(v){return Number(v)||0}
+function fmt(v){return new Intl.NumberFormat("en-IN").format(num(v))}
+function locName(id){const x=locations.find(l=>Number(l.id)===Number(id));return x?(x.code?`${x.code} — ${x.name}`:x.name):`Location #${id??"-"}`}
+function stockForBin(id){
+  return binInventory.filter(x=>Number(x.bin_id)===Number(id)).reduce((s,x)=>s+num(x.available_qty)+num(x.reserved_qty)+num(x.picked_qty),0)
+}
+function statusBadge(v){const x=String(v||"UNKNOWN").toUpperCase();const c=x==="ACTIVE"?"active":x==="INACTIVE"?"inactive":"other";return `<span class="badge ${c}">${esc(x)}</span>`}
+function capacityCell(cap,stock){
+  const c=num(cap), s=num(stock), pct=c?Math.min(100,Math.round(s/c*100)):0;
+  return `<div class="capacity-cell"><span>${fmt(c)}</span><div class="progress"><i style="width:${pct}%"></i></div><small class="muted">${pct}%</small></div>`
+}
+async function refreshAll(){
+  hideError();
+  try{
+    [bins,locations,binInventory]=await Promise.all([
+      api("/api/bins"),
+      api("/api/locations"),
+      api("/api/bin-inventory")
+    ]);
+    bins=Array.isArray(bins)?bins:[]; locations=Array.isArray(locations)?locations:[];
+    binInventory=Array.isArray(binInventory)?binInventory:[];
+    buildFilters(); updateKpis(); applyFilters();
+  }catch(e){showError(e.message); document.getElementById("rows").innerHTML=`<tr><td colspan="12" class="empty">Unable to load bin data.</td></tr>`}
+}
+function buildFilters(){
+  const lf=document.getElementById("locationFilter"),tf=document.getElementById("typeFilter"),sf=document.getElementById("statusFilter");
+  const oldL=lf.value,oldT=tf.value,oldS=sf.value;
+  lf.innerHTML='<option value="">All Locations</option>'+[...new Set(bins.map(x=>Number(x.location_id)))].filter(Boolean).sort((a,b)=>a-b).map(id=>`<option value="${id}">${esc(locName(id))}</option>`).join("");
+  tf.innerHTML='<option value="">All Types</option>'+[...new Set(bins.map(x=>String(x.bin_type||"").toUpperCase()).filter(Boolean))].sort().map(x=>`<option value="${esc(x)}">${esc(x)}</option>`).join("");
+  sf.innerHTML='<option value="">All Status</option>'+[...new Set(bins.map(x=>String(x.status||"").toUpperCase()).filter(Boolean))].sort().map(x=>`<option value="${esc(x)}">${esc(x)}</option>`).join("");
+  lf.value=oldL;tf.value=oldT;sf.value=oldS;
+}
+function updateKpis(){
+  document.getElementById("kTotal").textContent=fmt(bins.length);
+  document.getElementById("kActive").textContent=fmt(bins.filter(x=>String(x.status||"").toUpperCase()==="ACTIVE").length);
+  document.getElementById("kInactive").textContent=fmt(bins.filter(x=>String(x.status||"").toUpperCase()==="INACTIVE").length);
+  document.getElementById("kStorage").textContent=fmt(bins.filter(x=>String(x.bin_type||"").toUpperCase()==="STORAGE").length);
+  document.getElementById("kCapacity").textContent=fmt(bins.reduce((s,x)=>s+num(x.capacity),0));
+  document.getElementById("kStock").textContent=fmt(binInventory.reduce((s,x)=>s+num(x.available_qty)+num(x.reserved_qty)+num(x.picked_qty),0));
+}
+function applyFilters(){
+  const q=document.getElementById("search").value.toLowerCase().trim(), l=document.getElementById("locationFilter").value;
+  const t=document.getElementById("typeFilter").value, st=document.getElementById("statusFilter").value;
+  filtered=bins.filter(b=>{
+    const text=[b.id,b.location_id,locName(b.location_id),b.bin_code,b.zone,b.aisle,b.rack,b.shelf,b.bin_type,b.status].join(" ").toLowerCase();
+    return (!q||text.includes(q))&&(!l||String(b.location_id)===l)&&(!t||String(b.bin_type||"").toUpperCase()===t)&&(!st||String(b.status||"").toUpperCase()===st)
+  });
+  render();
+}
+function render(){
+  document.getElementById("resultCount").textContent=`${fmt(filtered.length)} bin${filtered.length===1?"":"s"}`;
+  const body=document.getElementById("rows");
+  if(!filtered.length){body.innerHTML='<tr><td colspan="12" class="empty">No bins match the current filters.</td></tr>';return}
+  body.innerHTML=filtered.map(b=>{
+    const stock=stockForBin(b.id),cap=num(b.capacity);
+    return `<tr>
+      <td><span class="bin">${esc(b.bin_code||`BIN-${b.id}`)}</span><br><small class="muted">ID ${esc(b.id)}</small></td>
+      <td>${esc(locName(b.location_id))}</td><td>${esc(b.zone||"-")}</td><td>${esc(b.aisle||"-")}</td>
+      <td>${esc(b.rack||"-")}</td><td>${esc(b.shelf||"-")}</td><td>${esc(b.bin_type||"-")}</td>
+      <td>${capacityCell(cap,stock)}</td><td><strong>${fmt(stock)}</strong></td><td>${statusBadge(b.status)}</td>
+      <td>${esc(b.created_at||"-")}</td><td><button class="btn btn-secondary" onclick="showDetails(${Number(b.id)})">Details</button></td>
+    </tr>`
+  }).join("");
+}
+function showDetails(id){
+  const b=bins.find(x=>Number(x.id)===id);if(!b)return;
+  const items=binInventory.filter(x=>Number(x.bin_id)===id);
+  const stock=stockForBin(id),cap=num(b.capacity),pct=cap?Math.min(100,Math.round(stock/cap*100)):0;
+  document.getElementById("modalTitle").textContent=`${b.bin_code||"Bin"} — Details`;
+  document.getElementById("modalBody").innerHTML=`
+    <div class="detail-grid">
+      <div class="detail"><label>Bin Code</label><strong>${esc(b.bin_code||"-")}</strong></div>
+      <div class="detail"><label>Status</label><strong>${statusBadge(b.status)}</strong></div>
+      <div class="detail"><label>Type</label><strong>${esc(b.bin_type||"-")}</strong></div>
+      <div class="detail"><label>Location</label><strong>${esc(locName(b.location_id))}</strong></div>
+      <div class="detail"><label>Zone / Aisle</label><strong>${esc(b.zone||"-")} / ${esc(b.aisle||"-")}</strong></div>
+      <div class="detail"><label>Rack / Shelf</label><strong>${esc(b.rack||"-")} / ${esc(b.shelf||"-")}</strong></div>
+      <div class="detail"><label>Capacity</label><strong>${fmt(cap)}</strong></div>
+      <div class="detail"><label>Bin Stock</label><strong>${fmt(stock)}</strong></div>
+      <div class="detail"><label>Utilization</label><strong>${pct}%</strong></div>
+    </div>
+    <h3 style="margin:22px 0 10px">Bin Inventory Records (${items.length})</h3>
+    ${items.length?`<div class="table-wrap"><table style="min-width:650px"><thead><tr><th>SKU</th><th>Product</th><th>Available</th><th>Reserved</th><th>Picked</th><th>Damaged</th><th>Quarantine</th></tr></thead><tbody>${items.map(x=>`<tr><td>${esc(x.sku||"-")}</td><td>${esc(x.product_name||"-")}</td><td>${fmt(x.available_qty)}</td><td>${fmt(x.reserved_qty)}</td><td>${fmt(x.picked_qty)}</td><td>${fmt(x.damaged_qty)}</td><td>${fmt(x.quarantine_qty)}</td></tr>`).join("")}</tbody></table></div>`:'<div class="empty">No bin-level inventory record found.</div>'}`;
+  document.getElementById("modalBackdrop").classList.add("show");
+}
+function closeModal(){document.getElementById("modalBackdrop").classList.remove("show")}
+function clearFilters(){document.getElementById("search").value="";document.getElementById("locationFilter").value="";document.getElementById("typeFilter").value="";document.getElementById("statusFilter").value="";applyFilters()}
+function showError(msg){const e=document.getElementById("errorBox");e.textContent=msg;e.style.display="block"}
+function hideError(){document.getElementById("errorBox").style.display="none"}
+function exportCSV(){
+  if(!filtered.length)return;
+  const head=["ID","Location","Bin Code","Zone","Aisle","Rack","Shelf","Bin Type","Capacity","Bin Stock","Status","Created At"];
+  const rows=filtered.map(b=>[b.id,locName(b.location_id),b.bin_code,b.zone,b.aisle,b.rack,b.shelf,b.bin_type,b.capacity,stockForBin(b.id),b.status,b.created_at]);
+  const csv=[head,...rows].map(r=>r.map(v=>`"${String(v??"").replace(/"/g,'""')}"`).join(",")).join("\n");
+  const a=document.createElement("a");a.href=URL.createObjectURL(new Blob([csv],{type:"text/csv;charset=utf-8"}));a.download="zippzo_bins.csv";a.click();URL.revokeObjectURL(a.href);
+}
+async function loadUser(){
+  const saved=localStorage.getItem(USER_KEY);try{if(saved){const u=JSON.parse(saved);document.getElementById("userName").textContent=u.full_name||u.name||u.employee_id||u.identifier||"Zippzo User"}}catch{}
+  if(!token()){window.location.href="/";return}
+  try{const u=await api("/api/auth/me");localStorage.setItem(USER_KEY,JSON.stringify(u));document.getElementById("userName").textContent=u.full_name||u.name||u.employee_id||u.identifier||"Zippzo User"}catch{}
+}
+async function logout(){const t=token();try{if(t)await fetch(API_BASE+"/api/auth/logout",{method:"POST",headers:{...headers(true)},body:JSON.stringify({session_token:t})})}catch{}localStorage.removeItem(TOKEN_KEY);localStorage.removeItem(USER_KEY);window.location.href="/"}
+document.addEventListener("DOMContentLoaded",async()=>{await loadUser();await refreshAll();setInterval(refreshAll,10000)})
+</script>
+</body>
+</html>

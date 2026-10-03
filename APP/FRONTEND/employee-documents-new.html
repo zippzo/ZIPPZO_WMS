@@ -1,0 +1,217 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1.0">
+<title>Zippzo Employee Documents</title>
+<style>
+*{box-sizing:border-box}:root{--dark:#111827;--blue:#2563eb;--green:#16a34a;--orange:#ea580c;--red:#dc2626;--purple:#7c3aed;--muted:#64748b;--line:#e2e8f0;--bg:#f4f7fb}
+body{margin:0;background:var(--bg);color:#172033;font-family:Inter,Segoe UI,Arial,sans-serif}.top{height:68px;background:var(--dark);color:#fff;display:flex;align-items:center;gap:16px;padding:0 22px;position:sticky;top:0;z-index:20}.logo{font-size:25px;font-weight:900;letter-spacing:1px}.title{font-size:14px;color:#cbd5e1}.spacer{flex:1}.top button{background:#1f2937;border:1px solid #475569;color:#fff;border-radius:8px;padding:9px 13px;cursor:pointer}
+.layout{display:grid;grid-template-columns:235px 1fr;min-height:calc(100vh - 68px)}nav{background:#fff;border-right:1px solid var(--line);padding:14px 10px;position:sticky;top:68px;height:calc(100vh - 68px);overflow:auto}nav h4{font-size:10px;color:#94a3b8;text-transform:uppercase;margin:12px}nav a{display:block;text-decoration:none;color:#334155;padding:9px 12px;border-radius:8px;font-size:12px;margin:2px 0}nav a:hover,nav a.active{background:#eff6ff;color:#1d4ed8;font-weight:700}
+main{padding:22px;min-width:0}.head{display:flex;align-items:center;justify-content:space-between;gap:15px;margin-bottom:18px}.head h1{font-size:25px;margin:0}.sub{font-size:13px;color:var(--muted);margin-top:5px}.actions{display:flex;gap:8px;flex-wrap:wrap}.btn{border:1px solid var(--line);background:#fff;border-radius:8px;padding:9px 13px;cursor:pointer;font-size:12px}.btn.primary{background:var(--blue);border-color:var(--blue);color:#fff}.btn.success{background:var(--green);border-color:var(--green);color:#fff}.btn.danger{color:var(--red)}.btn.small{padding:6px 9px;font-size:11px}
+.kpis{display:grid;grid-template-columns:repeat(8,1fr);gap:10px}.card{background:#fff;border:1px solid var(--line);border-radius:12px;padding:14px;box-shadow:0 1px 2px #00000008}.label{font-size:10px;color:var(--muted);text-transform:uppercase}.value{font-size:23px;font-weight:850;margin-top:6px}.note{font-size:10px;color:var(--muted);margin-top:4px}
+.section{margin-top:18px}.section-head{display:flex;align-items:center;justify-content:space-between;gap:10px;margin-bottom:10px}.section-head h2{font-size:16px;margin:0}.filters{display:flex;gap:8px;flex-wrap:wrap}.filters input,.filters select{height:37px;border:1px solid var(--line);border-radius:8px;background:#fff;padding:0 10px;font-size:12px;color:#172033}.filters .search{min-width:340px}
+.summary{display:grid;grid-template-columns:repeat(8,1fr);gap:10px}.summary strong{display:block;font-size:21px;margin-top:5px}.summary span{font-size:10px;color:var(--muted)}
+.table-wrap{overflow:auto;background:#fff;border:1px solid var(--line);border-radius:10px}.table{width:100%;border-collapse:collapse;font-size:12px}.table th{background:#f8fafc;color:#64748b;font-size:10px;text-transform:uppercase;text-align:left;position:sticky;top:0;z-index:2}.table th,.table td{padding:10px;border-bottom:1px solid #edf2f7;white-space:nowrap}.table tr:hover td{background:#f8fafc}
+.tag{display:inline-block;border-radius:999px;padding:4px 8px;font-size:10px;font-weight:700;background:#eef2ff;color:#3730a3}.tag.good{background:#f0fdf4;color:#15803d}.tag.warn{background:#fff7ed;color:#c2410c}.tag.bad{background:#fef2f2;color:#b91c1c}.tag.info{background:#eff6ff;color:#1d4ed8}.tag.purple{background:#f5f3ff;color:#6d28d9}.muted{color:var(--muted)}.empty{text-align:center;padding:30px;color:#94a3b8}
+.grid2{display:grid;grid-template-columns:1.1fr .9fr;gap:14px}.list{background:#fff;border:1px solid var(--line);border-radius:10px;overflow:hidden}.list-row{display:flex;justify-content:space-between;gap:10px;padding:11px 13px;border-bottom:1px solid #edf2f7;font-size:12px}.list-row:last-child{border:0}.list-row b{display:block}
+.modal{display:none;position:fixed;inset:0;background:#0008;z-index:50;align-items:center;justify-content:center;padding:20px}.modal.show{display:flex}.modal-box{background:#fff;border-radius:14px;width:min(1200px,100%);max-height:92vh;overflow:auto;padding:20px}.modal-head{display:flex;justify-content:space-between;align-items:center}.modal-head h2{font-size:18px;margin:0}.close{border:0;background:#f1f5f9;border-radius:8px;padding:7px 10px;cursor:pointer}
+.form-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:11px;margin-top:16px}.field{display:flex;flex-direction:column;gap:5px}.field label{font-size:10px;color:var(--muted);text-transform:uppercase;font-weight:700}.field input,.field select,.field textarea{border:1px solid var(--line);border-radius:8px;padding:9px;font:inherit;font-size:12px;background:#fff}.field textarea{min-height:75px;resize:vertical}.span2{grid-column:span 2}.span3{grid-column:span 3}.span4{grid-column:span 4}.modal-actions{display:flex;justify-content:flex-end;gap:8px;margin-top:18px}
+.detail-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:9px;margin-top:15px}.detail{border:1px solid var(--line);border-radius:8px;padding:10px}.detail small{display:block;color:var(--muted);font-size:10px}.detail b{display:block;margin-top:4px;font-size:12px;word-break:break-word}.timeline{margin-top:18px;border-left:2px solid #dbeafe;padding-left:18px}.timeline-item{position:relative;margin:0 0 15px}.timeline-item:before{content:"";position:absolute;left:-25px;top:2px;width:10px;height:10px;background:var(--blue);border-radius:50%}.timeline-item b{display:block;font-size:12px}.timeline-item span{font-size:10px;color:var(--muted)}
+.file-note{margin-top:12px;padding:11px;border:1px dashed #cbd5e1;border-radius:8px;background:#f8fafc;font-size:11px;color:#475569}
+.toast{position:fixed;right:20px;bottom:20px;background:#111827;color:#fff;padding:12px 15px;border-radius:8px;display:none;z-index:100;font-size:13px}.loading{opacity:.65;pointer-events:none}
+@media(max-width:1450px){.kpis{grid-template-columns:repeat(4,1fr)}.summary{grid-template-columns:repeat(4,1fr)}}@media(max-width:1050px){.layout{grid-template-columns:1fr}nav{display:none}.grid2{grid-template-columns:1fr}.detail-grid{grid-template-columns:repeat(2,1fr)}.form-grid{grid-template-columns:repeat(2,1fr)}.span4{grid-column:span 2}}@media(max-width:650px){main{padding:13px}.kpis,.summary{grid-template-columns:repeat(2,1fr)}.head{align-items:flex-start;flex-direction:column}.filters .search{min-width:100%}.detail-grid,.form-grid{grid-template-columns:1fr}.span2,.span3,.span4{grid-column:span 1}}@media print{.top,nav,.actions,.filters,.pagination,.no-print{display:none!important}.layout{display:block}main{padding:0}.card{box-shadow:none}}
+</style>
+
+<style id="zippzo-master-theme">
+/* ZIPPZO MASTER FRONTEND THEME — visual layer only */
+:root{
+ --z-purple:#331084;--z-dark:#24085F;--z-yellow:#FEB103;
+ --z-bg:#F5F6FB;--z-card:#FFFFFF;--z-text:#171A4A;--z-muted:#69708F;
+ --z-line:#E6E8F0;--z-shadow:0 5px 18px rgba(36,8,95,.07);
+}
+html,body{background:var(--z-bg)!important;color:var(--z-text)!important}
+body{font-family:Inter,Segoe UI,Arial,sans-serif!important}
+.topbar,.header,.top-header,.top-nav,.app-header{
+ background:linear-gradient(90deg,var(--z-dark),var(--z-purple))!important;
+ color:#fff!important;border-color:transparent!important;
+}
+.sidebar,.side-nav,.left-sidebar,.navigation{
+ background:linear-gradient(180deg,#25105F,#180743)!important;
+ color:#fff!important;border-color:transparent!important;
+}
+.brand{color:#fff!important}
+.sidebar .nav-button,.sidebar button,.side-nav button,.left-sidebar button,
+.navigation button,.nav-button{
+ color:#fff!important;background:transparent!important;border-radius:8px!important;
+ border-color:transparent!important;
+}
+.sidebar .nav-button:hover,.sidebar button:hover,.side-nav button:hover,
+.left-sidebar button:hover,.navigation button:hover,.nav-button:hover{
+ background:rgba(255,255,255,.09)!important;
+}
+.sidebar .nav-button.active,.sidebar .nav-button[aria-current="page"],
+.nav-button.active,.nav-button.selected,.nav-button.current{
+ background:var(--z-yellow)!important;color:#15112F!important;font-weight:900!important;
+}
+.sidebar-title,.section-title,.nav-section{
+ color:#B9A9E8!important;letter-spacing:.7px!important;font-weight:900!important;
+}
+.content,.main-content,.page-content,.workspace{background:var(--z-bg)!important}
+.card,.panel,.table-card,.summary-card,.kpi-card,.stat-card,.form-card,
+.modal-content,.toolbar,.filter-bar,.table-container{
+ background:#fff!important;border-color:var(--z-line)!important;
+ box-shadow:var(--z-shadow)!important;border-radius:12px!important;
+}
+.btn-primary,.primary-btn,.button-primary,.add-btn,.save-btn{
+ background:var(--z-yellow)!important;color:#17113B!important;border-color:var(--z-yellow)!important;
+}
+.btn-secondary,.secondary-btn{background:#fff!important;color:var(--z-text)!important;border-color:var(--z-line)!important}
+input,select,textarea{
+ border-color:#DFE2EB!important;border-radius:8px!important;background:#fff!important;color:var(--z-text)!important;
+}
+input:focus,select:focus,textarea:focus{
+ border-color:var(--z-purple)!important;box-shadow:0 0 0 3px rgba(51,16,132,.08)!important;
+}
+table{background:#fff!important}
+thead th{background:#F7F8FC!important;color:#626987!important}
+tbody td{border-color:#EDF0F5!important}
+tbody tr:hover td{background:#FAFAFF!important}
+.badge,.status-badge{border-radius:999px!important}
+.page-title,h1,h2{color:var(--z-text)!important}
+.muted,.subtitle,.page-subtitle,.help-text{color:var(--z-muted)!important}
+</style>
+
+
+<link rel="stylesheet" href="zippzo-standard.css">
+<script src="zippzo-standard.js" defer></script>
+</head>
+<body>
+<header class="top"><div class="logo">ZIPPZO</div><div class="title">Employee Documents</div><div class="spacer"></div><span id="userName" class="title">Loading...</span><button onclick="loadAll()">↻ Refresh</button><button onclick="logout()">Logout</button></header>
+<div class="layout"><nav id="nav"></nav><main>
+<div class="head"><div><h1>Employee Documents</h1><div class="sub">Employee → Document Type → Upload → Verification → Expiry → Renewal → HR Compliance</div></div><div class="actions"><button class="btn" onclick="exportCSV()">Export CSV</button><button class="btn" onclick="printReport()">Print</button><button class="btn primary" onclick="openCreate()">+ Add Document</button></div></div>
+
+<div class="kpis">
+<div class="card"><div class="label">TOTAL DOCUMENTS</div><div class="value" id="kTotal">—</div><div class="note">Employee documents</div></div>
+<div class="card"><div class="label">VERIFIED</div><div class="value" id="kVerified">—</div><div class="note">Verified records</div></div>
+<div class="card"><div class="label">PENDING</div><div class="value" id="kPending">—</div><div class="note">Awaiting verification</div></div>
+<div class="card"><div class="label">REJECTED</div><div class="value" id="kRejected">—</div><div class="note">Rejected documents</div></div>
+<div class="card"><div class="label">EXPIRING 30D</div><div class="value" id="kExpiring">—</div><div class="note">Expiry within 30 days</div></div>
+<div class="card"><div class="label">EXPIRED</div><div class="value" id="kExpired">—</div><div class="note">Past expiry</div></div>
+<div class="card"><div class="label">MISSING FILE</div><div class="value" id="kMissing">—</div><div class="note">No file reference</div></div>
+<div class="card"><div class="label">EMPLOYEES</div><div class="value" id="kEmployees">—</div><div class="note">Employees covered</div></div>
+</div>
+
+<section class="section"><div class="card"><div class="section-head"><h2>Document Filters</h2><button class="btn" onclick="clearFilters()">Clear Filters</button></div>
+<div class="filters">
+<input class="search" id="search" placeholder="Employee / document number / type / file..." oninput="applyFilters()">
+<select id="status" onchange="applyFilters()"><option value="">All Status</option></select>
+<select id="docType" onchange="applyFilters()"><option value="">All Document Types</option></select>
+<select id="department" onchange="applyFilters()"><option value="">All Departments</option></select>
+<select id="location" onchange="applyFilters()"><option value="">All Locations</option></select>
+<select id="expiry" onchange="applyFilters()"><option value="">All Expiry</option><option value="valid">Valid</option><option value="30">Expiring ≤30 Days</option><option value="expired">Expired</option><option value="none">No Expiry</option></select>
+<select id="sort" onchange="applyFilters()"><option value="newest">Newest</option><option value="name">Employee A-Z</option><option value="expiry">Expiry Soonest</option><option value="type">Document Type</option></select>
+<select id="pageSize" onchange="applyFilters()"><option>25</option><option>50</option><option>100</option></select>
+</div></div></section>
+
+<section class="section summary">
+<div class="card"><div class="label">FILTERED</div><strong id="sTotal">0</strong><span>documents</span></div>
+<div class="card"><div class="label">VERIFIED</div><strong id="sVerified">0</strong><span>verified</span></div>
+<div class="card"><div class="label">PENDING</div><strong id="sPending">0</strong><span>pending</span></div>
+<div class="card"><div class="label">EXPIRED</div><strong id="sExpired">0</strong><span>expired</span></div>
+<div class="card"><div class="label">EXPIRING</div><strong id="sExpiring">0</strong><span>≤30 days</span></div>
+<div class="card"><div class="label">MISSING</div><strong id="sMissing">0</strong><span>file reference</span></div>
+<div class="card"><div class="label">EMPLOYEES</div><strong id="sEmployees">0</strong><span>unique</span></div>
+<div class="card"><div class="label">ALERTS</div><strong id="sAlerts">0</strong><span>review</span></div>
+</section>
+
+<section class="section grid2">
+<div class="card"><div class="section-head"><h2>Document Status Summary</h2><span class="muted" id="statusCount">0 documents</span></div><div class="list" id="statusList"></div></div>
+<div class="card"><div class="section-head"><h2>Expiry & Compliance Alerts</h2><span class="tag warn" id="exceptionCount">0</span></div><div class="list" id="exceptionList"></div></div>
+</section>
+
+<section class="section"><div class="section-head"><h2>Employee Document Register</h2><span class="muted" id="resultCount">0 documents</span></div>
+<div class="table-wrap"><table class="table"><thead><tr><th>Document ID</th><th>Employee</th><th>Department</th><th>Document Type</th><th>Document No.</th><th>Issue Date</th><th>Expiry</th><th>Status</th><th>File</th><th>Verified By</th><th>Action</th></tr></thead><tbody id="body"></tbody></table></div>
+<div class="pagination"><span id="pageInfo">Page 1</span><div id="pager" style="display:flex;gap:5px"></div></div></section>
+</main></div>
+
+<div class="modal" id="formModal"><div class="modal-box"><div class="modal-head"><h2>Add Employee Document</h2><button class="close" onclick="closeForm()">✕</button></div>
+<form id="docForm" onsubmit="saveDocument(event)">
+<div class="form-grid">
+<div class="field"><label>Employee *</label><select id="fEmployee" required><option value="">Select employee</option></select></div>
+<div class="field"><label>Document Type *</label><select id="fType" required><option value="">Select type</option><option>AADHAAR</option><option>PAN</option><option>VOTER_ID</option><option>DRIVING_LICENSE</option><option>PASSPORT</option><option>EDUCATION_CERTIFICATE</option><option>EXPERIENCE_LETTER</option><option>OFFER_LETTER</option><option>APPOINTMENT_LETTER</option><option>BANK_PROOF</option><option>ADDRESS_PROOF</option><option>PHOTO</option><option>OTHER</option></select></div>
+<div class="field"><label>Document Number</label><input id="fNumber" placeholder="Document number"></div>
+<div class="field"><label>Status</label><select id="fStatus"><option>PENDING</option><option>VERIFIED</option><option>REJECTED</option><option>EXPIRED</option></select></div>
+<div class="field"><label>Issue Date</label><input id="fIssue" type="date"></div>
+<div class="field"><label>Expiry Date</label><input id="fExpiry" type="date"></div>
+<div class="field"><label>File Name / URL</label><input id="fFile" placeholder="File name or document URL"></div>
+<div class="field"><label>Verified By</label><input id="fVerifiedBy" placeholder="HR / employee"></div>
+<div class="field"><label>Verification Date</label><input id="fVerifiedDate" type="date"></div>
+<div class="field span4"><label>Remarks</label><textarea id="fRemarks" placeholder="Document remarks"></textarea></div>
+</div>
+<div class="file-note">This frontend records document metadata and file references through the available API. It does not claim binary file storage unless the backend endpoint supports it.</div>
+<div class="modal-actions"><button type="button" class="btn" onclick="closeForm()">Cancel</button><button class="btn primary">Save Document</button></div>
+</form></div></div>
+
+<div class="modal" id="detailModal"><div class="modal-box"><div class="modal-head"><h2>Document Details</h2><button class="close" onclick="closeDetail()">✕</button></div><div id="detail"></div></div></div>
+<div class="toast" id="toast"></div>
+<script>
+const API=window.location.origin,TOKEN_KEY="zippzo_session_token";let token=localStorage.getItem(TOKEN_KEY),rows=[],employees=[],filtered=[],page=1;
+const navLinks=[["index.html","Dashboard"],["hr-dashboard.html","HR Dashboard"],["employees.html","Employees"],["attendance.html","Attendance"],["shift-management.html","Shift Management"],["leave-management.html","Leave Management"],["payroll.html","Payroll"],["employee-documents.html","Employee Documents"],["employee-performance.html","Performance"],["hr-reports.html","HR Reports"],["products.html","Products"],["suppliers.html","Suppliers"],["locations.html","Locations"],["inventory.html","Inventory"],["stock-movements.html","Stock Movements"],["bins.html","Bins"],["purchase-orders.html","Purchase Orders"],["grn.html","GRN"],["putaway.html","Putaway"],["create-batch.html","Create Batch"],["picking.html","Picking"],["sorting.html","Sorting"],["grid-putaway.html","Grid Putaway"],["vehicle-arrival.html","Vehicle Arrival"],["dispatch.html","Dispatch"],["store-receiving.html","Store Receiving"],["orders.html","Orders"],["order-report.html","Order Report"],["access-control.html","Access Control"],["audit-logs.html","Audit Logs"],["system-settings.html","System Settings"]];
+function esc(v){return String(v??"").replace(/[&<>"']/g,m=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#039;"}[m]))}
+function arr(d){if(Array.isArray(d))return d;if(Array.isArray(d?.items))return d.items;if(Array.isArray(d?.data))return d.data;if(Array.isArray(d?.results))return d.results;return[]}
+function field(x,...keys){for(const k of keys)if(x?.[k]!==undefined&&x?.[k]!==null&&x?.[k]!=="")return x[k];return""}
+function toast(s){const x=document.getElementById("toast");x.textContent=s;x.style.display="block";clearTimeout(window.tt);window.tt=setTimeout(()=>x.style.display="none",3200)}
+async function api(path,opt={}){const h={"Content-Type":"application/json",...(opt.headers||{})};if(token)h.Authorization="Bearer "+token;const r=await fetch(API+path,{...opt,headers:h});if(r.status===401){localStorage.removeItem(TOKEN_KEY);localStorage.removeItem("zippzo_user");location.href="index.html";throw Error("Session expired")}const t=await r.text();let d={};try{d=t?JSON.parse(t):{}}catch{}if(!r.ok)throw Error(d.detail||d.message||"Request failed");return d}
+async function tryGet(paths){let e;for(const p of paths){try{return await api(p)}catch(x){e=x}}throw e||Error("API unavailable")}
+function nav(){document.getElementById("nav").innerHTML="<h4>HR & Admin</h4>"+navLinks.slice(0,10).map(x=>`<a href="${x[0]}" class="${location.pathname.endsWith(x[0])?"active":""}">${x[1]}</a>`).join("")+"<h4>Operations</h4>"+navLinks.slice(10).map(x=>`<a href="${x[0]}">${x[1]}</a>`).join("")}
+function did(x){return String(field(x,"document_id","employee_document_id","id","code")||"—")}function eid(x){return String(field(x,"employee_id","emp_id","employee_code")||"—")}function name(x){return String(field(x,"employee_name","name","full_name")||"—")}function dept(x){return String(field(x,"department","department_name")||"—")}function loc(x){return String(field(x,"location_name","location","site","city")||"—")}function type(x){return String(field(x,"document_type","type","category")||"—").toUpperCase()}function number(x){return String(field(x,"document_number","document_no","number","doc_number")||"—")}function issue(x){return String(field(x,"issue_date","issued_on")||"—")}function expiry(x){return String(field(x,"expiry_date","expires_on","valid_until")||"—")}function status(x){return String(field(x,"status","verification_status")||"PENDING").toUpperCase()}function fileRef(x){return String(field(x,"file_url","file_name","document_url","file_path","attachment")||"—")}function verifiedBy(x){return String(field(x,"verified_by_name","verified_by")||"—")}function statusClass(s){return s==="VERIFIED"?"good":s==="PENDING"?"warn":s==="REJECTED"||s==="EXPIRED"?"bad":"info"}
+function expiryState(x){const e=expiry(x);if(e==="—"||!e)return"none";const d=Date.parse(e),now=new Date();now.setHours(0,0,0,0);if(!Number.isFinite(d))return"none";const days=Math.ceil((d-now.getTime())/86400000);if(days<0)return"expired";if(days<=30)return"30";return"valid"}
+function alertFor(x){const s=expiryState(x);return s==="expired"||s==="30"||fileRef(x)==="—"||status(x)==="REJECTED"}
+async function loadAll(){document.body.classList.add("loading");try{const [dd,ed]=await Promise.all([tryGet(["/api/employee-documents","/api/employee_documents","/api/documents"]),tryGet(["/api/employees"])]);rows=arr(dd);employees=arr(ed);try{const me=await api("/api/auth/me");document.getElementById("userName").textContent=me.employee?.name||me.name||me.user?.name||"Zippzo User"}catch{}buildFilters();buildEmployees();applyFilters();renderKpis();toast("Employee document data refreshed")}catch(e){toast(e.message||"Employee document API is not available yet")}finally{document.body.classList.remove("loading")}}
+function fill(id,values,label){const el=document.getElementById(id),old=el.value;el.innerHTML=`<option value="">${label}</option>`+values.map(v=>`<option value="${esc(v)}">${esc(v)}</option>`).join("");if(values.includes(old))el.value=old}
+function buildFilters(){fill("status",[...new Set(rows.map(status))].sort(),"All Status");fill("docType",[...new Set(rows.map(type).filter(x=>x!=="—"))].sort(),"All Document Types");fill("department",[...new Set(rows.map(dept).filter(x=>x!=="—"))].sort(),"All Departments");fill("location",[...new Set(rows.map(loc).filter(x=>x!=="—"))].sort(),"All Locations")}
+function buildEmployees(){document.getElementById("fEmployee").innerHTML='<option value="">Select employee</option>'+employees.map(x=>`<option value="${esc(field(x,"id","employee_id","emp_id"))}">${esc(field(x,"employee_id","emp_id","code","id"))} · ${esc(field(x,"name","full_name","employee_name"))}</option>`).join("")}
+function applyFilters(){const q=document.getElementById("search").value.toLowerCase().trim(),st=document.getElementById("status").value,ty=document.getElementById("docType").value,de=document.getElementById("department").value,lo=document.getElementById("location").value,ex=document.getElementById("expiry").value;filtered=rows.filter(x=>{const b=JSON.stringify(x).toLowerCase(),es=expiryState(x);return(!q||b.includes(q))&&(!st||status(x)===st)&&(!ty||type(x)===ty)&&(!de||dept(x)===de)&&(!lo||loc(x)===lo)&&(!ex||es===ex)});const sort=document.getElementById("sort").value;filtered.sort((a,b)=>sort==="name"?name(a).localeCompare(name(b)):sort==="expiry"?String(expiry(a)).localeCompare(String(expiry(b))):sort==="type"?type(a).localeCompare(type(b)):String(b.created_at||b.uploaded_at||did(b)).localeCompare(String(a.created_at||a.uploaded_at||did(a))));page=1;render()}
+function renderKpis(){const c=s=>rows.filter(x=>status(x)===s).length;document.getElementById("kTotal").textContent=rows.length;document.getElementById("kVerified").textContent=c("VERIFIED");document.getElementById("kPending").textContent=c("PENDING");document.getElementById("kRejected").textContent=c("REJECTED");document.getElementById("kExpiring").textContent=rows.filter(x=>expiryState(x)==="30").length;document.getElementById("kExpired").textContent=rows.filter(x=>expiryState(x)==="expired").length;document.getElementById("kMissing").textContent=rows.filter(x=>fileRef(x)==="—").length;document.getElementById("kEmployees").textContent=new Set(rows.map(eid).filter(x=>x!=="—")).size}
+function render(){const ex=filtered.filter(x=>expiryState(x)==="expired").length,exp=filtered.filter(x=>expiryState(x)==="30").length,mis=filtered.filter(x=>fileRef(x)==="—").length;document.getElementById("sTotal").textContent=filtered.length;document.getElementById("sVerified").textContent=filtered.filter(x=>status(x)==="VERIFIED").length;document.getElementById("sPending").textContent=filtered.filter(x=>status(x)==="PENDING").length;document.getElementById("sExpired").textContent=ex;document.getElementById("sExpiring").textContent=exp;document.getElementById("sMissing").textContent=mis;document.getElementById("sEmployees").textContent=new Set(filtered.map(eid).filter(x=>x!=="—")).size;document.getElementById("sAlerts").textContent=filtered.filter(alertFor).length;document.getElementById("resultCount").textContent=filtered.length+" documents";renderStatus();renderExceptions();renderTable();renderPager()}
+function renderStatus(){const vals=["VERIFIED","PENDING","REJECTED","EXPIRED"];document.getElementById("statusCount").textContent=filtered.length+" documents";document.getElementById("statusList").innerHTML=vals.map(s=>`<div class="list-row"><div><b>${s}</b><span class="muted">Document status</span></div><span class="tag ${statusClass(s)}">${filtered.filter(x=>status(x)===s).length}</span></div>`).join("")}
+function renderExceptions(){const d=filtered.filter(alertFor).slice(0,15);document.getElementById("exceptionCount").textContent=filtered.filter(alertFor).length;document.getElementById("exceptionList").innerHTML=d.length?d.map(x=>{const es=expiryState(x),msg=es==="expired"?"Expired":es==="30"?"Expires within 30 days":fileRef(x)==="—"?"File missing":"Rejected";return`<div class="list-row"><div><b>${esc(eid(x))} · ${esc(name(x))}</b><span class="muted">${esc(type(x))} · ${esc(expiry(x))}</span></div><span class="tag ${es==="expired"?"bad":"warn"}">${msg}</span></div>`}).join(""):`<div class="empty">No document compliance alerts.</div>`}
+function renderTable(){const size=Number(document.getElementById("pageSize").value||25),pages=Math.max(1,Math.ceil(filtered.length/size));if(page>pages)page=pages;const d=filtered.slice((page-1)*size,page*size);document.getElementById("body").innerHTML=d.length?d.map((x,i)=>`<tr><td><b>${esc(did(x))}</b></td><td>${esc(eid(x))} · ${esc(name(x))}</td><td>${esc(dept(x))}</td><td>${esc(type(x))}</td><td>${esc(number(x))}</td><td>${esc(issue(x))}</td><td>${esc(expiry(x))}</td><td><span class="tag ${statusClass(status(x))}">${esc(status(x))}</span></td><td>${fileRef(x)==="—"?'<span class="tag bad">Missing</span>':'<span class="tag good">Available</span>'}</td><td>${esc(verifiedBy(x))}</td><td><button class="btn small" onclick="details(${(page-1)*size+i})">View</button></td></tr>`).join(""):`<tr><td colspan="11" class="empty">No employee documents match the selected filters.</td></tr>`}
+function renderPager(){const size=Number(document.getElementById("pageSize").value||25),pages=Math.max(1,Math.ceil(filtered.length/size));document.getElementById("pageInfo").textContent=`Page ${page} of ${pages} · ${filtered.length} documents`;let b="",s=Math.max(1,page-2),e=Math.min(pages,s+4);if(page>1)b+=`<button class="btn" onclick="gotoPage(${page-1})">‹</button>`;for(let p=s;p<=e;p++)b+=`<button class="btn ${p===page?"primary":""}" onclick="gotoPage(${p})">${p}</button>`;if(page<pages)b+=`<button class="btn" onclick="gotoPage(${page+1})">›</button>`;document.getElementById("pager").innerHTML=b}
+function gotoPage(p){page=p;renderTable();renderPager()}
+function clearFilters(){document.getElementById("search").value="";["status","docType","department","location","expiry"].forEach(id=>document.getElementById(id).value="");document.getElementById("sort").value="newest";document.getElementById("pageSize").value="25";applyFilters()}
+function openCreate(){document.getElementById("docForm").reset();document.getElementById("fStatus").value="PENDING";document.getElementById("formModal").classList.add("show")}function closeForm(){document.getElementById("formModal").classList.remove("show")}
+async function saveDocument(e){e.preventDefault();const employeeId=document.getElementById("fEmployee").value,emp=employees.find(x=>String(field(x,"id","employee_id","emp_id"))===String(employeeId));const data={employee_id:employeeId,employee_name:emp?field(emp,"name","full_name","employee_name"):"",document_type:document.getElementById("fType").value,document_number:document.getElementById("fNumber").value,status:document.getElementById("fStatus").value,issue_date:document.getElementById("fIssue").value||null,expiry_date:document.getElementById("fExpiry").value||null,file_name:document.getElementById("fFile").value,verified_by:document.getElementById("fVerifiedBy").value,verification_date:document.getElementById("fVerifiedDate").value||null,remarks:document.getElementById("fRemarks").value};try{let e2;for(const p of ["/api/employee-documents","/api/employee_documents","/api/documents"]){try{await api(p,{method:"POST",body:JSON.stringify(data)});e2=null;break}catch(x){e2=x}}if(e2)throw e2;closeForm();await loadAll();toast("Employee document created successfully")}catch(x){toast(x.message||"Document save API is not available yet")}}
+function D(a,b){return`<div class="detail"><small>${esc(a)}</small><b>${esc(b??"—")}</b></div>`}
+function details(i){const x=filtered[i];if(!x)return;const es=expiryState(x);document.getElementById("detail").innerHTML=`<div class="detail-grid">${D("Document ID",did(x))}${D("Employee ID",eid(x))}${D("Employee",name(x))}${D("Department",dept(x))}${D("Location",loc(x))}${D("Document Type",type(x))}${D("Document Number",number(x))}${D("Issue Date",issue(x))}${D("Expiry Date",expiry(x))}${D("Expiry Status",es==="expired"?"EXPIRED":es==="30"?"EXPIRING ≤30 DAYS":es==="none"?"NO EXPIRY":"VALID")}${D("Verification Status",status(x))}${D("Verified By",verifiedBy(x))}${D("Verification Date",field(x,"verification_date","verified_at")||"—")}${D("File Reference",fileRef(x))}${D("Remarks",field(x,"remarks","notes")||"—")}${D("Created",field(x,"created_at","uploaded_at")||"—")}</div><div class="timeline"><div class="timeline-item"><b>Document Added</b><span>${esc(type(x))} · ${esc(did(x))}</span></div><div class="timeline-item"><b>Verification</b><span>${esc(status(x))}${verifiedBy(x)!=="—"?" · "+esc(verifiedBy(x)):""}</span></div><div class="timeline-item"><b>Expiry Monitoring</b><span>${esc(expiry(x))} · ${es==="expired"?"Expired":es==="30"?"Expiring soon":es==="none"?"No expiry":"Valid"}</span></div><div class="timeline-item"><b>File Reference</b><span>${esc(fileRef(x))}</span></div></div>`;document.getElementById("detailModal").classList.add("show")}
+function closeDetail(){document.getElementById("detailModal").classList.remove("show")}
+function exportCSV(){const h=["Document ID","Employee ID","Employee","Department","Location","Document Type","Document Number","Issue Date","Expiry Date","Status","File Reference","Verified By"];const d=filtered.map(x=>[did(x),eid(x),name(x),dept(x),loc(x),type(x),number(x),issue(x),expiry(x),status(x),fileRef(x),verifiedBy(x)]);const csv=[h,...d].map(r=>r.map(v=>`"${String(v??"").replaceAll('"','""')}"`).join(",")).join("\n");const a=document.createElement("a");a.href=URL.createObjectURL(new Blob([csv],{type:"text/csv;charset=utf-8"}));a.download="zippzo_employee_documents.csv";a.click()}
+function printReport(){window.print()}
+async function logout(){try{if(token)await api("/api/auth/logout",{method:"POST",body:JSON.stringify({session_token:token})})}catch{}localStorage.removeItem(TOKEN_KEY);localStorage.removeItem("zippzo_user");location.href="index.html"}
+document.getElementById("formModal").addEventListener("click",e=>{if(e.target.id==="formModal")closeForm()});document.getElementById("detailModal").addEventListener("click",e=>{if(e.target.id==="detailModal")closeDetail()});(async()=>{nav();await loadAll()})();
+</script>
+
+<script id="zippzo-master-frontend">
+document.addEventListener("DOMContentLoaded", function(){
+  // Hide the retired Dropping module everywhere.
+  document.querySelectorAll("a,button").forEach(function(el){
+    const t=(el.textContent||"").trim().toLowerCase();
+    if(t==="dropping" || t.includes("dropping")) el.style.display="none";
+  });
+
+  // Use the real Zippzo logo wherever a common brand element exists.
+  document.querySelectorAll(".brand,.logo,.brand-logo").forEach(function(el){
+    if(!el.querySelector("img")){
+      const img=document.createElement("img");
+      img.src="zippzo-logo.jpg";
+      img.alt="Zippzo";
+      img.style.cssText="width:148px;max-height:55px;object-fit:contain;object-position:left center;";
+      el.prepend(img);
+    }
+  });
+});
+</script>
+
+</body>
+</html>

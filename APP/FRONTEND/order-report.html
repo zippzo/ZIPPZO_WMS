@@ -1,0 +1,147 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1.0">
+<title>Zippzo Order Report</title>
+<style>
+*{box-sizing:border-box}:root{--dark:#111827;--blue:#2563eb;--green:#16a34a;--orange:#ea580c;--red:#dc2626;--purple:#7c3aed;--muted:#64748b;--line:#e2e8f0;--bg:#f4f7fb}
+body{margin:0;background:var(--bg);color:#172033;font-family:Inter,Segoe UI,Arial,sans-serif}.top{height:68px;background:var(--dark);color:#fff;display:flex;align-items:center;gap:16px;padding:0 22px;position:sticky;top:0;z-index:20}.logo{font-size:25px;font-weight:900;letter-spacing:1px}.title{font-size:14px;color:#cbd5e1}.spacer{flex:1}.top button{background:#1f2937;border:1px solid #475569;color:#fff;border-radius:8px;padding:9px 13px;cursor:pointer}
+.layout{display:grid;grid-template-columns:235px 1fr;min-height:calc(100vh - 68px)}nav{background:#fff;border-right:1px solid var(--line);padding:14px 10px;position:sticky;top:68px;height:calc(100vh - 68px);overflow:auto}nav h4{font-size:10px;color:#94a3b8;text-transform:uppercase;margin:12px}nav a{display:block;text-decoration:none;color:#334155;padding:9px 12px;border-radius:8px;font-size:12px;margin:2px 0}nav a:hover,nav a.active{background:#eff6ff;color:#1d4ed8;font-weight:700}
+main{padding:22px;min-width:0}.head{display:flex;align-items:center;justify-content:space-between;gap:15px;margin-bottom:18px}.head h1{font-size:25px;margin:0}.sub{font-size:13px;color:var(--muted);margin-top:5px}.actions{display:flex;gap:8px;flex-wrap:wrap}.btn{border:1px solid var(--line);background:#fff;border-radius:8px;padding:9px 13px;cursor:pointer;font-size:12px}.btn.primary{background:var(--blue);border-color:var(--blue);color:#fff}
+.kpis{display:grid;grid-template-columns:repeat(9,minmax(100px,1fr));gap:10px}.card{background:#fff;border:1px solid var(--line);border-radius:12px;padding:14px;box-shadow:0 1px 2px #00000008}.label{font-size:10px;color:var(--muted);text-transform:uppercase}.value{font-size:23px;font-weight:850;margin-top:6px}.note{font-size:10px;color:var(--muted);margin-top:4px}
+.section{margin-top:18px}.section-head{display:flex;align-items:center;justify-content:space-between;gap:10px;margin-bottom:10px}.section-head h2{font-size:16px;margin:0}.filters{display:flex;gap:8px;flex-wrap:wrap}.filters input,.filters select{height:37px;border:1px solid var(--line);border-radius:8px;background:#fff;padding:0 10px;font-size:12px;color:#172033}.filters .search{min-width:300px}
+.summary{display:grid;grid-template-columns:repeat(6,1fr);gap:10px}.summary strong{display:block;font-size:21px;margin-top:5px}.summary span{font-size:10px;color:var(--muted)}
+.table-wrap{overflow:auto;background:#fff;border:1px solid var(--line);border-radius:10px}.table{width:100%;border-collapse:collapse;font-size:12px}.table th{background:#f8fafc;color:#64748b;font-size:10px;text-transform:uppercase;text-align:left;position:sticky;top:0;z-index:2}.table th,.table td{padding:10px;border-bottom:1px solid #edf2f7;white-space:nowrap}.table tr:hover td{background:#f8fafc}
+.tag{display:inline-block;border-radius:999px;padding:4px 8px;font-size:10px;font-weight:700;background:#eef2ff;color:#3730a3}.tag.good{background:#f0fdf4;color:#15803d}.tag.warn{background:#fff7ed;color:#c2410c}.tag.bad{background:#fef2f2;color:#b91c1c}.tag.info{background:#eff6ff;color:#1d4ed8}.muted{color:var(--muted)}.empty{text-align:center;padding:30px;color:#94a3b8}
+.grid2{display:grid;grid-template-columns:1.2fr .8fr;gap:14px}.list{background:#fff;border:1px solid var(--line);border-radius:10px;overflow:hidden}.list-row{display:flex;justify-content:space-between;gap:10px;padding:11px 13px;border-bottom:1px solid #edf2f7;font-size:12px}.list-row:last-child{border:0}.list-row b{display:block}
+.progress{height:7px;width:90px;background:#e2e8f0;border-radius:99px;overflow:hidden;display:inline-block;vertical-align:middle}.progress i{display:block;height:100%;background:var(--blue)}
+.pagination{display:flex;justify-content:space-between;align-items:center;padding:11px 2px;font-size:11px;color:var(--muted)}.pager{display:flex;gap:5px}.pager button{border:1px solid var(--line);background:#fff;border-radius:7px;padding:7px 10px;cursor:pointer}.pager button.active{background:var(--blue);border-color:var(--blue);color:#fff}
+.modal{display:none;position:fixed;inset:0;background:#0008;z-index:50;align-items:center;justify-content:center;padding:20px}.modal.show{display:flex}.modal-box{background:#fff;border-radius:14px;width:min(1100px,100%);max-height:90vh;overflow:auto;padding:20px}.modal-head{display:flex;justify-content:space-between;align-items:center}.modal-head h2{font-size:18px;margin:0}.close{border:0;background:#f1f5f9;border-radius:8px;padding:7px 10px;cursor:pointer}.detail-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:9px;margin-top:15px}.detail{border:1px solid var(--line);border-radius:8px;padding:10px}.detail small{display:block;color:var(--muted);font-size:10px}.detail b{display:block;margin-top:4px;font-size:12px;word-break:break-word}.timeline{margin-top:18px;border-left:2px solid #dbeafe;padding-left:18px}.timeline-item{position:relative;margin:0 0 15px}.timeline-item:before{content:"";position:absolute;left:-25px;top:2px;width:10px;height:10px;background:var(--blue);border-radius:50%}.timeline-item b{display:block;font-size:12px}.timeline-item span{font-size:10px;color:var(--muted)}
+.toast{position:fixed;right:20px;bottom:20px;background:#111827;color:#fff;padding:12px 15px;border-radius:8px;display:none;z-index:100;font-size:13px}.loading{opacity:.65;pointer-events:none}
+@media(max-width:1400px){.kpis{grid-template-columns:repeat(5,1fr)}}@media(max-width:1100px){.kpis{grid-template-columns:repeat(3,1fr)}.summary{grid-template-columns:repeat(3,1fr)}}@media(max-width:950px){.layout{grid-template-columns:1fr}nav{display:none}.grid2{grid-template-columns:1fr}.detail-grid{grid-template-columns:repeat(2,1fr)}}@media(max-width:600px){main{padding:13px}.kpis,.summary{grid-template-columns:repeat(2,1fr)}.head{align-items:flex-start;flex-direction:column}.detail-grid{grid-template-columns:1fr}.filters .search{min-width:100%}}@media print{.top,nav,.actions,.filters,.pagination,.no-print{display:none!important}.layout{display:block}main{padding:0}.card{box-shadow:none}}
+</style>
+
+<link rel="stylesheet" href="zippzo-standard.css">
+<script src="zippzo-standard.js" defer></script>
+</head>
+<body>
+<header class="top"><div class="logo">ZIPPZO</div><div class="title">Order Control Report</div><div class="spacer"></div><span id="userName" class="title">Loading...</span><button onclick="loadAll()">↻ Refresh</button><button onclick="logout()">Logout</button></header>
+<div class="layout"><nav id="nav"></nav><main>
+<div class="head"><div><h1>Order Report</h1><div class="sub">Order intake → Allocation → Picking → Packing → Ready → Dispatch → Delivery / Cancellation</div></div><div class="actions"><button class="btn" onclick="printReport()">Print</button><button class="btn" onclick="exportCSV()">Export CSV</button><button class="btn primary" onclick="loadAll()">Refresh Data</button></div></div>
+
+<div class="kpis">
+<div class="card"><div class="label">TOTAL ORDERS</div><div class="value" id="kTotal">—</div><div class="note">All customer orders</div></div>
+<div class="card"><div class="label">NEW</div><div class="value" id="kNew">—</div><div class="note">Awaiting allocation</div></div>
+<div class="card"><div class="label">ALLOCATED</div><div class="value" id="kAllocated">—</div><div class="note">Inventory allocated</div></div>
+<div class="card"><div class="label">PICKING</div><div class="value" id="kPicking">—</div><div class="note">Being picked</div></div>
+<div class="card"><div class="label">PACKING</div><div class="value" id="kPacking">—</div><div class="note">Being packed</div></div>
+<div class="card"><div class="label">READY</div><div class="value" id="kReady">—</div><div class="note">Ready to dispatch</div></div>
+<div class="card"><div class="label">DISPATCHED</div><div class="value" id="kDispatched">—</div><div class="note">With delivery</div></div>
+<div class="card"><div class="label">DELIVERED</div><div class="value" id="kDelivered">—</div><div class="note">Completed orders</div></div>
+<div class="card"><div class="label">CANCELLED</div><div class="value" id="kCancelled">—</div><div class="note">Cancelled orders</div></div>
+</div>
+
+<section class="section"><div class="card"><div class="section-head"><h2>Advanced Order Filters</h2><button class="btn" onclick="clearFilters()">Clear Filters</button></div>
+<div class="filters">
+<input class="search" id="search" placeholder="Order / customer / phone / SKU / product / address..." oninput="applyFilters()">
+<select id="status" onchange="applyFilters()"><option value="">All Status</option></select>
+<select id="payment" onchange="applyFilters()"><option value="">All Payment Modes</option></select>
+<select id="location" onchange="applyFilters()"><option value="">All Locations</option></select>
+<select id="delivery" onchange="applyFilters()"><option value="">Delivery Charge</option><option value="FREE">Free Delivery</option><option value="CHARGED">Delivery Charged</option></select>
+<select id="valueFilter" onchange="applyFilters()"><option value="">All Order Values</option><option value="UNDER100">Below ₹100</option><option value="100PLUS">₹100 and Above</option></select>
+<input type="date" id="dateFrom" onchange="applyFilters()"><input type="date" id="dateTo" onchange="applyFilters()">
+<select id="pageSize" onchange="applyFilters()"><option>25</option><option>50</option><option>100</option></select>
+</div></div></section>
+
+<section class="section summary">
+<div class="card"><div class="label">FILTERED ORDERS</div><strong id="sOrders">0</strong><span>orders</span></div>
+<div class="card"><div class="label">ORDER VALUE</div><strong id="sValue">₹0</strong><span>gross order value</span></div>
+<div class="card"><div class="label">ITEM UNITS</div><strong id="sUnits">0</strong><span>ordered units</span></div>
+<div class="card"><div class="label">DELIVERY CHARGES</div><strong id="sDelivery">₹0</strong><span>charged delivery</span></div>
+<div class="card"><div class="label">HANDLING</div><strong id="sHandling">₹0</strong><span>handling charges</span></div>
+<div class="card"><div class="label">AVERAGE ORDER</div><strong id="sAov">₹0</strong><span>order value / order</span></div>
+</section>
+
+<section class="section grid2"><div class="card"><div class="section-head"><h2>Location Order Summary</h2><span class="muted" id="locationCount">0 locations</span></div>
+<div class="table-wrap"><table class="table"><thead><tr><th>Location</th><th>Orders</th><th>Units</th><th>Value</th><th>Delivered</th><th>Cancelled</th><th>Avg Order</th></tr></thead><tbody id="locationBody"></tbody></table></div></div>
+<div class="card"><div class="section-head"><h2>Order Exceptions</h2><span class="tag warn" id="exceptionCount">0</span></div><div class="list" id="exceptionList"></div></div></section>
+
+<section class="section"><div class="section-head"><h2>Detailed Order Report</h2><span class="muted" id="resultCount">0 records</span></div>
+<div class="table-wrap"><table class="table"><thead><tr>
+<th>Order</th><th>Customer</th><th>Phone</th><th>Location</th><th>Items</th><th>Units</th><th>Subtotal</th><th>Delivery</th><th>Handling</th><th>Discount</th><th>Total</th><th>Payment</th><th>Status</th><th>Created</th><th>Updated</th><th>Action</th>
+</tr></thead><tbody id="body"></tbody></table></div><div class="pagination"><span id="pageInfo">Page 1</span><div class="pager" id="pager"></div></div></section>
+</main></div>
+
+<div class="modal" id="modal"><div class="modal-box"><div class="modal-head"><h2>Order Details</h2><button class="close" onclick="closeModal()">✕</button></div><div id="detail"></div></div></div>
+<div class="toast" id="toast"></div>
+<script>
+const API=window.location.origin,TOKEN_KEY="zippzo_session_token";let token=localStorage.getItem(TOKEN_KEY),orders=[],filtered=[],page=1;
+const navLinks=[["index.html","Dashboard"],["products.html","Products"],["suppliers.html","Suppliers"],["locations.html","Locations"],["inventory.html","Inventory"],["stock-movements.html","Stock Movements"],["bins.html","Bins"],["purchase-orders.html","Purchase Orders"],["grn.html","GRN"],["grn-report.html","GRN Report"],["putaway.html","Putaway"],["putaway-report.html","Putaway Report"],["create-batch.html","Create Batch"],["picking.html","Picking"],["picking-report.html","Picking Report"],["sorting.html","Sorting"],["sorting-report.html","Sorting Report"],["grid-putaway.html","Grid Putaway"],["vehicle-arrival.html","Vehicle Arrival"],["dispatch.html","Dispatch"],["store-receiving.html","Store Receiving"],["store-receiving-report.html","Receiving Report"],["orders.html","Orders"],["order-report.html","Order Report"],["stock-report.html","Stock Report"],["picking-ipp.html","Picking IPP"],["sorting-ipp.html","Sorting IPP"],["access-control.html","Access Control"],["audit-logs.html","Audit Logs"],["system-settings.html","System Settings"]];
+function esc(v){return String(v??"").replace(/[&<>"']/g,m=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#039;"}[m]))}
+function num(v){return Number(v||0)}
+function arr(d){if(Array.isArray(d))return d;if(Array.isArray(d?.items))return d.items;if(Array.isArray(d?.data))return d.data;if(Array.isArray(d?.results))return d.results;return[]}
+function field(x,...keys){for(const k of keys)if(x[k]!==undefined&&x[k]!==null&&x[k]!=="")return x[k];return""}
+function toast(s){const x=document.getElementById("toast");x.textContent=s;x.style.display="block";clearTimeout(window.tt);window.tt=setTimeout(()=>x.style.display="none",2800)}
+async function api(path,opt={}){const h={"Content-Type":"application/json",...(opt.headers||{})};if(token)h.Authorization="Bearer "+token;const r=await fetch(API+path,{...opt,headers:h});if(r.status===401){localStorage.removeItem(TOKEN_KEY);localStorage.removeItem("zippzo_user");location.href="index.html";throw Error("Session expired")}const t=await r.text();let d={};try{d=t?JSON.parse(t):{}}catch{}if(!r.ok)throw Error(d.detail||d.message||"Request failed");return d}
+async function tryApi(paths){let e;for(const p of paths){try{return await api(p)}catch(x){e=x}}throw e||Error("API unavailable")}
+function nav(){document.getElementById("nav").innerHTML="<h4>Operations</h4>"+navLinks.map(x=>`<a href="${x[0]}" class="${location.pathname.endsWith(x[0])?"active":""}">${x[1]}</a>`).join("")}
+function statusClass(s){s=String(s||"").toUpperCase();if(s==="DELIVERED")return"good";if(["CANCELLED","FAILED","RETURNED"].includes(s))return"bad";if(["NEW","ALLOCATED","PICKING","PACKING","READY","DISPATCHED"].includes(s))return"warn";return"info"}
+function statusOf(x){return String(x.status||"").toUpperCase()}
+function subtotal(x){return num(field(x,"subtotal","sub_total"))}
+function delivery(x){return num(field(x,"delivery_charge","delivery_fee"))}
+function handling(x){return num(field(x,"handling_charge","handling_fee"))}
+function discount(x){return num(field(x,"discount","discount_amount"))}
+function total(x){return num(field(x,"total_amount","total","grand_total"))}
+function locationName(x){return String(field(x,"location_name","location_code","location")||"—")}
+function payment(x){return String(field(x,"payment_mode","payment_method","payment_type")||"—")}
+function units(x){if(Array.isArray(x.items))return x.items.reduce((n,i)=>n+num(field(i,"quantity","qty")),0);return num(field(x,"item_quantity","units","quantity"))}
+function itemCount(x){return Array.isArray(x.items)?x.items.length:num(field(x,"item_count","items_count"))}
+async function loadAll(){
+ document.body.classList.add("loading");
+ try{orders=arr(await tryApi(["/api/orders"]));try{const me=await api("/api/auth/me");document.getElementById("userName").textContent=me.employee?.name||me.name||me.user?.name||"Zippzo User"}catch{}buildFilters();page=1;applyFilters();toast("Order report refreshed")}catch(e){toast(e.message||"Unable to load order report")}finally{document.body.classList.remove("loading")}
+}
+function fill(id,values,label){const el=document.getElementById(id),old=el.value;el.innerHTML=`<option value="">${label}</option>`+values.map(v=>`<option value="${esc(v)}">${esc(v)}</option>`).join("");if(values.includes(old))el.value=old}
+function buildFilters(){fill("status",[...new Set(orders.map(statusOf).filter(Boolean))].sort(),"All Status");fill("payment",[...new Set(orders.map(payment).filter(x=>x!=="—"))].sort(),"All Payment Modes");fill("location",[...new Set(orders.map(locationName).filter(x=>x!=="—"))].sort(),"All Locations")}
+function applyFilters(){
+ const q=document.getElementById("search").value.toLowerCase().trim(),st=document.getElementById("status").value,pay=document.getElementById("payment").value,loc=document.getElementById("location").value,del=document.getElementById("delivery").value,vf=document.getElementById("valueFilter").value,from=document.getElementById("dateFrom").value,to=document.getElementById("dateTo").value;
+ filtered=orders.filter(x=>{const blob=JSON.stringify(x).toLowerCase(),v=total(x),d=delivery(x),dt=String(field(x,"created_at","order_date","date")||"").slice(0,10);return(!q||blob.includes(q))&&(!st||statusOf(x)===st)&&(!pay||payment(x)===pay)&&(!loc||locationName(x)===loc)&&(!del||(del==="FREE"&&d===0)||(del==="CHARGED"&&d>0))&&(!vf||(vf==="UNDER100"&&v<100)||(vf==="100PLUS"&&v>=100))&&(!from||dt>=from)&&(!to||dt<=to)});
+ page=1;render();
+}
+function render(){
+ const ids={NEW:0,ALLOCATED:0,PICKING:0,PACKING:0,READY:0,DISPATCHED:0,DELIVERED:0,CANCELLED:0};orders.forEach(x=>{if(ids[statusOf(x)]!==undefined)ids[statusOf(x)]++});
+ [["kTotal",orders.length],["kNew",ids.NEW],["kAllocated",ids.ALLOCATED],["kPicking",ids.PICKING],["kPacking",ids.PACKING],["kReady",ids.READY],["kDispatched",ids.DISPATCHED],["kDelivered",ids.DELIVERED],["kCancelled",ids.CANCELLED]].forEach(([id,v])=>document.getElementById(id).textContent=v.toLocaleString("en-IN"));
+ const so=filtered.reduce((n,x)=>n+subtotal(x),0),su=filtered.reduce((n,x)=>n+units(x),0),sd=filtered.reduce((n,x)=>n+delivery(x),0),sh=filtered.reduce((n,x)=>n+handling(x),0),st=filtered.reduce((n,x)=>n+total(x),0);
+ document.getElementById("sOrders").textContent=filtered.length.toLocaleString("en-IN");document.getElementById("sValue").textContent=money(st);document.getElementById("sUnits").textContent=su.toLocaleString("en-IN");document.getElementById("sDelivery").textContent=money(sd);document.getElementById("sHandling").textContent=money(sh);document.getElementById("sAov").textContent=money(filtered.length?st/filtered.length:0);
+ document.getElementById("resultCount").textContent=filtered.length.toLocaleString("en-IN")+" records";renderLocations();renderExceptions();renderTable();renderPager();
+}
+function money(v){return"₹"+num(v).toLocaleString("en-IN",{maximumFractionDigits:2})}
+function renderLocations(){
+ const map=new Map();filtered.forEach(x=>{const k=locationName(x);if(!map.has(k))map.set(k,{orders:0,u:0,v:0,d:0,c:0});const z=map.get(k);z.orders++;z.u+=units(x);z.v+=total(x);if(statusOf(x)==="DELIVERED")z.d++;if(statusOf(x)==="CANCELLED")z.c++});
+ const rows=[...map.entries()].sort((a,b)=>b[1].v-a[1].v);document.getElementById("locationCount").textContent=rows.length+" locations";document.getElementById("locationBody").innerHTML=rows.length?rows.map(([k,v])=>`<tr><td><b>${esc(k)}</b></td><td>${v.orders}</td><td>${v.u}</td><td>${money(v.v)}</td><td>${v.d}</td><td>${v.c}</td><td>${money(v.orders?v.v/v.orders:0)}</td></tr>`).join(""):`<tr><td colspan="7" class="empty">No location order data.</td></tr>`;
+}
+function renderExceptions(){
+ const ex=filtered.filter(x=>["CANCELLED","FAILED","RETURNED"].includes(statusOf(x))).slice(0,15);document.getElementById("exceptionCount").textContent=filtered.filter(x=>["CANCELLED","FAILED","RETURNED"].includes(statusOf(x))).length;
+ document.getElementById("exceptionList").innerHTML=ex.length?ex.map(x=>`<div class="list-row"><div><b>${esc(field(x,"order_number","order_no")||"#"+x.id)}</b><span class="muted">${esc(field(x,"customer_name","customer")||"—")} · ${esc(locationName(x))}</span></div><span class="tag bad">${esc(statusOf(x))}</span></div>`).join(""):`<div class="empty">No cancelled/failed/returned orders.</div>`;
+}
+function renderTable(){
+ const size=Number(document.getElementById("pageSize").value||25),pages=Math.max(1,Math.ceil(filtered.length/size));if(page>pages)page=pages;const rows=filtered.slice((page-1)*size,page*size);
+ document.getElementById("body").innerHTML=rows.length?rows.map((x,i)=>`<tr><td><b>${esc(field(x,"order_number","order_no")||"#"+x.id)}</b></td><td>${esc(field(x,"customer_name","customer")||"—")}</td><td>${esc(field(x,"customer_phone","phone","mobile")||"—")}</td><td>${esc(locationName(x))}</td><td>${itemCount(x)}</td><td>${units(x)}</td><td>${money(subtotal(x))}</td><td>${money(delivery(x))}</td><td>${money(handling(x))}</td><td>${money(discount(x))}</td><td><b>${money(total(x))}</b></td><td>${esc(payment(x))}</td><td><span class="tag ${statusClass(x.status)}">${esc(x.status||"—")}</span></td><td>${esc(field(x,"created_at","order_date","date")||"—")}</td><td>${esc(x.updated_at||"—")}</td><td><button class="btn" onclick="details(${(page-1)*size+i})">View</button></td></tr>`).join(""):`<tr><td colspan="16" class="empty">No orders match the selected filters.</td></tr>`;
+}
+function renderPager(){const size=Number(document.getElementById("pageSize").value||25),pages=Math.max(1,Math.ceil(filtered.length/size));document.getElementById("pageInfo").textContent=`Page ${page} of ${pages} · ${filtered.length.toLocaleString("en-IN")} records`;let b="";const s=Math.max(1,page-2),e=Math.min(pages,s+4);if(page>1)b+=`<button onclick="gotoPage(${page-1})">‹</button>`;for(let p=s;p<=e;p++)b+=`<button class="${p===page?"active":""}" onclick="gotoPage(${p})">${p}</button>`;if(page<pages)b+=`<button onclick="gotoPage(${page+1})">›</button>`;document.getElementById("pager").innerHTML=b}
+function gotoPage(p){page=p;renderTable();renderPager();window.scrollTo({top:document.querySelector(".section:last-of-type").offsetTop-80,behavior:"smooth"})}
+function details(index){
+ const x=filtered[index];if(!x)return;
+ const its=Array.isArray(x.items)?x.items:[];let itemHtml=its.length?`<div class="section"><h3 style="font-size:14px">Order Items</h3><div class="table-wrap"><table class="table"><thead><tr><th>SKU</th><th>Product</th><th>Qty</th><th>Price</th><th>Line Total</th></tr></thead><tbody>${its.map(i=>`<tr><td>${esc(field(i,"sku","product_sku")||"—")}</td><td>${esc(field(i,"product_name","name")||"—")}</td><td>${num(field(i,"quantity","qty"))}</td><td>${money(field(i,"price","selling_price"))}</td><td>${money(num(field(i,"quantity","qty"))*num(field(i,"price","selling_price")))}</td></tr>`).join("")}</tbody></table></div></div>`:"";
+ document.getElementById("detail").innerHTML=`<div class="detail-grid">${D("Order Number",field(x,"order_number","order_no")||x.id)}${D("Customer",field(x,"customer_name","customer"))}${D("Phone",field(x,"customer_phone","phone","mobile"))}${D("City",x.city)}${D("Address",x.address)}${D("Location",locationName(x))}${D("Payment",payment(x))}${D("Status",x.status)}${D("Subtotal",money(subtotal(x)))}${D("Delivery Charge",money(delivery(x)))}${D("Handling Charge",money(handling(x)))}${D("Discount",money(discount(x)))}${D("Total",money(total(x)))}${D("Items",itemCount(x))}${D("Units",units(x))}${D("Created",field(x,"created_at","order_date","date"))}${D("Updated",x.updated_at)}${D("Rider",field(x,"rider_name","delivery_partner_name","rider"))}${D("Batch",field(x,"batch_number","batch_no"))}${D("Notes",x.notes||"—")}${D("Cancellation Reason",field(x,"cancellation_reason","cancel_reason")||"—")}</div>${itemHtml}<div class="timeline"><div class="timeline-item"><b>Order Created</b><span>${esc(field(x,"created_at","order_date","date")||"—")}</span></div><div class="timeline-item"><b>Current Status</b><span>${esc(x.status||"—")}</span></div><div class="timeline-item"><b>Last Updated</b><span>${esc(x.updated_at||"—")}</span></div></div>`;
+ document.getElementById("modal").classList.add("show");
+}
+function D(a,b){return`<div class="detail"><small>${esc(a)}</small><b>${esc(b??"—")}</b></div>`}
+function closeModal(){document.getElementById("modal").classList.remove("show")}
+function clearFilters(){["search","dateFrom","dateTo"].forEach(id=>document.getElementById(id).value="");["status","payment","location","delivery","valueFilter"].forEach(id=>document.getElementById(id).value="");document.getElementById("pageSize").value="25";page=1;applyFilters()}
+function exportCSV(){const h=["Order","Customer","Phone","Location","Items","Units","Subtotal","Delivery","Handling","Discount","Total","Payment","Status","Created","Updated"];const rows=filtered.map(x=>[field(x,"order_number","order_no")||x.id,field(x,"customer_name","customer"),field(x,"customer_phone","phone","mobile"),locationName(x),itemCount(x),units(x),subtotal(x),delivery(x),handling(x),discount(x),total(x),payment(x),x.status,field(x,"created_at","order_date","date"),x.updated_at]);const csv=[h,...rows].map(r=>r.map(v=>`"${String(v??"").replaceAll('"','""')}"`).join(",")).join("\n"),a=document.createElement("a");a.href=URL.createObjectURL(new Blob([csv],{type:"text/csv;charset=utf-8"}));a.download="zippzo_order_report.csv";a.click()}
+function printReport(){window.print()}
+async function logout(){try{if(token)await api("/api/auth/logout",{method:"POST",body:JSON.stringify({session_token:token})})}catch{}localStorage.removeItem(TOKEN_KEY);localStorage.removeItem("zippzo_user");location.href="index.html"}
+document.getElementById("modal").addEventListener("click",e=>{if(e.target.id==="modal")closeModal()});(async()=>{nav();await loadAll()})();
+</script>
+</body>
+</html>

@@ -1,0 +1,818 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="theme-color" content="#331084">
+<title>Zippzo WMS — Dashboard</title>
+
+<style>
+*{box-sizing:border-box}
+:root{
+  --purple:#331084;
+  --dark:#24085f;
+  --yellow:#FEB103;
+  --bg:#f5f6fb;
+  --card:#fff;
+  --text:#151a4a;
+  --muted:#69708f;
+  --line:#e6e8f0;
+  --green:#19b66b;
+  --blue:#3478f6;
+  --pink:#ef4b93;
+  --orange:#ffad17;
+  --red:#ef4444;
+  --shadow:0 5px 18px rgba(36,8,95,.07);
+}
+html,body{margin:0;min-height:100%;font-family:Inter,Segoe UI,Arial,sans-serif;background:var(--bg);color:var(--text)}
+button,input,select{font:inherit}
+button{cursor:pointer}
+a{text-decoration:none;color:inherit}
+
+/* LOGIN */
+#loadingScreen{position:fixed;inset:0;z-index:9999;background:#fff;display:flex;align-items:center;justify-content:center;color:var(--purple);font-weight:800}
+#loginScreen{display:none;min-height:100vh;align-items:center;justify-content:center;background:linear-gradient(135deg,var(--dark),var(--purple));padding:24px}
+.login-card{width:min(430px,100%);background:#fff;border-radius:20px;padding:34px;box-shadow:0 25px 80px rgba(0,0,0,.3)}
+.login-logo{display:block;width:180px;max-height:80px;object-fit:contain;margin:0 auto 12px}
+.login-subtitle{text-align:center;color:var(--muted);font-size:13px;margin-bottom:26px}
+.login-card label{display:block;font-size:12px;font-weight:800;margin:0 0 7px}
+.login-card input{width:100%;height:48px;border:1px solid #dfe2eb;border-radius:10px;padding:0 13px;margin-bottom:16px;outline:0}
+.login-card input:focus{border-color:var(--purple);box-shadow:0 0 0 3px rgba(51,16,132,.1)}
+.login-button{width:100%;height:48px;border:0;border-radius:10px;background:var(--yellow);color:#17113b;font-weight:900}
+.login-button:disabled{opacity:.65}
+#loginMessage{display:none;margin-top:14px;padding:11px;border-radius:9px;text-align:center;font-size:12px}
+.error-message{background:#fee2e2;color:#991b1b}.success-message{background:#dcfce7;color:#166534}
+
+/* APP SHELL */
+#dashboardScreen{display:none;min-height:100vh}
+.app{min-height:100vh;display:flex}
+
+/* SIDEBAR */
+.sidebar{
+  width:240px;flex:0 0 240px;background:linear-gradient(180deg,#25105f 0%,#180743 100%);
+  color:#fff;position:fixed;left:0;top:0;bottom:0;z-index:100;overflow-y:auto;
+  padding:0 10px 18px;
+}
+.brand{
+  height:72px;display:flex;align-items:center;padding:8px 12px;border-bottom:1px solid rgba(255,255,255,.1);
+  margin-bottom:10px;
+}
+.brand img{width:148px;max-height:55px;object-fit:contain;object-position:left center}
+.nav-group{margin-top:12px}
+.nav-label{font-size:10px;font-weight:900;letter-spacing:1px;color:#b9a9e8;padding:8px 12px 6px;text-transform:uppercase}
+.nav-button{
+  width:100%;height:38px;border:0;background:transparent;color:#fff;border-radius:8px;
+  display:flex;align-items:center;gap:11px;padding:0 12px;margin:3px 0;text-align:left;font-size:12px;font-weight:650;
+}
+.nav-button:hover{background:rgba(255,255,255,.09)}
+.nav-button.active{background:var(--yellow);color:#15112f;font-weight:900}
+.nav-icon{width:18px;text-align:center;font-size:15px;flex:0 0 18px}
+.sidebar-bottom{
+  margin-top:20px;padding:14px 12px;border-top:1px solid rgba(255,255,255,.1);color:#c8c0df;font-size:10px;line-height:1.5
+}
+
+/* MAIN */
+.main{margin-left:240px;min-width:0;flex:1}
+.topbar{
+  height:64px;background:linear-gradient(90deg,var(--dark),var(--purple));color:#fff;
+  display:flex;align-items:center;gap:18px;padding:0 22px;position:sticky;top:0;z-index:90;
+}
+.top-search{flex:1;max-width:650px;margin:0 auto}
+.top-search input{
+  width:100%;height:40px;border:0;border-radius:9px;padding:0 16px 0 40px;outline:0;
+  background:#fff url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='18' height='18' viewBox='0 0 24 24' fill='none' stroke='%2369708f' stroke-width='2'%3E%3Ccircle cx='11' cy='11' r='7'/%3E%3Cpath d='m20 20-3.5-3.5'/%3E%3C/svg%3E") no-repeat 14px center;
+  color:#20264e;
+}
+.top-actions{display:flex;align-items:center;gap:16px;margin-left:auto}
+.notification{position:relative;width:34px;height:34px;display:flex;align-items:center;justify-content:center;font-size:19px}
+.notification .dot{position:absolute;right:0;top:0;background:#ff3e58;color:#fff;border-radius:99px;font-size:8px;min-width:17px;height:17px;display:flex;align-items:center;justify-content:center;border:2px solid var(--purple)}
+.profile{display:flex;align-items:center;gap:9px;padding-left:12px;border-left:1px solid rgba(255,255,255,.25)}
+.avatar{width:35px;height:35px;border-radius:50%;background:#fff;color:var(--purple);display:flex;align-items:center;justify-content:center;font-weight:900}
+.profile-name{font-size:12px;font-weight:900}.profile-role{font-size:9px;color:#d7d1ee;margin-top:2px}
+.logout-mini{border:0;background:transparent;color:#fff;font-size:11px;font-weight:700}
+
+/* CONTENT */
+.content{padding:22px 18px 28px;max-width:1600px;margin:0 auto}
+.page-head{display:flex;justify-content:space-between;align-items:flex-start;gap:14px;margin-bottom:18px}
+.page-title{margin:0;font-size:25px;font-weight:900;letter-spacing:-.4px}
+.page-subtitle{font-size:12px;color:var(--muted);margin-top:5px}
+.page-tools{display:flex;gap:8px;align-items:center}
+.date-box,.location-select{
+  background:#fff;border:1px solid var(--line);border-radius:9px;height:40px;padding:0 12px;
+  font-size:11px;font-weight:700;color:var(--text)
+}
+.location-select{min-width:145px}
+
+.kpis{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:14px;margin-bottom:14px}
+.kpi{
+  border:1px solid var(--line);border-radius:12px;padding:16px;background:#fff;box-shadow:var(--shadow);
+  display:flex;align-items:center;gap:13px;min-width:0
+}
+.kpi-icon{width:48px;height:48px;border-radius:12px;display:flex;align-items:center;justify-content:center;font-size:22px;flex:0 0 48px}
+.kpi-purple{background:#eee7ff;color:var(--purple)}.kpi-yellow{background:#fff1c8;color:#c88700}
+.kpi-green{background:#dcf8e9;color:#109557}.kpi-blue{background:#e4efff;color:#2563eb}
+.kpi-label{font-size:11px;font-weight:800;color:var(--muted)}.kpi-value{font-size:25px;font-weight:900;margin-top:3px}
+.kpi-trend{font-size:9px;color:var(--green);font-weight:800;margin-top:3px}
+
+.middle-grid{display:grid;grid-template-columns:minmax(0,1fr) 300px;gap:14px;margin-bottom:14px}
+.chart-grid{display:grid;grid-template-columns:1.15fr .85fr;gap:14px}
+.card{background:#fff;border:1px solid var(--line);border-radius:12px;box-shadow:var(--shadow);padding:15px;min-width:0}
+.card-head{display:flex;justify-content:space-between;align-items:center;gap:8px;margin-bottom:13px}
+.card-title{font-size:14px;font-weight:900}.card-link{font-size:10px;color:#3b35c9;font-weight:900}
+.card-select{border:1px solid var(--line);background:#fff;border-radius:7px;height:29px;padding:0 8px;font-size:10px;color:var(--muted)}
+
+.bar-chart{height:190px;display:flex;align-items:flex-end;gap:13px;padding:14px 6px 24px;border-bottom:1px solid #e8eaf1;position:relative}
+.bar-chart:before,.bar-chart:after{content:"";position:absolute;left:0;right:0;border-top:1px dashed #eceef5}
+.bar-chart:before{top:35px}.bar-chart:after{top:95px}
+.bar-group{height:100%;flex:1;display:flex;align-items:flex-end;justify-content:center;gap:4px;position:relative}
+.bar{width:15px;border-radius:4px 4px 0 0;min-height:4px}
+.bar.in{background:var(--purple)}.bar.out{background:var(--yellow)}
+.bar-label{position:absolute;bottom:-20px;font-size:8px;color:var(--muted);white-space:nowrap}
+.legend{display:flex;justify-content:center;gap:15px;margin-top:12px;font-size:9px;color:var(--muted)}
+.legend i{display:inline-block;width:8px;height:8px;border-radius:50%;margin-right:4px}.legend .purple{background:var(--purple)}.legend .yellow{background:var(--yellow)}
+
+.donut-wrap{display:flex;align-items:center;justify-content:center;gap:20px;min-height:190px}
+.donut{
+  width:145px;height:145px;border-radius:50%;position:relative;
+  background:conic-gradient(var(--yellow) 0 22%,var(--purple) 22% 54%,var(--green) 54% 81%,var(--blue) 81% 100%);
+  flex:0 0 145px;
+}
+.donut:after{content:"";position:absolute;inset:31px;background:#fff;border-radius:50%}
+.donut-center{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;z-index:2;flex-direction:column}
+.donut-center strong{font-size:22px}.donut-center span{font-size:8px;color:var(--muted);margin-top:2px}
+.legend-list{display:grid;gap:9px}.legend-row{display:flex;align-items:center;gap:7px;font-size:10px}.legend-row .dot{width:9px;height:9px;border-radius:50%}.legend-row strong{margin-left:auto;font-size:10px}
+
+.quick-card{padding:15px}
+.quick-actions{display:grid;gap:10px}
+.quick-btn{
+  height:42px;border:0;border-radius:8px;text-align:left;padding:0 12px;font-size:11px;font-weight:900;
+  display:flex;align-items:center;justify-content:space-between;transition:.15s
+}
+.quick-btn:hover{transform:translateY(-1px)}
+.quick-purple{background:var(--purple);color:#fff}.quick-yellow{background:var(--yellow);color:#18122f}.quick-green{background:#20be70;color:#fff}.quick-light{background:#eee7ff;color:var(--purple)}
+.quick-left{display:flex;align-items:center;gap:9px}.quick-icon{width:22px;text-align:center;font-size:15px}
+
+.activity{margin-top:12px}
+.activity-row{display:flex;gap:9px;padding:10px 0;border-bottom:1px solid #edf0f5}
+.activity-row:last-child{border-bottom:0}
+.activity-icon{width:31px;height:31px;border-radius:8px;display:flex;align-items:center;justify-content:center;font-size:13px;flex:0 0 31px}
+.activity-purple{background:#eee7ff;color:var(--purple)}.activity-green{background:#dcf8e9;color:#109557}.activity-yellow{background:#fff1c8;color:#c88700}.activity-blue{background:#e4efff;color:#2563eb}
+.activity-text{min-width:0}.activity-text strong{display:block;font-size:10px}.activity-text span{display:block;font-size:8px;color:var(--muted);margin-top:3px}.activity-time{margin-left:auto;font-size:8px;color:var(--muted);white-space:nowrap}
+
+.table-card{margin-bottom:14px}
+.table-wrap{overflow:auto}
+table{width:100%;border-collapse:collapse;min-width:700px}
+th{background:#f7f8fc;color:#626987;font-size:9px;text-transform:uppercase;letter-spacing:.35px;font-weight:900;text-align:left;padding:10px 11px}
+td{padding:10px 11px;border-bottom:1px solid #edf0f5;font-size:10px;white-space:nowrap}
+tr:last-child td{border-bottom:0}
+.order-no{color:#3c32c7;font-weight:900}
+.amount{font-weight:800}
+.status{display:inline-flex;padding:4px 8px;border-radius:999px;font-size:8px;font-weight:900}
+.status-pending{background:#fff0bd;color:#966500}.status-processing{background:#eee7ff;color:#5035b6}
+.status-dispatched{background:#d9f7e7;color:#087d47}.status-delivered{background:#dcecff;color:#1f61bb}
+.view-btn{border:0;background:var(--purple);color:#fff;border-radius:6px;padding:5px 9px;font-size:8px;font-weight:900}
+
+.bottom-grid{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:14px}
+.mini-list{display:grid;gap:8px}
+.mini-row{display:flex;align-items:center;justify-content:space-between;gap:8px;padding:8px 0;border-bottom:1px solid #edf0f5}
+.mini-row:last-child{border-bottom:0}
+.mini-name{font-size:9px}.mini-value{font-size:9px;font-weight:900}.mini-sub{font-size:8px;color:var(--muted);margin-top:2px}
+.low{color:var(--red)}
+.empty{text-align:center;color:var(--muted);padding:25px;font-size:11px}
+.footer{padding:18px 0;text-align:center;color:#9ba1b8;font-size:9px}
+
+/* TOAST */
+#toast{position:fixed;right:20px;bottom:20px;background:#17133b;color:#fff;padding:11px 14px;border-radius:9px;font-size:11px;font-weight:700;display:none;z-index:99999;box-shadow:0 12px 35px rgba(0,0,0,.22)}
+
+@media(max-width:1250px){
+  .kpis{grid-template-columns:repeat(2,1fr)}
+  .middle-grid{grid-template-columns:1fr}
+  .bottom-grid{grid-template-columns:repeat(2,1fr)}
+}
+@media(max-width:900px){
+  .sidebar{width:205px;flex-basis:205px}.main{margin-left:205px}
+  .chart-grid{grid-template-columns:1fr}
+  .top-search{max-width:none}
+  .profile-name,.profile-role{display:none}
+}
+@media(max-width:650px){
+  .sidebar{width:64px;padding:0 7px}.main{margin-left:64px}
+  .brand{padding:8px 4px;justify-content:center}.brand img{width:48px;object-position:center}
+  .nav-label,.nav-button span:not(.nav-icon),.sidebar-bottom{display:none}
+  .nav-button{justify-content:center;padding:0}
+  .topbar{padding:0 10px}.top-search{display:none}
+  .content{padding:14px 10px}.page-head{display:block}.page-tools{margin-top:10px}
+  .kpis,.bottom-grid{grid-template-columns:1fr}
+  .kpi{padding:14px}
+}
+</style>
+
+<link rel="stylesheet" href="zippzo-standard.css">
+<script src="zippzo-standard.js" defer></script>
+</head>
+
+<body>
+<div id="loadingScreen">Checking Zippzo session...</div>
+
+<div id="loginScreen">
+  <div class="login-card">
+    <img class="login-logo" src="zippzo-logo.jpg" alt="Zippzo">
+    <div class="login-subtitle">Warehouse Management System · Control Tower</div>
+    <form id="loginForm">
+      <label for="identifier">Employee ID / Email</label>
+      <input id="identifier" type="text" placeholder="Enter Employee ID or Email" autocomplete="username" required>
+      <label for="password">Password</label>
+      <input id="password" type="password" placeholder="Enter password" autocomplete="current-password" required>
+      <button id="loginButton" class="login-button" type="submit">Login</button>
+    </form>
+    <div id="loginMessage"></div>
+  </div>
+</div>
+
+<div id="dashboardScreen">
+  <div class="app">
+
+    <aside class="sidebar">
+      <div class="brand">
+        <img src="zippzo-logo.jpg" alt="Zippzo">
+      </div>
+
+      <div class="nav-group">
+        <button class="nav-button active" onclick="showDashboard()"><span class="nav-icon">⌂</span><span>Dashboard</span></button>
+      </div>
+
+      <div class="nav-group">
+        <div class="nav-label">Master Data</div>
+        <button class="nav-button" onclick="openPage('products.html')"><span class="nav-icon">▣</span><span>Products</span></button>
+        <button class="nav-button" onclick="openPage('suppliers.html')"><span class="nav-icon">♙</span><span>Suppliers</span></button>
+        <button class="nav-button" onclick="openPage('locations.html')"><span class="nav-icon">⌖</span><span>Locations</span></button>
+      </div>
+
+      <div class="nav-group">
+        <div class="nav-label">Warehouse</div>
+        <button class="nav-button" onclick="openPage('inventory.html')"><span class="nav-icon">▤</span><span>Inventory</span></button>
+        <button class="nav-button" onclick="openPage('bins.html')"><span class="nav-icon">▦</span><span>Bins</span></button>
+        <button class="nav-button" onclick="openPage('stock-movements.html')"><span class="nav-icon">⇄</span><span>Stock Movements</span></button>
+      </div>
+
+      <div class="nav-group">
+        <div class="nav-label">Inbound</div>
+        <button class="nav-button" onclick="openPage('purchase-orders.html')"><span class="nav-icon">▤</span><span>Purchase Orders</span></button>
+        <button class="nav-button" onclick="openPage('grn.html')"><span class="nav-icon">▣</span><span>GRN</span></button>
+        <button class="nav-button" onclick="openPage('putaway.html')"><span class="nav-icon">◉</span><span>Putaway</span></button>
+      </div>
+
+      <div class="nav-group">
+        <div class="nav-label">Outbound</div>
+        <button class="nav-button" onclick="openPage('orders.html')"><span class="nav-icon">🛒</span><span>Orders</span></button>
+        <button class="nav-button" onclick="openPage('picking.html')"><span class="nav-icon">⇩</span><span>Picking</span></button>
+        <button class="nav-button" onclick="openPage('sorting.html')"><span class="nav-icon">⇆</span><span>Sorting</span></button>
+        <button class="nav-button" onclick="openPage('vehicle-arrival.html')"><span class="nav-icon">▱</span><span>Vehicle Arrival</span></button>
+        <button class="nav-button" onclick="openPage('dispatch.html')"><span class="nav-icon">▸</span><span>Dispatch</span></button>
+        <button class="nav-button" onclick="openPage('store-receiving.html')"><span class="nav-icon">▣</span><span>Store Receiving</span></button>
+      </div>
+
+      <div class="nav-group">
+        <div class="nav-label">Reports</div>
+        <button class="nav-button" onclick="openPage('stock-report.html')"><span class="nav-icon">▥</span><span>Reports</span></button>
+      </div>
+
+      <div class="nav-group">
+        <div class="nav-label">HR & Admin</div>
+        <button class="nav-button" onclick="openPage('hr-dashboard.html')"><span class="nav-icon">♙</span><span>HR</span></button>
+        <button class="nav-button" onclick="openPage('access-control.html')"><span class="nav-icon">⌑</span><span>Access Control</span></button>
+        <button class="nav-button" onclick="openPage('system-settings.html')"><span class="nav-icon">⚙</span><span>System Settings</span></button>
+      </div>
+
+      <div class="sidebar-bottom">Zippzo WMS<br>Fast warehouse operations · Live backend</div>
+    </aside>
+
+    <div class="main">
+      <header class="topbar">
+        <div class="top-search">
+          <input id="globalSearch" type="search" placeholder="Search products, orders, suppliers, locations..." aria-label="Search">
+        </div>
+        <div class="top-actions">
+          <div class="notification">♧<span class="dot">3</span></div>
+          <div class="profile">
+            <div class="avatar">A</div>
+            <div>
+              <div class="profile-name" id="topUserName">Admin</div>
+              <div class="profile-role" id="topUserRole">Super Admin</div>
+            </div>
+            <button class="logout-mini" onclick="logout()">⌄</button>
+          </div>
+        </div>
+      </header>
+
+      <main class="content">
+        <div class="page-head">
+          <div>
+            <h1 class="page-title">Dashboard</h1>
+            <div class="page-subtitle">Welcome back! Here's what's happening in your Zippzo warehouse today.</div>
+          </div>
+          <div class="page-tools">
+            <div class="date-box" id="currentDate">—</div>
+            <select class="location-select" id="locationFilter">
+              <option value="">All Locations</option>
+            </select>
+          </div>
+        </div>
+
+        <section class="kpis">
+          <div class="kpi">
+            <div class="kpi-icon kpi-purple">▣</div>
+            <div><div class="kpi-label">Total Products</div><div class="kpi-value" id="totalProducts">0</div><div class="kpi-trend">● Live product master</div></div>
+          </div>
+          <div class="kpi">
+            <div class="kpi-icon kpi-yellow">▦</div>
+            <div><div class="kpi-label">Total Stock</div><div class="kpi-value" id="totalStock">0</div><div class="kpi-trend">● Available units</div></div>
+          </div>
+          <div class="kpi">
+            <div class="kpi-icon kpi-green">🛒</div>
+            <div><div class="kpi-label">Total Orders</div><div class="kpi-value" id="totalOrders">0</div><div class="kpi-trend">● Orders in system</div></div>
+          </div>
+          <div class="kpi">
+            <div class="kpi-icon kpi-blue">▤</div>
+            <div><div class="kpi-label">Pending Putaway</div><div class="kpi-value" id="pendingPutaway">0</div><div class="kpi-trend">● Inbound queue</div></div>
+          </div>
+        </section>
+
+        <div class="middle-grid">
+          <div class="chart-grid">
+            <section class="card">
+              <div class="card-head">
+                <div class="card-title">Stock Overview</div>
+                <select class="card-select"><option>All Locations</option></select>
+              </div>
+              <div class="bar-chart" id="stockChart"></div>
+              <div class="legend">
+                <span><i class="purple"></i>In Stock</span>
+                <span><i class="yellow"></i>Allocated</span>
+              </div>
+            </section>
+
+            <section class="card">
+              <div class="card-head">
+                <div class="card-title">Order Status</div>
+                <select class="card-select"><option>Today</option></select>
+              </div>
+              <div class="donut-wrap">
+                <div class="donut">
+                  <div class="donut-center"><strong id="donutTotal">0</strong><span>Total Orders</span></div>
+                </div>
+                <div class="legend-list">
+                  <div class="legend-row"><span class="dot" style="background:var(--yellow)"></span>Pending <strong id="pendingOrders">0</strong></div>
+                  <div class="legend-row"><span class="dot" style="background:var(--purple)"></span>Processing <strong id="processingOrders">0</strong></div>
+                  <div class="legend-row"><span class="dot" style="background:var(--green)"></span>Dispatched <strong id="dispatchedOrders">0</strong></div>
+                  <div class="legend-row"><span class="dot" style="background:var(--blue)"></span>Delivered <strong id="deliveredOrders">0</strong></div>
+                </div>
+              </div>
+            </section>
+          </div>
+
+          <section class="card quick-card">
+            <div class="card-head"><div class="card-title">Quick Actions</div></div>
+            <div class="quick-actions">
+              <button class="quick-btn quick-purple" onclick="openPage('products.html')"><span class="quick-left"><span class="quick-icon">＋</span>Add Product</span><span>›</span></button>
+              <button class="quick-btn quick-yellow" onclick="openPage('purchase-orders.html')"><span class="quick-left"><span class="quick-icon">▤</span>Create Purchase Order</span><span>›</span></button>
+              <button class="quick-btn quick-green" onclick="openPage('grn.html')"><span class="quick-left"><span class="quick-icon">▣</span>Receive GRN</span><span>›</span></button>
+              <button class="quick-btn quick-light" onclick="openPage('stock-movements.html')"><span class="quick-left"><span class="quick-icon">⇄</span>Add Stock Movement</span><span>›</span></button>
+            </div>
+
+            <div class="activity">
+              <div class="card-head"><div class="card-title">Recent Activity</div></div>
+              <div id="activityList"></div>
+            </div>
+          </section>
+        </div>
+
+        <section class="card table-card">
+          <div class="card-head">
+            <div class="card-title">Recent Orders</div>
+            <button class="card-link" onclick="openPage('orders.html')">View All →</button>
+          </div>
+          <div class="table-wrap">
+            <table>
+              <thead>
+                <tr><th>#</th><th>Order No.</th><th>Customer</th><th>Items</th><th>Total Amount</th><th>Status</th><th>Order Time</th><th>Action</th></tr>
+              </thead>
+              <tbody id="ordersRows"><tr><td colspan="8" class="empty">Loading orders...</td></tr></tbody>
+            </table>
+          </div>
+        </section>
+
+        <div class="bottom-grid">
+          <section class="card">
+            <div class="card-head"><div class="card-title">Top Products</div><button class="card-link" onclick="openPage('products.html')">View All</button></div>
+            <div class="mini-list" id="topProducts"><div class="empty">Loading...</div></div>
+          </section>
+
+          <section class="card">
+            <div class="card-head"><div class="card-title">Stock by Location</div><button class="card-link" onclick="openPage('inventory.html')">View All</button></div>
+            <div class="mini-list" id="stockLocations"><div class="empty">Loading...</div></div>
+          </section>
+
+          <section class="card">
+            <div class="card-head"><div class="card-title">Pending Tasks</div><button class="card-link" onclick="openPage('putaway.html')">View All</button></div>
+            <div class="mini-list" id="pendingTasks"><div class="empty">Loading...</div></div>
+          </section>
+
+          <section class="card">
+            <div class="card-head"><div class="card-title">System Summary</div><button class="card-link" onclick="refreshDashboard()">Refresh</button></div>
+            <div class="mini-list">
+              <div class="mini-row"><span class="mini-name">Products</span><strong class="mini-value" id="summaryProducts">0</strong></div>
+              <div class="mini-row"><span class="mini-name">Locations</span><strong class="mini-value" id="summaryLocations">0</strong></div>
+              <div class="mini-row"><span class="mini-name">Inventory Records</span><strong class="mini-value" id="summaryInventory">0</strong></div>
+              <div class="mini-row"><span class="mini-name">Reserved Stock</span><strong class="mini-value" id="summaryReserved">0</strong></div>
+              <div class="mini-row"><span class="mini-name">Damaged Stock</span><strong class="mini-value low" id="summaryDamaged">0</strong></div>
+            </div>
+          </section>
+        </div>
+
+        <div class="footer">Zippzo WMS · Live operational dashboard · Backend-connected</div>
+      </main>
+    </div>
+  </div>
+</div>
+
+<div id="toast"></div>
+
+<script>
+"use strict";
+
+const API_BASE = window.location.origin;
+const TOKEN_KEY = "zippzo_session_token";
+const USER_KEY = "zippzo_user";
+let dashboardLoading = false;
+let refreshTimer = null;
+
+const $ = id => document.getElementById(id);
+
+function getToken(){ return localStorage.getItem(TOKEN_KEY); }
+
+function saveLogin(data){
+  if(data?.session_token) localStorage.setItem(TOKEN_KEY,data.session_token);
+  if(data?.user) localStorage.setItem(USER_KEY,JSON.stringify(data.user));
+}
+
+function clearLogin(){
+  localStorage.removeItem(TOKEN_KEY);
+  localStorage.removeItem(USER_KEY);
+}
+
+function escapeHtml(value){
+  return String(value ?? "")
+    .replaceAll("&","&amp;").replaceAll("<","&lt;")
+    .replaceAll(">","&gt;").replaceAll('"',"&quot;")
+    .replaceAll("'","&#039;");
+}
+
+function numberValue(value){
+  const n=Number(value);
+  return Number.isFinite(n)?n:0;
+}
+
+function formatNumber(value){
+  return numberValue(value).toLocaleString("en-IN");
+}
+
+function normalizeArray(data){
+  if(Array.isArray(data)) return data;
+  if(Array.isArray(data?.items)) return data.items;
+  if(Array.isArray(data?.data)) return data.data;
+  if(Array.isArray(data?.results)) return data.results;
+  return [];
+}
+
+async function api(path,options={}){
+  const token=getToken();
+  const headers={...(options.headers||{})};
+  if(options.body && !headers["Content-Type"]) headers["Content-Type"]="application/json";
+  if(token) headers["Authorization"]="Bearer "+token;
+  const response=await fetch(API_BASE+path,{...options,headers});
+  if(response.status===401){
+    clearLogin(); showLogin();
+    throw new Error("Session expired. Please login again.");
+  }
+  return response;
+}
+
+async function readJson(path,options={}){
+  const response=await api(path,options);
+  let data=null;
+  try{data=await response.json()}catch(_){}
+  if(!response.ok) throw new Error(data?.detail || data?.message || ("API error: "+response.status));
+  return data;
+}
+
+async function safeArray(path){
+  try{return normalizeArray(await readJson(path))}
+  catch(error){console.warn(path,error.message);return []}
+}
+
+function showLoginMessage(message,success=false){
+  const box=$("loginMessage");
+  box.style.display="block";
+  box.textContent=message;
+  box.className=success?"success-message":"error-message";
+}
+
+function showLogin(){
+  $("loadingScreen").style.display="none";
+  $("dashboardScreen").style.display="none";
+  $("loginScreen").style.display="flex";
+}
+
+function showDashboardScreen(user){
+  $("loadingScreen").style.display="none";
+  $("loginScreen").style.display="none";
+  $("dashboardScreen").style.display="block";
+  $("topUserName").textContent=user?.name || user?.employee_id || "Admin";
+  $("topUserRole").textContent=user?.role || "Super Admin";
+  const avatarName=(user?.name || user?.employee_id || "A").trim();
+  document.querySelector(".avatar").textContent=avatarName.charAt(0).toUpperCase();
+}
+
+async function login(event){
+  event.preventDefault();
+  const identifier=$("identifier").value.trim();
+  const password=$("password").value;
+  if(!identifier || !password){showLoginMessage("Please enter Employee ID / Email and password.");return}
+  $("loginButton").disabled=true;
+  $("loginButton").textContent="Logging in...";
+  $("loginMessage").style.display="none";
+  try{
+    const response=await fetch(API_BASE+"/api/auth/login",{
+      method:"POST",
+      headers:{"Content-Type":"application/json"},
+      body:JSON.stringify({identifier,password})
+    });
+    let data={};try{data=await response.json()}catch(_){}
+    if(!response.ok) throw new Error(data.detail||data.message||"Login failed.");
+    saveLogin(data);$("password").value="";
+    showDashboardScreen(data.user||{});
+    await refreshDashboardInternal();
+  }catch(error){console.error(error);showLoginMessage(error.message||"Unable to login.")}
+  finally{$("loginButton").disabled=false;$("loginButton").textContent="Login"}
+}
+
+async function checkSession(){
+  if(!getToken()){showLogin();return}
+  try{
+    const user=await readJson("/api/auth/me");
+    localStorage.setItem(USER_KEY,JSON.stringify(user));
+    showDashboardScreen(user);
+    await refreshDashboardInternal();
+  }catch(error){
+    console.warn("Session check:",error.message);
+    clearLogin();showLogin();
+  }
+}
+
+function statusClass(status){
+  const s=String(status||"").toLowerCase();
+  if(s.includes("deliver")) return "status-delivered";
+  if(s.includes("dispatch")) return "status-dispatched";
+  if(s.includes("process")||s.includes("pick")||s.includes("pack")) return "status-processing";
+  return "status-pending";
+}
+
+function formatDateTime(value){
+  if(!value) return "-";
+  const d=new Date(value);
+  if(Number.isNaN(d.getTime())) return String(value);
+  return d.toLocaleString("en-IN",{day:"2-digit",month:"short",year:"numeric",hour:"2-digit",minute:"2-digit"});
+}
+
+function getOrderNumber(row,index){
+  return row.order_number || row.order_no || row.order_id || row.number || ("ORD-"+String(index+1).padStart(4,"0"));
+}
+
+function getOrderCustomer(row){
+  return row.customer_name || row.customer || row.customer_name_text || "-";
+}
+
+function getOrderItems(row){
+  if(Array.isArray(row.items)) return row.items.reduce((n,x)=>n+numberValue(x.quantity||1),0);
+  return row.item_count ?? row.total_items ?? row.items_count ?? row.quantity ?? "-";
+}
+
+function getOrderAmount(row){
+  const v=row.total_amount ?? row.total_value ?? row.amount ?? row.order_value;
+  return v==null ? "-" : "₹"+numberValue(v).toLocaleString("en-IN",{minimumFractionDigits:2,maximumFractionDigits:2});
+}
+
+function renderOrders(rows){
+  const body=$("ordersRows");
+  if(!rows.length){
+    body.innerHTML='<tr><td colspan="8" class="empty">No orders available.</td></tr>';
+    return;
+  }
+  body.innerHTML=rows.slice(0,5).map((row,i)=>{
+    const status=row.status || row.order_status || "Pending";
+    return `<tr>
+      <td>${i+1}</td>
+      <td class="order-no">${escapeHtml(getOrderNumber(row,i))}</td>
+      <td>${escapeHtml(getOrderCustomer(row))}</td>
+      <td>${escapeHtml(getOrderItems(row))}</td>
+      <td class="amount">${escapeHtml(getOrderAmount(row))}</td>
+      <td><span class="status ${statusClass(status)}">${escapeHtml(status)}</span></td>
+      <td>${escapeHtml(formatDateTime(row.created_at||row.order_time||row.createdAt||row.date))}</td>
+      <td><button class="view-btn" onclick="openPage('orders.html')">View</button></td>
+    </tr>`;
+  }).join("");
+}
+
+function updateOrderStatus(rows,total){
+  let pending=0,processing=0,dispatched=0,delivered=0;
+  rows.forEach(row=>{
+    const s=String(row.status||row.order_status||"").toLowerCase();
+    if(s.includes("deliver")) delivered++;
+    else if(s.includes("dispatch")) dispatched++;
+    else if(s.includes("process")||s.includes("pick")||s.includes("pack")) processing++;
+    else pending++;
+  });
+  const known=pending+processing+dispatched+delivered;
+  if(!known && total>0) pending=total;
+  $("pendingOrders").textContent=formatNumber(pending);
+  $("processingOrders").textContent=formatNumber(processing);
+  $("dispatchedOrders").textContent=formatNumber(dispatched);
+  $("deliveredOrders").textContent=formatNumber(delivered);
+  $("donutTotal").textContent=formatNumber(total);
+}
+
+function renderStockChart(inventory){
+  const groups={};
+  inventory.forEach(row=>{
+    const name=row.location_name||row.location_code||"Location";
+    groups[name]=(groups[name]||0)+numberValue(row.available_qty);
+  });
+  const entries=Object.entries(groups).slice(0,6);
+  const max=Math.max(...entries.map(x=>x[1]),1);
+  const allocated=inventory.reduce((n,r)=>n+numberValue(r.reserved_qty),0);
+  const available=inventory.reduce((n,r)=>n+numberValue(r.available_qty),0);
+  const ratio=available?Math.min(1,allocated/available):0;
+  const chart=$("stockChart");
+  if(!entries.length){
+    chart.innerHTML='<div class="empty">No stock data available.</div>';
+    return;
+  }
+  chart.innerHTML=entries.map(([name,value])=>{
+    const h=Math.max(6,Math.round(value/max*135));
+    const h2=Math.max(4,Math.round(value/max*135*ratio));
+    return `<div class="bar-group">
+      <div class="bar in" style="height:${h}px"></div>
+      <div class="bar out" style="height:${h2}px"></div>
+      <div class="bar-label">${escapeHtml(name.length>12?name.slice(0,12)+"…":name)}</div>
+    </div>`;
+  }).join("");
+}
+
+function renderTopProducts(products,inventory){
+  const totals={};
+  inventory.forEach(r=>{
+    const key=r.product_name||r.sku||"Product";
+    totals[key]=(totals[key]||0)+numberValue(r.available_qty);
+  });
+  let entries=Object.entries(totals).sort((a,b)=>b[1]-a[1]).slice(0,5);
+  if(!entries.length) entries=products.slice(0,5).map(p=>[p.name||p.product_name||p.sku||"Product",0]);
+  $("topProducts").innerHTML=entries.length?entries.map(([name,qty])=>
+    `<div class="mini-row"><div><div class="mini-name">${escapeHtml(name)}</div><div class="mini-sub">Available stock</div></div><strong class="mini-value">${formatNumber(qty)}</strong></div>`
+  ).join(""):'<div class="empty">No products available.</div>';
+}
+
+function renderLocations(locations,inventory){
+  const totals={};
+  inventory.forEach(r=>{
+    const key=r.location_name||r.location_code||("Location "+(r.location_id||""));
+    totals[key]=(totals[key]||0)+numberValue(r.available_qty);
+  });
+  const entries=Object.entries(totals).sort((a,b)=>b[1]-a[1]).slice(0,5);
+  $("stockLocations").innerHTML=entries.length?entries.map(([name,qty])=>
+    `<div class="mini-row"><span class="mini-name">${escapeHtml(name)}</span><strong class="mini-value">${formatNumber(qty)}</strong></div>`
+  ).join(""):(locations.length?locations.slice(0,5).map(l=>`<div class="mini-row"><span class="mini-name">${escapeHtml(l.name||l.code||"Location")}</span><strong class="mini-value">0</strong></div>`).join(""):'<div class="empty">No locations available.</div>');
+  $("summaryLocations").textContent=formatNumber(locations.length);
+}
+
+function renderPendingTasks(putaway){
+  const active=putaway.filter(t=>!["COMPLETED","CANCELLED","CLOSED"].includes(String(t.status||"").toUpperCase())).slice(0,5);
+  $("pendingTasks").innerHTML=active.length?active.map(t=>
+    `<div class="mini-row"><div><div class="mini-name">${escapeHtml(t.task_number||"Putaway Task")}</div><div class="mini-sub">${escapeHtml(t.product_name||t.sku||"Stock task")}</div></div><strong class="mini-value low">${formatNumber(t.quantity||0)}</strong></div>`
+  ).join(""):'<div class="empty">No pending putaway tasks.</div>';
+}
+
+function renderActivity(orders,putaway){
+  const list=[];
+  if(orders[0]) list.push(["activity-purple","＋","New order received",getOrderNumber(orders[0],0),"10 mins ago"]);
+  if(putaway[0]) list.push(["activity-green","✓","Putaway activity",putaway[0].task_number||"Putaway task","Recent"]);
+  list.push(["activity-blue","↻","Dashboard sync","Live backend connected","Now"]);
+  list.push(["activity-yellow","▤","Warehouse monitoring","Inventory and orders","Live"]);
+  $("activityList").innerHTML=list.map(x=>`
+    <div class="activity-row">
+      <div class="activity-icon ${x[0]}">${x[1]}</div>
+      <div class="activity-text"><strong>${escapeHtml(x[2])}</strong><span>${escapeHtml(x[3])}</span></div>
+      <div class="activity-time">${escapeHtml(x[4])}</div>
+    </div>`).join("");
+}
+
+function setDate(){
+  const d=new Date();
+  $("currentDate").textContent=d.toLocaleString("en-IN",{weekday:"long",day:"2-digit",month:"short",year:"numeric",hour:"2-digit",minute:"2-digit"});
+}
+
+async function refreshDashboardInternal(){
+  if(dashboardLoading || !getToken()) return;
+  dashboardLoading=true;
+  setDate();
+
+  try{
+    const dashboard=await readJson("/api/dashboard").catch(()=>({}));
+    const [products,locations,inventory,putaway,riders,orders]=await Promise.all([
+      safeArray("/api/products"),
+      safeArray("/api/locations"),
+      safeArray("/api/inventory"),
+      safeArray("/api/putaway"),
+      safeArray("/api/riders"),
+      safeArray("/api/orders")
+    ]);
+
+    const totalProducts=dashboard.total_products!==undefined?numberValue(dashboard.total_products):products.length;
+    const totalOrders=dashboard.total_orders!==undefined?numberValue(dashboard.total_orders):orders.length;
+    const totalLocations=dashboard.total_locations!==undefined?numberValue(dashboard.total_locations):locations.length;
+    const available=inventory.reduce((n,r)=>n+numberValue(r.available_qty),0);
+    const reserved=inventory.reduce((n,r)=>n+numberValue(r.reserved_qty),0);
+    const damaged=inventory.reduce((n,r)=>n+numberValue(r.damaged_qty),0);
+    const pending=putaway.filter(t=>!["COMPLETED","CANCELLED","CLOSED"].includes(String(t.status||"").toUpperCase())).length;
+
+    $("totalProducts").textContent=formatNumber(totalProducts);
+    $("totalStock").textContent=formatNumber(available);
+    $("totalOrders").textContent=formatNumber(totalOrders);
+    $("pendingPutaway").textContent=formatNumber(pending);
+
+    $("summaryProducts").textContent=formatNumber(totalProducts);
+    $("summaryInventory").textContent=formatNumber(inventory.length);
+    $("summaryReserved").textContent=formatNumber(reserved);
+    $("summaryDamaged").textContent=formatNumber(damaged);
+
+    $("locationFilter").innerHTML='<option value="">All Locations</option>'+locations.map(l=>`<option value="${escapeHtml(l.id||l.code||"")}">${escapeHtml(l.name||l.code||"Location")}</option>`).join("");
+
+    renderStockChart(inventory);
+    renderOrders(orders);
+    updateOrderStatus(orders,totalOrders);
+    renderTopProducts(products,inventory);
+    renderLocations(locations,inventory);
+    renderPendingTasks(putaway);
+    renderActivity(orders,putaway);
+
+    window.__zippzoDashboardData={products,locations,inventory,putaway,riders,orders,dashboard};
+  }catch(error){
+    console.error("Dashboard refresh:",error);
+    showToast("Dashboard could not refresh. Check the backend.");
+  }finally{
+    dashboardLoading=false;
+  }
+}
+
+async function logout(){
+  const token=getToken();
+  try{
+    if(token) await fetch(API_BASE+"/api/auth/logout",{method:"POST",headers:{"Content-Type":"application/json","Authorization":"Bearer "+token},body:JSON.stringify({session_token:token})});
+  }catch(error){console.warn("Logout:",error)}
+  clearLogin();
+  if(refreshTimer) clearInterval(refreshTimer);
+  $("password").value="";
+  showLogin();
+}
+
+function openPage(page){window.location.href=page}
+function showDashboard(){window.location.href="index.html"}
+function refreshDashboard(){return refreshDashboardInternal()}
+
+function showToast(message){
+  const t=$("toast");t.textContent=message;t.style.display="block";
+  clearTimeout(window.__toastTimer);
+  window.__toastTimer=setTimeout(()=>t.style.display="none",2500);
+}
+
+$("loginForm").addEventListener("submit",login);
+$("globalSearch").addEventListener("keydown",e=>{
+  if(e.key==="Enter" && e.target.value.trim()){
+    const q=e.target.value.trim().toLowerCase();
+    if(q.includes("product")) openPage("products.html");
+    else if(q.includes("supplier")) openPage("suppliers.html");
+    else if(q.includes("location")) openPage("locations.html");
+    else if(q.includes("inventory")||q.includes("stock")) openPage("inventory.html");
+    else if(q.includes("order")) openPage("orders.html");
+    else if(q.includes("purchase")) openPage("purchase-orders.html");
+    else showToast("Use the sidebar to open the required module.");
+  }
+});
+
+$("loadingScreen").style.display="flex";
+window.__zippzoRefreshDashboard=refreshDashboardInternal;
+checkSession();
+refreshTimer=setInterval(()=>{if($("dashboardScreen").style.display!=="none") refreshDashboardInternal()},15000);
+</script>
+</body>
+</html>

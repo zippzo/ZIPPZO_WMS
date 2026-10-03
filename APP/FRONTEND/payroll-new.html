@@ -1,0 +1,227 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1.0">
+<title>Zippzo Payroll</title>
+<style>
+*{box-sizing:border-box}:root{--dark:#111827;--blue:#2563eb;--green:#16a34a;--orange:#ea580c;--red:#dc2626;--purple:#7c3aed;--muted:#64748b;--line:#e2e8f0;--bg:#f4f7fb}
+body{margin:0;background:var(--bg);color:#172033;font-family:Inter,Segoe UI,Arial,sans-serif}.top{height:68px;background:var(--dark);color:#fff;display:flex;align-items:center;gap:16px;padding:0 22px;position:sticky;top:0;z-index:20}.logo{font-size:25px;font-weight:900;letter-spacing:1px}.title{font-size:14px;color:#cbd5e1}.spacer{flex:1}.top button{background:#1f2937;border:1px solid #475569;color:#fff;border-radius:8px;padding:9px 13px;cursor:pointer}
+.layout{display:grid;grid-template-columns:235px 1fr;min-height:calc(100vh - 68px)}nav{background:#fff;border-right:1px solid var(--line);padding:14px 10px;position:sticky;top:68px;height:calc(100vh - 68px);overflow:auto}nav h4{font-size:10px;color:#94a3b8;text-transform:uppercase;margin:12px}nav a{display:block;text-decoration:none;color:#334155;padding:9px 12px;border-radius:8px;font-size:12px;margin:2px 0}nav a:hover,nav a.active{background:#eff6ff;color:#1d4ed8;font-weight:700}
+main{padding:22px;min-width:0}.head{display:flex;align-items:center;justify-content:space-between;gap:15px;margin-bottom:18px}.head h1{font-size:25px;margin:0}.sub{font-size:13px;color:var(--muted);margin-top:5px}.actions{display:flex;gap:8px;flex-wrap:wrap}.btn{border:1px solid var(--line);background:#fff;border-radius:8px;padding:9px 13px;cursor:pointer;font-size:12px}.btn.primary{background:var(--blue);border-color:var(--blue);color:#fff}.btn.success{background:var(--green);border-color:var(--green);color:#fff}.btn.danger{color:var(--red)}.btn.small{padding:6px 9px;font-size:11px}
+.kpis{display:grid;grid-template-columns:repeat(8,1fr);gap:10px}.card{background:#fff;border:1px solid var(--line);border-radius:12px;padding:14px;box-shadow:0 1px 2px #00000008}.label{font-size:10px;color:var(--muted);text-transform:uppercase}.value{font-size:23px;font-weight:850;margin-top:6px}.note{font-size:10px;color:var(--muted);margin-top:4px}
+.section{margin-top:18px}.section-head{display:flex;align-items:center;justify-content:space-between;gap:10px;margin-bottom:10px}.section-head h2{font-size:16px;margin:0}.filters{display:flex;gap:8px;flex-wrap:wrap}.filters input,.filters select{height:37px;border:1px solid var(--line);border-radius:8px;background:#fff;padding:0 10px;font-size:12px;color:#172033}.filters .search{min-width:340px}
+.summary{display:grid;grid-template-columns:repeat(8,1fr);gap:10px}.summary strong{display:block;font-size:21px;margin-top:5px}.summary span{font-size:10px;color:var(--muted)}
+.table-wrap{overflow:auto;background:#fff;border:1px solid var(--line);border-radius:10px}.table{width:100%;border-collapse:collapse;font-size:12px}.table th{background:#f8fafc;color:#64748b;font-size:10px;text-transform:uppercase;text-align:left;position:sticky;top:0;z-index:2}.table th,.table td{padding:10px;border-bottom:1px solid #edf2f7;white-space:nowrap}.table tr:hover td{background:#f8fafc}
+.tag{display:inline-block;border-radius:999px;padding:4px 8px;font-size:10px;font-weight:700;background:#eef2ff;color:#3730a3}.tag.good{background:#f0fdf4;color:#15803d}.tag.warn{background:#fff7ed;color:#c2410c}.tag.bad{background:#fef2f2;color:#b91c1c}.tag.info{background:#eff6ff;color:#1d4ed8}.tag.purple{background:#f5f3ff;color:#6d28d9}.muted{color:var(--muted)}.empty{text-align:center;padding:30px;color:#94a3b8}
+.grid2{display:grid;grid-template-columns:1.15fr .85fr;gap:14px}.list{background:#fff;border:1px solid var(--line);border-radius:10px;overflow:hidden}.list-row{display:flex;justify-content:space-between;gap:10px;padding:11px 13px;border-bottom:1px solid #edf2f7;font-size:12px}.list-row:last-child{border:0}.list-row b{display:block}.progress{height:7px;width:90px;background:#e2e8f0;border-radius:99px;overflow:hidden;display:inline-block;vertical-align:middle}.progress i{display:block;height:100%;background:var(--blue)}
+.modal{display:none;position:fixed;inset:0;background:#0008;z-index:50;align-items:center;justify-content:center;padding:20px}.modal.show{display:flex}.modal-box{background:#fff;border-radius:14px;width:min(1200px,100%);max-height:92vh;overflow:auto;padding:20px}.modal-head{display:flex;justify-content:space-between;align-items:center}.modal-head h2{font-size:18px;margin:0}.close{border:0;background:#f1f5f9;border-radius:8px;padding:7px 10px;cursor:pointer}
+.form-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:11px;margin-top:16px}.field{display:flex;flex-direction:column;gap:5px}.field label{font-size:10px;color:var(--muted);text-transform:uppercase;font-weight:700}.field input,.field select,.field textarea{border:1px solid var(--line);border-radius:8px;padding:9px;font:inherit;font-size:12px;background:#fff}.field textarea{min-height:75px;resize:vertical}.span2{grid-column:span 2}.span3{grid-column:span 3}.span4{grid-column:span 4}.modal-actions{display:flex;justify-content:flex-end;gap:8px;margin-top:18px}
+.detail-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:9px;margin-top:15px}.detail{border:1px solid var(--line);border-radius:8px;padding:10px}.detail small{display:block;color:var(--muted);font-size:10px}.detail b{display:block;margin-top:4px;font-size:12px;word-break:break-word}.timeline{margin-top:18px;border-left:2px solid #dbeafe;padding-left:18px}.timeline-item{position:relative;margin:0 0 15px}.timeline-item:before{content:"";position:absolute;left:-25px;top:2px;width:10px;height:10px;background:var(--blue);border-radius:50%}.timeline-item b{display:block;font-size:12px}.timeline-item span{font-size:10px;color:var(--muted)}
+.toast{position:fixed;right:20px;bottom:20px;background:#111827;color:#fff;padding:12px 15px;border-radius:8px;display:none;z-index:100;font-size:13px}.loading{opacity:.65;pointer-events:none}
+@media(max-width:1450px){.kpis{grid-template-columns:repeat(4,1fr)}.summary{grid-template-columns:repeat(4,1fr)}}@media(max-width:1050px){.layout{grid-template-columns:1fr}nav{display:none}.grid2{grid-template-columns:1fr}.detail-grid{grid-template-columns:repeat(2,1fr)}.form-grid{grid-template-columns:repeat(2,1fr)}.span4{grid-column:span 2}}@media(max-width:650px){main{padding:13px}.kpis,.summary{grid-template-columns:repeat(2,1fr)}.head{align-items:flex-start;flex-direction:column}.filters .search{min-width:100%}.detail-grid,.form-grid{grid-template-columns:1fr}.span2,.span3,.span4{grid-column:span 1}}@media print{.top,nav,.actions,.filters,.pagination,.no-print{display:none!important}.layout{display:block}main{padding:0}.card{box-shadow:none}}
+</style>
+
+<style id="zippzo-master-theme">
+/* ZIPPZO MASTER FRONTEND THEME — visual layer only */
+:root{
+ --z-purple:#331084;--z-dark:#24085F;--z-yellow:#FEB103;
+ --z-bg:#F5F6FB;--z-card:#FFFFFF;--z-text:#171A4A;--z-muted:#69708F;
+ --z-line:#E6E8F0;--z-shadow:0 5px 18px rgba(36,8,95,.07);
+}
+html,body{background:var(--z-bg)!important;color:var(--z-text)!important}
+body{font-family:Inter,Segoe UI,Arial,sans-serif!important}
+.topbar,.header,.top-header,.top-nav,.app-header{
+ background:linear-gradient(90deg,var(--z-dark),var(--z-purple))!important;
+ color:#fff!important;border-color:transparent!important;
+}
+.sidebar,.side-nav,.left-sidebar,.navigation{
+ background:linear-gradient(180deg,#25105F,#180743)!important;
+ color:#fff!important;border-color:transparent!important;
+}
+.brand{color:#fff!important}
+.sidebar .nav-button,.sidebar button,.side-nav button,.left-sidebar button,
+.navigation button,.nav-button{
+ color:#fff!important;background:transparent!important;border-radius:8px!important;
+ border-color:transparent!important;
+}
+.sidebar .nav-button:hover,.sidebar button:hover,.side-nav button:hover,
+.left-sidebar button:hover,.navigation button:hover,.nav-button:hover{
+ background:rgba(255,255,255,.09)!important;
+}
+.sidebar .nav-button.active,.sidebar .nav-button[aria-current="page"],
+.nav-button.active,.nav-button.selected,.nav-button.current{
+ background:var(--z-yellow)!important;color:#15112F!important;font-weight:900!important;
+}
+.sidebar-title,.section-title,.nav-section{
+ color:#B9A9E8!important;letter-spacing:.7px!important;font-weight:900!important;
+}
+.content,.main-content,.page-content,.workspace{background:var(--z-bg)!important}
+.card,.panel,.table-card,.summary-card,.kpi-card,.stat-card,.form-card,
+.modal-content,.toolbar,.filter-bar,.table-container{
+ background:#fff!important;border-color:var(--z-line)!important;
+ box-shadow:var(--z-shadow)!important;border-radius:12px!important;
+}
+.btn-primary,.primary-btn,.button-primary,.add-btn,.save-btn{
+ background:var(--z-yellow)!important;color:#17113B!important;border-color:var(--z-yellow)!important;
+}
+.btn-secondary,.secondary-btn{background:#fff!important;color:var(--z-text)!important;border-color:var(--z-line)!important}
+input,select,textarea{
+ border-color:#DFE2EB!important;border-radius:8px!important;background:#fff!important;color:var(--z-text)!important;
+}
+input:focus,select:focus,textarea:focus{
+ border-color:var(--z-purple)!important;box-shadow:0 0 0 3px rgba(51,16,132,.08)!important;
+}
+table{background:#fff!important}
+thead th{background:#F7F8FC!important;color:#626987!important}
+tbody td{border-color:#EDF0F5!important}
+tbody tr:hover td{background:#FAFAFF!important}
+.badge,.status-badge{border-radius:999px!important}
+.page-title,h1,h2{color:var(--z-text)!important}
+.muted,.subtitle,.page-subtitle,.help-text{color:var(--z-muted)!important}
+</style>
+
+
+<link rel="stylesheet" href="zippzo-standard.css">
+<script src="zippzo-standard.js" defer></script>
+</head>
+<body>
+<header class="top"><div class="logo">ZIPPZO</div><div class="title">Payroll Management</div><div class="spacer"></div><span id="userName" class="title">Loading...</span><button onclick="loadAll()">↻ Refresh</button><button onclick="logout()">Logout</button></header>
+<div class="layout"><nav id="nav"></nav><main>
+<div class="head"><div><h1>Payroll Management</h1><div class="sub">Employee → Salary Structure → Attendance → Earnings → Deductions → Net Pay → Payroll Status</div></div><div class="actions"><button class="btn" onclick="exportCSV()">Export CSV</button><button class="btn" onclick="printReport()">Print</button><button class="btn primary" onclick="openCreate()">+ Create Payroll</button></div></div>
+
+<div class="kpis">
+<div class="card"><div class="label">TOTAL RECORDS</div><div class="value" id="kTotal">—</div><div class="note">Payroll records</div></div>
+<div class="card"><div class="label">DRAFT</div><div class="value" id="kDraft">—</div><div class="note">Not finalized</div></div>
+<div class="card"><div class="label">PROCESSED</div><div class="value" id="kProcessed">—</div><div class="note">Processed payroll</div></div>
+<div class="card"><div class="label">PAID</div><div class="value" id="kPaid">—</div><div class="note">Paid records</div></div>
+<div class="card"><div class="label">GROSS PAY</div><div class="value" id="kGross">₹0</div><div class="note">Gross earnings</div></div>
+<div class="card"><div class="label">DEDUCTIONS</div><div class="value" id="kDeduct">₹0</div><div class="note">Total deductions</div></div>
+<div class="card"><div class="label">NET PAY</div><div class="value" id="kNet">₹0</div><div class="note">Net payroll</div></div>
+<div class="card"><div class="label">ALERTS</div><div class="value" id="kAlerts">—</div><div class="note">Incomplete records</div></div>
+</div>
+
+<section class="section"><div class="card"><div class="section-head"><h2>Payroll Filters</h2><button class="btn" onclick="clearFilters()">Clear Filters</button></div>
+<div class="filters">
+<input class="search" id="search" placeholder="Employee / payroll ID / department / month..." oninput="applyFilters()">
+<input id="monthFrom" type="month" onchange="applyFilters()">
+<input id="monthTo" type="month" onchange="applyFilters()">
+<select id="status" onchange="applyFilters()"><option value="">All Status</option></select>
+<select id="department" onchange="applyFilters()"><option value="">All Departments</option></select>
+<select id="location" onchange="applyFilters()"><option value="">All Locations</option></select>
+<select id="sort" onchange="applyFilters()"><option value="newest">Newest</option><option value="employee">Employee A-Z</option><option value="net">Net Pay ↓</option><option value="gross">Gross Pay ↓</option></select>
+<select id="pageSize" onchange="applyFilters()"><option>25</option><option>50</option><option>100</option></select>
+</div></div></section>
+
+<section class="section summary">
+<div class="card"><div class="label">FILTERED</div><strong id="sTotal">0</strong><span>records</span></div>
+<div class="card"><div class="label">PROCESSED</div><strong id="sProcessed">0</strong><span>processed</span></div>
+<div class="card"><div class="label">PAID</div><strong id="sPaid">0</strong><span>paid</span></div>
+<div class="card"><div class="label">GROSS</div><strong id="sGross">₹0</strong><span>earnings</span></div>
+<div class="card"><div class="label">DEDUCTIONS</div><strong id="sDeduct">₹0</strong><span>deductions</span></div>
+<div class="card"><div class="label">NET</div><strong id="sNet">₹0</strong><span>net pay</span></div>
+<div class="card"><div class="label">EMPLOYEES</div><strong id="sEmployees">0</strong><span>unique</span></div>
+<div class="card"><div class="label">ALERTS</div><strong id="sAlerts">0</strong><span>review</span></div>
+</section>
+
+<section class="section grid2">
+<div class="card"><div class="section-head"><h2>Payroll Status Summary</h2><span class="muted" id="statusCount">0 records</span></div><div class="list" id="statusList"></div></div>
+<div class="card"><div class="section-head"><h2>Payroll Exceptions</h2><span class="tag warn" id="exceptionCount">0</span></div><div class="list" id="exceptionList"></div></div>
+</section>
+
+<section class="section"><div class="section-head"><h2>Payroll Register</h2><span class="muted" id="resultCount">0 records</span></div>
+<div class="table-wrap"><table class="table"><thead><tr><th>Payroll ID</th><th>Period</th><th>Employee</th><th>Department</th><th>Location</th><th>Days</th><th>Basic</th><th>Gross</th><th>Deductions</th><th>Net Pay</th><th>Status</th><th>Action</th></tr></thead><tbody id="body"></tbody></table></div>
+<div class="pagination"><span id="pageInfo">Page 1</span><div id="pager" style="display:flex;gap:5px"></div></div></section>
+</main></div>
+
+<div class="modal" id="formModal"><div class="modal-box"><div class="modal-head"><h2>Create Payroll Record</h2><button class="close" onclick="closeForm()">✕</button></div>
+<form id="payrollForm" onsubmit="savePayroll(event)">
+<div class="form-grid">
+<div class="field"><label>Employee *</label><select id="fEmployee" required onchange="fillEmployeeInfo()"><option value="">Select employee</option></select></div>
+<div class="field"><label>Payroll Period *</label><input id="fPeriod" type="month" required></div>
+<div class="field"><label>Status</label><select id="fStatus"><option>DRAFT</option><option>PROCESSED</option><option>PAID</option><option>HOLD</option><option>CANCELLED</option></select></div>
+<div class="field"><label>Working Days</label><input id="fWorkingDays" type="number" min="0" step="0.5" value="0"></div>
+<div class="field"><label>Paid Days</label><input id="fPaidDays" type="number" min="0" step="0.5" value="0"></div>
+<div class="field"><label>LOP Days</label><input id="fLopDays" type="number" min="0" step="0.5" value="0"></div>
+<div class="field"><label>Basic Salary</label><input id="fBasic" type="number" min="0" step="0.01" value="0" oninput="calcPayroll()"></div>
+<div class="field"><label>HRA</label><input id="fHra" type="number" min="0" step="0.01" value="0" oninput="calcPayroll()"></div>
+<div class="field"><label>Allowances</label><input id="fAllowance" type="number" min="0" step="0.01" value="0" oninput="calcPayroll()"></div>
+<div class="field"><label>Overtime</label><input id="fOvertime" type="number" min="0" step="0.01" value="0" oninput="calcPayroll()"></div>
+<div class="field"><label>Bonus / Incentive</label><input id="fBonus" type="number" min="0" step="0.01" value="0" oninput="calcPayroll()"></div>
+<div class="field"><label>PF</label><input id="fPf" type="number" min="0" step="0.01" value="0" oninput="calcPayroll()"></div>
+<div class="field"><label>ESI</label><input id="fEsi" type="number" min="0" step="0.01" value="0" oninput="calcPayroll()"></div>
+<div class="field"><label>Professional Tax</label><input id="fPt" type="number" min="0" step="0.01" value="0" oninput="calcPayroll()"></div>
+<div class="field"><label>TDS</label><input id="fTds" type="number" min="0" step="0.01" value="0" oninput="calcPayroll()"></div>
+<div class="field"><label>Other Deductions</label><input id="fOther" type="number" min="0" step="0.01" value="0" oninput="calcPayroll()"></div>
+<div class="field"><label>Gross Pay</label><input id="fGross" type="number" readonly></div>
+<div class="field"><label>Total Deductions</label><input id="fDeduct" type="number" readonly></div>
+<div class="field"><label>Net Pay</label><input id="fNet" type="number" readonly></div>
+<div class="field span4"><label>Remarks</label><textarea id="fRemarks" placeholder="Payroll notes"></textarea></div>
+</div>
+<div class="modal-actions"><button type="button" class="btn" onclick="closeForm()">Cancel</button><button class="btn primary">Save Payroll</button></div>
+</form></div></div>
+
+<div class="modal" id="detailModal"><div class="modal-box"><div class="modal-head"><h2>Payroll Details</h2><button class="close" onclick="closeDetail()">✕</button></div><div id="detail"></div></div></div>
+<div class="toast" id="toast"></div>
+<script>
+const API=window.location.origin,TOKEN_KEY="zippzo_session_token";let token=localStorage.getItem(TOKEN_KEY),rows=[],employees=[],filtered=[],page=1;
+const navLinks=[["index.html","Dashboard"],["hr-dashboard.html","HR Dashboard"],["employees.html","Employees"],["attendance.html","Attendance"],["shift-management.html","Shift Management"],["leave-management.html","Leave Management"],["payroll.html","Payroll"],["employee-documents.html","Employee Documents"],["employee-performance.html","Performance"],["hr-reports.html","HR Reports"],["products.html","Products"],["suppliers.html","Suppliers"],["locations.html","Locations"],["inventory.html","Inventory"],["stock-movements.html","Stock Movements"],["bins.html","Bins"],["purchase-orders.html","Purchase Orders"],["grn.html","GRN"],["putaway.html","Putaway"],["create-batch.html","Create Batch"],["picking.html","Picking"],["sorting.html","Sorting"],["grid-putaway.html","Grid Putaway"],["vehicle-arrival.html","Vehicle Arrival"],["dispatch.html","Dispatch"],["store-receiving.html","Store Receiving"],["orders.html","Orders"],["order-report.html","Order Report"],["access-control.html","Access Control"],["audit-logs.html","Audit Logs"],["system-settings.html","System Settings"]];
+function esc(v){return String(v??"").replace(/[&<>"']/g,m=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#039;"}[m]))}
+function arr(d){if(Array.isArray(d))return d;if(Array.isArray(d?.items))return d.items;if(Array.isArray(d?.data))return d.data;if(Array.isArray(d?.results))return d.results;return[]}
+function field(x,...keys){for(const k of keys)if(x?.[k]!==undefined&&x?.[k]!==null&&x?.[k]!=="")return x[k];return""}
+function num(v){return Number(v||0)}
+function money(v){return"₹"+num(v).toLocaleString("en-IN",{maximumFractionDigits:2})}
+function toast(s){const x=document.getElementById("toast");x.textContent=s;x.style.display="block";clearTimeout(window.tt);window.tt=setTimeout(()=>x.style.display="none",3200)}
+async function api(path,opt={}){const h={"Content-Type":"application/json",...(opt.headers||{})};if(token)h.Authorization="Bearer "+token;const r=await fetch(API+path,{...opt,headers:h});if(r.status===401){localStorage.removeItem(TOKEN_KEY);localStorage.removeItem("zippzo_user");location.href="index.html";throw Error("Session expired")}const t=await r.text();let d={};try{d=t?JSON.parse(t):{}}catch{}if(!r.ok)throw Error(d.detail||d.message||"Request failed");return d}
+async function tryGet(paths){let e;for(const p of paths){try{return await api(p)}catch(x){e=x}}throw e||Error("API unavailable")}
+function nav(){document.getElementById("nav").innerHTML="<h4>HR & Admin</h4>"+navLinks.slice(0,10).map(x=>`<a href="${x[0]}" class="${location.pathname.endsWith(x[0])?"active":""}">${x[1]}</a>`).join("")+"<h4>Operations</h4>"+navLinks.slice(10).map(x=>`<a href="${x[0]}">${x[1]}</a>`).join("")}
+function pid(x){return String(field(x,"payroll_id","payroll_number","code","id")||"—")}function period(x){return String(field(x,"payroll_period","period","month","salary_month")||"—")}function eid(x){return String(field(x,"employee_id","emp_id","employee_code")||"—")}function name(x){return String(field(x,"employee_name","name","full_name")||"—")}function dept(x){return String(field(x,"department","department_name")||"—")}function loc(x){return String(field(x,"location_name","location","site","city")||"—")}function days(x){return num(field(x,"paid_days","days_paid","working_days_paid","days"))}function basic(x){return num(field(x,"basic_salary","basic","basic_pay"))}function gross(x){return num(field(x,"gross_pay","gross_salary","gross"))}function deduct(x){return num(field(x,"total_deductions","deductions","deduction_amount"))}function net(x){let v=field(x,"net_pay","net_salary","net");if(v!=="")return num(v);return gross(x)-deduct(x)}function status(x){return String(field(x,"status","payroll_status")||"DRAFT").toUpperCase()}function statusClass(s){return s==="PAID"?"good":s==="PROCESSED"?"info":s==="DRAFT"?"warn":s==="HOLD"?"purple":"bad"}function alertFor(x){return !eid(x)||period(x)==="—"||net(x)<0}
+async function loadAll(){document.body.classList.add("loading");try{const [pd,ed]=await Promise.all([tryGet(["/api/payroll","/api/payrolls","/api/payroll-records"]),tryGet(["/api/employees"])]);rows=arr(pd);employees=arr(ed);try{const me=await api("/api/auth/me");document.getElementById("userName").textContent=me.employee?.name||me.name||me.user?.name||"Zippzo User"}catch{}buildFilters();buildEmployees();applyFilters();renderKpis();toast("Payroll data refreshed")}catch(e){toast(e.message||"Payroll API is not available yet")}finally{document.body.classList.remove("loading")}}
+function fill(id,values,label){const el=document.getElementById(id),old=el.value;el.innerHTML=`<option value="">${label}</option>`+values.map(v=>`<option value="${esc(v)}">${esc(v)}</option>`).join("");if(values.includes(old))el.value=old}
+function buildFilters(){fill("status",[...new Set(rows.map(status))].sort(),"All Status");fill("department",[...new Set(rows.map(dept).filter(x=>x!=="—"))].sort(),"All Departments");fill("location",[...new Set(rows.map(loc).filter(x=>x!=="—"))].sort(),"All Locations")}
+function buildEmployees(){document.getElementById("fEmployee").innerHTML='<option value="">Select employee</option>'+employees.map(x=>`<option value="${esc(field(x,"id","employee_id","emp_id"))}">${esc(field(x,"employee_id","emp_id","code","id"))} · ${esc(field(x,"name","full_name","employee_name"))}</option>`).join("")}
+function applyFilters(){const q=document.getElementById("search").value.toLowerCase().trim(),mf=document.getElementById("monthFrom").value,mt=document.getElementById("monthTo").value,st=document.getElementById("status").value,de=document.getElementById("department").value,lo=document.getElementById("location").value;filtered=rows.filter(x=>{const p=period(x).slice(0,7),b=JSON.stringify(x).toLowerCase();return(!q||b.includes(q))&&(!mf||p>=mf)&&(!mt||p<=mt)&&(!st||status(x)===st)&&(!de||dept(x)===de)&&(!lo||loc(x)===lo)});const sort=document.getElementById("sort").value;filtered.sort((a,b)=>sort==="employee"?name(a).localeCompare(name(b)):sort==="net"?net(b)-net(a):sort==="gross"?gross(b)-gross(a):String(b.created_at||period(b)||pid(b)).localeCompare(String(a.created_at||period(a)||pid(a))));page=1;render()}
+function renderKpis(){document.getElementById("kTotal").textContent=rows.length;document.getElementById("kDraft").textContent=rows.filter(x=>status(x)==="DRAFT").length;document.getElementById("kProcessed").textContent=rows.filter(x=>status(x)==="PROCESSED").length;document.getElementById("kPaid").textContent=rows.filter(x=>status(x)==="PAID").length;document.getElementById("kGross").textContent=money(rows.reduce((s,x)=>s+gross(x),0));document.getElementById("kDeduct").textContent=money(rows.reduce((s,x)=>s+deduct(x),0));document.getElementById("kNet").textContent=money(rows.reduce((s,x)=>s+net(x),0));document.getElementById("kAlerts").textContent=rows.filter(alertFor).length}
+function render(){const grossTotal=filtered.reduce((s,x)=>s+gross(x),0),dedTotal=filtered.reduce((s,x)=>s+deduct(x),0),netTotal=filtered.reduce((s,x)=>s+net(x),0);document.getElementById("sTotal").textContent=filtered.length;document.getElementById("sProcessed").textContent=filtered.filter(x=>status(x)==="PROCESSED").length;document.getElementById("sPaid").textContent=filtered.filter(x=>status(x)==="PAID").length;document.getElementById("sGross").textContent=money(grossTotal);document.getElementById("sDeduct").textContent=money(dedTotal);document.getElementById("sNet").textContent=money(netTotal);document.getElementById("sEmployees").textContent=new Set(filtered.map(eid).filter(Boolean)).size;document.getElementById("sAlerts").textContent=filtered.filter(alertFor).length;document.getElementById("resultCount").textContent=filtered.length+" records";renderStatus();renderExceptions();renderTable();renderPager()}
+function renderStatus(){const vals=["DRAFT","PROCESSED","PAID","HOLD","CANCELLED"];document.getElementById("statusCount").textContent=filtered.length+" records";document.getElementById("statusList").innerHTML=vals.map(s=>`<div class="list-row"><div><b>${s}</b><span class="muted">Payroll status</span></div><span class="tag ${statusClass(s)}">${filtered.filter(x=>status(x)===s).length}</span></div>`).join("")}
+function renderExceptions(){const d=filtered.filter(alertFor).slice(0,15);document.getElementById("exceptionCount").textContent=filtered.filter(alertFor).length;document.getElementById("exceptionList").innerHTML=d.length?d.map(x=>`<div class="list-row"><div><b>${esc(pid(x))} · ${esc(name(x))}</b><span class="muted">${esc(period(x))} · ${money(net(x))}</span></div><span class="tag warn">${!eid(x)?"Employee missing":period(x)==="—"?"Period missing":net(x)<0?"Negative net":"Review"}</span></div>`).join(""):`<div class="empty">No payroll exceptions.</div>`}
+function renderTable(){const size=Number(document.getElementById("pageSize").value||25),pages=Math.max(1,Math.ceil(filtered.length/size));if(page>pages)page=pages;const d=filtered.slice((page-1)*size,page*size);document.getElementById("body").innerHTML=d.length?d.map((x,i)=>`<tr><td><b>${esc(pid(x))}</b></td><td>${esc(period(x))}</td><td>${esc(eid(x))} · ${esc(name(x))}</td><td>${esc(dept(x))}</td><td>${esc(loc(x))}</td><td>${days(x).toFixed(1)}</td><td>${money(basic(x))}</td><td>${money(gross(x))}</td><td>${money(deduct(x))}</td><td><b>${money(net(x))}</b></td><td><span class="tag ${statusClass(status(x))}">${esc(status(x))}</span></td><td><button class="btn small" onclick="details(${(page-1)*size+i})">View</button></td></tr>`).join(""):`<tr><td colspan="12" class="empty">No payroll records match the selected filters.</td></tr>`}
+function renderPager(){const size=Number(document.getElementById("pageSize").value||25),pages=Math.max(1,Math.ceil(filtered.length/size));document.getElementById("pageInfo").textContent=`Page ${page} of ${pages} · ${filtered.length} records`;let b="",s=Math.max(1,page-2),e=Math.min(pages,s+4);if(page>1)b+=`<button class="btn" onclick="gotoPage(${page-1})">‹</button>`;for(let p=s;p<=e;p++)b+=`<button class="btn ${p===page?"primary":""}" onclick="gotoPage(${p})">${p}</button>`;if(page<pages)b+=`<button class="btn" onclick="gotoPage(${page+1})">›</button>`;document.getElementById("pager").innerHTML=b}
+function gotoPage(p){page=p;renderTable();renderPager()}
+function clearFilters(){["search","monthFrom","monthTo"].forEach(id=>document.getElementById(id).value="");["status","department","location"].forEach(id=>document.getElementById(id).value="");document.getElementById("sort").value="newest";document.getElementById("pageSize").value="25";applyFilters()}
+function openCreate(){document.getElementById("payrollForm").reset();document.getElementById("fPeriod").value=new Date().toISOString().slice(0,7);document.getElementById("fStatus").value="DRAFT";["fGross","fDeduct","fNet"].forEach(id=>document.getElementById(id).value="0");document.getElementById("formModal").classList.add("show")}function closeForm(){document.getElementById("formModal").classList.remove("show")}
+function fillEmployeeInfo(){const id=document.getElementById("fEmployee").value,x=employees.find(e=>String(field(e,"id","employee_id","emp_id"))===String(id));if(!x)return;const sal=num(field(x,"basic_salary","basic","salary","monthly_salary"));if(sal)document.getElementById("fBasic").value=sal;calcPayroll()}
+function calcPayroll(){const b=num(document.getElementById("fBasic").value),h=num(document.getElementById("fHra").value),a=num(document.getElementById("fAllowance").value),o=num(document.getElementById("fOvertime").value),bo=num(document.getElementById("fBonus").value),pf=num(document.getElementById("fPf").value),es=num(document.getElementById("fEsi").value),pt=num(document.getElementById("fPt").value),tds=num(document.getElementById("fTds").value),oth=num(document.getElementById("fOther").value),g=b+h+a+o+bo,d=pf+es+pt+tds+oth;document.getElementById("fGross").value=g.toFixed(2);document.getElementById("fDeduct").value=d.toFixed(2);document.getElementById("fNet").value=(g-d).toFixed(2)}
+async function savePayroll(e){e.preventDefault();calcPayroll();const id=document.getElementById("fEmployee").value,emp=employees.find(x=>String(field(x,"id","employee_id","emp_id"))===String(id)),data={employee_id:id,employee_name:emp?field(emp,"name","full_name","employee_name"):"",payroll_period:document.getElementById("fPeriod").value,status:document.getElementById("fStatus").value,working_days:num(document.getElementById("fWorkingDays").value),paid_days:num(document.getElementById("fPaidDays").value),lop_days:num(document.getElementById("fLopDays").value),basic_salary:num(document.getElementById("fBasic").value),hra:num(document.getElementById("fHra").value),allowances:num(document.getElementById("fAllowance").value),overtime:num(document.getElementById("fOvertime").value),bonus:num(document.getElementById("fBonus").value),pf:num(document.getElementById("fPf").value),esi:num(document.getElementById("fEsi").value),professional_tax:num(document.getElementById("fPt").value),tds:num(document.getElementById("fTds").value),other_deductions:num(document.getElementById("fOther").value),gross_pay:num(document.getElementById("fGross").value),total_deductions:num(document.getElementById("fDeduct").value),net_pay:num(document.getElementById("fNet").value),remarks:document.getElementById("fRemarks").value};try{let e2;for(const p of ["/api/payroll","/api/payrolls","/api/payroll-records"]){try{await api(p,{method:"POST",body:JSON.stringify(data)});e2=null;break}catch(x){e2=x}}if(e2)throw e2;closeForm();await loadAll();toast("Payroll record created successfully")}catch(x){toast(x.message||"Payroll save API is not available yet")}}
+function D(a,b){return`<div class="detail"><small>${esc(a)}</small><b>${esc(b??"—")}</b></div>`}
+function details(i){const x=filtered[i];if(!x)return;document.getElementById("detail").innerHTML=`<div class="detail-grid">${D("Payroll ID",pid(x))}${D("Period",period(x))}${D("Employee ID",eid(x))}${D("Employee",name(x))}${D("Department",dept(x))}${D("Location",loc(x))}${D("Working Days",field(x,"working_days")||"—")}${D("Paid Days",days(x))}${D("LOP Days",field(x,"lop_days","loss_of_pay_days")||"—")}${D("Basic Salary",money(basic(x)))}${D("HRA",money(field(x,"hra","house_rent_allowance")))}${D("Allowances",money(field(x,"allowances","allowance")))}${D("Overtime",money(field(x,"overtime")))}${D("Bonus / Incentive",money(field(x,"bonus","incentive")))}${D("Gross Pay",money(gross(x)))}${D("PF",money(field(x,"pf","provident_fund")))}${D("ESI",money(field(x,"esi")))}${D("Professional Tax",money(field(x,"professional_tax","pt")))}${D("TDS",money(field(x,"tds")))}${D("Other Deductions",money(field(x,"other_deductions")))}${D("Total Deductions",money(deduct(x)))}${D("Net Pay",money(net(x)))}${D("Status",status(x))}${D("Remarks",field(x,"remarks","notes")||"—")}${D("Created",field(x,"created_at")||"—")}</div><div class="timeline"><div class="timeline-item"><b>Payroll Period</b><span>${esc(period(x))}</span></div><div class="timeline-item"><b>Earnings</b><span>Gross ${money(gross(x))}</span></div><div class="timeline-item"><b>Deductions</b><span>${money(deduct(x))}</span></div><div class="timeline-item"><b>Net Pay</b><span>${money(net(x))}</span></div><div class="timeline-item"><b>Status</b><span>${esc(status(x))}</span></div></div>`;document.getElementById("detailModal").classList.add("show")}
+function closeDetail(){document.getElementById("detailModal").classList.remove("show")}
+function exportCSV(){const h=["Payroll ID","Period","Employee ID","Employee","Department","Location","Paid Days","Basic","Gross","Deductions","Net Pay","Status"];const d=filtered.map(x=>[pid(x),period(x),eid(x),name(x),dept(x),loc(x),days(x),basic(x),gross(x),deduct(x),net(x),status(x)]);const csv=[h,...d].map(r=>r.map(v=>`"${String(v??"").replaceAll('"','""')}"`).join(",")).join("\n");const a=document.createElement("a");a.href=URL.createObjectURL(new Blob([csv],{type:"text/csv;charset=utf-8"}));a.download="zippzo_payroll.csv";a.click()}
+function printReport(){window.print()}
+async function logout(){try{if(token)await api("/api/auth/logout",{method:"POST",body:JSON.stringify({session_token:token})})}catch{}localStorage.removeItem(TOKEN_KEY);localStorage.removeItem("zippzo_user");location.href="index.html"}
+document.getElementById("formModal").addEventListener("click",e=>{if(e.target.id==="formModal")closeForm()});document.getElementById("detailModal").addEventListener("click",e=>{if(e.target.id==="detailModal")closeDetail()});(async()=>{nav();await loadAll()})();
+</script>
+
+<script id="zippzo-master-frontend">
+document.addEventListener("DOMContentLoaded", function(){
+  // Hide the retired Dropping module everywhere.
+  document.querySelectorAll("a,button").forEach(function(el){
+    const t=(el.textContent||"").trim().toLowerCase();
+    if(t==="dropping" || t.includes("dropping")) el.style.display="none";
+  });
+
+  // Use the real Zippzo logo wherever a common brand element exists.
+  document.querySelectorAll(".brand,.logo,.brand-logo").forEach(function(el){
+    if(!el.querySelector("img")){
+      const img=document.createElement("img");
+      img.src="zippzo-logo.jpg";
+      img.alt="Zippzo";
+      img.style.cssText="width:148px;max-height:55px;object-fit:contain;object-position:left center;";
+      el.prepend(img);
+    }
+  });
+});
+</script>
+
+</body>
+</html>

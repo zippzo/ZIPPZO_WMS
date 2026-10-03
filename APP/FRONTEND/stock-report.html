@@ -1,0 +1,406 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1.0">
+<title>Zippzo Stock Report</title>
+<style>
+*{box-sizing:border-box}
+:root{--dark:#0f172a;--dark2:#111827;--blue:#2563eb;--green:#16a34a;--orange:#ea580c;--red:#dc2626;--purple:#7c3aed;--muted:#64748b;--line:#e2e8f0;--bg:#f4f7fb;--card:#fff}
+body{margin:0;background:var(--bg);font-family:Inter,Segoe UI,Arial,sans-serif;color:#172033}
+.top{height:68px;background:var(--dark2);color:#fff;display:flex;align-items:center;gap:16px;padding:0 22px;position:sticky;top:0;z-index:20}
+.logo{font-size:25px;font-weight:900;letter-spacing:1px}.title{font-size:14px;color:#cbd5e1}.spacer{flex:1}.top button{border:1px solid #475569;background:#1f2937;color:#fff;border-radius:8px;padding:9px 13px;cursor:pointer}
+.layout{display:grid;grid-template-columns:235px 1fr;min-height:calc(100vh - 68px)}
+nav{background:#fff;border-right:1px solid var(--line);padding:14px 10px;position:sticky;top:68px;height:calc(100vh - 68px);overflow:auto}
+nav h4{font-size:10px;color:#94a3b8;margin:12px 12px 7px;text-transform:uppercase}
+nav a{display:block;text-decoration:none;color:#334155;padding:9px 12px;border-radius:8px;font-size:12px;margin:2px 0}
+nav a:hover,nav a.active{background:#eff6ff;color:#1d4ed8;font-weight:700}
+main{padding:22px;min-width:0}.head{display:flex;align-items:center;justify-content:space-between;gap:15px;margin-bottom:18px}
+h1{font-size:25px;margin:0}.sub{font-size:13px;color:var(--muted);margin-top:5px}.actions{display:flex;gap:8px;flex-wrap:wrap}
+.btn{border:1px solid var(--line);background:#fff;border-radius:8px;padding:9px 13px;cursor:pointer;font-size:12px}.btn:hover{filter:brightness(.97)}
+.btn.primary{background:var(--blue);border-color:var(--blue);color:#fff}.btn.green{background:var(--green);border-color:var(--green);color:#fff}.btn.danger{color:var(--red)}
+.kpis{display:grid;grid-template-columns:repeat(8,minmax(110px,1fr));gap:10px}.card{background:#fff;border:1px solid var(--line);border-radius:12px;padding:14px;box-shadow:0 1px 2px #00000008}
+.label{font-size:10px;color:var(--muted);text-transform:uppercase}.value{font-size:23px;font-weight:850;margin-top:6px}.note{font-size:10px;color:var(--muted);margin-top:4px}
+.section{margin-top:18px}.section-head{display:flex;align-items:center;justify-content:space-between;gap:10px;margin-bottom:10px}.section-head h2{font-size:16px;margin:0}
+.filters{display:flex;gap:8px;flex-wrap:wrap}.filters input,.filters select{height:37px;border:1px solid var(--line);border-radius:8px;padding:0 10px;background:#fff;color:#172033;font-size:12px}.filters .search{min-width:270px}
+.summary{display:grid;grid-template-columns:repeat(6,1fr);gap:10px}
+.summary .card strong{display:block;font-size:21px;margin-top:5px}.summary .card span{font-size:10px;color:var(--muted)}
+.table-wrap{overflow:auto;background:#fff;border:1px solid var(--line);border-radius:10px}.table{width:100%;border-collapse:collapse;font-size:12px}.table th{background:#f8fafc;color:#64748b;font-size:10px;text-transform:uppercase;text-align:left;position:sticky;top:0;z-index:2}.table th,.table td{padding:10px;border-bottom:1px solid #edf2f7;white-space:nowrap}.table tr:hover td{background:#f8fafc}
+.tag{display:inline-block;border-radius:999px;padding:4px 8px;font-size:10px;font-weight:700;background:#eef2ff;color:#3730a3}.tag.good{background:#f0fdf4;color:#15803d}.tag.warn{background:#fff7ed;color:#c2410c}.tag.bad{background:#fef2f2;color:#b91c1c}.tag.info{background:#eff6ff;color:#1d4ed8}
+.bar{height:7px;width:85px;background:#e2e8f0;border-radius:99px;overflow:hidden;display:inline-block;vertical-align:middle}.bar i{display:block;height:100%;background:var(--blue)}
+.grid2{display:grid;grid-template-columns:1.3fr .7fr;gap:14px}.list{background:#fff;border:1px solid var(--line);border-radius:10px;overflow:hidden}.list-row{display:flex;justify-content:space-between;gap:12px;padding:11px 13px;border-bottom:1px solid #edf2f7;font-size:12px}.list-row:last-child{border-bottom:0}.list-row b{display:block}.muted{color:var(--muted)}
+.empty{text-align:center;color:#94a3b8;padding:30px}.pagination{display:flex;justify-content:space-between;align-items:center;padding:11px 2px;font-size:11px;color:var(--muted)}.pager{display:flex;gap:5px}.pager button{border:1px solid var(--line);background:#fff;border-radius:7px;padding:7px 10px;cursor:pointer}.pager button.active{background:var(--blue);color:#fff;border-color:var(--blue)}
+.modal{display:none;position:fixed;inset:0;background:#0008;z-index:50;align-items:center;justify-content:center;padding:20px}.modal.show{display:flex}.modal-box{background:#fff;border-radius:14px;width:min(1000px,100%);max-height:90vh;overflow:auto;padding:20px}.modal-head{display:flex;justify-content:space-between;align-items:center}.modal-head h2{margin:0;font-size:18px}.close{border:0;background:#f1f5f9;border-radius:8px;padding:7px 10px;cursor:pointer}.detail-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:9px;margin-top:15px}.detail{border:1px solid var(--line);border-radius:8px;padding:10px}.detail small{display:block;color:var(--muted);font-size:10px}.detail b{display:block;margin-top:4px;font-size:12px;word-break:break-word}
+.toast{position:fixed;right:20px;bottom:20px;background:#111827;color:#fff;padding:12px 15px;border-radius:8px;display:none;z-index:100;font-size:13px}
+.loading{opacity:.65;pointer-events:none}
+@media(max-width:1300px){.kpis{grid-template-columns:repeat(4,1fr)}.summary{grid-template-columns:repeat(3,1fr)}}
+@media(max-width:950px){.layout{grid-template-columns:1fr}nav{display:none}.grid2{grid-template-columns:1fr}.detail-grid{grid-template-columns:repeat(2,1fr)}}
+@media(max-width:600px){main{padding:13px}.kpis,.summary{grid-template-columns:repeat(2,1fr)}.head{align-items:flex-start;flex-direction:column}.detail-grid{grid-template-columns:1fr}.filters .search{min-width:100%}}
+@media print{.top,nav,.actions,.filters,.pagination,.no-print{display:none!important}.layout{display:block}main{padding:0}.card{box-shadow:none}.section{break-inside:avoid}}
+</style>
+
+<link rel="stylesheet" href="zippzo-standard.css">
+<script src="zippzo-standard.js" defer></script>
+</head>
+<body>
+<header class="top">
+  <div class="logo">ZIPPZO</div>
+  <div class="title">Stock & Inventory Report</div>
+  <div class="spacer"></div>
+  <span id="userName" class="title">Loading...</span>
+  <button onclick="loadAll()">↻ Refresh</button>
+  <button onclick="logout()">Logout</button>
+</header>
+
+<div class="layout">
+<nav id="nav"></nav>
+<main>
+  <div class="head">
+    <div>
+      <h1>Stock Report</h1>
+      <div class="sub">Location inventory, available stock, reservations, damaged/quarantine stock and replenishment visibility.</div>
+    </div>
+    <div class="actions">
+      <button class="btn" onclick="printReport()">Print</button>
+      <button class="btn" onclick="exportCSV()">Export CSV</button>
+      <button class="btn primary" onclick="loadAll()">Refresh Data</button>
+    </div>
+  </div>
+
+  <div class="kpis">
+    <div class="card"><div class="label">Inventory Records</div><div class="value" id="kRecords">—</div><div class="note">Location/SKU records</div></div>
+    <div class="card"><div class="label">Unique SKUs</div><div class="value" id="kSkus">—</div><div class="note">Products in stock</div></div>
+    <div class="card"><div class="label">Available Units</div><div class="value" id="kAvailable">—</div><div class="note">Sellable stock</div></div>
+    <div class="card"><div class="label">Reserved Units</div><div class="value" id="kReserved">—</div><div class="note">Allocated/reserved</div></div>
+    <div class="card"><div class="label">Picked Units</div><div class="value" id="kPicked">—</div><div class="note">Picked from stock</div></div>
+    <div class="card"><div class="label">Damaged Units</div><div class="value" id="kDamaged">—</div><div class="note">Damaged stock</div></div>
+    <div class="card"><div class="label">Quarantine</div><div class="value" id="kQuarantine">—</div><div class="note">Blocked stock</div></div>
+    <div class="card"><div class="label">Low Stock</div><div class="value" id="kLow">—</div><div class="note">At/below reorder</div></div>
+  </div>
+
+  <section class="section">
+    <div class="card">
+      <div class="section-head">
+        <h2>Advanced Stock Filters</h2>
+        <button class="btn" onclick="clearFilters()">Clear Filters</button>
+      </div>
+      <div class="filters">
+        <input class="search" id="search" placeholder="SKU / barcode / product / brand / location / bin..." oninput="applyFilters()">
+        <select id="location" onchange="applyFilters()"><option value="">All Locations</option></select>
+        <select id="stockStatus" onchange="applyFilters()">
+          <option value="">All Stock Status</option>
+          <option value="AVAILABLE">Available</option>
+          <option value="LOW">Low Stock</option>
+          <option value="OUT">Out of Stock</option>
+          <option value="RESERVED">Reserved</option>
+          <option value="DAMAGED">Damaged</option>
+          <option value="QUARANTINE">Quarantine</option>
+        </select>
+        <select id="sortBy" onchange="applyFilters()">
+          <option value="product">Product A-Z</option>
+          <option value="available_desc">Available High-Low</option>
+          <option value="available_asc">Available Low-High</option>
+          <option value="reserved_desc">Reserved High-Low</option>
+          <option value="location">Location A-Z</option>
+        </select>
+        <select id="pageSize" onchange="applyFilters()"><option>25</option><option>50</option><option>100</option></select>
+      </div>
+    </div>
+  </section>
+
+  <section class="section summary">
+    <div class="card"><div class="label">FILTERED AVAILABLE</div><strong id="sAvailable">0</strong><span>units</span></div>
+    <div class="card"><div class="label">FILTERED RESERVED</div><strong id="sReserved">0</strong><span>units</span></div>
+    <div class="card"><div class="label">FILTERED PICKED</div><strong id="sPicked">0</strong><span>units</span></div>
+    <div class="card"><div class="label">FILTERED DAMAGED</div><strong id="sDamaged">0</strong><span>units</span></div>
+    <div class="card"><div class="label">FILTERED QUARANTINE</div><strong id="sQuarantine">0</strong><span>units</span></div>
+    <div class="card"><div class="label">STOCK UTILIZATION</div><strong id="sUtil">0%</strong><span>reserved / available + reserved</span></div>
+  </section>
+
+  <section class="section grid2">
+    <div class="card">
+      <div class="section-head"><h2>Location Stock Summary</h2><span class="muted" id="locationCount">0 locations</span></div>
+      <div class="table-wrap">
+        <table class="table">
+          <thead><tr><th>Location</th><th>Records</th><th>SKUs</th><th>Available</th><th>Reserved</th><th>Damaged</th><th>Quarantine</th></tr></thead>
+          <tbody id="locationBody"></tbody>
+        </table>
+      </div>
+    </div>
+    <div class="card">
+      <div class="section-head"><h2>Replenishment Alerts</h2><span class="tag warn" id="lowCount">0</span></div>
+      <div class="list" id="lowList"></div>
+    </div>
+  </section>
+
+  <section class="section">
+    <div class="section-head">
+      <h2>Detailed Stock Report</h2>
+      <span class="muted" id="resultCount">0 records</span>
+    </div>
+    <div class="table-wrap">
+      <table class="table">
+        <thead>
+          <tr>
+            <th>SKU</th><th>Barcode</th><th>Product</th><th>Category</th><th>Brand</th>
+            <th>Location</th><th>Bin</th><th>Available</th><th>Reserved</th><th>Picked</th>
+            <th>Damaged</th><th>Quarantine</th><th>Reorder</th><th>Stock Status</th><th>Utilization</th><th>Updated</th><th>Action</th>
+          </tr>
+        </thead>
+        <tbody id="stockBody"></tbody>
+      </table>
+    </div>
+    <div class="pagination">
+      <span id="pageInfo">Page 1</span>
+      <div class="pager" id="pager"></div>
+    </div>
+  </section>
+</main>
+</div>
+
+<div class="modal" id="modal">
+  <div class="modal-box">
+    <div class="modal-head"><h2>Stock Record Details</h2><button class="close" onclick="closeModal()">✕</button></div>
+    <div id="detail"></div>
+  </div>
+</div>
+<div class="toast" id="toast"></div>
+
+<script>
+const API=window.location.origin;
+const TOKEN_KEY="zippzo_session_token";
+let token=localStorage.getItem(TOKEN_KEY);
+let stock=[],filtered=[],page=1;
+
+const navLinks=[
+["index.html","Dashboard"],["products.html","Products"],["suppliers.html","Suppliers"],["locations.html","Locations"],
+["inventory.html","Inventory"],["stock-movements.html","Stock Movements"],["bins.html","Bins"],["purchase-orders.html","Purchase Orders"],
+["grn.html","GRN"],["putaway.html","Putaway"],["create-batch.html","Create Batch"],["picking.html","Picking"],
+["sorting.html","Sorting"],["sorting-report.html","Sorting Report"],["grid-putaway.html","Grid Putaway"],
+["vehicle-arrival.html","Vehicle Arrival"],["dispatch.html","Dispatch"],["store-receiving.html","Store Receiving"],
+["store-receiving-report.html","Receiving Report"],["orders.html","Orders"],["stock-report.html","Stock Report"],
+["picking-report.html","Picking Report"],["picking-ipp.html","Picking IPP"],["sorting-ipp.html","Sorting IPP"],
+["access-control.html","Access Control"],["audit-logs.html","Audit Logs"],["system-settings.html","System Settings"]
+];
+
+function esc(v){return String(v??"").replace(/[&<>"']/g,m=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#039;"}[m]));}
+function num(v){return Number(v||0);}
+function arr(d){if(Array.isArray(d))return d;if(Array.isArray(d?.items))return d.items;if(Array.isArray(d?.data))return d.data;if(Array.isArray(d?.results))return d.results;return[];}
+function toast(msg){const x=document.getElementById("toast");x.textContent=msg;x.style.display="block";clearTimeout(window.toastTimer);window.toastTimer=setTimeout(()=>x.style.display="none",2800);}
+async function api(path,opt={}){
+ const headers={"Content-Type":"application/json",...(opt.headers||{})};
+ if(token)headers.Authorization="Bearer "+token;
+ const r=await fetch(API+path,{...opt,headers});
+ if(r.status===401){localStorage.removeItem(TOKEN_KEY);localStorage.removeItem("zippzo_user");location.href="index.html";throw Error("Session expired");}
+ const text=await r.text();let data={};try{data=text?JSON.parse(text):{}}catch{}
+ if(!r.ok)throw Error(data.detail||data.message||"Request failed");
+ return data;
+}
+async function tryApi(paths){let last;for(const p of paths){try{return await api(p)}catch(e){last=e}}throw last||Error("API unavailable");}
+
+function buildNav(){
+ document.getElementById("nav").innerHTML=
+ "<h4>Operations</h4>"+
+ navLinks.map(x=>`<a href="${x[0]}" class="${location.pathname.endsWith(x[0])?"active":""}">${x[1]}</a>`).join("");
+}
+
+async function loadAll(){
+ document.body.classList.add("loading");
+ try{
+   stock=arr(await tryApi(["/api/inventory"]));
+   try{
+     const me=await api("/api/auth/me");
+     document.getElementById("userName").textContent=me.employee?.name||me.name||me.user?.name||"Zippzo User";
+   }catch{}
+   buildLocationFilter();
+   page=1;
+   applyFilters();
+   toast("Stock report refreshed");
+ }catch(e){
+   toast(e.message||"Unable to load stock report");
+ }finally{document.body.classList.remove("loading");}
+}
+
+function locationName(x){return String(x.location_name||x.location_code||x.location||x.store_name||"—");}
+function productName(x){return String(x.product_name||x.name||"—");}
+function available(x){return num(x.available_qty);}
+function reserved(x){return num(x.reserved_qty);}
+function picked(x){return num(x.picked_qty);}
+function damaged(x){return num(x.damaged_qty);}
+function quarantine(x){return num(x.quarantine_qty);}
+function reorder(x){return num(x.reorder_level??x.minimum_stock??0);}
+function totalCommitted(x){return available(x)+reserved(x);}
+function statusOf(x){
+ const a=available(x),r=reorder(x),d=damaged(x),q=quarantine(x);
+ if(q>0)return "QUARANTINE";
+ if(d>0 && a===0)return "DAMAGED";
+ if(a===0)return "OUT";
+ if(a<=r)return "LOW";
+ if(reserved(x)>0 && a===0)return "RESERVED";
+ return "AVAILABLE";
+}
+
+function buildLocationFilter(){
+ const current=document.getElementById("location").value;
+ const locations=[...new Set(stock.map(locationName).filter(x=>x!=="—"))].sort((a,b)=>a.localeCompare(b));
+ document.getElementById("location").innerHTML="<option value=''>All Locations</option>"+
+ locations.map(x=>`<option value="${esc(x)}">${esc(x)}</option>`).join("");
+ if(locations.includes(current))document.getElementById("location").value=current;
+}
+
+function applyFilters(){
+ const q=document.getElementById("search").value.toLowerCase().trim();
+ const loc=document.getElementById("location").value;
+ const st=document.getElementById("stockStatus").value;
+ const sort=document.getElementById("sortBy").value;
+ filtered=stock.filter(x=>{
+   const blob=JSON.stringify(x).toLowerCase();
+   return (!q||blob.includes(q)) &&
+          (!loc||locationName(x)===loc) &&
+          (!st||statusOf(x)===st);
+ });
+ filtered.sort((a,b)=>{
+   if(sort==="available_desc")return available(b)-available(a);
+   if(sort==="available_asc")return available(a)-available(b);
+   if(sort==="reserved_desc")return reserved(b)-reserved(a);
+   if(sort==="location")return locationName(a).localeCompare(locationName(b));
+   return productName(a).localeCompare(productName(b));
+ });
+ page=1;
+ render();
+}
+
+function render(){
+ const totalAvailable=stock.reduce((n,x)=>n+available(x),0);
+ const totalReserved=stock.reduce((n,x)=>n+reserved(x),0);
+ const totalPicked=stock.reduce((n,x)=>n+picked(x),0);
+ const totalDamaged=stock.reduce((n,x)=>n+damaged(x),0);
+ const totalQuarantine=stock.reduce((n,x)=>n+quarantine(x),0);
+ const unique=[...new Set(stock.map(x=>x.sku||x.product_id).filter(Boolean))].length;
+ const low=stock.filter(x=>statusOf(x)==="LOW"||statusOf(x)==="OUT").length;
+
+ setText("kRecords",stock.length);setText("kSkus",unique);setText("kAvailable",totalAvailable);
+ setText("kReserved",totalReserved);setText("kPicked",totalPicked);setText("kDamaged",totalDamaged);
+ setText("kQuarantine",totalQuarantine);setText("kLow",low);
+
+ const fa=filtered.reduce((n,x)=>n+available(x),0),fr=filtered.reduce((n,x)=>n+reserved(x),0);
+ const fp=filtered.reduce((n,x)=>n+picked(x),0),fd=filtered.reduce((n,x)=>n+damaged(x),0),fq=filtered.reduce((n,x)=>n+quarantine(x),0);
+ const util=(fa+fr)?Math.round(fr/(fa+fr)*100):0;
+ setText("sAvailable",fa);setText("sReserved",fr);setText("sPicked",fp);setText("sDamaged",fd);setText("sQuarantine",fq);setText("sUtil",util+"%");
+ renderLocations();renderAlerts();renderTable();renderPager();
+}
+
+function setText(id,v){document.getElementById(id).textContent=typeof v==="number"?v.toLocaleString("en-IN"):v;}
+
+function renderLocations(){
+ const map=new Map();
+ filtered.forEach(x=>{
+   const key=locationName(x);
+   if(!map.has(key))map.set(key,{records:0,skus:new Set(),available:0,reserved:0,damaged:0,quarantine:0});
+   const v=map.get(key);v.records++;v.skus.add(x.sku||x.product_id);v.available+=available(x);v.reserved+=reserved(x);v.damaged+=damaged(x);v.quarantine+=quarantine(x);
+ });
+ const rows=[...map.entries()].sort((a,b)=>b[1].available-a[1].available);
+ document.getElementById("locationCount").textContent=rows.length+" locations";
+ document.getElementById("locationBody").innerHTML=rows.length?rows.map(([name,v])=>
+ `<tr><td><b>${esc(name)}</b></td><td>${v.records}</td><td>${v.skus.size}</td><td>${v.available.toLocaleString("en-IN")}</td><td>${v.reserved.toLocaleString("en-IN")}</td><td>${v.damaged.toLocaleString("en-IN")}</td><td>${v.quarantine.toLocaleString("en-IN")}</td></tr>`
+ ).join(""):`<tr><td colspan="7" class="empty">No location stock data.</td></tr>`;
+}
+
+function renderAlerts(){
+ const alerts=stock.filter(x=>statusOf(x)==="LOW"||statusOf(x)==="OUT")
+ .sort((a,b)=>available(a)-available(b)).slice(0,12);
+ document.getElementById("lowCount").textContent=stock.filter(x=>statusOf(x)==="LOW"||statusOf(x)==="OUT").length;
+ document.getElementById("lowList").innerHTML=alerts.length?alerts.map(x=>{
+   const s=statusOf(x);
+   return `<div class="list-row"><div><b>${esc(productName(x))}</b><span class="muted">${esc(x.sku||"—")} · ${esc(locationName(x))}</span></div><div style="text-align:right"><b>${available(x)}</b><span class="tag ${s==="OUT"?"bad":"warn"}">${s}</span></div></div>`;
+ }).join(""):`<div class="empty">No low-stock alerts.</div>`;
+}
+
+function renderTable(){
+ const size=Number(document.getElementById("pageSize").value||25);
+ const pages=Math.max(1,Math.ceil(filtered.length/size));if(page>pages)page=pages;
+ const start=(page-1)*size;const rows=filtered.slice(start,start+size);
+ document.getElementById("resultCount").textContent=filtered.length.toLocaleString("en-IN")+" records";
+ document.getElementById("stockBody").innerHTML=rows.length?rows.map((x,i)=>{
+   const av=available(x),rs=reserved(x),pk=picked(x),dm=damaged(x),q=quarantine(x),rl=reorder(x),st=statusOf(x);
+   const util=totalCommitted(x)?Math.round(rs/totalCommitted(x)*100):0;
+   return `<tr>
+   <td><b>${esc(x.sku||"—")}</b></td>
+   <td>${esc(x.barcode||"—")}</td>
+   <td>${esc(productName(x))}</td>
+   <td>${esc(x.category||"—")}</td>
+   <td>${esc(x.brand||"—")}</td>
+   <td>${esc(locationName(x))}</td>
+   <td>${esc(x.bin_code||x.bin_name||"—")}</td>
+   <td><b>${av.toLocaleString("en-IN")}</b></td>
+   <td>${rs.toLocaleString("en-IN")}</td>
+   <td>${pk.toLocaleString("en-IN")}</td>
+   <td>${dm.toLocaleString("en-IN")}</td>
+   <td>${q.toLocaleString("en-IN")}</td>
+   <td>${rl.toLocaleString("en-IN")}</td>
+   <td><span class="tag ${st==="AVAILABLE"?"good":st==="LOW"?"warn":st==="OUT"||st==="DAMAGED"?"bad":"info"}">${st}</span></td>
+   <td><span class="bar"><i style="width:${Math.min(100,util)}%"></i></span> ${util}%</td>
+   <td>${esc(x.updated_at||x.created_at||"—")}</td>
+   <td><button class="btn" onclick="details(${start+i})">View</button></td>
+   </tr>`;
+ }).join(""):`<tr><td colspan="17" class="empty">No stock records match the selected filters.</td></tr>`;
+}
+
+function renderPager(){
+ const size=Number(document.getElementById("pageSize").value||25);
+ const pages=Math.max(1,Math.ceil(filtered.length/size));
+ document.getElementById("pageInfo").textContent=`Page ${page} of ${pages} · ${filtered.length.toLocaleString("en-IN")} records`;
+ let buttons="";
+ const begin=Math.max(1,page-2),end=Math.min(pages,begin+4);
+ if(page>1)buttons+=`<button onclick="gotoPage(${page-1})">‹</button>`;
+ for(let p=begin;p<=end;p++)buttons+=`<button class="${p===page?"active":""}" onclick="gotoPage(${p})">${p}</button>`;
+ if(page<pages)buttons+=`<button onclick="gotoPage(${page+1})">›</button>`;
+ document.getElementById("pager").innerHTML=buttons;
+}
+function gotoPage(p){page=p;renderTable();renderPager();window.scrollTo({top:document.querySelector(".section:last-of-type").offsetTop-90,behavior:"smooth"});}
+
+function details(index){
+ const x=filtered[index];if(!x)return;
+ const av=available(x),rs=reserved(x),pk=picked(x),dm=damaged(x),q=quarantine(x),rl=reorder(x);
+ const st=statusOf(x),util=totalCommitted(x)?Math.round(rs/totalCommitted(x)*100):0;
+ document.getElementById("detail").innerHTML=`
+ <div class="detail-grid">
+ ${d("Product",productName(x))}${d("SKU",x.sku)}${d("Barcode",x.barcode)}
+ ${d("Category",x.category)}${d("Brand",x.brand)}${d("UOM",x.uom)}
+ ${d("Location",locationName(x))}${d("Location ID",x.location_id)}${d("Bin",x.bin_code||x.bin_name)}
+ ${d("Available Quantity",av)}${d("Reserved Quantity",rs)}${d("Picked Quantity",pk)}
+ ${d("Damaged Quantity",dm)}${d("Quarantine Quantity",q)}${d("Reorder Level",rl)}
+ ${d("Stock Status",st)}${d("Reservation Utilization",util+"%")}${d("Updated At",x.updated_at||x.created_at)}
+ ${d("Product ID",x.product_id)}${d("Inventory ID",x.id)}${d("Packed Quantity",x.packed_qty)}
+ ${d("Dispatched Quantity",x.dispatched_qty)}${d("Returned Quantity",x.returned_qty)}
+ </div>`;
+ document.getElementById("modal").classList.add("show");
+}
+function d(a,b){return`<div class="detail"><small>${esc(a)}</small><b>${esc(b??"—")}</b></div>`}
+function closeModal(){document.getElementById("modal").classList.remove("show")}
+
+function clearFilters(){
+ document.getElementById("search").value="";
+ document.getElementById("location").value="";
+ document.getElementById("stockStatus").value="";
+ document.getElementById("sortBy").value="product";
+ document.getElementById("pageSize").value="25";
+ page=1;applyFilters();
+}
+
+function exportCSV(){
+ const heads=["SKU","Barcode","Product","Category","Brand","Location","Bin","Available","Reserved","Picked","Damaged","Quarantine","Reorder Level","Status","Updated"];
+ const rows=filtered.map(x=>[x.sku,x.barcode,productName(x),x.category,x.brand,locationName(x),x.bin_code||x.bin_name,available(x),reserved(x),picked(x),damaged(x),quarantine(x),reorder(x),statusOf(x),x.updated_at||x.created_at]);
+ const csv=[heads,...rows].map(r=>r.map(v=>`"${String(v??"").replaceAll('"','""')}"`).join(",")).join("\n");
+ const a=document.createElement("a");a.href=URL.createObjectURL(new Blob([csv],{type:"text/csv;charset=utf-8"}));a.download="zippzo_stock_report.csv";a.click();URL.revokeObjectURL(a.href);
+}
+function printReport(){window.print();}
+async function logout(){
+ try{if(token)await api("/api/auth/logout",{method:"POST",body:JSON.stringify({session_token:token})})}catch{}
+ localStorage.removeItem(TOKEN_KEY);localStorage.removeItem("zippzo_user");location.href="index.html";
+}
+document.getElementById("modal").addEventListener("click",e=>{if(e.target.id==="modal")closeModal()});
+(async()=>{buildNav();await loadAll()})();
+</script>
+</body>
+</html>

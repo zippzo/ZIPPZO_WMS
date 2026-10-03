@@ -1,0 +1,185 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1.0">
+<title>Zippzo - Create Batch</title>
+<style>
+:root{--purple:#331084;--dark:#24085F;--yellow:#FEB103;--bg:#f5f6fa;--border:#e5e7eb;--text:#202124;--muted:#6b7280}
+*{box-sizing:border-box}body{margin:0;font-family:Arial,Helvetica,sans-serif;background:var(--bg);color:var(--text)}
+.app{display:flex;min-height:100vh}.sidebar{width:250px;background:var(--dark);color:#fff;padding:20px 14px;position:fixed;inset:0 auto 0 0}
+.logo{height:58px;display:flex;align-items:center;gap:12px;padding:0 10px 18px;border-bottom:1px solid rgba(255,255,255,.12);font-size:24px;font-weight:800}
+.logo img{width:42px;height:42px;object-fit:contain;border-radius:8px;background:#fff}
+.section{font-size:11px;color:#c9bde8;margin:22px 10px 8px;font-weight:700;letter-spacing:.8px}
+.nav{width:100%;border:0;background:transparent;color:#fff;text-align:left;padding:11px 12px;border-radius:8px;cursor:pointer;margin:2px 0}
+.nav:hover,.nav.active{background:var(--yellow);color:#241000}.main{margin-left:250px;width:calc(100% - 250px)}
+.top{height:72px;background:var(--purple);color:#fff;display:flex;align-items:center;justify-content:space-between;padding:0 28px}
+.search{width:380px;background:#fff;border:0;border-radius:8px;padding:11px 14px;outline:none}.user{font-weight:700}.role{font-size:12px;opacity:.8}
+.content{padding:28px}.head{display:flex;justify-content:space-between;align-items:center;margin-bottom:22px}.title{font-size:28px;font-weight:800}.sub{color:var(--muted);margin-top:5px}
+.actions{display:flex;gap:10px}.btn{border:0;border-radius:8px;padding:11px 16px;font-weight:700;cursor:pointer}.primary{background:var(--purple);color:#fff}.yellow{background:var(--yellow);color:#241000}.danger{background:#dc2626;color:#fff}.secondary{background:#fff;border:1px solid var(--border)}
+.cards{display:grid;grid-template-columns:repeat(4,1fr);gap:16px;margin-bottom:20px}.card,.panel{background:#fff;border:1px solid var(--border);border-radius:12px;padding:20px;box-shadow:0 2px 8px rgba(0,0,0,.03)}
+.label{font-size:13px;color:var(--muted)}.value{font-size:27px;font-weight:800;margin-top:8px}.panel{margin-top:18px}.panel-head{display:flex;justify-content:space-between;align-items:center;margin-bottom:15px}.panel h2{margin:0;font-size:18px}
+.filters{display:grid;grid-template-columns:2fr 1fr 1fr 1fr;gap:10px;margin-bottom:15px}input,select{width:100%;padding:11px;border:1px solid var(--border);border-radius:8px;background:#fff;outline:none}input:focus,select:focus{border-color:var(--purple)}
+.table-wrap{overflow:auto}table{width:100%;border-collapse:collapse;min-width:900px}th,td{padding:12px 10px;border-bottom:1px solid #eee;text-align:left;font-size:13px}th{background:#fafafa;color:#555}.badge{display:inline-block;padding:5px 9px;border-radius:20px;font-size:11px;font-weight:700}.created{background:#ede9fe;color:#5b21b6}.picking{background:#dbeafe;color:#1d4ed8}.cancelled{background:#fee2e2;color:#b91c1c}
+.hidden{display:none}.msg{padding:10px 12px;border-radius:8px;margin-bottom:12px;display:none}.ok{display:block;background:#dcfce7;color:#166534}.err{display:block;background:#fee2e2;color:#991b1b}
+.modal{position:fixed;inset:0;background:rgba(0,0,0,.45);display:none;align-items:center;justify-content:center;padding:20px}.modal.show{display:flex}.dialog{background:#fff;width:min(760px,100%);border-radius:14px;padding:24px;max-height:90vh;overflow:auto}.grid{display:grid;grid-template-columns:1fr 1fr;gap:14px}.full{grid-column:1/-1}.footer{display:flex;justify-content:flex-end;gap:10px;margin-top:20px}
+.dropzone{border:2px dashed #c4b5fd;border-radius:10px;padding:26px;text-align:center;background:#faf8ff}.dropzone input{border:0}
+@media(max-width:900px){.sidebar{width:210px}.main{margin-left:210px;width:calc(100% - 210px)}.cards{grid-template-columns:1fr 1fr}.filters{grid-template-columns:1fr 1fr}}
+</style>
+</head>
+<body>
+<div class="app">
+<aside class="sidebar">
+  <div class="logo"><img src="zippzo-logo.jpg" onerror="this.style.display='none'"><span>ZIPPZO</span></div>
+  <div class="section">ORDERS</div>
+  <button class="nav active">Create Batch</button>
+  <button class="nav" onclick="location.href='orders.html'">Orders</button>
+  <button class="nav" onclick="location.href='picking.html'">Picking</button>
+  <button class="nav" onclick="location.href='sorting.html'">Sorting</button>
+  <button class="nav" onclick="location.href='grid-putaway.html'">Grid Putaway</button>
+  <div class="section">WAREHOUSE</div>
+  <button class="nav" onclick="location.href='inventory.html'">Inventory</button>
+  <button class="nav" onclick="location.href='bins.html'">Bins</button>
+  <div class="section">REPORTS</div>
+  <button class="nav" onclick="location.href='order-report.html'">Order Report</button>
+  <button class="nav" onclick="location.href='picking-report.html'">Picking Report</button>
+  <button class="nav" onclick="location.href='sorting-report.html'">Sorting Report</button>
+</aside>
+<main class="main">
+<header class="top">
+  <input id="search" class="search" placeholder="Search batch number, location or status...">
+  <div><div id="userName" class="user">Zippzo User</div><div id="userRole" class="role">Loading...</div></div>
+</header>
+<section class="content">
+  <div class="head">
+    <div><div class="title">Batch Management</div><div class="sub">Upload orders, create batches and control batch cancellation.</div></div>
+    <div class="actions">
+      <button id="uploadBtn" class="btn yellow" onclick="openUpload()">↑ Upload Excel</button>
+      <button id="createBtn" class="btn primary" onclick="openCreate()">+ Create Batch</button>
+    </div>
+  </div>
+  <div id="msg" class="msg"></div>
+  <div class="cards">
+    <div class="card"><div class="label">Total Batches</div><div id="total" class="value">0</div></div>
+    <div class="card"><div class="label">Created</div><div id="created" class="value">0</div></div>
+    <div class="card"><div class="label">Picking</div><div id="picking" class="value">0</div></div>
+    <div class="card"><div class="label">Cancelled</div><div id="cancelled" class="value">0</div></div>
+  </div>
+  <div class="panel">
+    <div class="panel-head"><h2>Batch List</h2><button class="btn secondary" onclick="loadBatches()">Refresh</button></div>
+    <div class="filters">
+      <input id="filterText" placeholder="Search...">
+      <select id="filterStatus"><option value="">All Status</option><option>CREATED</option><option>PICKING</option><option>CANCELLED</option><option>COMPLETED</option></select>
+      <select id="filterLocation"><option value="">All Locations</option></select>
+      <button class="btn secondary" onclick="clearFilters()">Clear</button>
+    </div>
+    <div class="table-wrap"><table><thead><tr><th>Batch</th><th>Orders</th><th>Units</th><th>Location</th><th>Priority</th><th>Status</th><th>Created By</th><th>Created At</th><th>Action</th></tr></thead><tbody id="rows"><tr><td colspan="9">Loading...</td></tr></tbody></table></div>
+  </div>
+</section>
+</main>
+</div>
+
+<div id="createModal" class="modal"><div class="dialog">
+  <h2>Create Batch</h2><p class="sub">Create a batch from eligible orders. Batch number is generated by the server.</p>
+  <div class="grid">
+    <div><label>Location</label><select id="location"></select></div>
+    <div><label>Priority</label><select id="priority"><option>NORMAL</option><option>HIGH</option></select></div>
+    <div><label>Order Status</label><select id="orderStatus"><option value="ALLOCATED">ALLOCATED</option><option value="READY_FOR_PICKING">READY_FOR_PICKING</option></select></div>
+    <div><label>Maximum Orders</label><input id="maxOrders" type="number" min="1" value="50"></div>
+    <div class="full"><label>Notes</label><input id="notes" placeholder="Optional"></div>
+  </div>
+  <div class="footer"><button class="btn secondary" onclick="closeCreate()">Cancel</button><button class="btn primary" onclick="createBatch()">Create Batch</button></div>
+</div></div>
+
+<div id="uploadModal" class="modal"><div class="dialog">
+  <h2>Upload Batch Excel</h2><p class="sub">Only users with BATCH_UPLOAD access can import batch/order data.</p>
+  <div class="dropzone">
+    <input id="excelFile" type="file" accept=".xlsx,.xls,.csv">
+    <p>Recommended columns: Order Number, Location Code, Priority, Order Status</p>
+  </div>
+  <div id="uploadPreview" class="panel hidden"></div>
+  <div class="footer"><button class="btn secondary" onclick="closeUpload()">Cancel</button><button class="btn yellow" onclick="uploadExcel()">Validate & Import</button></div>
+</div></div>
+
+<div id="cancelModal" class="modal"><div class="dialog">
+  <h2>Cancel Batch</h2><p id="cancelText" class="sub"></p>
+  <label>Cancellation Reason</label><input id="cancelReason" placeholder="Enter reason" required>
+  <div class="footer"><button class="btn secondary" onclick="closeCancel()">Keep Batch</button><button class="btn danger" onclick="cancelBatch()">Cancel Batch</button></div>
+</div></div>
+
+<script>
+const API=window.location.origin,TOKEN_KEY="zippzo_session_token",USER_KEY="zippzo_user";
+let user=null,batches=[],cancelId=null;
+function token(){return localStorage.getItem(TOKEN_KEY)||""}
+async function api(path,opt={}){const h=opt.headers||{};h["Content-Type"]="application/json";if(token())h.Authorization="Bearer "+token();const r=await fetch(API+path,{...opt,headers:h});const d=await r.json().catch(()=>({}));if(!r.ok)throw new Error(d.detail||d.message||`Request failed (${r.status})`);return d}
+function role(){return String(user?.role||"").trim().toUpperCase()}
+function allowed(p){return ["ADMIN","ADMINISTRATOR","OPERATIONS MANAGER","OPERATIONS_MANAGER","OPS_MANAGER"].includes(role())}
+function showMsg(t,error=false){const e=document.getElementById("msg");e.textContent=t;e.className="msg "+(error?"err":"ok");setTimeout(()=>e.className="msg",4000)}
+function applyAccess(){const ok=allowed();document.getElementById("uploadBtn").style.display=ok?"":"none";document.getElementById("createBtn").style.display=ok?"":"none"}
+async function init(){
+ try{
+  user=JSON.parse(localStorage.getItem(USER_KEY)||"null");
+  if(!user){const m=await api("/api/auth/me");user=m.user;localStorage.setItem(USER_KEY,JSON.stringify(user))}
+  document.getElementById("userName").textContent=user.full_name||user.employee_id||"User";
+  document.getElementById("userRole").textContent=user.role||"";
+  applyAccess(); await loadLocations(); await loadBatches();
+ }catch(e){showMsg(e.message,true)}
+}
+async function loadLocations(){
+ try{
+  const a=await api("/api/locations"); const opts='<option value="">All Locations</option>'+a.map(x=>`<option value="${x.id}">${esc(x.location_code||x.code)} - ${esc(x.location_name||x.name)}</option>`).join("");
+  document.getElementById("filterLocation").innerHTML=opts;
+  document.getElementById("location").innerHTML=opts.replace('All Locations','Select Location');
+ }catch(e){}
+}
+async function loadBatches(){
+ try{
+  const d=await api("/api/batches");batches=Array.isArray(d)?d:(d.items||d.batches||[]);
+  render();
+ }catch(e){document.getElementById("rows").innerHTML=`<tr><td colspan="9">${esc(e.message)}</td></tr>`;showMsg("Batch API is not installed yet. Use the backend batch code with this page.",true)}
+}
+function render(){
+ const q=(document.getElementById("filterText").value||document.getElementById("search").value).toLowerCase(),st=document.getElementById("filterStatus").value,loc=document.getElementById("filterLocation").value;
+ const a=batches.filter(x=>(!q||JSON.stringify(x).toLowerCase().includes(q))&&(!st||String(x.status).toUpperCase()===st)&&(!loc||String(x.location_id)===loc));
+ document.getElementById("total").textContent=batches.length;
+ document.getElementById("created").textContent=batches.filter(x=>String(x.status).toUpperCase()==="CREATED").length;
+ document.getElementById("picking").textContent=batches.filter(x=>String(x.status).toUpperCase()==="PICKING").length;
+ document.getElementById("cancelled").textContent=batches.filter(x=>String(x.status).toUpperCase()==="CANCELLED").length;
+ document.getElementById("rows").innerHTML=a.length?a.map(x=>`<tr>
+ <td><b>${esc(x.batch_number)}</b></td><td>${x.order_count??0}</td><td>${x.total_units??0}</td><td>${esc(x.location_name||x.location_code||x.location_id||"-")}</td><td>${esc(x.priority||"NORMAL")}</td>
+ <td><span class="badge ${String(x.status).toLowerCase()}">${esc(x.status)}</span></td><td>${esc(x.created_by_name||x.created_by||"-")}</td><td>${esc(x.created_at||"-")}</td>
+ <td>${allowed()&&![ "CANCELLED","COMPLETED"].includes(String(x.status).toUpperCase())?`<button class="btn danger" onclick="openCancel(${x.id},'${js(x.batch_number)}')">Cancel</button>`:"-"}</td>
+ </tr>`).join(""):'<tr><td colspan="9">No batches found.</td></tr>';
+}
+function openCreate(){if(!allowed())return showMsg("You do not have BATCH_CREATE access.",true);document.getElementById("createModal").classList.add("show")}
+function closeCreate(){document.getElementById("createModal").classList.remove("show")}
+async function createBatch(){
+ try{
+  const location_id=document.getElementById("location").value;if(!location_id)throw new Error("Select a location.");
+  const d=await api("/api/batches",{method:"POST",body:JSON.stringify({location_id:Number(location_id),priority:document.getElementById("priority").value,order_status:document.getElementById("orderStatus").value,max_orders:Number(document.getElementById("maxOrders").value),notes:document.getElementById("notes").value||null})});
+  closeCreate();showMsg(d.message||"Batch created successfully.");await loadBatches();
+ }catch(e){showMsg(e.message,true)}
+}
+function openUpload(){if(!allowed())return showMsg("You do not have BATCH_UPLOAD access.",true);document.getElementById("uploadModal").classList.add("show")}
+function closeUpload(){document.getElementById("uploadModal").classList.remove("show")}
+async function uploadExcel(){
+ try{
+  const f=document.getElementById("excelFile").files[0];if(!f)throw new Error("Select an Excel/CSV file.");
+  const fd=new FormData();fd.append("file",f);const r=await fetch(API+"/api/batches/upload-excel",{method:"POST",headers:{Authorization:"Bearer "+token()},body:fd});const d=await r.json();if(!r.ok)throw new Error(d.detail||"Upload failed");
+  document.getElementById("uploadPreview").classList.remove("hidden");document.getElementById("uploadPreview").innerHTML=`<b>Import result</b><p>Total: ${d.total_rows??0} | Valid: ${d.valid_rows??0} | Errors: ${d.error_rows??0} | Imported: ${d.imported_rows??0}</p>`;
+  showMsg(d.message||"Excel import completed.");await loadBatches();
+ }catch(e){showMsg(e.message,true)}
+}
+function openCancel(id,no){if(!allowed())return showMsg("You do not have BATCH_CANCEL access.",true);cancelId=id;document.getElementById("cancelText").textContent=`Cancel ${no}? The batch will not be deleted; it will be marked CANCELLED and audited.`;document.getElementById("cancelReason").value="";document.getElementById("cancelModal").classList.add("show")}
+function closeCancel(){cancelId=null;document.getElementById("cancelModal").classList.remove("show")}
+async function cancelBatch(){
+ try{const reason=document.getElementById("cancelReason").value.trim();if(!reason)throw new Error("Enter cancellation reason.");const d=await api(`/api/batches/${cancelId}/cancel`,{method:"POST",body:JSON.stringify({reason})});closeCancel();showMsg(d.message||"Batch cancelled.");await loadBatches()}catch(e){showMsg(e.message,true)}
+}
+function clearFilters(){document.getElementById("filterText").value="";document.getElementById("search").value="";document.getElementById("filterStatus").value="";document.getElementById("filterLocation").value="";render()}
+function esc(v){return String(v??"").replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]))}
+function js(v){return String(v??"").replace(/\\/g,"\\\\").replace(/'/g,"\\'")}
+["search","filterText","filterStatus","filterLocation"].forEach(id=>document.getElementById(id).addEventListener("input",render));
+init();
+</script>
+</body>
+</html>

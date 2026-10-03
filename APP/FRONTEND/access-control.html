@@ -1,0 +1,3433 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1.0">
+<title>Zippzo Access Control</title>
+
+<style>
+*{box-sizing:border-box}
+
+body{
+    margin:0;
+    font-family:Arial,Helvetica,sans-serif;
+    background:#f5f7fb;
+    color:#172033
+}
+
+.topbar{
+    height:64px;
+    background:#111827;
+    color:#fff;
+    display:flex;
+    align-items:center;
+    justify-content:space-between;
+    padding:0 22px;
+    position:sticky;
+    top:0;
+    z-index:50
+}
+
+.brand{
+    font-size:22px;
+    font-weight:800;
+    letter-spacing:1px
+}
+
+.top-user{
+    font-size:13px
+}
+
+.layout{
+    display:flex;
+    min-height:calc(100vh - 64px)
+}
+
+.sidebar{
+    width:245px;
+    background:#172033;
+    color:#dbe4f0;
+    padding:18px 12px;
+    position:sticky;
+    top:64px;
+    height:calc(100vh - 64px);
+    overflow:auto;
+    flex-shrink:0
+}
+
+.sidebar-title{
+    font-size:11px;
+    color:#91a0b5;
+    text-transform:uppercase;
+    margin:18px 10px 7px
+}
+
+.nav-button{
+    width:100%;
+    display:block;
+    border:0;
+    background:transparent;
+    color:#dbe4f0;
+    text-align:left;
+    padding:10px 12px;
+    border-radius:8px;
+    margin:2px 0;
+    cursor:pointer
+}
+
+.nav-button:hover{
+    background:#26334a
+}
+
+.nav-button.active{
+    background:#fff;
+    color:#111827;
+    font-weight:700
+}
+
+.content{
+    flex:1;
+    min-width:0;
+    padding:24px
+}
+
+.page-header{
+    display:flex;
+    justify-content:space-between;
+    align-items:flex-start;
+    gap:20px;
+    margin-bottom:18px
+}
+
+.page-title{
+    margin:0;
+    font-size:28px
+}
+
+.page-subtitle{
+    margin:6px 0 0;
+    color:#667085
+}
+
+.actions{
+    display:flex;
+    gap:8px;
+    flex-wrap:wrap
+}
+
+.btn{
+    border:0;
+    border-radius:8px;
+    padding:10px 14px;
+    cursor:pointer;
+    font-weight:700;
+    background:#111827;
+    color:#fff
+}
+
+.btn.secondary{
+    background:#eef2f6;
+    color:#172033
+}
+
+.btn.danger{
+    background:#b42318;
+    color:#fff
+}
+
+.btn.small{
+    padding:7px 10px;
+    font-size:12px
+}
+
+.alert{
+    display:none;
+    padding:11px 14px;
+    border-radius:8px;
+    margin-bottom:14px
+}
+
+.alert.show{
+    display:block
+}
+
+.alert.ok{
+    background:#ecfdf3;
+    color:#027a48
+}
+
+.alert.error{
+    background:#fef3f2;
+    color:#b42318
+}
+
+.kpi-grid{
+    display:grid;
+    grid-template-columns:repeat(6,1fr);
+    gap:12px;
+    margin-bottom:18px
+}
+
+.kpi{
+    background:#fff;
+    border:1px solid #e5e9f0;
+    border-radius:12px;
+    padding:15px;
+    box-shadow:0 2px 8px rgba(16,24,40,.04)
+}
+
+.kpi-label{
+    font-size:11px;
+    color:#667085
+}
+
+.kpi-value{
+    margin-top:6px;
+    font-size:23px;
+    font-weight:800
+}
+
+.section{
+    background:#fff;
+    border:1px solid #e5e9f0;
+    border-radius:12px;
+    padding:18px;
+    margin-bottom:18px;
+    box-shadow:0 2px 8px rgba(16,24,40,.04)
+}
+
+.section h2{
+    margin:0 0 14px;
+    font-size:17px
+}
+
+.tabs{
+    display:flex;
+    gap:8px;
+    margin-bottom:18px;
+    flex-wrap:wrap
+}
+
+.tab{
+    border:1px solid #d0d5dd;
+    background:#fff;
+    color:#475467;
+    padding:9px 14px;
+    border-radius:8px;
+    cursor:pointer;
+    font-weight:700
+}
+
+.tab.active{
+    background:#111827;
+    color:#fff;
+    border-color:#111827
+}
+
+.filters{
+    display:grid;
+    grid-template-columns:2fr repeat(4,1fr);
+    gap:10px
+}
+
+.filters input,
+.filters select{
+    width:100%;
+    padding:10px;
+    border:1px solid #d0d5dd;
+    border-radius:8px;
+    background:#fff
+}
+
+.table-container{
+    overflow:auto;
+    border:1px solid #e5e9f0;
+    border-radius:10px
+}
+
+table{
+    width:100%;
+    min-width:1400px;
+    border-collapse:collapse
+}
+
+th,td{
+    padding:10px;
+    border-bottom:1px solid #edf0f4;
+    text-align:left;
+    font-size:12px;
+    white-space:nowrap
+}
+
+th{
+    background:#f8fafc;
+    color:#475467;
+    font-size:10px;
+    text-transform:uppercase;
+    position:sticky;
+    top:0;
+    z-index:2
+}
+
+.badge{
+    display:inline-flex;
+    padding:4px 8px;
+    border-radius:999px;
+    font-size:10px;
+    font-weight:800
+}
+
+.good{
+    background:#ecfdf3;
+    color:#047857
+}
+
+.info{
+    background:#eff6ff;
+    color:#1d4ed8
+}
+
+.pending{
+    background:#fff7ed;
+    color:#9a3412
+}
+
+.danger{
+    background:#fef2f2;
+    color:#b42318
+}
+
+.gray{
+    background:#f2f4f7;
+    color:#475467
+}
+
+.empty{
+    padding:30px;
+    text-align:center;
+    color:#667085
+}
+
+.permission-layout{
+    display:grid;
+    grid-template-columns:280px 1fr;
+    gap:18px
+}
+
+.role-list{
+    border:1px solid #e5e9f0;
+    border-radius:10px;
+    overflow:hidden
+}
+
+.role-item{
+    padding:13px;
+    border-bottom:1px solid #edf0f4;
+    cursor:pointer;
+    background:#fff
+}
+
+.role-item:hover{
+    background:#f8fafc
+}
+
+.role-item.active{
+    background:#111827;
+    color:#fff
+}
+
+.role-name{
+    font-weight:800;
+    font-size:13px
+}
+
+.role-meta{
+    margin-top:4px;
+    font-size:10px;
+    opacity:.7
+}
+
+.permission-area{
+    min-width:0
+}
+
+.permission-toolbar{
+    display:flex;
+    justify-content:space-between;
+    align-items:center;
+    gap:10px;
+    margin-bottom:14px;
+    flex-wrap:wrap
+}
+
+.permission-search{
+    width:300px;
+    max-width:100%;
+    padding:9px;
+    border:1px solid #d0d5dd;
+    border-radius:8px
+}
+
+.permission-grid{
+    display:grid;
+    grid-template-columns:repeat(3,1fr);
+    gap:10px
+}
+
+.permission-card{
+    border:1px solid #e5e9f0;
+    border-radius:10px;
+    padding:13px;
+    background:#fff
+}
+
+.permission-card.enabled{
+    border-color:#98a2b3;
+    background:#f8fafc
+}
+
+.permission-head{
+    display:flex;
+    align-items:flex-start;
+    gap:10px
+}
+
+.permission-head input{
+    margin-top:2px;
+    width:17px;
+    height:17px
+}
+
+.permission-name{
+    font-weight:800;
+    font-size:12px
+}
+
+.permission-description{
+    margin-top:5px;
+    color:#667085;
+    font-size:10px;
+    line-height:1.4
+}
+
+.permission-module{
+    margin-top:8px;
+    font-size:9px;
+    color:#667085;
+    text-transform:uppercase
+}
+
+.form-grid{
+    display:grid;
+    grid-template-columns:repeat(2,1fr);
+    gap:12px
+}
+
+.field{
+    display:flex;
+    flex-direction:column;
+    gap:5px
+}
+
+.field.full{
+    grid-column:1/-1
+}
+
+.field label{
+    font-size:11px;
+    font-weight:700;
+    color:#475467
+}
+
+.field input,
+.field select,
+.field textarea{
+    padding:10px;
+    border:1px solid #d0d5dd;
+    border-radius:8px;
+    outline:none
+}
+
+.field textarea{
+    min-height:90px;
+    resize:vertical
+}
+
+.form-actions{
+    margin-top:18px;
+    display:flex;
+    justify-content:flex-end;
+    gap:8px
+}
+
+.modal{
+    position:fixed;
+    inset:0;
+    background:rgba(15,23,42,.55);
+    display:none;
+    align-items:center;
+    justify-content:center;
+    padding:20px;
+    z-index:100
+}
+
+.modal.show{
+    display:flex
+}
+
+.modal-box{
+    width:min(1050px,100%);
+    max-height:92vh;
+    overflow:auto;
+    background:#fff;
+    border-radius:14px;
+    padding:20px
+}
+
+.modal-head{
+    display:flex;
+    justify-content:space-between;
+    align-items:center;
+    margin-bottom:18px
+}
+
+.modal-head h2{
+    margin:0
+}
+
+.close{
+    border:0;
+    background:#eef2f6;
+    border-radius:8px;
+    padding:8px 12px;
+    cursor:pointer
+}
+
+.detail-grid{
+    display:grid;
+    grid-template-columns:repeat(4,1fr);
+    gap:10px
+}
+
+.detail{
+    background:#f8fafc;
+    padding:11px;
+    border-radius:8px
+}
+
+.detail small{
+    display:block;
+    color:#667085;
+    font-size:10px
+}
+
+.detail b{
+    display:block;
+    margin-top:5px;
+    font-size:13px
+}
+
+.permission-count{
+    font-size:11px;
+    color:#667085
+}
+
+@media(max-width:1400px){
+    .kpi-grid{
+        grid-template-columns:repeat(3,1fr)
+    }
+
+    .permission-grid{
+        grid-template-columns:repeat(2,1fr)
+    }
+
+    .filters{
+        grid-template-columns:repeat(3,1fr)
+    }
+
+    .detail-grid{
+        grid-template-columns:repeat(2,1fr)
+    }
+}
+
+@media(max-width:900px){
+    .permission-layout{
+        grid-template-columns:1fr
+    }
+
+    .role-list{
+        display:grid;
+        grid-template-columns:repeat(2,1fr)
+    }
+}
+
+@media(max-width:760px){
+    .sidebar{
+        display:none
+    }
+
+    .content{
+        padding:14px
+    }
+
+    .kpi-grid{
+        grid-template-columns:repeat(2,1fr)
+    }
+
+    .filters,
+    .form-grid,
+    .detail-grid,
+    .permission-grid{
+        grid-template-columns:1fr
+    }
+
+    .role-list{
+        grid-template-columns:1fr
+    }
+}
+
+@media print{
+    .sidebar,
+    .topbar,
+    .actions,
+    .tabs,
+    .filters,
+    .btn{
+        display:none!important
+    }
+
+    .content{
+        padding:0
+    }
+}
+</style>
+
+<link rel="stylesheet" href="zippzo-standard.css">
+<script src="zippzo-standard.js" defer></script>
+</head>
+
+<body>
+
+<header class="topbar">
+
+<div class="brand">
+ZIPPZO
+</div>
+
+<div
+class="top-user"
+id="topUser">
+Access Control
+</div>
+
+</header>
+
+
+<div class="layout">
+
+<aside class="sidebar">
+
+<div class="sidebar-title">Main</div>
+
+<button
+class="nav-button"
+onclick="go('index.html')">
+Dashboard
+</button>
+
+<button
+class="nav-button"
+onclick="go('warehouse-dashboard.html')">
+Warehouse Dashboard
+</button>
+
+
+<div class="sidebar-title">Master Data</div>
+
+<button
+class="nav-button"
+onclick="go('products.html')">
+Products
+</button>
+
+<button
+class="nav-button"
+onclick="go('suppliers.html')">
+Suppliers
+</button>
+
+<button
+class="nav-button"
+onclick="go('locations.html')">
+Locations
+</button>
+
+<button
+class="nav-button"
+onclick="go('employees.html')">
+Employees
+</button>
+
+<button
+class="nav-button active">
+Access Control
+</button>
+
+
+<div class="sidebar-title">Warehouse</div>
+
+<button
+class="nav-button"
+onclick="go('inventory.html')">
+Inventory
+</button>
+
+<button
+class="nav-button"
+onclick="go('bins.html')">
+Bins
+</button>
+
+<button
+class="nav-button"
+onclick="go('stock-movements.html')">
+Stock Movements
+</button>
+
+
+<div class="sidebar-title">Inbound</div>
+
+<button
+class="nav-button"
+onclick="go('purchase-orders.html')">
+Purchase Orders
+</button>
+
+<button
+class="nav-button"
+onclick="go('grn.html')">
+GRN
+</button>
+
+<button
+class="nav-button"
+onclick="go('putaway.html')">
+Putaway
+</button>
+
+<button
+class="nav-button"
+onclick="go('grid-putaway.html')">
+Grid Putaway
+</button>
+
+
+<div class="sidebar-title">Orders</div>
+
+<button
+class="nav-button"
+onclick="go('orders.html')">
+Orders
+</button>
+
+<button
+class="nav-button"
+onclick="go('create-batch.html')">
+Create Batch
+</button>
+
+<button
+class="nav-button"
+onclick="go('picking.html')">
+Picking
+</button>
+
+<button
+class="nav-button"
+onclick="go('sorting.html')">
+Sorting
+</button>
+
+
+<div class="sidebar-title">Dispatch</div>
+
+<button
+class="nav-button"
+onclick="go('vehicle-arrival.html')">
+Vehicle Arrival
+</button>
+
+<button
+class="nav-button"
+onclick="go('dispatch.html')">
+Dispatch
+</button>
+
+<button
+class="nav-button"
+onclick="go('store-receiving.html')">
+Store Receiving
+</button>
+
+
+<div class="sidebar-title">Reports</div>
+
+<button
+class="nav-button"
+onclick="go('stock-report.html')">
+Stock Report
+</button>
+
+<button
+class="nav-button"
+onclick="go('grn-report.html')">
+GRN Report
+</button>
+
+<button
+class="nav-button"
+onclick="go('putaway-report.html')">
+Putaway Report
+</button>
+
+<button
+class="nav-button"
+onclick="go('order-report.html')">
+Order Report
+</button>
+
+<button
+class="nav-button"
+onclick="go('picking-report.html')">
+Picking Report
+</button>
+
+<button
+class="nav-button"
+onclick="go('sorting-report.html')">
+Sorting Report
+</button>
+
+<button
+class="nav-button"
+onclick="go('delivery-report.html')">
+Delivery Report
+</button>
+
+<button
+class="nav-button"
+onclick="go('store-receiving-report.html')">
+Store Receiving Report
+</button>
+
+<button
+class="nav-button"
+onclick="go('picking-ipp.html')">
+Picking IPP
+</button>
+
+<button
+class="nav-button"
+onclick="go('sorting-ipp.html')">
+Sorting IPP
+</button>
+
+
+<div class="sidebar-title">Session</div>
+
+<button
+class="nav-button"
+onclick="logout()">
+Logout
+</button>
+
+</aside>
+
+
+<main class="content">
+
+<div class="page-header">
+
+<div>
+
+<h1 class="page-title">
+Access Control
+</h1>
+
+<p class="page-subtitle">
+Zippzo roles, permissions and employee access management.
+</p>
+
+</div>
+
+<div class="actions">
+
+<button
+class="btn secondary"
+onclick="loadAll()">
+Refresh
+</button>
+
+<button
+class="btn secondary"
+onclick="exportRoles()">
+Export Roles
+</button>
+
+<button
+class="btn"
+onclick="openRoleModal()">
++ Add Role
+</button>
+
+</div>
+
+</div>
+
+
+<div
+id="alert"
+class="alert">
+</div>
+
+
+<section class="kpi-grid">
+
+<div class="kpi">
+<div class="kpi-label">Roles</div>
+<div class="kpi-value" id="kRoles">0</div>
+</div>
+
+<div class="kpi">
+<div class="kpi-label">Permissions</div>
+<div class="kpi-value" id="kPermissions">0</div>
+</div>
+
+<div class="kpi">
+<div class="kpi-label">Role Assignments</div>
+<div class="kpi-value" id="kAssignments">0</div>
+</div>
+
+<div class="kpi">
+<div class="kpi-label">Active Employees</div>
+<div class="kpi-value" id="kEmployees">0</div>
+</div>
+
+<div class="kpi">
+<div class="kpi-label">Admin Roles</div>
+<div class="kpi-value" id="kAdmin">0</div>
+</div>
+
+<div class="kpi">
+<div class="kpi-label">Protected Permissions</div>
+<div class="kpi-value" id="kProtected">0</div>
+</div>
+
+</section>
+
+
+<div class="tabs">
+
+<button
+class="tab active"
+id="tabRoles"
+onclick="switchTab('roles')">
+Roles
+</button>
+
+<button
+class="tab"
+id="tabPermissions"
+onclick="switchTab('permissions')">
+Permissions
+</button>
+
+<button
+class="tab"
+id="tabAssignments"
+onclick="switchTab('assignments')">
+Employee Access
+</button>
+
+</div>
+
+
+<!-- ROLES -->
+
+<section
+class="section"
+id="rolesSection">
+
+<div class="filters">
+
+<input
+id="roleSearch"
+placeholder="Search role..."
+oninput="renderRoles()">
+
+<select
+id="roleStatusFilter"
+onchange="renderRoles()">
+
+<option value="">
+All Status
+</option>
+
+<option value="active">
+Active
+</option>
+
+<option value="inactive">
+Inactive
+</option>
+
+</select>
+
+<select
+id="roleTypeFilter"
+onchange="renderRoles()">
+
+<option value="">
+All Types
+</option>
+
+<option value="SYSTEM">
+System
+</option>
+
+<option value="CUSTOM">
+Custom
+</option>
+
+</select>
+
+</div>
+
+<br>
+
+<div class="table-container">
+
+<table>
+
+<thead>
+
+<tr>
+
+<th>ID</th>
+<th>Role</th>
+<th>Description</th>
+<th>Type</th>
+<th>Status</th>
+<th>Permissions</th>
+<th>Employees</th>
+<th>Created</th>
+<th>Action</th>
+
+</tr>
+
+</thead>
+
+<tbody id="roleBody">
+
+<tr>
+<td colspan="9" class="empty">
+Loading roles...
+</td>
+</tr>
+
+</tbody>
+
+</table>
+
+</div>
+
+</section>
+
+
+<!-- PERMISSIONS -->
+
+<section
+class="section"
+id="permissionsSection"
+style="display:none">
+
+<div class="permission-toolbar">
+
+<div>
+
+<h2 style="margin:0">
+Permission Matrix
+</h2>
+
+<div
+class="permission-count"
+id="selectedRoleLabel">
+Select a role
+</div>
+
+</div>
+
+<div class="actions">
+
+<input
+class="permission-search"
+id="permissionSearch"
+placeholder="Search permissions..."
+oninput="renderPermissions()">
+
+<button
+class="btn secondary"
+onclick="selectAllPermissions()">
+Select All
+</button>
+
+<button
+class="btn secondary"
+onclick="clearAllPermissions()">
+Clear All
+</button>
+
+<button
+class="btn"
+onclick="savePermissions()">
+Save Permissions
+</button>
+
+</div>
+
+</div>
+
+<div
+class="permission-grid"
+id="permissionGrid">
+
+<div class="empty">
+Loading permissions...
+</div>
+
+</div>
+
+</section>
+
+
+<!-- ASSIGNMENTS -->
+
+<section
+class="section"
+id="assignmentsSection"
+style="display:none">
+
+<div class="filters">
+
+<input
+id="employeeSearch"
+placeholder="Search employee..."
+oninput="renderAssignments">
+
+<select
+id="employeeRoleFilter"
+onchange="renderAssignments()">
+
+<option value="">
+All Roles
+</option>
+
+</select>
+
+<select
+id="employeeAccessFilter"
+onchange="renderAssignments()">
+
+<option value="">
+All Access
+</option>
+
+<option value="assigned">
+Role Assigned
+</option>
+
+<option value="unassigned">
+No Role
+</option>
+
+</select>
+
+</div>
+
+<br>
+
+<div class="table-container">
+
+<table>
+
+<thead>
+
+<tr>
+
+<th>Employee ID</th>
+<th>Name</th>
+<th>Department</th>
+<th>Current Role</th>
+<th>Status</th>
+<th>Access Level</th>
+<th>Action</th>
+
+</tr>
+
+</thead>
+
+<tbody id="assignmentBody">
+
+<tr>
+<td colspan="7" class="empty">
+Loading employees...
+</td>
+</tr>
+
+</tbody>
+
+</table>
+
+</div>
+
+</section>
+
+
+</main>
+
+</div>
+
+
+<!-- ROLE MODAL -->
+
+<div
+class="modal"
+id="roleModal">
+
+<div class="modal-box">
+
+<div class="modal-head">
+
+<h2 id="roleModalTitle">
+Add Role
+</h2>
+
+<button
+class="close"
+onclick="closeRoleModal()">
+Close
+</button>
+
+</div>
+
+<form
+id="roleForm"
+onsubmit="saveRole(event)">
+
+<input
+type="hidden"
+id="roleId">
+
+<div class="form-grid">
+
+<div class="field">
+
+<label>
+Role Name
+</label>
+
+<input
+id="roleName"
+required
+placeholder="WAREHOUSE_MANAGER">
+
+</div>
+
+<div class="field">
+
+<label>
+Role Type
+</label>
+
+<select id="roleType">
+
+<option value="CUSTOM">
+CUSTOM
+</option>
+
+<option value="SYSTEM">
+SYSTEM
+</option>
+
+</select>
+
+</div>
+
+<div class="field">
+
+<label>
+Status
+</label>
+
+<select id="roleStatus">
+
+<option value="ACTIVE">
+ACTIVE
+</option>
+
+<option value="INACTIVE">
+INACTIVE
+</option>
+
+</select>
+
+</div>
+
+<div class="field full">
+
+<label>
+Description
+</label>
+
+<textarea
+id="roleDescription"
+placeholder="Describe the role responsibilities and access level.">
+</textarea>
+
+</div>
+
+</div>
+
+<div class="form-actions">
+
+<button
+type="button"
+class="btn secondary"
+onclick="closeRoleModal()">
+Cancel
+</button>
+
+<button
+type="submit"
+class="btn">
+Save Role
+</button>
+
+</div>
+
+</form>
+
+</div>
+
+</div>
+
+
+<!-- ASSIGN MODAL -->
+
+<div
+class="modal"
+id="assignModal">
+
+<div class="modal-box">
+
+<div class="modal-head">
+
+<h2>
+Assign Employee Role
+</h2>
+
+<button
+class="close"
+onclick="closeAssignModal()">
+Close
+</button>
+
+</div>
+
+<form
+id="assignForm"
+onsubmit="saveAssignment(event)">
+
+<input
+type="hidden"
+id="assignEmployeeId">
+
+<div class="form-grid">
+
+<div class="field">
+
+<label>
+Employee
+</label>
+
+<input
+id="assignEmployeeName"
+disabled>
+
+</div>
+
+<div class="field">
+
+<label>
+Role
+</label>
+
+<select
+id="assignRole"
+required>
+
+<option value="">
+Select Role
+</option>
+
+</select>
+
+</div>
+
+</div>
+
+<div class="form-actions">
+
+<button
+type="button"
+class="btn secondary"
+onclick="closeAssignModal()">
+Cancel
+</button>
+
+<button
+type="submit"
+class="btn">
+Save Access
+</button>
+
+</div>
+
+</form>
+
+</div>
+
+</div>
+
+
+<script>
+
+const API=
+    window.location.origin;
+
+const TOKEN_KEY=
+    "zippzo_session_token";
+
+const USER_KEY=
+    "zippzo_user";
+
+
+let roles=[];
+let permissions=[];
+let employees=[];
+let rolePermissions=[];
+let selectedRoleId=null;
+let currentTab="roles";
+
+
+function token(){
+
+    return localStorage.getItem(
+        TOKEN_KEY
+    )||"";
+
+}
+
+
+function headers(){
+
+    const h={
+        "Content-Type":
+            "application/json"
+    };
+
+    const t=
+        token();
+
+    if(t){
+
+        h.Authorization=
+            "Bearer "+t;
+
+    }
+
+    return h;
+
+}
+
+
+async function api(
+    path,
+    options={}
+){
+
+    const response=
+        await fetch(
+            API+
+            path,
+            {
+                ...options,
+                headers:{
+                    ...headers(),
+                    ...(options.headers||{})
+                }
+            }
+        );
+
+    const text=
+        await response.text();
+
+    let data={};
+
+    try{
+
+        data=
+            text
+                ?JSON.parse(text)
+                :{};
+
+    }catch{
+
+        data={
+            detail:text
+        };
+
+    }
+
+    if(
+        response.status===401
+    ){
+
+        throw new Error(
+            "Authorization required"
+        );
+
+    }
+
+    if(!response.ok){
+
+        throw new Error(
+            data.detail||
+            data.message||
+            `HTTP ${response.status}`
+        );
+
+    }
+
+    return data;
+
+}
+
+
+function arr(data){
+
+    if(Array.isArray(data)){
+
+        return data;
+
+    }
+
+    return data?.items||
+           data?.data||
+           data?.results||
+           data?.roles||
+           data?.permissions||
+           data?.employees||
+           [];
+
+}
+
+
+function pick(
+    obj,
+    ...keys
+){
+
+    for(
+        const key of keys
+    ){
+
+        if(
+            obj?.[key]!==undefined &&
+            obj?.[key]!==null
+        ){
+
+            return obj[key];
+
+        }
+
+    }
+
+    return "";
+
+}
+
+
+function esc(
+    value
+){
+
+    return String(
+        value??""
+    ).replace(
+        /[&<>"']/g,
+        m=>({
+            "&":"&amp;",
+            "<":"&lt;",
+            ">":"&gt;",
+            '"':"&quot;",
+            "'":"&#39;"
+        }[m])
+    );
+
+}
+
+
+function go(
+    page
+){
+
+    window.location.href=
+        page;
+
+}
+
+
+function showAlert(
+    message,
+    type="ok"
+){
+
+    const box=
+        document.getElementById(
+            "alert"
+        );
+
+    box.textContent=
+        message;
+
+    box.className=
+        "alert show "+
+        (
+            type==="error"
+                ?"error"
+                :"ok"
+        );
+
+    setTimeout(
+        ()=>{
+            box.className=
+                "alert";
+        },
+        3500
+    );
+
+}
+
+
+function normalizeRole(
+    row
+){
+
+    return{
+
+        raw:row,
+
+        id:pick(
+            row,
+            "id",
+            "role_id"
+        ),
+
+        name:pick(
+            row,
+            "name",
+            "role_name"
+        ),
+
+        description:pick(
+            row,
+            "description",
+            "remarks"
+        ),
+
+        type:String(
+            pick(
+                row,
+                "role_type",
+                "type"
+            )||
+            "CUSTOM"
+        ).toUpperCase(),
+
+        status:String(
+            pick(
+                row,
+                "status"
+            )||
+            (
+                row.active===false
+                    ?"INACTIVE"
+                    :"ACTIVE"
+            )
+        ).toUpperCase(),
+
+        permissionCount:Number(
+            pick(
+                row,
+                "permission_count",
+                "permissions_count"
+            )||0
+        ),
+
+        employeeCount:Number(
+            pick(
+                row,
+                "employee_count",
+                "employees_count"
+            )||0
+        ),
+
+        createdAt:pick(
+            row,
+            "created_at",
+            "created_date"
+        )
+
+    };
+
+}
+
+
+function normalizePermission(
+    row
+){
+
+    return{
+
+        raw:row,
+
+        id:pick(
+            row,
+            "id",
+            "permission_id"
+        ),
+
+        name:pick(
+            row,
+            "name",
+            "permission_name",
+            "code"
+        ),
+
+        description:pick(
+            row,
+            "description",
+            "remarks"
+        ),
+
+        module:pick(
+            row,
+            "module",
+            "module_name",
+            "resource"
+        ),
+
+        protected:
+            Boolean(
+                row.protected||
+                row.is_protected||
+                false
+            )
+
+    };
+
+}
+
+
+function normalizeEmployee(
+    row
+){
+
+    return{
+
+        raw:row,
+
+        id:pick(
+            row,
+            "id",
+            "employee_id"
+        ),
+
+        code:pick(
+            row,
+            "employee_code",
+            "employee_number"
+        )||
+        (
+            typeof row.employee_id==="string"
+                ?row.employee_id
+                :""
+        ),
+
+        name:pick(
+            row,
+            "full_name",
+            "name",
+            "employee_name"
+        ),
+
+        department:pick(
+            row,
+            "department",
+            "department_name"
+        ),
+
+        role:pick(
+            row,
+            "role_name",
+            "role"
+        ),
+
+        status:String(
+            pick(
+                row,
+                "status"
+            )||
+            (
+                row.active===false
+                    ?"INACTIVE"
+                    :"ACTIVE"
+            )
+        ).toUpperCase()
+
+    };
+
+}
+
+
+async function loadAll(){
+
+    try{
+
+        const results=
+            await Promise.all([
+                loadRoles(),
+                loadPermissions(),
+                loadEmployees()
+            ]);
+
+        updateKpis();
+
+        renderRoles();
+
+        renderAssignments();
+
+        if(
+            selectedRoleId
+        ){
+
+            await loadRolePermissions(
+                selectedRoleId
+            );
+
+        }
+
+    }catch(error){
+
+        showAlert(
+            error.message||
+            "Unable to load access control.",
+            "error"
+        );
+
+    }
+
+}
+
+
+async function loadRoles(){
+
+    let data;
+
+    try{
+
+        data=
+            await api(
+                "/api/roles"
+            );
+
+    }catch(error){
+
+        data=
+            await api(
+                "/api/access/roles"
+            );
+
+    }
+
+    roles=
+        arr(data).map(
+            normalizeRole
+        );
+
+}
+
+
+async function loadPermissions(){
+
+    let data;
+
+    try{
+
+        data=
+            await api(
+                "/api/permissions"
+            );
+
+    }catch(error){
+
+        data=
+            await api(
+                "/api/access/permissions"
+            );
+
+    }
+
+    permissions=
+        arr(data).map(
+            normalizePermission
+        );
+
+}
+
+
+async function loadEmployees(){
+
+    try{
+
+        const data=
+            await api(
+                "/api/employees"
+            );
+
+        employees=
+            arr(data).map(
+                normalizeEmployee
+            );
+
+    }catch(error){
+
+        employees=[];
+
+        console.log(
+            "Employee access load:",
+            error
+        );
+
+    }
+
+}
+
+
+function updateKpis(){
+
+    document.getElementById(
+        "kRoles"
+    ).textContent=
+        roles.length;
+
+    document.getElementById(
+        "kPermissions"
+    ).textContent=
+        permissions.length;
+
+    document.getElementById(
+        "kAssignments"
+    ).textContent=
+        employees.filter(
+            x=>x.role
+        ).length;
+
+    document.getElementById(
+        "kEmployees"
+    ).textContent=
+        employees.filter(
+            x=>
+                x.status==="ACTIVE"
+        ).length;
+
+    document.getElementById(
+        "kAdmin"
+    ).textContent=
+        roles.filter(
+            x=>
+                x.name
+                    .toUpperCase()
+                    .includes(
+                        "ADMIN"
+                    )
+        ).length;
+
+    document.getElementById(
+        "kProtected"
+    ).textContent=
+        permissions.filter(
+            x=>
+                x.protected
+        ).length;
+
+}
+
+
+function switchTab(
+    tab
+){
+
+    currentTab=
+        tab;
+
+    document.getElementById(
+        "rolesSection"
+    ).style.display=
+        tab==="roles"
+            ?"block"
+            :"none";
+
+    document.getElementById(
+        "permissionsSection"
+    ).style.display=
+        tab==="permissions"
+            ?"block"
+            :"none";
+
+    document.getElementById(
+        "assignmentsSection"
+    ).style.display=
+        tab==="assignments"
+            ?"block"
+            :"none";
+
+    document.getElementById(
+        "tabRoles"
+    ).classList.toggle(
+        "active",
+        tab==="roles"
+    );
+
+    document.getElementById(
+        "tabPermissions"
+    ).classList.toggle(
+        "active",
+        tab==="permissions"
+    );
+
+    document.getElementById(
+        "tabAssignments"
+    ).classList.toggle(
+        "active",
+        tab==="assignments"
+    );
+
+    if(
+        tab==="permissions" &&
+        selectedRoleId
+    ){
+
+        loadRolePermissions(
+            selectedRoleId
+        );
+
+    }
+
+}
+
+
+function renderRoles(){
+
+    const body=
+        document.getElementById(
+            "roleBody"
+        );
+
+    const search=
+        document.getElementById(
+            "roleSearch"
+        )
+        .value
+        .toLowerCase()
+        .trim();
+
+    const status=
+        document.getElementById(
+            "roleStatusFilter"
+        ).value
+        .toUpperCase();
+
+    const type=
+        document.getElementById(
+            "roleTypeFilter"
+        ).value
+        .toUpperCase();
+
+    const filtered=
+        roles.filter(
+            x=>{
+
+                if(
+                    search &&
+                    !(
+                        x.name+
+                        " "+
+                        x.description
+                    )
+                    .toLowerCase()
+                    .includes(
+                        search
+                    )
+                ){
+
+                    return false;
+
+                }
+
+                if(
+                    status &&
+                    x.status!==status
+                ){
+
+                    return false;
+
+                }
+
+                if(
+                    type &&
+                    x.type!==type
+                ){
+
+                    return false;
+
+                }
+
+                return true;
+
+            }
+        );
+
+    if(!filtered.length){
+
+        body.innerHTML=`
+<tr>
+<td colspan="9" class="empty">
+No roles found.
+</td>
+</tr>
+`;
+
+        return;
+
+    }
+
+    body.innerHTML=
+        filtered.map(
+            x=>`
+
+<tr>
+
+<td>${esc(x.id)}</td>
+
+<td>
+<b>${esc(x.name)}</b>
+</td>
+
+<td>${esc(x.description)}</td>
+
+<td>
+
+<span class="badge ${
+    x.type==="SYSTEM"
+        ?"info"
+        :"gray"
+}">
+
+${esc(x.type)}
+
+</span>
+
+</td>
+
+<td>
+
+<span class="badge ${
+    x.status==="ACTIVE"
+        ?"good"
+        :"danger"
+}">
+
+${esc(x.status)}
+
+</span>
+
+</td>
+
+<td>
+${x.permissionCount}
+</td>
+
+<td>
+${x.employeeCount}
+</td>
+
+<td>
+${esc(x.createdAt)}
+</td>
+
+<td>
+
+<button
+class="btn small secondary"
+onclick="selectRole(${JSON.stringify(x.id)})">
+Permissions
+</button>
+
+<button
+class="btn small secondary"
+onclick="editRole(${JSON.stringify(x.id)})">
+Edit
+</button>
+
+</td>
+
+</tr>
+
+`
+        ).join("");
+
+}
+
+
+async function selectRole(
+    id
+){
+
+    selectedRoleId=
+        id;
+
+    switchTab(
+        "permissions"
+    );
+
+    const role=
+        roles.find(
+            x=>
+                String(x.id)===
+                String(id)
+        );
+
+    document.getElementById(
+        "selectedRoleLabel"
+    ).textContent=
+        role
+            ?`Editing permissions for ${role.name}`
+            :"Select a role";
+
+    await loadRolePermissions(
+        id
+    );
+
+}
+
+
+async function loadRolePermissions(
+    roleId
+){
+
+    try{
+
+        let data;
+
+        try{
+
+            data=
+                await api(
+                    `/api/roles/${roleId}/permissions`
+                );
+
+        }catch(error){
+
+            data=
+                await api(
+                    `/api/access/roles/${roleId}/permissions`
+                );
+
+        }
+
+        rolePermissions=
+            arr(data);
+
+        renderPermissions();
+
+    }catch(error){
+
+        rolePermissions=[];
+
+        renderPermissions();
+
+        showAlert(
+            error.message||
+            "Unable to load role permissions.",
+            "error"
+        );
+
+    }
+
+}
+
+
+function permissionIsAssigned(
+    permission
+){
+
+    const permissionId=
+        String(
+            permission.id
+        );
+
+    return rolePermissions.some(
+        item=>{
+
+            const id=
+                String(
+                    pick(
+                        item,
+                        "permission_id",
+                        "id"
+                    )
+                );
+
+            return id===
+                permissionId;
+
+        }
+    );
+
+}
+
+
+function renderPermissions(){
+
+    const container=
+        document.getElementById(
+            "permissionGrid"
+        );
+
+    const search=
+        document.getElementById(
+            "permissionSearch"
+        )
+        .value
+        .toLowerCase()
+        .trim();
+
+    if(!selectedRoleId){
+
+        container.innerHTML=`
+<div class="empty">
+Select a role from the Roles tab first.
+</div>
+`;
+
+        return;
+
+    }
+
+    const filtered=
+        permissions.filter(
+            x=>{
+
+                const text=
+                    (
+                        x.name+
+                        " "+
+                        x.description+
+                        " "+
+                        x.module
+                    )
+                    .toLowerCase();
+
+                return !search||
+                    text.includes(
+                        search
+                    );
+
+            }
+        );
+
+    if(!filtered.length){
+
+        container.innerHTML=`
+<div class="empty">
+No permissions found.
+</div>
+`;
+
+        return;
+
+    }
+
+    container.innerHTML=
+        filtered.map(
+            x=>{
+
+                const checked=
+                    permissionIsAssigned(
+                        x
+                    );
+
+                return`
+
+<div class="permission-card ${
+    checked
+        ?"enabled"
+        :""
+}">
+
+<div class="permission-head">
+
+<input
+type="checkbox"
+class="permission-checkbox"
+data-permission-id="${esc(x.id)}"
+${checked?"checked":""}
+onchange="permissionChanged(this)">
+
+<div>
+
+<div class="permission-name">
+${esc(x.name)}
+</div>
+
+<div class="permission-description">
+${esc(x.description)}
+</div>
+
+<div class="permission-module">
+${esc(x.module||"GENERAL")}
+</div>
+
+</div>
+
+</div>
+
+</div>
+
+`;
+
+            }
+        ).join("");
+
+}
+
+
+function permissionChanged(
+checkbox
+){
+
+    const card=
+        checkbox.closest(
+            ".permission-card"
+        );
+
+    if(card){
+
+        card.classList.toggle(
+            "enabled",
+            checkbox.checked
+        );
+
+    }
+
+}
+
+
+function selectAllPermissions(){
+
+    document
+        .querySelectorAll(
+            ".permission-checkbox"
+        )
+        .forEach(
+            checkbox=>{
+
+                checkbox.checked=
+                    true;
+
+                permissionChanged(
+                    checkbox
+                );
+
+            }
+        );
+
+}
+
+
+function clearAllPermissions(){
+
+    document
+        .querySelectorAll(
+            ".permission-checkbox"
+        )
+        .forEach(
+            checkbox=>{
+
+                checkbox.checked=
+                    false;
+
+                permissionChanged(
+                    checkbox
+                );
+
+            }
+        );
+
+}
+
+
+async function savePermissions(){
+
+    if(!selectedRoleId){
+
+        showAlert(
+            "Select a role first.",
+            "error"
+        );
+
+        return;
+
+    }
+
+    const selected=[
+        ...document.querySelectorAll(
+            ".permission-checkbox:checked"
+        )
+    ].map(
+        checkbox=>
+            Number(
+                checkbox.dataset.permissionId
+            )
+    );
+
+    try{
+
+        let saved=false;
+
+        try{
+
+            await api(
+                `/api/roles/${selectedRoleId}/permissions`,
+                {
+                    method:"PUT",
+                    body:
+                        JSON.stringify({
+                            permission_ids:
+                                selected
+                        })
+                }
+            );
+
+            saved=true;
+
+        }catch(error){
+
+            try{
+
+                await api(
+                    `/api/access/roles/${selectedRoleId}/permissions`,
+                    {
+                        method:"PUT",
+                        body:
+                            JSON.stringify({
+                                permission_ids:
+                                    selected
+                            })
+                    }
+                );
+
+                saved=true;
+
+            }catch(secondError){
+
+                try{
+
+                    await api(
+                        `/api/roles/${selectedRoleId}/permissions`,
+                        {
+                            method:"POST",
+                            body:
+                                JSON.stringify({
+                                    permission_ids:
+                                        selected
+                                })
+                        }
+                    );
+
+                    saved=true;
+
+                }catch(thirdError){
+
+                    throw secondError;
+
+                }
+
+            }
+
+        }
+
+        if(saved){
+
+            showAlert(
+                "Role permissions saved successfully."
+            );
+
+            await loadRoles();
+
+            await loadRolePermissions(
+                selectedRoleId
+            );
+
+            updateKpis();
+
+        }
+
+    }catch(error){
+
+        showAlert(
+            error.message||
+            "Unable to save permissions.",
+            "error"
+        );
+
+    }
+
+}
+
+
+function openRoleModal(){
+
+    document.getElementById(
+        "roleForm"
+    ).reset();
+
+    document.getElementById(
+        "roleId"
+    ).value="";
+
+    document.getElementById(
+        "roleType"
+    ).value="CUSTOM";
+
+    document.getElementById(
+        "roleStatus"
+    ).value="ACTIVE";
+
+    document.getElementById(
+        "roleModalTitle"
+    ).textContent=
+        "Add Role";
+
+    document.getElementById(
+        "roleModal"
+    ).classList.add(
+        "show"
+    );
+
+}
+
+
+function closeRoleModal(){
+
+    document.getElementById(
+        "roleModal"
+    ).classList.remove(
+        "show"
+    );
+
+}
+
+
+function editRole(
+    id
+){
+
+    const role=
+        roles.find(
+            x=>
+                String(x.id)===
+                String(id)
+        );
+
+    if(!role){
+
+        return;
+
+    }
+
+    document.getElementById(
+        "roleId"
+    ).value=
+        role.id;
+
+    document.getElementById(
+        "roleName"
+    ).value=
+        role.name;
+
+    document.getElementById(
+        "roleType"
+    ).value=
+        role.type;
+
+    document.getElementById(
+        "roleStatus"
+    ).value=
+        role.status;
+
+    document.getElementById(
+        "roleDescription"
+    ).value=
+        role.description;
+
+    document.getElementById(
+        "roleModalTitle"
+    ).textContent=
+        "Edit Role";
+
+    document.getElementById(
+        "roleModal"
+    ).classList.add(
+        "show"
+    );
+
+}
+
+
+async function saveRole(
+event
+){
+
+    event.preventDefault();
+
+    const id=
+        document.getElementById(
+            "roleId"
+        ).value;
+
+    const payload={
+
+        name:
+            document.getElementById(
+                "roleName"
+            ).value
+            .trim()
+            .toUpperCase(),
+
+        role_type:
+            document.getElementById(
+                "roleType"
+            ).value,
+
+        status:
+            document.getElementById(
+                "roleStatus"
+            ).value,
+
+        description:
+            document.getElementById(
+                "roleDescription"
+            ).value
+            .trim()
+
+    };
+
+    try{
+
+        if(id){
+
+            try{
+
+                await api(
+                    `/api/roles/${id}`,
+                    {
+                        method:"PUT",
+                        body:
+                            JSON.stringify(
+                                payload
+                            )
+                    }
+                );
+
+            }catch(error){
+
+                await api(
+                    `/api/access/roles/${id}`,
+                    {
+                        method:"PUT",
+                        body:
+                            JSON.stringify(
+                                payload
+                            )
+                    }
+                );
+
+            }
+
+            showAlert(
+                "Role updated successfully."
+            );
+
+        }else{
+
+            try{
+
+                await api(
+                    "/api/roles",
+                    {
+                        method:"POST",
+                        body:
+                            JSON.stringify(
+                                payload
+                            )
+                    }
+                );
+
+            }catch(error){
+
+                await api(
+                    "/api/access/roles",
+                    {
+                        method:"POST",
+                        body:
+                            JSON.stringify(
+                                payload
+                            )
+                    }
+                );
+
+            }
+
+            showAlert(
+                "Role created successfully."
+            );
+
+        }
+
+        closeRoleModal();
+
+        await loadRoles();
+
+        updateKpis();
+
+        renderRoles();
+
+    }catch(error){
+
+        showAlert(
+            error.message||
+            "Unable to save role.",
+            "error"
+        );
+
+    }
+
+}
+
+
+function renderAssignments(){
+
+    const body=
+        document.getElementById(
+            "assignmentBody"
+        );
+
+    const search=
+        document.getElementById(
+            "employeeSearch"
+        )
+        .value
+        .toLowerCase()
+        .trim();
+
+    const role=
+        document.getElementById(
+            "employeeRoleFilter"
+        ).value;
+
+    const access=
+        document.getElementById(
+            "employeeAccessFilter"
+        ).value;
+
+    fillEmployeeRoleFilter();
+
+    const filtered=
+        employees.filter(
+            x=>{
+
+                const text=
+                    (
+                        x.code+
+                        " "+
+                        x.name+
+                        " "+
+                        x.department+
+                        " "+
+                        x.role
+                    )
+                    .toLowerCase();
+
+                if(
+                    search &&
+                    !text.includes(
+                        search
+                    )
+                ){
+
+                    return false;
+
+                }
+
+                if(
+                    role &&
+                    x.role!==role
+                ){
+
+                    return false;
+
+                }
+
+                if(
+                    access==="assigned" &&
+                    !x.role
+                ){
+
+                    return false;
+
+                }
+
+                if(
+                    access==="unassigned" &&
+                    x.role
+                ){
+
+                    return false;
+
+                }
+
+                return true;
+
+            }
+        );
+
+    if(!filtered.length){
+
+        body.innerHTML=`
+<tr>
+<td colspan="7" class="empty">
+No employee access records found.
+</td>
+</tr>
+`;
+
+        return;
+
+    }
+
+    body.innerHTML=
+        filtered.map(
+            x=>`
+
+<tr>
+
+<td>
+<b>${esc(x.code)}</b>
+</td>
+
+<td>
+${esc(x.name)}
+</td>
+
+<td>
+${esc(x.department)}
+</td>
+
+<td>
+${esc(x.role||"No Role")}
+</td>
+
+<td>
+
+<span class="badge ${
+    x.status==="ACTIVE"
+        ?"good"
+        :"danger"
+}">
+
+${esc(x.status)}
+
+</span>
+
+</td>
+
+<td>
+
+<span class="badge ${
+    x.role
+        ?"info"
+        :"pending"
+}">
+
+${x.role
+    ?"Role Assigned"
+    :"No Role"}
+
+</span>
+
+</td>
+
+<td>
+
+<button
+class="btn small secondary"
+onclick="openAssignModal(${JSON.stringify(x.id)})">
+Assign Role
+</button>
+
+</td>
+
+</tr>
+
+`
+        ).join("");
+
+}
+
+
+function fillEmployeeRoleFilter(){
+
+    const select=
+        document.getElementById(
+            "employeeRoleFilter"
+        );
+
+    const old=
+        select.value;
+
+    const unique=[
+        ...new Set(
+            employees
+                .map(
+                    x=>x.role
+                )
+                .filter(Boolean)
+        )
+    ].sort();
+
+    select.innerHTML=
+        `<option value="">
+        All Roles
+        </option>`+
+        unique.map(
+            value=>
+                `<option value="${esc(value)}">
+                ${esc(value)}
+                </option>`
+        ).join("");
+
+    select.value=
+        unique.includes(old)
+            ?old
+            :"";
+
+}
+
+
+function openAssignModal(
+    employeeId
+){
+
+    const employee=
+        employees.find(
+            x=>
+                String(x.id)===
+                String(employeeId)
+        );
+
+    if(!employee){
+
+        return;
+
+    }
+
+    document.getElementById(
+        "assignEmployeeId"
+    ).value=
+        employee.id;
+
+    document.getElementById(
+        "assignEmployeeName"
+    ).value=
+        `${employee.name} (${employee.code})`;
+
+    const select=
+        document.getElementById(
+            "assignRole"
+        );
+
+    select.innerHTML=
+        `<option value="">
+        Select Role
+        </option>`+
+        roles
+            .filter(
+                x=>
+                    x.status==="ACTIVE"
+            )
+            .map(
+                x=>
+                    `<option value="${esc(x.id)}">
+                    ${esc(x.name)}
+                    </option>`
+            )
+            .join("");
+
+    const current=
+        roles.find(
+            x=>
+                x.name===
+                employee.role
+        );
+
+    if(current){
+
+        select.value=
+            current.id;
+
+    }
+
+    document.getElementById(
+        "assignModal"
+    ).classList.add(
+        "show"
+    );
+
+}
+
+
+function closeAssignModal(){
+
+    document.getElementById(
+        "assignModal"
+    ).classList.remove(
+        "show"
+    );
+
+}
+
+
+async function saveAssignment(
+event
+){
+
+    event.preventDefault();
+
+    const employeeId=
+        document.getElementById(
+            "assignEmployeeId"
+        ).value;
+
+    const roleId=
+        document.getElementById(
+            "assignRole"
+        ).value;
+
+    if(!employeeId||!roleId){
+
+        showAlert(
+            "Select an employee and role.",
+            "error"
+        );
+
+        return;
+
+    }
+
+    const payload={
+        employee_id:
+            Number(employeeId),
+        role_id:
+            Number(roleId)
+    };
+
+    try{
+
+        try{
+
+            await api(
+                `/api/employees/${employeeId}/role`,
+                {
+                    method:"PUT",
+                    body:
+                        JSON.stringify(
+                            payload
+                        )
+                }
+            );
+
+        }catch(error){
+
+            try{
+
+                await api(
+                    "/api/employee-roles",
+                    {
+                        method:"POST",
+                        body:
+                            JSON.stringify(
+                                payload
+                            )
+                    }
+                );
+
+            }catch(secondError){
+
+                await api(
+                    `/api/access/employees/${employeeId}/role`,
+                    {
+                        method:"PUT",
+                        body:
+                            JSON.stringify(
+                                payload
+                            )
+                    }
+                );
+
+            }
+
+        }
+
+        showAlert(
+            "Employee role assigned successfully."
+        );
+
+        closeAssignModal();
+
+        await loadEmployees();
+
+        updateKpis();
+
+        renderAssignments();
+
+    }catch(error){
+
+        showAlert(
+            error.message||
+            "Unable to assign employee role.",
+            "error"
+        );
+
+    }
+
+}
+
+
+function exportRoles(){
+
+    if(!roles.length){
+
+        showAlert(
+            "No role data to export.",
+            "error"
+        );
+
+        return;
+
+    }
+
+    const rows=[
+
+        [
+            "ID",
+            "Role",
+            "Description",
+            "Type",
+            "Status",
+            "Permissions",
+            "Employees",
+            "Created"
+        ],
+
+        ...roles.map(
+            x=>[
+                x.id,
+                x.name,
+                x.description,
+                x.type,
+                x.status,
+                x.permissionCount,
+                x.employeeCount,
+                x.createdAt
+            ]
+        )
+
+    ];
+
+    const csv=
+        rows.map(
+            row=>
+                row.map(
+                    value=>
+                        `"${String(
+                            value??""
+                        ).replace(
+                            /"/g,
+                            '""'
+                        )}"`
+                ).join(",")
+        ).join("\n");
+
+    const blob=
+        new Blob(
+            [csv],
+            {
+                type:
+                    "text/csv;charset=utf-8"
+            }
+        );
+
+    const url=
+        URL.createObjectURL(
+            blob
+        );
+
+    const link=
+        document.createElement(
+            "a"
+        );
+
+    link.href=url;
+
+    link.download=
+        "zippzo_roles.csv";
+
+    document.body.appendChild(
+        link
+    );
+
+    link.click();
+
+    link.remove();
+
+    URL.revokeObjectURL(
+        url
+    );
+
+}
+
+
+async function logout(){
+
+    try{
+
+        if(token()){
+
+            await fetch(
+                API+
+                "/api/auth/logout",
+                {
+                    method:"POST",
+                    headers:{
+                        ...headers(),
+                        "Content-Type":
+                            "application/json"
+                    },
+                    body:
+                        JSON.stringify({
+                            session_token:
+                                token()
+                        })
+                }
+            );
+
+        }
+
+    }catch(error){
+
+        console.log(
+            "Logout error",
+            error
+        );
+
+    }
+
+    localStorage.removeItem(
+        TOKEN_KEY
+    );
+
+    localStorage.removeItem(
+        USER_KEY
+    );
+
+    window.location.href=
+        "index.html";
+
+}
+
+
+try{
+
+    const user=
+        JSON.parse(
+            localStorage.getItem(
+                USER_KEY
+            )||"null"
+        );
+
+    document.getElementById(
+        "topUser"
+    ).textContent=
+        user
+            ?(
+                user.full_name||
+                user.name||
+                user.employee_id||
+                "Access Control"
+            )
+            :"Access Control";
+
+}catch(error){
+
+    console.log(
+        "User display error",
+        error
+    );
+
+}
+
+
+loadAll();
+
+setInterval(
+    loadAll,
+    15000
+);
+
+</script>
+
+</body>
+</html>

@@ -1,0 +1,183 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1.0">
+<title>Zippzo Dispatch Control Tower</title>
+<style>
+*{box-sizing:border-box}body{margin:0;font-family:Arial,Helvetica,sans-serif;background:#f5f7fb;color:#172033}
+.topbar{height:64px;background:#111827;color:#fff;display:flex;align-items:center;justify-content:space-between;padding:0 22px;position:sticky;top:0;z-index:20}.brand{font-size:22px;font-weight:800;letter-spacing:1px}.top-user{font-size:13px}
+.layout{display:flex;min-height:calc(100vh - 64px)}.sidebar{width:245px;background:#172033;color:#dbe4f0;padding:18px 12px;position:sticky;top:64px;height:calc(100vh - 64px);overflow:auto}.sidebar-title{font-size:11px;text-transform:uppercase;color:#91a0b5;margin:18px 10px 7px}.nav-button{width:100%;display:block;border:0;background:transparent;color:#dbe4f0;text-align:left;padding:10px 12px;border-radius:8px;margin:2px 0;cursor:pointer}.nav-button:hover{background:#26334a}.nav-button.active{background:#fff;color:#111827;font-weight:700}
+.content{flex:1;padding:24px;min-width:0}.page-header{display:flex;justify-content:space-between;gap:18px;align-items:flex-start;margin-bottom:18px}.page-title{margin:0;font-size:28px}.page-subtitle{margin:6px 0 0;color:#667085}
+.cards{display:grid;grid-template-columns:repeat(7,minmax(120px,1fr));gap:12px;margin-bottom:18px}.card,.section{background:#fff;border:1px solid #e5e9f0;border-radius:12px;box-shadow:0 2px 8px rgba(16,24,40,.04)}.card{padding:15px}.card-label{font-size:12px;color:#667085}.card-value{font-size:24px;font-weight:800;margin-top:5px}.section{padding:18px;margin-bottom:18px}.section h2{font-size:17px;margin:0 0 14px}
+.flow{display:flex;gap:6px;overflow:auto}.flow span{padding:9px 12px;background:#eef2f6;border-radius:7px;white-space:nowrap;font-size:12px;font-weight:700}.flow span.active{background:#111827;color:#fff}
+.filters{display:grid;grid-template-columns:2fr repeat(6,1fr);gap:10px}.filters input,.filters select,.form-group input,.form-group select,.form-group textarea{width:100%;padding:10px;border:1px solid #d0d5dd;border-radius:8px;background:#fff}.form-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:12px}.form-group label{display:block;font-size:12px;font-weight:700;margin-bottom:6px}.form-group.full{grid-column:1/-1}
+.btn{border:0;border-radius:8px;padding:10px 14px;cursor:pointer;font-weight:700;background:#111827;color:#fff}.btn.secondary{background:#eef2f6;color:#172033}.btn.success{background:#15803d}.btn.warn{background:#b45309}.btn.danger{background:#b42318}.btn.small{padding:7px 9px;font-size:12px}.actions{display:flex;gap:7px;flex-wrap:wrap}
+.table-container{overflow:auto;border:1px solid #e5e9f0;border-radius:10px}table{width:100%;border-collapse:collapse;min-width:1350px;background:#fff}th,td{padding:11px 10px;border-bottom:1px solid #edf0f4;text-align:left;font-size:13px;white-space:nowrap}th{background:#f8fafc;color:#475467;font-size:11px;text-transform:uppercase;position:sticky;top:0;z-index:2}
+.badge{display:inline-flex;padding:4px 8px;border-radius:999px;font-size:11px;font-weight:800}.badge.ready{background:#ecfdf3;color:#047857}.badge.dispatching{background:#eff6ff;color:#1d4ed8}.badge.dispatched{background:#f3e8ff;color:#7e22ce}.badge.received{background:#dcfce7;color:#166534}.badge.hold{background:#fef2f2;color:#b42318}.badge.pending{background:#fff7ed;color:#9a3412}
+.empty{padding:30px;text-align:center;color:#667085}.alert{padding:11px 13px;border-radius:8px;margin-bottom:12px;display:none}.alert.show{display:block}.alert.error{background:#fef3f2;color:#b42318}.alert.ok{background:#ecfdf3;color:#027a48}
+.modal{position:fixed;inset:0;background:rgba(15,23,42,.55);display:none;align-items:center;justify-content:center;padding:20px;z-index:50}.modal.show{display:flex}.modal-box{width:min(1100px,100%);max-height:92vh;overflow:auto;background:#fff;border-radius:14px;padding:20px}.modal-head{display:flex;justify-content:space-between;align-items:center;margin-bottom:15px}.close{border:0;background:#eef2f6;border-radius:8px;padding:8px 12px;cursor:pointer}.detail-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:10px}.detail{background:#f8fafc;padding:10px;border-radius:8px}.detail small{display:block;color:#667085}.detail b{display:block;margin-top:3px}.checklist{display:grid;grid-template-columns:repeat(2,1fr);gap:8px}.check{padding:10px;background:#f8fafc;border-radius:8px}.check input{margin-right:7px}
+@media(max-width:1200px){.cards{grid-template-columns:repeat(4,1fr)}.filters{grid-template-columns:repeat(3,1fr)}.form-grid,.detail-grid{grid-template-columns:repeat(2,1fr)}}@media(max-width:760px){.sidebar{display:none}.content{padding:14px}.cards{grid-template-columns:repeat(2,1fr)}.filters,.form-grid,.detail-grid,.checklist{grid-template-columns:1fr}}
+</style>
+
+<style id="zippzo-master-theme">
+/* ZIPPZO MASTER FRONTEND THEME — visual layer only */
+:root{
+ --z-purple:#331084;--z-dark:#24085F;--z-yellow:#FEB103;
+ --z-bg:#F5F6FB;--z-card:#FFFFFF;--z-text:#171A4A;--z-muted:#69708F;
+ --z-line:#E6E8F0;--z-shadow:0 5px 18px rgba(36,8,95,.07);
+}
+html,body{background:var(--z-bg)!important;color:var(--z-text)!important}
+body{font-family:Inter,Segoe UI,Arial,sans-serif!important}
+.topbar,.header,.top-header,.top-nav,.app-header{
+ background:linear-gradient(90deg,var(--z-dark),var(--z-purple))!important;
+ color:#fff!important;border-color:transparent!important;
+}
+.sidebar,.side-nav,.left-sidebar,.navigation{
+ background:linear-gradient(180deg,#25105F,#180743)!important;
+ color:#fff!important;border-color:transparent!important;
+}
+.brand{color:#fff!important}
+.sidebar .nav-button,.sidebar button,.side-nav button,.left-sidebar button,
+.navigation button,.nav-button{
+ color:#fff!important;background:transparent!important;border-radius:8px!important;
+ border-color:transparent!important;
+}
+.sidebar .nav-button:hover,.sidebar button:hover,.side-nav button:hover,
+.left-sidebar button:hover,.navigation button:hover,.nav-button:hover{
+ background:rgba(255,255,255,.09)!important;
+}
+.sidebar .nav-button.active,.sidebar .nav-button[aria-current="page"],
+.nav-button.active,.nav-button.selected,.nav-button.current{
+ background:var(--z-yellow)!important;color:#15112F!important;font-weight:900!important;
+}
+.sidebar-title,.section-title,.nav-section{
+ color:#B9A9E8!important;letter-spacing:.7px!important;font-weight:900!important;
+}
+.content,.main-content,.page-content,.workspace{background:var(--z-bg)!important}
+.card,.panel,.table-card,.summary-card,.kpi-card,.stat-card,.form-card,
+.modal-content,.toolbar,.filter-bar,.table-container{
+ background:#fff!important;border-color:var(--z-line)!important;
+ box-shadow:var(--z-shadow)!important;border-radius:12px!important;
+}
+.btn-primary,.primary-btn,.button-primary,.add-btn,.save-btn{
+ background:var(--z-yellow)!important;color:#17113B!important;border-color:var(--z-yellow)!important;
+}
+.btn-secondary,.secondary-btn{background:#fff!important;color:var(--z-text)!important;border-color:var(--z-line)!important}
+input,select,textarea{
+ border-color:#DFE2EB!important;border-radius:8px!important;background:#fff!important;color:var(--z-text)!important;
+}
+input:focus,select:focus,textarea:focus{
+ border-color:var(--z-purple)!important;box-shadow:0 0 0 3px rgba(51,16,132,.08)!important;
+}
+table{background:#fff!important}
+thead th{background:#F7F8FC!important;color:#626987!important}
+tbody td{border-color:#EDF0F5!important}
+tbody tr:hover td{background:#FAFAFF!important}
+.badge,.status-badge{border-radius:999px!important}
+.page-title,h1,h2{color:var(--z-text)!important}
+.muted,.subtitle,.page-subtitle,.help-text{color:var(--z-muted)!important}
+</style>
+
+
+<link rel="stylesheet" href="zippzo-standard.css">
+<script src="zippzo-standard.js" defer></script>
+</head>
+<body>
+<header class="topbar"><div class="brand">ZIPPZO</div><div class="top-user" id="topUser">Dispatch</div></header>
+<div class="layout">
+<aside class="sidebar">
+<div class="sidebar-title">Main</div><button class="nav-button" onclick="go('index.html')">Dashboard</button>
+<div class="sidebar-title">Master Data</div><button class="nav-button" onclick="go('products.html')">Products</button><button class="nav-button" onclick="go('suppliers.html')">Suppliers</button><button class="nav-button" onclick="go('locations.html')">Locations</button><button class="nav-button" onclick="go('employees.html')">Employees</button>
+<div class="sidebar-title">Warehouse</div><button class="nav-button" onclick="go('inventory.html')">Inventory</button><button class="nav-button" onclick="go('bins.html')">Bins</button><button class="nav-button" onclick="go('stock-movements.html')">Stock Movements</button>
+<div class="sidebar-title">Inbound</div><button class="nav-button" onclick="go('purchase-orders.html')">Purchase Orders</button><button class="nav-button" onclick="go('grn.html')">GRN</button><button class="nav-button" onclick="go('putaway.html')">Putaway</button><button class="nav-button" onclick="go('grid-putaway.html')">Grid Putaway</button>
+<div class="sidebar-title">Orders</div><button class="nav-button" onclick="go('orders.html')">Orders</button><button class="nav-button" onclick="go('create-batch.html')">Create Batch</button><button class="nav-button" onclick="go('picking.html')">Picking</button><button class="nav-button" onclick="go('sorting.html')">Sorting</button>
+<div class="sidebar-title">Dispatch</div><button class="nav-button" onclick="go('vehicle-arrival.html')">Vehicle Arrival</button><button class="nav-button active">Dispatch</button><button class="nav-button" onclick="go('store-receiving.html')">Store Receiving</button>
+<div class="sidebar-title">Session</div><button class="nav-button" onclick="logout()">Logout</button>
+</aside>
+
+<main class="content">
+<div class="page-header"><div><h1 class="page-title">Dispatch Control Tower</h1><p class="page-subtitle">Grid Putaway → Vehicle Arrival → LPN Manifest → Dispatch Checklist → Vehicle Departure → Store</p></div><div class="actions"><button class="btn secondary" onclick="loadAll()">Refresh</button><button class="btn" onclick="openCreate()">Create Dispatch</button></div></div>
+<div id="alert" class="alert"></div>
+<div class="cards">
+<div class="card"><div class="card-label">Total</div><div class="card-value" id="kTotal">0</div></div>
+<div class="card"><div class="card-label">Ready</div><div class="card-value" id="kReady">0</div></div>
+<div class="card"><div class="card-label">Dispatching</div><div class="card-value" id="kDispatching">0</div></div>
+<div class="card"><div class="card-label">Dispatched</div><div class="card-value" id="kDispatched">0</div></div>
+<div class="card"><div class="card-label">Store Received</div><div class="card-value" id="kReceived">0</div></div>
+<div class="card"><div class="card-label">LPNs</div><div class="card-value" id="kLpns">0</div></div>
+<div class="card"><div class="card-label">Units</div><div class="card-value" id="kUnits">0</div></div>
+</div>
+
+<section class="section"><h2>Outbound Dispatch Flow</h2><div class="flow"><span>Grid Putaway</span><span>Vehicle Arrival</span><span>LPN Manifest</span><span class="active">Dispatch Checklist</span><span>Vehicle Departure</span><span>Store</span></div></section>
+
+<section class="section"><h2>Dispatch Filters</h2><div class="filters">
+<input id="search" placeholder="Search dispatch, store, vehicle, driver, LPN..." oninput="render()">
+<select id="statusFilter" onchange="render()"><option value="">All Status</option><option>READY</option><option>DISPATCHING</option><option>DISPATCHED</option><option>STORE_RECEIVED</option><option>HOLD</option></select>
+<select id="storeFilter" onchange="render()"><option value="">All Stores</option></select>
+<select id="vehicleFilter" onchange="render()"><option value="">All Vehicles</option></select>
+<select id="sealFilter" onchange="render()"><option value="">All Seals</option><option value="yes">Seal Present</option><option value="no">Seal Missing</option></select>
+<select id="ageFilter" onchange="render()"><option value="">All Age</option><option value="15">15+ min</option><option value="30">30+ min</option><option value="60">60+ min</option></select>
+<select id="lpnFilter" onchange="render()"><option value="">All LPN State</option><option value="yes">Has LPNs</option><option value="no">No LPNs</option></select>
+</div></section>
+
+<section class="section"><div class="table-container"><table><thead><tr><th>Dispatch</th><th>Store</th><th>Vehicle</th><th>Driver</th><th>Seal</th><th>LPNs</th><th>Units</th><th>Status</th><th>Created Age</th><th>Departure</th><th>Actions</th></tr></thead><tbody id="tbody"><tr><td colspan="11" class="empty">Loading...</td></tr></tbody></table></div></section>
+</main></div>
+
+<div class="modal" id="modal"><div class="modal-box"><div class="modal-head"><h2 id="modalTitle">Dispatch</h2><button class="close" onclick="closeModal()">Close</button></div><div id="modalBody"></div></div></div>
+
+<script>
+const API=window.location.origin,TOKEN_KEY="zippzo_session_token",USER_KEY="zippzo_user";let records=[],activeManifest=[];
+function token(){return localStorage.getItem(TOKEN_KEY)||""}
+function headers(json=false){const h={};if(json)h["Content-Type"]="application/json";if(token())h.Authorization="Bearer "+token();return h}
+async function api(path,opt={}){const r=await fetch(API+path,{...opt,headers:{...headers(!!opt.body),...(opt.headers||{})}});const tx=await r.text();let d={};try{d=tx?JSON.parse(tx):{}}catch{d={detail:tx}}if(r.status===401){show("Session expired. Please login again.","error");throw Error("Authorization required")}if(!r.ok)throw Error(d.detail||d.message||("HTTP "+r.status));return d}
+function arr(d){return Array.isArray(d)?d:(d?.items||d?.data||d?.results||d?.dispatches||[])}
+function pick(o,...ks){for(const k of ks)if(o?.[k]!==undefined&&o?.[k]!==null)return o[k];return""}
+function esc(v){return String(v??"").replace(/[&<>"']/g,m=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[m]))}
+function age(t){if(!t)return 0;const d=new Date(t);return Number.isNaN(d.getTime())?0:Math.max(0,Math.floor((Date.now()-d.getTime())/60000))}
+function go(p){location.href=p}
+function show(m,t="ok"){const a=document.getElementById("alert");a.textContent=m;a.className="alert show "+(t==="error"?"error":"ok");setTimeout(()=>a.className="alert",3500)}
+function norm(r){return{id:pick(r,"id","dispatch_id"),dispatch:pick(r,"dispatch_number","dispatch_no","reference","number")||("DSP-"+pick(r,"id","dispatch_id")),store:pick(r,"destination_store","store_name","store","destination"),vehicle:pick(r,"vehicle_number","vehicle_no","vehicle"),driver:pick(r,"driver_name","driver"),seal:pick(r,"seal_number","seal_no","seal"),lpnCount:Number(pick(r,"lpn_count","lpns_count","total_lpns")||0),units:Number(pick(r,"unit_count","units","total_units")||0),status:String(pick(r,"status")||"READY").toUpperCase(),created:pick(r,"created_at","created_on","timestamp"),departure:pick(r,"departure_time","departed_at"),remarks:pick(r,"remarks","notes"),raw:r}}
+async function loadRecords(){try{records=arr(await api("/api/dispatch"))}catch{try{records=arr(await api("/api/dispatches"))}catch{try{records=arr(await api("/api/store-dispatches"))}catch(e){records=[];throw e}}}}
+async function loadAll(){try{await loadRecords();render()}catch(e){render();show(e.message||"Unable to load dispatch data.","error")}}
+function updateKpi(){const a=records.map(norm);kTotal.textContent=a.length;kReady.textContent=a.filter(x=>x.status==="READY").length;kDispatching.textContent=a.filter(x=>x.status==="DISPATCHING").length;kDispatched.textContent=a.filter(x=>x.status==="DISPATCHED").length;kReceived.textContent=a.filter(x=>x.status==="STORE_RECEIVED"||x.status==="RECEIVED").length;kLpns.textContent=a.reduce((s,x)=>s+x.lpnCount,0);kUnits.textContent=a.reduce((s,x)=>s+x.units,0)}
+function fillFilters(){const a=records.map(norm),stores=[...new Set(a.map(x=>x.store).filter(Boolean))].sort(),vehicles=[...new Set(a.map(x=>x.vehicle).filter(Boolean))].sort();let old=storeFilter.value;storeFilter.innerHTML='<option value="">All Stores</option>'+stores.map(x=>`<option>${esc(x)}</option>`).join("");storeFilter.value=old;old=vehicleFilter.value;vehicleFilter.innerHTML='<option value="">All Vehicles</option>'+vehicles.map(x=>`<option>${esc(x)}</option>`).join("");vehicleFilter.value=old}
+function cls(s){s=s.toLowerCase();return s==="ready"?"ready":s==="dispatching"?"dispatching":s==="dispatched"?"dispatched":s==="store_received"||s==="received"?"received":s==="hold"?"hold":"pending"}
+function render(){updateKpi();fillFilters();const q=search.value.toLowerCase().trim(),st=statusFilter.value,store=storeFilter.value,veh=vehicleFilter.value,seal=sealFilter.value,af=ageFilter.value,lf=lpnFilter.value;const a=records.map(norm).filter(x=>{const h=[x.dispatch,x.store,x.vehicle,x.driver,x.seal].join(" ").toLowerCase();if(q&&!h.includes(q))return false;if(st&&x.status!==st)return false;if(store&&x.store!==store)return false;if(veh&&x.vehicle!==veh)return false;if(seal==="yes"&&!x.seal)return false;if(seal==="no"&&x.seal)return false;if(af&&age(x.created)<Number(af))return false;if(lf==="yes"&&x.lpnCount<=0)return false;if(lf==="no"&&x.lpnCount>0)return false;return true});tbody.innerHTML=a.length?a.map(x=>`<tr><td><b>${esc(x.dispatch)}</b></td><td>${esc(x.store)}</td><td><b>${esc(x.vehicle)}</b></td><td>${esc(x.driver)}</td><td>${x.seal?esc(x.seal):"—"}</td><td>${x.lpnCount}</td><td>${x.units}</td><td><span class="badge ${cls(x.status)}">${esc(x.status)}</span></td><td>${age(x.created)} min</td><td>${esc(x.departure||"—")}</td><td><div class="actions"><button class="btn small secondary" onclick="details(${JSON.stringify(x.id)})">View</button><button class="btn small" onclick="manifest(${JSON.stringify(x.id)})">LPN Manifest</button>${x.status==="READY"?`<button class="btn small success" onclick="status(${JSON.stringify(x.id)},'DISPATCHING')">Start Dispatch</button>`:""}${x.status==="DISPATCHING"?`<button class="btn small success" onclick="status(${JSON.stringify(x.id)},'DISPATCHED')">Vehicle Departed</button>`:""}${x.status!=="STORE_RECEIVED"&&x.status!=="DISPATCHED"?`<button class="btn small danger" onclick="status(${JSON.stringify(x.id)},'HOLD')">Hold</button>`:""}</div></td></tr>`).join(""):'<tr><td colspan="11" class="empty">No dispatch records found.</td></tr>'}
+async function getManifest(id){try{return arr(await api(`/api/dispatch/${id}/lpns`))}catch{try{return arr(await api(`/api/dispatch/${id}/manifest`))}catch{try{return arr(await api(`/api/dispatches/${id}/lpns`))}catch(e){throw e}}}}
+async function manifest(id){const x=records.map(norm).find(r=>String(r.id)===String(id));try{activeManifest=await getManifest(id);document.getElementById("modalTitle").textContent=(x?.dispatch||"Dispatch")+" — LPN Manifest";document.getElementById("modalBody").innerHTML=`<div class="detail-grid">${detail("Dispatch",x?.dispatch)}${detail("Store",x?.store)}${detail("Vehicle",x?.vehicle)}${detail("Driver",x?.driver)}${detail("Seal",x?.seal||"—")}${detail("LPNs",x?.lpnCount)}${detail("Units",x?.units)}${detail("Status",x?.status)}</div><h3 style="margin-top:18px">LPN / Carton / Tote Manifest</h3><div class="table-container"><table style="min-width:900px"><thead><tr><th>LPN</th><th>Carton/Tote</th><th>SKU</th><th>Product</th><th>Expected</th><th>Loaded</th><th>Verified</th></tr></thead><tbody>${activeManifest.length?activeManifest.map(l=>`<tr><td>${esc(pick(l,"lpn_number","lpn_no","code"))}</td><td>${esc(pick(l,"carton_number","tote_number","carton","tote"))}</td><td>${esc(pick(l,"sku"))}</td><td>${esc(pick(l,"product_name","product"))}</td><td>${pick(l,"expected_quantity","expected_qty","quantity")||0}</td><td>${pick(l,"loaded_quantity","loaded_qty")||0}</td><td>${String(pick(l,"status")||"").toUpperCase()==="VERIFIED"?"YES":"NO"}</td></tr>`).join(""):'<tr><td colspan="7" class="empty">No manifest records available.</td></tr>'}</tbody></table></div><div class="actions" style="margin-top:14px"><button class="btn secondary" onclick="printManifest(${JSON.stringify(id)})">Print Manifest</button></div>`;document.getElementById("modal").classList.add("show")}catch(e){show(e.message,"error")}}
+function detail(a,b){return`<div class="detail"><small>${esc(a)}</small><b>${esc(b||"—")}</b></div>`}
+function details(id){const x=records.map(norm).find(r=>String(r.id)===String(id));if(!x)return;document.getElementById("modalTitle").textContent=x.dispatch;document.getElementById("modalBody").innerHTML=`<div class="detail-grid">${detail("Dispatch",x.dispatch)}${detail("Destination Store",x.store)}${detail("Vehicle",x.vehicle)}${detail("Driver",x.driver)}${detail("Seal Number",x.seal||"—")}${detail("LPN Count",x.lpnCount)}${detail("Total Units",x.units)}${detail("Status",x.status)}${detail("Created",x.created||"—")}${detail("Departure",x.departure||"—")}${detail("Age",age(x.created)+" min")}${detail("Remarks",x.remarks||"—")}</div><hr><h3>Dispatch Checklist</h3><div class="checklist"><label class="check"><input type="checkbox"> Grid putaway released</label><label class="check"><input type="checkbox"> Vehicle number verified</label><label class="check"><input type="checkbox"> Driver verified</label><label class="check"><input type="checkbox"> Destination store verified</label><label class="check"><input type="checkbox"> LPN manifest verified</label><label class="check"><input type="checkbox"> All quantities verified</label><label class="check"><input type="checkbox"> Seal verified</label><label class="check"><input type="checkbox"> Dispatch documents ready</label></div><div class="actions" style="margin-top:15px"><button class="btn" onclick="manifest(${JSON.stringify(x.id)})">Open LPN Manifest</button>${x.status==="READY"?`<button class="btn success" onclick="status(${JSON.stringify(x.id)},'DISPATCHING')">Start Dispatch</button>`:""}${x.status==="DISPATCHING"?`<button class="btn success" onclick="status(${JSON.stringify(x.id)},'DISPATCHED')">Vehicle Departed</button>`:""}</div>`;document.getElementById("modal").classList.add("show")}
+async function status(id,s){let remarks="";if(s==="HOLD"){remarks=prompt("Hold reason:");if(remarks===null)return}else if(!confirm(`Set dispatch status to ${s}?`))return;let last;for(const p of [`/api/dispatch/${id}/status`,`/api/dispatches/${id}/status`]){try{await api(p,{method:"PUT",body:JSON.stringify({status:s,remarks})});show("Dispatch status updated.");closeModal();await loadAll();return}catch(e){last=e}}show(last?.message||"Status update failed.","error")}
+function openCreate(){document.getElementById("modalTitle").textContent="Create Dispatch";document.getElementById("modalBody").innerHTML=`<div class="form-grid"><div class="form-group"><label>Dispatch Number</label><input id="cDispatch" placeholder="Optional"></div><div class="form-group"><label>Destination Store</label><input id="cStore"></div><div class="form-group"><label>Vehicle Number</label><input id="cVehicle"></div><div class="form-group"><label>Driver Name</label><input id="cDriver"></div><div class="form-group"><label>Seal Number</label><input id="cSeal"></div><div class="form-group"><label>LPN Count</label><input id="cLpns" type="number" min="0"></div><div class="form-group"><label>Total Units</label><input id="cUnits" type="number" min="0"></div><div class="form-group"><label>Status</label><select id="cStatus"><option>READY</option><option>HOLD</option></select></div><div class="form-group full"><label>Remarks</label><textarea id="cRemarks"></textarea></div></div><div class="actions" style="margin-top:15px"><button class="btn" onclick="createDispatch()">Create Dispatch</button><button class="btn secondary" onclick="closeModal()">Cancel</button></div>`;document.getElementById("modal").classList.add("show")}
+async function createDispatch(){const p={dispatch_number:cDispatch.value,destination_store:cStore.value,vehicle_number:cVehicle.value,driver_name:cDriver.value,seal_number:cSeal.value,lpn_count:Number(cLpns.value||0),unit_count:Number(cUnits.value||0),status:cStatus.value,remarks:cRemarks.value};if(!p.destination_store||!p.vehicle_number){show("Destination store and vehicle number are required.","error");return}try{await api("/api/dispatch",{method:"POST",body:JSON.stringify(p)});show("Dispatch created.");closeModal();await loadAll()}catch(e){show(e.message,"error")}}
+function printManifest(id){const x=records.map(norm).find(r=>String(r.id)===String(id));const w=window.open("","_blank");if(!w)return;w.document.write(`<html><head><title>${esc(x?.dispatch||"Dispatch Manifest")}</title><style>body{font-family:Arial;padding:30px}table{width:100%;border-collapse:collapse}th,td{border:1px solid #999;padding:8px;text-align:left}</style></head><body><h1>ZIPPZO DISPATCH LPN MANIFEST</h1><p>Dispatch: ${esc(x?.dispatch)} | Store: ${esc(x?.store)}</p><p>Vehicle: ${esc(x?.vehicle)} | Driver: ${esc(x?.driver)} | Seal: ${esc(x?.seal||"—")}</p><table><tr><th>LPN</th><th>Carton/Tote</th><th>SKU</th><th>Product</th><th>Expected</th><th>Loaded</th><th>Verified</th></tr>${activeManifest.map(l=>`<tr><td>${esc(pick(l,"lpn_number","lpn_no","code"))}</td><td>${esc(pick(l,"carton_number","tote_number","carton","tote"))}</td><td>${esc(pick(l,"sku"))}</td><td>${esc(pick(l,"product_name","product"))}</td><td>${pick(l,"expected_quantity","quantity")||0}</td><td>${pick(l,"loaded_quantity","loaded_qty")||0}</td><td>${String(pick(l,"status")||"").toUpperCase()==="VERIFIED"?"YES":"NO"}</td></tr>`).join("")}</table><p style="margin-top:40px">Dispatcher: ____________________ &nbsp;&nbsp; Driver: ____________________</p><script>window.print()<\/script>
+<script id="zippzo-master-frontend">
+document.addEventListener("DOMContentLoaded", function(){
+  // Hide the retired Dropping module everywhere.
+  document.querySelectorAll("a,button").forEach(function(el){
+    const t=(el.textContent||"").trim().toLowerCase();
+    if(t==="dropping" || t.includes("dropping")) el.style.display="none";
+  });
+
+  // Use the real Zippzo logo wherever a common brand element exists.
+  document.querySelectorAll(".brand,.logo,.brand-logo").forEach(function(el){
+    if(!el.querySelector("img")){
+      const img=document.createElement("img");
+      img.src="zippzo-logo.jpg";
+      img.alt="Zippzo";
+      img.style.cssText="width:148px;max-height:55px;object-fit:contain;object-position:left center;";
+      el.prepend(img);
+    }
+  });
+});
+</script>
+
+</body></html>`);w.document.close()}
+function closeModal(){document.getElementById("modal").classList.remove("show")}
+async function logout(){try{if(token())await api("/api/auth/logout",{method:"POST",body:JSON.stringify({session_token:token()})})}catch{}localStorage.removeItem(TOKEN_KEY);localStorage.removeItem(USER_KEY);location.href="index.html"}
+try{const u=JSON.parse(localStorage.getItem(USER_KEY)||"null");topUser.textContent=u?(u.full_name||u.name||u.employee_id||"Dispatch"):"Dispatch"}catch{}
+loadAll();setInterval(loadAll,10000);
+</script>
+</body>
+</html>

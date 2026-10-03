@@ -1,0 +1,945 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Zippzo - Riders</title>
+    <link rel="stylesheet" href="style.css">
+
+<link rel="stylesheet" href="zippzo-standard.css">
+<script src="zippzo-standard.js" defer></script>
+</head>
+
+<body>
+
+<div class="app">
+
+    <aside class="sidebar">
+
+        <div class="logo-area">
+            <div class="logo">ZIPPZO</div>
+            <div class="logo-subtitle">
+                Warehouse Management System
+            </div>
+        </div>
+
+        <nav class="nav">
+            <a href="index.html">Dashboard</a>
+            <a href="products.html">Products</a>
+            <a href="locations.html">Locations</a>
+            <a href="bins.html">Bins</a>
+            <a href="inventory.html">Inventory</a>
+            <a href="stock-movements.html">Stock Movements</a>
+            <a href="orders.html">Orders</a>
+            <a href="riders.html" class="active">Riders</a>
+        </nav>
+
+    </aside>
+
+
+    <main class="main">
+
+        <div class="page-header">
+
+            <div>
+                <h1 class="page-title">Riders</h1>
+
+                <div class="page-subtitle">
+                    Manage Zippzo delivery riders and availability
+                </div>
+            </div>
+
+            <div class="header-actions">
+
+                <div class="system-status">
+                    <span class="status-dot"></span>
+                    System Online
+                </div>
+
+                <button
+                    class="btn btn-primary"
+                    onclick="openRiderForm()">
+                    + Add Rider
+                </button>
+
+            </div>
+
+        </div>
+
+
+        <!-- RIDER SUMMARY -->
+
+        <div class="dashboard-grid">
+
+            <div class="card stat-card">
+                <div class="stat-title">
+                    Total Riders
+                </div>
+
+                <div
+                    class="stat-value"
+                    id="totalRiders">
+                    0
+                </div>
+
+                <div class="stat-description">
+                    Registered riders
+                </div>
+            </div>
+
+
+            <div class="card stat-card">
+                <div class="stat-title">
+                    Online
+                </div>
+
+                <div
+                    class="stat-value"
+                    id="onlineRiders">
+                    0
+                </div>
+
+                <div class="stat-description">
+                    Available for delivery
+                </div>
+            </div>
+
+
+            <div class="card stat-card">
+                <div class="stat-title">
+                    Offline
+                </div>
+
+                <div
+                    class="stat-value"
+                    id="offlineRiders">
+                    0
+                </div>
+
+                <div class="stat-description">
+                    Currently offline
+                </div>
+            </div>
+
+
+            <div class="card stat-card">
+                <div class="stat-title">
+                    Deliveries
+                </div>
+
+                <div
+                    class="stat-value"
+                    id="totalDeliveries">
+                    0
+                </div>
+
+                <div class="stat-description">
+                    Completed deliveries
+                </div>
+            </div>
+
+        </div>
+
+
+        <!-- RIDER FORM -->
+
+        <div
+            class="panel"
+            id="riderFormPanel"
+            style="display:none;">
+
+            <div class="panel-header">
+
+                <div class="panel-title">
+                    Add New Rider
+                </div>
+
+                <button
+                    class="btn btn-light"
+                    onclick="closeRiderForm()">
+                    Close
+                </button>
+
+            </div>
+
+
+            <form id="riderForm">
+
+                <div class="form-grid">
+
+                    <div class="form-group">
+
+                        <label>Rider Code</label>
+
+                        <input
+                            type="text"
+                            id="riderCode"
+                            placeholder="ZRP001"
+                            required>
+
+                    </div>
+
+
+                    <div class="form-group">
+
+                        <label>Rider Name</label>
+
+                        <input
+                            type="text"
+                            id="riderName"
+                            placeholder="Rider Name"
+                            required>
+
+                    </div>
+
+
+                    <div class="form-group">
+
+                        <label>Phone</label>
+
+                        <input
+                            type="text"
+                            id="riderPhone"
+                            placeholder="10 digit mobile number">
+
+                    </div>
+
+
+                    <div class="form-group">
+
+                        <label>Vehicle Type</label>
+
+                        <select id="vehicleType">
+
+                            <option value="BIKE">
+                                Bike
+                            </option>
+
+                            <option value="SCOOTER">
+                                Scooter
+                            </option>
+
+                            <option value="EV">
+                                EV
+                            </option>
+
+                            <option value="BICYCLE">
+                                Bicycle
+                            </option>
+
+                        </select>
+
+                    </div>
+
+
+                    <div class="form-group">
+
+                        <label>Location ID</label>
+
+                        <input
+                            type="number"
+                            id="locationId"
+                            placeholder="Optional">
+
+                    </div>
+
+                </div>
+
+
+                <br>
+
+                <button
+                    type="submit"
+                    class="btn btn-primary">
+                    Save Rider
+                </button>
+
+            </form>
+
+        </div>
+
+
+        <!-- RIDER LIST -->
+
+        <div class="panel">
+
+            <div class="panel-header">
+
+                <div class="panel-title">
+                    Rider List
+                </div>
+
+                <button
+                    class="btn btn-light"
+                    onclick="loadRiders()">
+                    Refresh
+                </button>
+
+            </div>
+
+
+            <div class="search-box">
+
+                <input
+                    type="text"
+                    id="searchRider"
+                    placeholder="Search rider..."
+                    oninput="filterRiders()">
+
+            </div>
+
+
+            <div class="table-container">
+
+                <table>
+
+                    <thead>
+
+                        <tr>
+                            <th>Rider Code</th>
+                            <th>Name</th>
+                            <th>Phone</th>
+                            <th>Vehicle</th>
+                            <th>Status</th>
+                            <th>Location</th>
+                            <th>Deliveries</th>
+                            <th>Action</th>
+                        </tr>
+
+                    </thead>
+
+
+                    <tbody id="ridersTable">
+
+                        <tr>
+
+                            <td colspan="8">
+
+                                <div class="loading">
+                                    Loading riders...
+                                </div>
+
+                            </td>
+
+                        </tr>
+
+                    </tbody>
+
+                </table>
+
+            </div>
+
+        </div>
+
+
+        <div class="footer">
+            Zippzo Warehouse Management System
+        </div>
+
+    </main>
+
+</div>
+
+
+<script>
+
+let allRiders = [];
+
+
+/* ================================
+   LOAD RIDERS
+================================ */
+
+async function loadRiders() {
+
+    try {
+
+        const response =
+            await fetch("/api/riders");
+
+
+        if (!response.ok) {
+
+            throw new Error(
+                "Failed to load riders"
+            );
+
+        }
+
+
+        allRiders =
+            await response.json();
+
+
+        renderRiders(allRiders);
+
+        updateSummary(allRiders);
+
+
+    } catch (error) {
+
+        console.error(error);
+
+
+        document.getElementById(
+            "ridersTable"
+        ).innerHTML = `
+
+            <tr>
+
+                <td colspan="8">
+
+                    <div class="alert alert-danger">
+
+                        Unable to load riders.
+
+                        Check that the
+                        FastAPI server is running.
+
+                    </div>
+
+                </td>
+
+            </tr>
+
+        `;
+
+    }
+
+}
+
+
+/* ================================
+   SUMMARY
+================================ */
+
+function updateSummary(riders) {
+
+    document.getElementById(
+        "totalRiders"
+    ).textContent = riders.length;
+
+
+    document.getElementById(
+        "onlineRiders"
+    ).textContent =
+
+        riders.filter(
+            r => r.status === "ONLINE"
+        ).length;
+
+
+    document.getElementById(
+        "offlineRiders"
+    ).textContent =
+
+        riders.filter(
+            r => r.status !== "ONLINE"
+        ).length;
+
+
+    document.getElementById(
+        "totalDeliveries"
+    ).textContent =
+
+        riders.reduce(
+            (total, rider) =>
+                total +
+                Number(
+                    rider.total_deliveries || 0
+                ),
+            0
+        );
+
+}
+
+
+/* ================================
+   RENDER
+================================ */
+
+function renderRiders(riders) {
+
+    const table =
+        document.getElementById(
+            "ridersTable"
+        );
+
+
+    if (!riders.length) {
+
+        table.innerHTML = `
+
+            <tr>
+
+                <td colspan="8">
+
+                    <div class="empty-state">
+
+                        <div class="empty-state-title">
+                            No Riders Found
+                        </div>
+
+                        <div class="empty-state-text">
+                            Add your first Zippzo rider.
+                        </div>
+
+                    </div>
+
+                </td>
+
+            </tr>
+
+        `;
+
+        return;
+    }
+
+
+    table.innerHTML = riders.map(
+        rider => `
+
+        <tr>
+
+            <td>
+                <strong>
+                    ${escapeHtml(
+                        rider.rider_code
+                    )}
+                </strong>
+            </td>
+
+
+            <td>
+                ${escapeHtml(
+                    rider.name
+                )}
+            </td>
+
+
+            <td>
+                ${escapeHtml(
+                    rider.phone || "-"
+                )}
+            </td>
+
+
+            <td>
+                ${escapeHtml(
+                    rider.vehicle_type || "-"
+                )}
+            </td>
+
+
+            <td>
+                ${statusBadge(
+                    rider.status
+                )}
+            </td>
+
+
+            <td>
+                ${rider.location_id
+                    ? "Location #" +
+                      rider.location_id
+                    : "-"}
+            </td>
+
+
+            <td>
+                ${Number(
+                    rider.total_deliveries || 0
+                )}
+            </td>
+
+
+            <td>
+
+                ${
+                    rider.status === "ONLINE"
+
+                    ?
+
+                    `
+                    <button
+                        class="btn btn-warning"
+                        onclick="
+                            changeRiderStatus(
+                                ${rider.id},
+                                'OFFLINE'
+                            )">
+                        Go Offline
+                    </button>
+                    `
+
+                    :
+
+                    `
+                    <button
+                        class="btn btn-success"
+                        onclick="
+                            changeRiderStatus(
+                                ${rider.id},
+                                'ONLINE'
+                            )">
+                        Go Online
+                    </button>
+                    `
+                }
+
+            </td>
+
+        </tr>
+
+    `
+    ).join("");
+
+}
+
+
+/* ================================
+   STATUS BADGE
+================================ */
+
+function statusBadge(status) {
+
+    const value =
+        status || "OFFLINE";
+
+
+    const className =
+        value === "ONLINE"
+            ? "badge-online"
+            : "badge-offline";
+
+
+    return `
+
+        <span class="badge ${className}">
+            ${escapeHtml(value)}
+        </span>
+
+    `;
+
+}
+
+
+/* ================================
+   SEARCH
+================================ */
+
+function filterRiders() {
+
+    const search =
+        document.getElementById(
+            "searchRider"
+        )
+        .value
+        .toLowerCase()
+        .trim();
+
+
+    const filtered =
+        allRiders.filter(rider => {
+
+            return (
+
+                String(
+                    rider.rider_code || ""
+                )
+                .toLowerCase()
+                .includes(search)
+
+                ||
+
+                String(
+                    rider.name || ""
+                )
+                .toLowerCase()
+                .includes(search)
+
+                ||
+
+                String(
+                    rider.phone || ""
+                )
+                .toLowerCase()
+                .includes(search)
+
+            );
+
+        });
+
+
+    renderRiders(filtered);
+
+}
+
+
+/* ================================
+   OPEN FORM
+================================ */
+
+function openRiderForm() {
+
+    document.getElementById(
+        "riderFormPanel"
+    ).style.display = "block";
+
+
+    document.getElementById(
+        "riderFormPanel"
+    ).scrollIntoView({
+        behavior: "smooth"
+    });
+
+}
+
+
+/* ================================
+   CLOSE FORM
+================================ */
+
+function closeRiderForm() {
+
+    document.getElementById(
+        "riderFormPanel"
+    ).style.display = "none";
+
+}
+
+
+/* ================================
+   CREATE RIDER
+================================ */
+
+document.getElementById(
+    "riderForm"
+)
+.addEventListener(
+    "submit",
+    async function(event) {
+
+        event.preventDefault();
+
+
+        const riderData = {
+
+            rider_code:
+                document.getElementById(
+                    "riderCode"
+                ).value.trim(),
+
+            name:
+                document.getElementById(
+                    "riderName"
+                ).value.trim(),
+
+            phone:
+                document.getElementById(
+                    "riderPhone"
+                ).value.trim(),
+
+            vehicle_type:
+                document.getElementById(
+                    "vehicleType"
+                ).value,
+
+            location_id:
+                document.getElementById(
+                    "locationId"
+                ).value
+                    ? Number(
+                        document.getElementById(
+                            "locationId"
+                        ).value
+                    )
+                    : null
+
+        };
+
+
+        try {
+
+            const response =
+                await fetch(
+                    "/api/riders",
+                    {
+                        method: "POST",
+
+                        headers: {
+                            "Content-Type":
+                                "application/json"
+                        },
+
+                        body:
+                            JSON.stringify(
+                                riderData
+                            )
+                    }
+                );
+
+
+            const result =
+                await response.json();
+
+
+            if (!response.ok) {
+
+                throw new Error(
+                    result.detail ||
+                    "Unable to create rider"
+                );
+
+            }
+
+
+            alert(
+                "Rider created successfully."
+            );
+
+
+            document.getElementById(
+                "riderForm"
+            ).reset();
+
+
+            closeRiderForm();
+
+            loadRiders();
+
+
+        } catch (error) {
+
+            alert(
+                "Error: " +
+                error.message
+            );
+
+        }
+
+    }
+);
+
+
+/* ================================
+   RIDER STATUS
+================================ */
+
+async function changeRiderStatus(
+    riderId,
+    status
+) {
+
+    try {
+
+        const response =
+            await fetch(
+                `/api/riders/${riderId}/status`,
+                {
+                    method: "POST",
+
+                    headers: {
+                        "Content-Type":
+                            "application/json"
+                    },
+
+                    body:
+                        JSON.stringify({
+                            status: status
+                        })
+                }
+            );
+
+
+        const result =
+            await response.json();
+
+
+        if (!response.ok) {
+
+            throw new Error(
+                result.detail ||
+                "Unable to update rider"
+            );
+
+        }
+
+
+        loadRiders();
+
+
+    } catch (error) {
+
+        alert(
+            "Error: " +
+            error.message
+        );
+
+    }
+
+}
+
+
+/* ================================
+   SECURITY
+================================ */
+
+function escapeHtml(value) {
+
+    if (
+        value === null ||
+        value === undefined
+    ) {
+        return "";
+    }
+
+
+    return String(value)
+
+        .replace(
+            /&/g,
+            "&amp;"
+        )
+
+        .replace(
+            /</g,
+            "&lt;"
+        )
+
+        .replace(
+            />/g,
+            "&gt;"
+        )
+
+        .replace(
+            /"/g,
+            "&quot;"
+        )
+
+        .replace(
+            /'/g,
+            "&#039;"
+        );
+
+}
+
+
+/* ================================
+   INITIAL LOAD
+================================ */
+
+loadRiders();
+
+
+/* AUTO REFRESH */
+
+setInterval(
+    loadRiders,
+    10000
+);
+
+</script>
+
+</body>
+</html>

@@ -1,0 +1,186 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1.0">
+<title>Zippzo Picking Report</title>
+<style>
+*{box-sizing:border-box}:root{--dark:#111827;--blue:#2563eb;--green:#16a34a;--orange:#ea580c;--red:#dc2626;--muted:#64748b;--line:#e2e8f0;--bg:#f4f7fb}
+body{margin:0;background:var(--bg);color:#172033;font-family:Inter,Segoe UI,Arial,sans-serif}.top{height:68px;background:var(--dark);color:#fff;display:flex;align-items:center;gap:16px;padding:0 22px;position:sticky;top:0;z-index:20}.logo{font-size:25px;font-weight:900;letter-spacing:1px}.title{font-size:14px;color:#cbd5e1}.spacer{flex:1}.top button{background:#1f2937;border:1px solid #475569;color:#fff;border-radius:8px;padding:9px 13px;cursor:pointer}
+.layout{display:grid;grid-template-columns:235px 1fr;min-height:calc(100vh - 68px)}nav{background:#fff;border-right:1px solid var(--line);padding:14px 10px;position:sticky;top:68px;height:calc(100vh - 68px);overflow:auto}nav h4{font-size:10px;color:#94a3b8;text-transform:uppercase;margin:12px}nav a{display:block;text-decoration:none;color:#334155;padding:9px 12px;border-radius:8px;font-size:12px;margin:2px 0}nav a:hover,nav a.active{background:#eff6ff;color:#1d4ed8;font-weight:700}
+main{padding:22px;min-width:0}.head{display:flex;align-items:center;justify-content:space-between;gap:15px;margin-bottom:18px}.head h1{font-size:25px;margin:0}.sub{font-size:13px;color:var(--muted);margin-top:5px}.actions{display:flex;gap:8px;flex-wrap:wrap}.btn{border:1px solid var(--line);background:#fff;border-radius:8px;padding:9px 13px;cursor:pointer;font-size:12px}.btn.primary{background:var(--blue);border-color:var(--blue);color:#fff}
+.kpis{display:grid;grid-template-columns:repeat(8,minmax(110px,1fr));gap:10px}.card{background:#fff;border:1px solid var(--line);border-radius:12px;padding:14px;box-shadow:0 1px 2px #00000008}.label{font-size:10px;color:var(--muted);text-transform:uppercase}.value{font-size:23px;font-weight:850;margin-top:6px}.note{font-size:10px;color:var(--muted);margin-top:4px}
+.section{margin-top:18px}.section-head{display:flex;align-items:center;justify-content:space-between;gap:10px;margin-bottom:10px}.section-head h2{font-size:16px;margin:0}.filters{display:flex;gap:8px;flex-wrap:wrap}.filters input,.filters select{height:37px;border:1px solid var(--line);border-radius:8px;background:#fff;padding:0 10px;font-size:12px;color:#172033}.filters .search{min-width:280px}
+.summary{display:grid;grid-template-columns:repeat(6,1fr);gap:10px}.summary strong{display:block;font-size:21px;margin-top:5px}.summary span{font-size:10px;color:var(--muted)}
+.table-wrap{overflow:auto;background:#fff;border:1px solid var(--line);border-radius:10px}.table{width:100%;border-collapse:collapse;font-size:12px}.table th{background:#f8fafc;color:#64748b;font-size:10px;text-transform:uppercase;text-align:left;position:sticky;top:0;z-index:2}.table th,.table td{padding:10px;border-bottom:1px solid #edf2f7;white-space:nowrap}.table tr:hover td{background:#f8fafc}
+.tag{display:inline-block;border-radius:999px;padding:4px 8px;font-size:10px;font-weight:700;background:#eef2ff;color:#3730a3}.tag.good{background:#f0fdf4;color:#15803d}.tag.warn{background:#fff7ed;color:#c2410c}.tag.bad{background:#fef2f2;color:#b91c1c}.tag.info{background:#eff6ff;color:#1d4ed8}.muted{color:var(--muted)}.empty{text-align:center;padding:30px;color:#94a3b8}
+.grid2{display:grid;grid-template-columns:1.25fr .75fr;gap:14px}.list{background:#fff;border:1px solid var(--line);border-radius:10px;overflow:hidden}.list-row{display:flex;justify-content:space-between;gap:10px;padding:11px 13px;border-bottom:1px solid #edf2f7;font-size:12px}.list-row:last-child{border:0}.list-row b{display:block}.progress{height:7px;width:90px;background:#e2e8f0;border-radius:99px;overflow:hidden;display:inline-block;vertical-align:middle}.progress i{display:block;height:100%;background:var(--blue)}
+.pagination{display:flex;justify-content:space-between;align-items:center;padding:11px 2px;font-size:11px;color:var(--muted)}.pager{display:flex;gap:5px}.pager button{border:1px solid var(--line);background:#fff;border-radius:7px;padding:7px 10px;cursor:pointer}.pager button.active{background:var(--blue);border-color:var(--blue);color:#fff}
+.modal{display:none;position:fixed;inset:0;background:#0008;z-index:50;align-items:center;justify-content:center;padding:20px}.modal.show{display:flex}.modal-box{background:#fff;border-radius:14px;width:min(1100px,100%);max-height:90vh;overflow:auto;padding:20px}.modal-head{display:flex;justify-content:space-between;align-items:center}.modal-head h2{font-size:18px;margin:0}.close{border:0;background:#f1f5f9;border-radius:8px;padding:7px 10px;cursor:pointer}.detail-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:9px;margin-top:15px}.detail{border:1px solid var(--line);border-radius:8px;padding:10px}.detail small{display:block;color:var(--muted);font-size:10px}.detail b{display:block;margin-top:4px;font-size:12px;word-break:break-word}
+.timeline{margin-top:18px;border-left:2px solid #dbeafe;padding-left:18px}.timeline-item{position:relative;margin:0 0 15px}.timeline-item:before{content:"";position:absolute;left:-25px;top:2px;width:10px;height:10px;background:var(--blue);border-radius:50%}.timeline-item b{display:block;font-size:12px}.timeline-item span{font-size:10px;color:var(--muted)}
+.toast{position:fixed;right:20px;bottom:20px;background:#111827;color:#fff;padding:12px 15px;border-radius:8px;display:none;z-index:100;font-size:13px}.loading{opacity:.65;pointer-events:none}
+@media(max-width:1300px){.kpis{grid-template-columns:repeat(4,1fr)}.summary{grid-template-columns:repeat(3,1fr)}}@media(max-width:950px){.layout{grid-template-columns:1fr}nav{display:none}.grid2{grid-template-columns:1fr}.detail-grid{grid-template-columns:repeat(2,1fr)}}@media(max-width:600px){main{padding:13px}.kpis,.summary{grid-template-columns:repeat(2,1fr)}.head{align-items:flex-start;flex-direction:column}.detail-grid{grid-template-columns:1fr}.filters .search{min-width:100%}}@media print{.top,nav,.actions,.filters,.pagination,.no-print{display:none!important}.layout{display:block}main{padding:0}.card{box-shadow:none}}
+</style>
+
+<link rel="stylesheet" href="zippzo-standard.css">
+<script src="zippzo-standard.js" defer></script>
+</head>
+<body>
+<header class="top"><div class="logo">ZIPPZO</div><div class="title">Picking Operations Report</div><div class="spacer"></div><span id="userName" class="title">Loading...</span><button onclick="loadAll()">↻ Refresh</button><button onclick="logout()">Logout</button></header>
+<div class="layout"><nav id="nav"></nav><main>
+<div class="head"><div><h1>Picking Report</h1><div class="sub">Create Batch → Picking Assignment → Pick Start → SKU/Barcode Scan → Source Bin Scan → Quantity Confirmation → Picking Complete → Sorting</div></div><div class="actions"><button class="btn" onclick="printReport()">Print</button><button class="btn" onclick="exportCSV()">Export CSV</button><button class="btn primary" onclick="loadAll()">Refresh Data</button></div></div>
+
+<div class="kpis">
+<div class="card"><div class="label">TOTAL TASKS</div><div class="value" id="kTotal">—</div><div class="note">All picking records</div></div>
+<div class="card"><div class="label">PENDING</div><div class="value" id="kPending">—</div><div class="note">Waiting assignment</div></div>
+<div class="card"><div class="label">ASSIGNED</div><div class="value" id="kAssigned">—</div><div class="note">Picker assigned</div></div>
+<div class="card"><div class="label">IN PROGRESS</div><div class="value" id="kProgress">—</div><div class="note">Active picks</div></div>
+<div class="card"><div class="label">COMPLETED</div><div class="value" id="kCompleted">—</div><div class="note">Ready for sorting</div></div>
+<div class="card"><div class="label">HOLD</div><div class="value" id="kHold">—</div><div class="note">Exceptions / holds</div></div>
+<div class="card"><div class="label">REQUIRED UNITS</div><div class="value" id="kRequired">—</div><div class="note">Units to pick</div></div>
+<div class="card"><div class="label">PICKED UNITS</div><div class="value" id="kPicked">—</div><div class="note">Confirmed picked</div></div>
+</div>
+
+<section class="section"><div class="card"><div class="section-head"><h2>Advanced Picking Filters</h2><button class="btn" onclick="clearFilters()">Clear Filters</button></div>
+<div class="filters">
+<input class="search" id="search" placeholder="Batch / order / SKU / product / bin / picker..." oninput="applyFilters()">
+<select id="status" onchange="applyFilters()"><option value="">All Status</option></select>
+<select id="priority" onchange="applyFilters()"><option value="">All Priority</option></select>
+<select id="location" onchange="applyFilters()"><option value="">All Locations</option></select>
+<select id="picker" onchange="applyFilters()"><option value="">All Pickers</option></select>
+<select id="scan" onchange="applyFilters()"><option value="">All Scan Status</option><option value="VERIFIED">SKU + Bin Verified</option><option value="SKU_PENDING">SKU Scan Pending</option><option value="BIN_PENDING">Bin Scan Pending</option><option value="BOTH_PENDING">Both Pending</option></select>
+<input type="date" id="dateFrom" onchange="applyFilters()"><input type="date" id="dateTo" onchange="applyFilters()">
+<select id="pageSize" onchange="applyFilters()"><option>25</option><option>50</option><option>100</option></select>
+</div></div></section>
+
+<section class="section summary">
+<div class="card"><div class="label">FILTERED REQUIRED</div><strong id="sRequired">0</strong><span>units</span></div>
+<div class="card"><div class="label">FILTERED PICKED</div><strong id="sPicked">0</strong><span>units</span></div>
+<div class="card"><div class="label">PICK COMPLETION</div><strong id="sCompletion">0%</strong><span>picked / required</span></div>
+<div class="card"><div class="label">SKU VERIFIED</div><strong id="sSku">0</strong><span>tasks</span></div>
+<div class="card"><div class="label">BIN VERIFIED</div><strong id="sBin">0</strong><span>tasks</span></div>
+<div class="card"><div class="label">FULLY VERIFIED</div><strong id="sVerified">0</strong><span>SKU + source bin</span></div>
+</section>
+
+<section class="section grid2"><div class="card"><div class="section-head"><h2>Picker Productivity</h2><span class="muted" id="pickerCount">0 pickers</span></div>
+<div class="table-wrap"><table class="table"><thead><tr><th>Picker</th><th>Tasks</th><th>Required</th><th>Picked</th><th>Completed</th><th>Pick Rate</th></tr></thead><tbody id="pickerBody"></tbody></table></div></div>
+<div class="card"><div class="section-head"><h2>Picking Exceptions</h2><span class="tag warn" id="exceptionCount">0</span></div><div class="list" id="exceptionList"></div></div></section>
+
+<section class="section"><div class="section-head"><h2>Detailed Picking Report</h2><span class="muted" id="resultCount">0 records</span></div>
+<div class="table-wrap"><table class="table"><thead><tr>
+<th>Task</th><th>Batch</th><th>Order</th><th>Picker</th><th>SKU</th><th>Product</th><th>Location</th><th>Source Bin</th><th>Required</th><th>Picked</th><th>Progress</th><th>SKU Scan</th><th>Bin Scan</th><th>Status</th><th>Priority</th><th>Created</th><th>Started</th><th>Completed</th><th>Action</th>
+</tr></thead><tbody id="body"></tbody></table></div><div class="pagination"><span id="pageInfo">Page 1</span><div class="pager" id="pager"></div></div></section>
+</main></div>
+
+<div class="modal" id="modal"><div class="modal-box"><div class="modal-head"><h2>Picking Task Details</h2><button class="close" onclick="closeModal()">✕</button></div><div id="detail"></div></div></div>
+<div class="toast" id="toast"></div>
+
+<script>
+const API=window.location.origin,TOKEN_KEY="zippzo_session_token";let token=localStorage.getItem(TOKEN_KEY),tasks=[],filtered=[],page=1;
+const navLinks=[["index.html","Dashboard"],["products.html","Products"],["suppliers.html","Suppliers"],["locations.html","Locations"],["inventory.html","Inventory"],["stock-movements.html","Stock Movements"],["bins.html","Bins"],["purchase-orders.html","Purchase Orders"],["grn.html","GRN"],["grn-report.html","GRN Report"],["putaway.html","Putaway"],["putaway-report.html","Putaway Report"],["create-batch.html","Create Batch"],["picking.html","Picking"],["picking-report.html","Picking Report"],["sorting.html","Sorting"],["sorting-report.html","Sorting Report"],["grid-putaway.html","Grid Putaway"],["vehicle-arrival.html","Vehicle Arrival"],["dispatch.html","Dispatch"],["store-receiving.html","Store Receiving"],["store-receiving-report.html","Receiving Report"],["orders.html","Orders"],["stock-report.html","Stock Report"],["picking-ipp.html","Picking IPP"],["sorting-ipp.html","Sorting IPP"],["access-control.html","Access Control"],["audit-logs.html","Audit Logs"],["system-settings.html","System Settings"]];
+function esc(v){return String(v??"").replace(/[&<>"']/g,m=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#039;"}[m]));}
+function num(v){return Number(v||0)}
+function arr(d){if(Array.isArray(d))return d;if(Array.isArray(d?.items))return d.items;if(Array.isArray(d?.data))return d.data;if(Array.isArray(d?.results))return d.results;return[]}
+function field(x,...keys){for(const k of keys)if(x[k]!==undefined&&x[k]!==null&&x[k]!=="")return x[k];return""}
+function toast(s){const x=document.getElementById("toast");x.textContent=s;x.style.display="block";clearTimeout(window.tt);window.tt=setTimeout(()=>x.style.display="none",2800)}
+async function api(path,opt={}){const h={"Content-Type":"application/json",...(opt.headers||{})};if(token)h.Authorization="Bearer "+token;const r=await fetch(API+path,{...opt,headers:h});if(r.status===401){localStorage.removeItem(TOKEN_KEY);localStorage.removeItem("zippzo_user");location.href="index.html";throw Error("Session expired")}const t=await r.text();let d={};try{d=t?JSON.parse(t):{}}catch{}if(!r.ok)throw Error(d.detail||d.message||"Request failed");return d}
+async function tryApi(paths){let e;for(const p of paths){try{return await api(p)}catch(x){e=x}}throw e||Error("API unavailable")}
+function nav(){document.getElementById("nav").innerHTML="<h4>Operations</h4>"+navLinks.map(x=>`<a href="${x[0]}" class="${location.pathname.endsWith(x[0])?"active":""}">${x[1]}</a>`).join("")}
+function statusClass(s){s=String(s||"").toUpperCase();if(s==="COMPLETED")return"good";if(["HOLD","CANCELLED","ERROR","SHORT"].includes(s))return"bad";if(["PENDING","ASSIGNED","IN_PROGRESS","IN PROGRESS"].includes(s))return"warn";return"info"}
+function required(x){return num(field(x,"required_quantity","quantity","required_qty","ordered_quantity"))}
+function picked(x){return num(field(x,"picked_quantity","confirmed_quantity","picked_qty","completed_quantity","picked"))}
+function pickerName(x){return String(field(x,"picker_name","assigned_picker_name","employee_name","assigned_employee_name","picker")||"—")}
+function locationName(x){return String(field(x,"location_name","location_code","location")||"—")}
+function sourceBin(x){return String(field(x,"source_bin_code","source_bin","bin_code","bin_name","assigned_bin_code")||"—")}
+function skuScan(x){return String(field(x,"scanned_sku","scan_sku","verified_sku","barcode_scanned")||"")}
+function binScan(x){return String(field(x,"scanned_bin_code","source_bin_scan","scan_bin","verified_bin","bin_scanned")||"")}
+function statusOf(x){return String(x.status||"").toUpperCase()}
+async function loadAll(){
+ document.body.classList.add("loading");
+ try{
+  tasks=arr(await tryApi(["/api/picking","/api/picking/tasks","/api/picking-tasks"]));
+  try{const me=await api("/api/auth/me");document.getElementById("userName").textContent=me.employee?.name||me.name||me.user?.name||"Zippzo User"}catch{}
+  buildFilters();page=1;applyFilters();toast("Picking report refreshed");
+ }catch(e){toast(e.message||"Unable to load picking report")}finally{document.body.classList.remove("loading")}
+}
+function fill(id,values,label){const el=document.getElementById(id),old=el.value;el.innerHTML=`<option value="">${label}</option>`+values.map(v=>`<option value="${esc(v)}">${esc(v)}</option>`).join("");if(values.includes(old))el.value=old}
+function buildFilters(){
+ fill("status",[...new Set(tasks.map(statusOf).filter(Boolean))].sort(),"All Status");
+ fill("priority",[...new Set(tasks.map(x=>String(x.priority||"")).filter(Boolean))].sort(),"All Priority");
+ fill("location",[...new Set(tasks.map(locationName).filter(x=>x!=="—"))].sort(),"All Locations");
+ fill("picker",[...new Set(tasks.map(pickerName).filter(x=>x!=="—"))].sort(),"All Pickers");
+}
+function applyFilters(){
+ const q=document.getElementById("search").value.toLowerCase().trim(),st=document.getElementById("status").value,pr=document.getElementById("priority").value,loc=document.getElementById("location").value,pk=document.getElementById("picker").value,scan=document.getElementById("scan").value,from=document.getElementById("dateFrom").value,to=document.getElementById("dateTo").value;
+ filtered=tasks.filter(x=>{
+  const blob=JSON.stringify(x).toLowerCase(),ss=!!skuScan(x),bs=!!binScan(x),dt=String(field(x,"created_at","started_at","completed_at")||"").slice(0,10);
+  return(!q||blob.includes(q))&&(!st||statusOf(x)===st)&&(!pr||String(x.priority||"")===pr)&&(!loc||locationName(x)===loc)&&(!pk||pickerName(x)===pk)&&(!scan||(scan==="VERIFIED"&&ss&&bs)||(scan==="SKU_PENDING"&&!ss)||(scan==="BIN_PENDING"&&!bs)||(scan==="BOTH_PENDING"&&!ss&&!bs))&&(!from||dt>=from)&&(!to||dt<=to);
+ });
+ page=1;render();
+}
+function render(){
+ const counts={PENDING:0,ASSIGNED:0,IN_PROGRESS:0,COMPLETED:0,HOLD:0};tasks.forEach(x=>{if(counts[statusOf(x)]!==undefined)counts[statusOf(x)]++});
+ const rqAll=tasks.reduce((n,x)=>n+required(x),0),pkAll=tasks.reduce((n,x)=>n+picked(x),0);
+ [["kTotal",tasks.length],["kPending",counts.PENDING],["kAssigned",counts.ASSIGNED],["kProgress",counts.IN_PROGRESS],["kCompleted",counts.COMPLETED],["kHold",counts.HOLD],["kRequired",rqAll],["kPicked",pkAll]].forEach(([id,v])=>document.getElementById(id).textContent=v.toLocaleString("en-IN"));
+ const rq=filtered.reduce((n,x)=>n+required(x),0),pk=filtered.reduce((n,x)=>n+picked(x),0),rate=rq?Math.min(100,Math.round(pk/rq*100)):0,sku=filtered.filter(x=>!!skuScan(x)).length,bin=filtered.filter(x=>!!binScan(x)).length,ver=filtered.filter(x=>skuScan(x)&&binScan(x)).length;
+ [["sRequired",rq],["sPicked",pk],["sSku",sku],["sBin",bin],["sVerified",ver]].forEach(([id,v])=>document.getElementById(id).textContent=v.toLocaleString("en-IN"));document.getElementById("sCompletion").textContent=rate+"%";document.getElementById("resultCount").textContent=filtered.length.toLocaleString("en-IN")+" records";
+ renderPickers();renderExceptions();renderTable();renderPager();
+}
+function renderPickers(){
+ const map=new Map();
+ filtered.forEach(x=>{const k=pickerName(x);if(!map.has(k))map.set(k,{tasks:0,r:0,p:0,done:0});const v=map.get(k);v.tasks++;v.r+=required(x);v.p+=picked(x);if(statusOf(x)==="COMPLETED")v.done++});
+ const rows=[...map.entries()].sort((a,b)=>b[1].p-a[1].p);document.getElementById("pickerCount").textContent=rows.length+" pickers";
+ document.getElementById("pickerBody").innerHTML=rows.length?rows.map(([k,v])=>`<tr><td><b>${esc(k)}</b></td><td>${v.tasks}</td><td>${v.r}</td><td>${v.p}</td><td>${v.done}</td><td><span class="tag ${v.r&&v.p>=v.r?"good":"warn"}">${v.r?Math.min(100,Math.round(v.p/v.r*100)):0}%</span></td></tr>`).join(""):`<tr><td colspan="6" class="empty">No picker data.</td></tr>`;
+}
+function renderExceptions(){
+ const ex=filtered.filter(x=>["HOLD","ERROR","SHORT"].includes(statusOf(x))||(!skuScan(x)||!binScan(x))).slice(0,15);
+ document.getElementById("exceptionCount").textContent=filtered.filter(x=>["HOLD","ERROR","SHORT"].includes(statusOf(x))||(!skuScan(x)||!binScan(x))).length;
+ document.getElementById("exceptionList").innerHTML=ex.length?ex.map(x=>{
+  const missing=[];if(!skuScan(x))missing.push("SKU");if(!binScan(x))missing.push("BIN");
+  const st=["HOLD","ERROR","SHORT"].includes(statusOf(x))?statusOf(x):missing.join(" + ")+" SCAN";
+  return `<div class="list-row"><div><b>${esc(field(x,"task_number","task_no")||"#"+x.id)}</b><span class="muted">${esc(x.sku||"—")} · ${esc(pickerName(x))}</span></div><span class="tag ${["HOLD","ERROR","SHORT"].includes(statusOf(x))?"bad":"warn"}">${esc(st)}</span></div>`;
+ }).join(""):`<div class="empty">No active picking exceptions.</div>`;
+}
+function renderTable(){
+ const size=Number(document.getElementById("pageSize").value||25),pages=Math.max(1,Math.ceil(filtered.length/size));if(page>pages)page=pages;const rows=filtered.slice((page-1)*size,page*size);
+ document.getElementById("body").innerHTML=rows.length?rows.map((x,i)=>{
+  const rq=required(x),pk=picked(x),p=rq?Math.min(100,Math.round(pk/rq*100)):0,ss=skuScan(x),bs=binScan(x);
+  return `<tr><td><b>${esc(field(x,"task_number","task_no")||"#"+x.id)}</b></td><td>${esc(field(x,"batch_number","batch_no")||"—")}</td><td>${esc(field(x,"order_number","order_no")||"—")}</td><td>${esc(pickerName(x))}</td><td>${esc(x.sku||"—")}</td><td>${esc(x.product_name||"—")}</td><td>${esc(locationName(x))}</td><td>${esc(sourceBin(x))}</td><td>${rq}</td><td>${pk}</td><td><span class="progress"><i style="width:${p}%"></i></span> ${p}%</td><td><span class="tag ${ss?"good":"warn"}">${ss?"VERIFIED":"PENDING"}</span></td><td><span class="tag ${bs?"good":"warn"}">${bs?"VERIFIED":"PENDING"}</span></td><td><span class="tag ${statusClass(x.status)}">${esc(x.status||"—")}</span></td><td>${esc(x.priority||"NORMAL")}</td><td>${esc(x.created_at||"—")}</td><td>${esc(x.started_at||"—")}</td><td>${esc(x.completed_at||"—")}</td><td><button class="btn" onclick="details(${(page-1)*size+i})">View</button></td></tr>`;
+ }).join(""):`<tr><td colspan="19" class="empty">No picking records match the selected filters.</td></tr>`;
+}
+function renderPager(){
+ const size=Number(document.getElementById("pageSize").value||25),pages=Math.max(1,Math.ceil(filtered.length/size));document.getElementById("pageInfo").textContent=`Page ${page} of ${pages} · ${filtered.length.toLocaleString("en-IN")} records`;let b="";const s=Math.max(1,page-2),e=Math.min(pages,s+4);if(page>1)b+=`<button onclick="gotoPage(${page-1})">‹</button>`;for(let p=s;p<=e;p++)b+=`<button class="${p===page?"active":""}" onclick="gotoPage(${p})">${p}</button>`;if(page<pages)b+=`<button onclick="gotoPage(${page+1})">›</button>`;document.getElementById("pager").innerHTML=b;
+}
+function gotoPage(p){page=p;renderTable();renderPager();window.scrollTo({top:document.querySelector(".section:last-of-type").offsetTop-80,behavior:"smooth"})}
+function details(index){
+ const x=filtered[index];if(!x)return;const rq=required(x),pk=picked(x),rate=rq?Math.round(pk/rq*100):0;
+ document.getElementById("detail").innerHTML=`<div class="detail-grid">
+ ${D("Task",field(x,"task_number","task_no")||x.id)}${D("Batch",field(x,"batch_number","batch_no"))}${D("Order",field(x,"order_number","order_no"))}${D("Picker",pickerName(x))}
+ ${D("SKU",x.sku)}${D("Product",x.product_name)}${D("Location",locationName(x))}${D("Source Bin",sourceBin(x))}
+ ${D("Required Quantity",rq)}${D("Picked Quantity",pk)}${D("Completion",rate+"%")}${D("Priority",x.priority)}
+ ${D("Status",x.status)}${D("SKU Scan",skuScan(x)||"Pending")}${D("Source Bin Scan",binScan(x)||"Pending")}${D("Barcode",x.barcode)}
+ ${D("Created",x.created_at)}${D("Assigned",x.assigned_at)}${D("Started",x.started_at)}${D("Completed",x.completed_at)}
+ ${D("Created By",x.created_by)}${D("Completed By",x.completed_by)}${D("Remarks",x.remarks||"—")}${D("Exception",x.exception||"—")}
+ </div><div class="timeline">
+ <div class="timeline-item"><b>Task Created</b><span>${esc(x.created_at||"—")}</span></div>
+ <div class="timeline-item"><b>Picker Assigned</b><span>${esc(x.assigned_at||"Not assigned")}</span></div>
+ <div class="timeline-item"><b>Picking Started</b><span>${esc(x.started_at||"Not started")}</span></div>
+ <div class="timeline-item"><b>Picking Completed</b><span>${esc(x.completed_at||"Not completed")}</span></div>
+ </div>`;
+ document.getElementById("modal").classList.add("show");
+}
+function D(a,b){return`<div class="detail"><small>${esc(a)}</small><b>${esc(b??"—")}</b></div>`}
+function closeModal(){document.getElementById("modal").classList.remove("show")}
+function clearFilters(){["search","dateFrom","dateTo"].forEach(id=>document.getElementById(id).value="");["status","priority","location","picker","scan"].forEach(id=>document.getElementById(id).value="");document.getElementById("pageSize").value="25";page=1;applyFilters()}
+function exportCSV(){
+ const h=["Task","Batch","Order","Picker","SKU","Product","Location","Source Bin","Required","Picked","Progress","SKU Scan","Bin Scan","Status","Priority","Created","Assigned","Started","Completed"];
+ const rows=filtered.map(x=>{const rq=required(x),pk=picked(x);return[field(x,"task_number","task_no")||x.id,field(x,"batch_number","batch_no"),field(x,"order_number","order_no"),pickerName(x),x.sku,x.product_name,locationName(x),sourceBin(x),rq,pk,rq?Math.round(pk/rq*100)+"%":"0%",skuScan(x)?"VERIFIED":"PENDING",binScan(x)?"VERIFIED":"PENDING",x.status,x.priority,x.created_at,x.assigned_at,x.started_at,x.completed_at]});
+ const csv=[h,...rows].map(r=>r.map(v=>`"${String(v??"").replaceAll('"','""')}"`).join(",")).join("\n"),a=document.createElement("a");a.href=URL.createObjectURL(new Blob([csv],{type:"text/csv;charset=utf-8"}));a.download="zippzo_picking_report.csv";a.click();
+}
+function printReport(){window.print()}
+async function logout(){try{if(token)await api("/api/auth/logout",{method:"POST",body:JSON.stringify({session_token:token})})}catch{}localStorage.removeItem(TOKEN_KEY);localStorage.removeItem("zippzo_user");location.href="index.html"}
+document.getElementById("modal").addEventListener("click",e=>{if(e.target.id==="modal")closeModal()});
+(async()=>{nav();await loadAll()})();
+</script>
+</body>
+</html>

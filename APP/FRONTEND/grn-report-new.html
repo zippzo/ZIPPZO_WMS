@@ -1,0 +1,285 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1.0">
+<title>Zippzo GRN Report</title>
+<style>
+*{box-sizing:border-box}:root{--dark:#111827;--blue:#2563eb;--green:#16a34a;--orange:#ea580c;--red:#dc2626;--purple:#7c3aed;--muted:#64748b;--line:#e2e8f0;--bg:#f4f7fb}
+body{margin:0;background:var(--bg);color:#172033;font-family:Inter,Segoe UI,Arial,sans-serif}.top{height:68px;background:var(--dark);color:#fff;display:flex;align-items:center;gap:16px;padding:0 22px;position:sticky;top:0;z-index:20}.logo{font-size:25px;font-weight:900;letter-spacing:1px}.title{font-size:14px;color:#cbd5e1}.spacer{flex:1}.top button{background:#1f2937;border:1px solid #475569;color:#fff;border-radius:8px;padding:9px 13px;cursor:pointer}
+.layout{display:grid;grid-template-columns:235px 1fr;min-height:calc(100vh - 68px)}nav{background:#fff;border-right:1px solid var(--line);padding:14px 10px;position:sticky;top:68px;height:calc(100vh - 68px);overflow:auto}nav h4{font-size:10px;color:#94a3b8;text-transform:uppercase;margin:12px}nav a{display:block;text-decoration:none;color:#334155;padding:9px 12px;border-radius:8px;font-size:12px;margin:2px 0}nav a:hover,nav a.active{background:#eff6ff;color:#1d4ed8;font-weight:700}
+main{padding:22px;min-width:0}.head{display:flex;align-items:center;justify-content:space-between;gap:15px;margin-bottom:18px}.head h1{font-size:25px;margin:0}.sub{font-size:13px;color:var(--muted);margin-top:5px}.actions{display:flex;gap:8px;flex-wrap:wrap}.btn{border:1px solid var(--line);background:#fff;border-radius:8px;padding:9px 13px;cursor:pointer;font-size:12px}.btn.primary{background:var(--blue);border-color:var(--blue);color:#fff}.btn.green{background:var(--green);border-color:var(--green);color:#fff}
+.kpis{display:grid;grid-template-columns:repeat(8,minmax(110px,1fr));gap:10px}.card{background:#fff;border:1px solid var(--line);border-radius:12px;padding:14px;box-shadow:0 1px 2px #00000008}.label{font-size:10px;color:var(--muted);text-transform:uppercase}.value{font-size:23px;font-weight:850;margin-top:6px}.note{font-size:10px;color:var(--muted);margin-top:4px}
+.section{margin-top:18px}.section-head{display:flex;align-items:center;justify-content:space-between;gap:10px;margin-bottom:10px}.section-head h2{font-size:16px;margin:0}.filters{display:flex;gap:8px;flex-wrap:wrap}.filters input,.filters select{height:37px;border:1px solid var(--line);border-radius:8px;background:#fff;padding:0 10px;font-size:12px;color:#172033}.filters .search{min-width:270px}
+.summary{display:grid;grid-template-columns:repeat(6,1fr);gap:10px}.summary strong{display:block;font-size:21px;margin-top:5px}.summary span{font-size:10px;color:var(--muted)}
+.table-wrap{overflow:auto;background:#fff;border:1px solid var(--line);border-radius:10px}.table{width:100%;border-collapse:collapse;font-size:12px}.table th{background:#f8fafc;color:#64748b;font-size:10px;text-transform:uppercase;text-align:left;position:sticky;top:0;z-index:2}.table th,.table td{padding:10px;border-bottom:1px solid #edf2f7;white-space:nowrap}.table tr:hover td{background:#f8fafc}
+.tag{display:inline-block;border-radius:999px;padding:4px 8px;font-size:10px;font-weight:700;background:#eef2ff;color:#3730a3}.tag.good{background:#f0fdf4;color:#15803d}.tag.warn{background:#fff7ed;color:#c2410c}.tag.bad{background:#fef2f2;color:#b91c1c}.tag.info{background:#eff6ff;color:#1d4ed8}.muted{color:var(--muted)}.empty{text-align:center;padding:30px;color:#94a3b8}
+.grid2{display:grid;grid-template-columns:1.25fr .75fr;gap:14px}.list{background:#fff;border:1px solid var(--line);border-radius:10px;overflow:hidden}.list-row{display:flex;justify-content:space-between;gap:10px;padding:11px 13px;border-bottom:1px solid #edf2f7;font-size:12px}.list-row:last-child{border:0}.list-row b{display:block}.progress{height:7px;width:90px;background:#e2e8f0;border-radius:99px;overflow:hidden;display:inline-block;vertical-align:middle}.progress i{display:block;height:100%;background:var(--blue)}
+.pagination{display:flex;justify-content:space-between;align-items:center;padding:11px 2px;font-size:11px;color:var(--muted)}.pager{display:flex;gap:5px}.pager button{border:1px solid var(--line);background:#fff;border-radius:7px;padding:7px 10px;cursor:pointer}.pager button.active{background:var(--blue);border-color:var(--blue);color:#fff}
+.modal{display:none;position:fixed;inset:0;background:#0008;z-index:50;align-items:center;justify-content:center;padding:20px}.modal.show{display:flex}.modal-box{background:#fff;border-radius:14px;width:min(1050px,100%);max-height:90vh;overflow:auto;padding:20px}.modal-head{display:flex;justify-content:space-between;align-items:center}.modal-head h2{font-size:18px;margin:0}.close{border:0;background:#f1f5f9;border-radius:8px;padding:7px 10px;cursor:pointer}.detail-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:9px;margin-top:15px}.detail{border:1px solid var(--line);border-radius:8px;padding:10px}.detail small{display:block;color:var(--muted);font-size:10px}.detail b{display:block;margin-top:4px;font-size:12px;word-break:break-word}.toast{position:fixed;right:20px;bottom:20px;background:#111827;color:#fff;padding:12px 15px;border-radius:8px;display:none;z-index:100;font-size:13px}.loading{opacity:.65;pointer-events:none}
+@media(max-width:1300px){.kpis{grid-template-columns:repeat(4,1fr)}.summary{grid-template-columns:repeat(3,1fr)}}@media(max-width:950px){.layout{grid-template-columns:1fr}nav{display:none}.grid2{grid-template-columns:1fr}.detail-grid{grid-template-columns:repeat(2,1fr)}}@media(max-width:600px){main{padding:13px}.kpis,.summary{grid-template-columns:repeat(2,1fr)}.head{align-items:flex-start;flex-direction:column}.detail-grid{grid-template-columns:1fr}.filters .search{min-width:100%}}@media print{.top,nav,.actions,.filters,.pagination,.no-print{display:none!important}.layout{display:block}main{padding:0}.card{box-shadow:none}}
+</style>
+
+<style id="zippzo-master-theme">
+/* ZIPPZO MASTER FRONTEND THEME — visual layer only */
+:root{
+ --z-purple:#331084;--z-dark:#24085F;--z-yellow:#FEB103;
+ --z-bg:#F5F6FB;--z-card:#FFFFFF;--z-text:#171A4A;--z-muted:#69708F;
+ --z-line:#E6E8F0;--z-shadow:0 5px 18px rgba(36,8,95,.07);
+}
+html,body{background:var(--z-bg)!important;color:var(--z-text)!important}
+body{font-family:Inter,Segoe UI,Arial,sans-serif!important}
+.topbar,.header,.top-header,.top-nav,.app-header{
+ background:linear-gradient(90deg,var(--z-dark),var(--z-purple))!important;
+ color:#fff!important;border-color:transparent!important;
+}
+.sidebar,.side-nav,.left-sidebar,.navigation{
+ background:linear-gradient(180deg,#25105F,#180743)!important;
+ color:#fff!important;border-color:transparent!important;
+}
+.brand{color:#fff!important}
+.sidebar .nav-button,.sidebar button,.side-nav button,.left-sidebar button,
+.navigation button,.nav-button{
+ color:#fff!important;background:transparent!important;border-radius:8px!important;
+ border-color:transparent!important;
+}
+.sidebar .nav-button:hover,.sidebar button:hover,.side-nav button:hover,
+.left-sidebar button:hover,.navigation button:hover,.nav-button:hover{
+ background:rgba(255,255,255,.09)!important;
+}
+.sidebar .nav-button.active,.sidebar .nav-button[aria-current="page"],
+.nav-button.active,.nav-button.selected,.nav-button.current{
+ background:var(--z-yellow)!important;color:#15112F!important;font-weight:900!important;
+}
+.sidebar-title,.section-title,.nav-section{
+ color:#B9A9E8!important;letter-spacing:.7px!important;font-weight:900!important;
+}
+.content,.main-content,.page-content,.workspace{background:var(--z-bg)!important}
+.card,.panel,.table-card,.summary-card,.kpi-card,.stat-card,.form-card,
+.modal-content,.toolbar,.filter-bar,.table-container{
+ background:#fff!important;border-color:var(--z-line)!important;
+ box-shadow:var(--z-shadow)!important;border-radius:12px!important;
+}
+.btn-primary,.primary-btn,.button-primary,.add-btn,.save-btn{
+ background:var(--z-yellow)!important;color:#17113B!important;border-color:var(--z-yellow)!important;
+}
+.btn-secondary,.secondary-btn{background:#fff!important;color:var(--z-text)!important;border-color:var(--z-line)!important}
+input,select,textarea{
+ border-color:#DFE2EB!important;border-radius:8px!important;background:#fff!important;color:var(--z-text)!important;
+}
+input:focus,select:focus,textarea:focus{
+ border-color:var(--z-purple)!important;box-shadow:0 0 0 3px rgba(51,16,132,.08)!important;
+}
+table{background:#fff!important}
+thead th{background:#F7F8FC!important;color:#626987!important}
+tbody td{border-color:#EDF0F5!important}
+tbody tr:hover td{background:#FAFAFF!important}
+.badge,.status-badge{border-radius:999px!important}
+.page-title,h1,h2{color:var(--z-text)!important}
+.muted,.subtitle,.page-subtitle,.help-text{color:var(--z-muted)!important}
+</style>
+
+
+<link rel="stylesheet" href="zippzo-standard.css">
+<script src="zippzo-standard.js" defer></script>
+</head>
+<body>
+<header class="top">
+<div class="logo">ZIPPZO</div><div class="title">Goods Receipt Note Report</div><div class="spacer"></div>
+<span id="userName" class="title">Loading...</span><button onclick="loadAll()">↻ Refresh</button><button onclick="logout()">Logout</button>
+</header>
+<div class="layout"><nav id="nav"></nav><main>
+<div class="head">
+<div><h1>GRN Report</h1><div class="sub">Purchase Order → Goods Receipt → QC → Accepted / Damaged → Putaway Task</div></div>
+<div class="actions"><button class="btn" onclick="printReport()">Print</button><button class="btn" onclick="exportCSV()">Export CSV</button><button class="btn primary" onclick="loadAll()">Refresh Data</button></div>
+</div>
+
+<div class="kpis">
+<div class="card"><div class="label">TOTAL GRNs</div><div class="value" id="kTotal">—</div><div class="note">All receipt records</div></div>
+<div class="card"><div class="label">OPEN</div><div class="value" id="kOpen">—</div><div class="note">Not completed</div></div>
+<div class="card"><div class="label">COMPLETED</div><div class="value" id="kCompleted">—</div><div class="note">Receipt completed</div></div>
+<div class="card"><div class="label">QC PENDING</div><div class="value" id="kQCPending">—</div><div class="note">Awaiting QC</div></div>
+<div class="card"><div class="label">RECEIVED UNITS</div><div class="value" id="kReceived">—</div><div class="note">Accepted + received</div></div>
+<div class="card"><div class="label">ACCEPTED UNITS</div><div class="value" id="kAccepted">—</div><div class="note">Putaway eligible</div></div>
+<div class="card"><div class="label">DAMAGED UNITS</div><div class="value" id="kDamaged">—</div><div class="note">Damage recorded</div></div>
+<div class="card"><div class="label">PUTAWAY TASKS</div><div class="value" id="kPutaway">—</div><div class="note">Generated from GRN</div></div>
+</div>
+
+<section class="section"><div class="card">
+<div class="section-head"><h2>Advanced GRN Filters</h2><button class="btn" onclick="clearFilters()">Clear Filters</button></div>
+<div class="filters">
+<input class="search" id="search" placeholder="GRN / PO / supplier / product / SKU..." oninput="applyFilters()">
+<select id="status" onchange="applyFilters()"><option value="">All Status</option></select>
+<select id="qc" onchange="applyFilters()"><option value="">All QC</option></select>
+<select id="location" onchange="applyFilters()"><option value="">All Locations</option></select>
+<select id="supplier" onchange="applyFilters()"><option value="">All Suppliers</option></select>
+<select id="exception" onchange="applyFilters()"><option value="">All Receipt Conditions</option><option value="DAMAGED">Damaged</option><option value="SHORT">Short</option><option value="CLEAN">No Exception</option></select>
+<input type="date" id="dateFrom" onchange="applyFilters()"><input type="date" id="dateTo" onchange="applyFilters()">
+<select id="pageSize" onchange="applyFilters()"><option>25</option><option>50</option><option>100</option></select>
+</div></div></section>
+
+<section class="section summary">
+<div class="card"><div class="label">FILTERED ORDERED</div><strong id="sOrdered">0</strong><span>units</span></div>
+<div class="card"><div class="label">FILTERED RECEIVED</div><strong id="sReceived">0</strong><span>units</span></div>
+<div class="card"><div class="label">FILTERED ACCEPTED</div><strong id="sAccepted">0</strong><span>units</span></div>
+<div class="card"><div class="label">FILTERED DAMAGED</div><strong id="sDamaged">0</strong><span>units</span></div>
+<div class="card"><div class="label">RECEIPT ACCURACY</div><strong id="sAccuracy">0%</strong><span>received / ordered</span></div>
+<div class="card"><div class="label">ACCEPTANCE RATE</div><strong id="sAcceptance">0%</strong><span>accepted / received</span></div>
+</section>
+
+<section class="section grid2">
+<div class="card"><div class="section-head"><h2>Location Receipt Summary</h2><span class="muted" id="locationCount">0 locations</span></div>
+<div class="table-wrap"><table class="table"><thead><tr><th>Location</th><th>GRNs</th><th>Received</th><th>Accepted</th><th>Damaged</th><th>Accuracy</th></tr></thead><tbody id="locationBody"></tbody></table></div></div>
+<div class="card"><div class="section-head"><h2>Receipt Exceptions</h2><span class="tag warn" id="exceptionCount">0</span></div><div class="list" id="exceptionList"></div></div>
+</section>
+
+<section class="section"><div class="section-head"><h2>Detailed GRN Report</h2><span class="muted" id="resultCount">0 records</span></div>
+<div class="table-wrap"><table class="table"><thead><tr>
+<th>GRN</th><th>PO</th><th>Supplier</th><th>Location</th><th>Items</th><th>Ordered</th><th>Received</th><th>Accepted</th><th>Damaged</th><th>Accuracy</th><th>QC</th><th>Status</th><th>Created</th><th>Received At</th><th>Action</th>
+</tr></thead><tbody id="body"></tbody></table></div>
+<div class="pagination"><span id="pageInfo">Page 1</span><div class="pager" id="pager"></div></div></section>
+</main></div>
+
+<div class="modal" id="modal"><div class="modal-box"><div class="modal-head"><h2>GRN Details</h2><button class="close" onclick="closeModal()">✕</button></div><div id="detail"></div></div></div>
+<div class="toast" id="toast"></div>
+
+<script>
+const API=window.location.origin,TOKEN_KEY="zippzo_session_token";let token=localStorage.getItem(TOKEN_KEY),grns=[],filtered=[],page=1;
+const navLinks=[
+["index.html","Dashboard"],["products.html","Products"],["suppliers.html","Suppliers"],["locations.html","Locations"],["inventory.html","Inventory"],["stock-movements.html","Stock Movements"],["bins.html","Bins"],["purchase-orders.html","Purchase Orders"],["grn.html","GRN"],["grn-report.html","GRN Report"],["putaway.html","Putaway"],["create-batch.html","Create Batch"],["picking.html","Picking"],["sorting.html","Sorting"],["sorting-report.html","Sorting Report"],["grid-putaway.html","Grid Putaway"],["vehicle-arrival.html","Vehicle Arrival"],["dispatch.html","Dispatch"],["store-receiving.html","Store Receiving"],["store-receiving-report.html","Receiving Report"],["orders.html","Orders"],["stock-report.html","Stock Report"],["picking-report.html","Picking Report"],["picking-ipp.html","Picking IPP"],["sorting-ipp.html","Sorting IPP"],["access-control.html","Access Control"],["audit-logs.html","Audit Logs"],["system-settings.html","System Settings"]];
+function esc(v){return String(v??"").replace(/[&<>"']/g,m=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#039;"}[m]));}
+function num(v){return Number(v||0)}
+function arr(d){if(Array.isArray(d))return d;if(Array.isArray(d?.items))return d.items;if(Array.isArray(d?.data))return d.data;if(Array.isArray(d?.results))return d.results;return[]}
+function toast(s){const x=document.getElementById("toast");x.textContent=s;x.style.display="block";clearTimeout(window.tt);window.tt=setTimeout(()=>x.style.display="none",2800)}
+async function api(path,opt={}){const h={"Content-Type":"application/json",...(opt.headers||{})};if(token)h.Authorization="Bearer "+token;const r=await fetch(API+path,{...opt,headers:h});if(r.status===401){localStorage.removeItem(TOKEN_KEY);localStorage.removeItem("zippzo_user");location.href="index.html";throw Error("Session expired")}const t=await r.text();let d={};try{d=t?JSON.parse(t):{}}catch{}if(!r.ok)throw Error(d.detail||d.message||"Request failed");return d}
+async function tryApi(paths){let e;for(const p of paths){try{return await api(p)}catch(x){e=x}}throw e||Error("API unavailable")}
+function nav(){document.getElementById("nav").innerHTML="<h4>Operations</h4>"+navLinks.map(x=>`<a href="${x[0]}" class="${location.pathname.endsWith(x[0])?"active":""}">${x[1]}</a>`).join("")}
+function field(x,...keys){for(const k of keys)if(x[k]!==undefined&&x[k]!==null&&x[k]!=="")return x[k];return""}
+function statusClass(s){s=String(s||"").toUpperCase();if(["COMPLETED","CLOSED","RECEIVED","APPROVED"].includes(s))return"good";if(["CANCELLED","REJECTED","ERROR"].includes(s))return"bad";if(["PENDING","OPEN","QC_PENDING","IN_PROGRESS","DRAFT"].includes(s))return"warn";return"info"}
+function statusOf(x){return String(x.status||"").toUpperCase()}
+function ordered(x){return num(field(x,"ordered_quantity","ordered_qty","quantity_ordered","ordered"))}
+function received(x){return num(field(x,"received_quantity","received_qty","quantity_received","received"))}
+function accepted(x){return num(field(x,"accepted_quantity","accepted_qty","quantity_accepted","accepted"))}
+function damaged(x){return num(field(x,"damaged_quantity","damaged_qty","quantity_damaged","damaged"))}
+function supplierName(x){return String(field(x,"supplier_name","supplier","vendor_name","vendor")||"—")}
+function locationName(x){return String(field(x,"location_name","location_code","location","warehouse_name")||"—")}
+function qcStatus(x){return String(field(x,"qc_status","quality_status")||"—")}
+async function loadAll(){
+ document.body.classList.add("loading");
+ try{
+  grns=arr(await tryApi(["/api/grn"]));
+  try{const me=await api("/api/auth/me");document.getElementById("userName").textContent=me.employee?.name||me.name||me.user?.name||"Zippzo User"}catch{}
+  buildFilters();page=1;applyFilters();toast("GRN report refreshed");
+ }catch(e){toast(e.message||"Unable to load GRN report")}finally{document.body.classList.remove("loading")}
+}
+function fillSelect(id,values,label){const el=document.getElementById(id),old=el.value;el.innerHTML=`<option value="">${label}</option>`+values.map(v=>`<option value="${esc(v)}">${esc(v)}</option>`).join("");if(values.includes(old))el.value=old}
+function buildFilters(){
+ fillSelect("status",[...new Set(grns.map(x=>statusOf(x)).filter(Boolean))].sort(),"All Status");
+ fillSelect("qc",[...new Set(grns.map(x=>qcStatus(x)).filter(x=>x!=="—"))].sort(),"All QC");
+ fillSelect("location",[...new Set(grns.map(locationName).filter(x=>x!=="—"))].sort(),"All Locations");
+ fillSelect("supplier",[...new Set(grns.map(supplierName).filter(x=>x!=="—"))].sort(),"All Suppliers");
+}
+function applyFilters(){
+ const q=document.getElementById("search").value.toLowerCase().trim(),st=document.getElementById("status").value,qc=document.getElementById("qc").value,loc=document.getElementById("location").value,sup=document.getElementById("supplier").value,ex=document.getElementById("exception").value,from=document.getElementById("dateFrom").value,to=document.getElementById("dateTo").value;
+ filtered=grns.filter(x=>{
+  const blob=JSON.stringify(x).toLowerCase(),ord=ordered(x),rec=received(x),dam=damaged(x),dt=String(field(x,"received_at","receipt_date","grn_date","created_at")||"").slice(0,10);
+  return(!q||blob.includes(q))&&(!st||statusOf(x)===st)&&(!qc||qcStatus(x)===qc)&&(!loc||locationName(x)===loc)&&(!sup||supplierName(x)===sup)&&(!ex||(ex==="DAMAGED"&&dam>0)||(ex==="SHORT"&&rec<ord)||(ex==="CLEAN"&&dam===0&&rec>=ord))&&(!from||dt>=from)&&(!to||dt<=to);
+ });
+ page=1;render();
+}
+function render(){
+ const open=grns.filter(x=>!["COMPLETED","CLOSED","CANCELLED"].includes(statusOf(x))).length;
+ const completed=grns.filter(x=>["COMPLETED","CLOSED"].includes(statusOf(x))).length;
+ const qcp=grns.filter(x=>["PENDING","QC_PENDING"].includes(qcStatus(x))).length;
+ const tr=grns.reduce((n,x)=>n+received(x),0),ta=grns.reduce((n,x)=>n+accepted(x),0),td=grns.reduce((n,x)=>n+damaged(x),0);
+ const put=grns.reduce((n,x)=>n+num(field(x,"putaway_task_count","putaway_tasks_count")),0);
+ [["kTotal",grns.length],["kOpen",open],["kCompleted",completed],["kQCPending",qcp],["kReceived",tr],["kAccepted",ta],["kDamaged",td],["kPutaway",put]].forEach(([id,v])=>document.getElementById(id).textContent=v.toLocaleString("en-IN"));
+ const so=filtered.reduce((n,x)=>n+ordered(x),0),sr=filtered.reduce((n,x)=>n+received(x),0),sa=filtered.reduce((n,x)=>n+accepted(x),0),sd=filtered.reduce((n,x)=>n+damaged(x),0);
+ const acc=so?Math.min(100,Math.round(sr/so*100)):0,accept=sr?Math.min(100,Math.round(sa/sr*100)):0;
+ [["sOrdered",so],["sReceived",sr],["sAccepted",sa],["sDamaged",sd]].forEach(([id,v])=>document.getElementById(id).textContent=v.toLocaleString("en-IN"));
+ document.getElementById("sAccuracy").textContent=acc+"%";document.getElementById("sAcceptance").textContent=accept+"%";
+ document.getElementById("resultCount").textContent=filtered.length.toLocaleString("en-IN")+" records";
+ renderLocations();renderExceptions();renderTable();renderPager();
+}
+function renderLocations(){
+ const map=new Map();
+ filtered.forEach(x=>{const k=locationName(x);if(!map.has(k))map.set(k,{grn:0,r:0,a:0,d:0,o:0});const v=map.get(k);v.grn++;v.r+=received(x);v.a+=accepted(x);v.d+=damaged(x);v.o+=ordered(x)});
+ const rows=[...map.entries()].sort((a,b)=>b[1].r-a[1].r);document.getElementById("locationCount").textContent=rows.length+" locations";
+ document.getElementById("locationBody").innerHTML=rows.length?rows.map(([k,v])=>`<tr><td><b>${esc(k)}</b></td><td>${v.grn}</td><td>${v.r}</td><td>${v.a}</td><td>${v.d}</td><td><span class="tag ${v.o&&v.r>=v.o?"good":"warn"}">${v.o?Math.min(100,Math.round(v.r/v.o*100)):0}%</span></td></tr>`).join(""):`<tr><td colspan="6" class="empty">No location receipt data.</td></tr>`;
+}
+function renderExceptions(){
+ const ex=filtered.filter(x=>damaged(x)>0||received(x)<ordered(x)).sort((a,b)=>(damaged(b)+Math.max(0,ordered(b)-received(b)))-(damaged(a)+Math.max(0,ordered(a)-received(a)))).slice(0,12);
+ document.getElementById("exceptionCount").textContent=filtered.filter(x=>damaged(x)>0||received(x)<ordered(x)).length;
+ document.getElementById("exceptionList").innerHTML=ex.length?ex.map(x=>{
+  const sh=Math.max(0,ordered(x)-received(x)),dm=damaged(x);
+  return `<div class="list-row"><div><b>${esc(field(x,"grn_number","grn_no","number")||"GRN #"+x.id)}</b><span class="muted">${esc(supplierName(x))} · ${esc(locationName(x))}</span></div><div style="text-align:right">${sh?`<span class="tag warn">SHORT ${sh}</span>`:""} ${dm?`<span class="tag bad">DAMAGED ${dm}</span>`:""}</div></div>`;
+ }).join(""):`<div class="empty">No GRN exceptions.</div>`;
+}
+function renderTable(){
+ const size=Number(document.getElementById("pageSize").value||25),pages=Math.max(1,Math.ceil(filtered.length/size));if(page>pages)page=pages;
+ const rows=filtered.slice((page-1)*size,page*size);
+ document.getElementById("body").innerHTML=rows.length?rows.map((x,i)=>{
+  const o=ordered(x),r=received(x),a=accepted(x),d=damaged(x),acc=o?Math.min(100,Math.round(r/o*100)):0;
+  const items=Array.isArray(x.items)?x.items.length:num(field(x,"item_count","items_count"));
+  const put=num(field(x,"putaway_task_count","putaway_tasks_count"));
+  return `<tr><td><b>${esc(field(x,"grn_number","grn_no","number")||"#"+x.id)}</b></td><td>${esc(field(x,"purchase_order_number","po_number","purchase_order_no")||"—")}</td><td>${esc(supplierName(x))}</td><td>${esc(locationName(x))}</td><td>${items||"—"}</td><td>${o}</td><td>${r}</td><td>${a}</td><td>${d}</td><td><span class="tag ${acc===100?"good":acc>=95?"warn":"bad"}">${acc}%</span></td><td><span class="tag ${statusClass(qcStatus(x))}">${esc(qcStatus(x))}</span></td><td><span class="tag ${statusClass(x.status)}">${esc(x.status||"—")}</span></td><td>${esc(field(x,"created_at","grn_date","receipt_date")||"—")}</td><td>${esc(field(x,"received_at","completed_at")||"—")}</td><td><button class="btn" onclick="details(${(page-1)*size+i})">View</button></td></tr>`;
+ }).join(""):`<tr><td colspan="15" class="empty">No GRN records match the selected filters.</td></tr>`;
+}
+function renderPager(){
+ const size=Number(document.getElementById("pageSize").value||25),pages=Math.max(1,Math.ceil(filtered.length/size));
+ document.getElementById("pageInfo").textContent=`Page ${page} of ${pages} · ${filtered.length.toLocaleString("en-IN")} records`;
+ let b="";const st=Math.max(1,page-2),en=Math.min(pages,st+4);if(page>1)b+=`<button onclick="gotoPage(${page-1})">‹</button>`;
+ for(let p=st;p<=en;p++)b+=`<button class="${p===page?"active":""}" onclick="gotoPage(${p})">${p}</button>`;
+ if(page<pages)b+=`<button onclick="gotoPage(${page+1})">›</button>`;document.getElementById("pager").innerHTML=b;
+}
+function gotoPage(p){page=p;renderTable();renderPager();window.scrollTo({top:document.querySelector(".section:last-of-type").offsetTop-80,behavior:"smooth"})}
+function details(index){
+ const x=filtered[index];if(!x)return;const o=ordered(x),r=received(x),a=accepted(x),d=damaged(x),sh=Math.max(0,o-r);
+ document.getElementById("detail").innerHTML=`<div class="detail-grid">
+ ${D("GRN Number",field(x,"grn_number","grn_no","number")||x.id)}${D("Purchase Order",field(x,"purchase_order_number","po_number","purchase_order_no"))}${D("Supplier",supplierName(x))}
+ ${D("Location",locationName(x))}${D("Status",x.status)}${D("QC Status",qcStatus(x))}
+ ${D("Ordered Quantity",o)}${D("Received Quantity",r)}${D("Accepted Quantity",a)}
+ ${D("Damaged Quantity",d)}${D("Short Quantity",sh)}${D("Receipt Accuracy",o?Math.round(r/o*100)+"%":"0%")}
+ ${D("Putaway Tasks",field(x,"putaway_task_count","putaway_tasks_count")||0)}${D("Items",Array.isArray(x.items)?x.items.length:field(x,"item_count","items_count")||"—")}${D("Created By",field(x,"created_by_name","employee_name","created_by"))}
+ ${D("GRN Date",field(x,"grn_date","receipt_date"))}${D("Created At",x.created_at)}${D("Received At",field(x,"received_at","completed_at"))}
+ ${D("Notes",x.notes||"—")}${D("Remarks",x.remarks||"—")}${D("Reference",x.reference_number||"—")}
+ </div>`;
+ document.getElementById("modal").classList.add("show");
+}
+function D(a,b){return`<div class="detail"><small>${esc(a)}</small><b>${esc(b??"—")}</b></div>`}
+function closeModal(){document.getElementById("modal").classList.remove("show")}
+function clearFilters(){["search","dateFrom","dateTo"].forEach(id=>document.getElementById(id).value="");["status","qc","location","supplier","exception"].forEach(id=>document.getElementById(id).value="");document.getElementById("pageSize").value="25";page=1;applyFilters()}
+function exportCSV(){
+ const h=["GRN","PO","Supplier","Location","Ordered","Received","Accepted","Damaged","Short","QC","Status","Created","Received At"];
+ const rows=filtered.map(x=>[field(x,"grn_number","grn_no","number")||x.id,field(x,"purchase_order_number","po_number","purchase_order_no"),supplierName(x),locationName(x),ordered(x),received(x),accepted(x),damaged(x),Math.max(0,ordered(x)-received(x)),qcStatus(x),x.status,field(x,"created_at","grn_date","receipt_date"),field(x,"received_at","completed_at")]);
+ const csv=[h,...rows].map(r=>r.map(v=>`"${String(v??"").replaceAll('"','""')}"`).join(",")).join("\n"),a=document.createElement("a");a.href=URL.createObjectURL(new Blob([csv],{type:"text/csv;charset=utf-8"}));a.download="zippzo_grn_report.csv";a.click();
+}
+function printReport(){window.print()}
+async function logout(){try{if(token)await api("/api/auth/logout",{method:"POST",body:JSON.stringify({session_token:token})})}catch{}localStorage.removeItem(TOKEN_KEY);localStorage.removeItem("zippzo_user");location.href="index.html"}
+document.getElementById("modal").addEventListener("click",e=>{if(e.target.id==="modal")closeModal()});
+(async()=>{nav();await loadAll()})();
+</script>
+
+<script id="zippzo-master-frontend">
+document.addEventListener("DOMContentLoaded", function(){
+  // Hide the retired Dropping module everywhere.
+  document.querySelectorAll("a,button").forEach(function(el){
+    const t=(el.textContent||"").trim().toLowerCase();
+    if(t==="dropping" || t.includes("dropping")) el.style.display="none";
+  });
+
+  // Use the real Zippzo logo wherever a common brand element exists.
+  document.querySelectorAll(".brand,.logo,.brand-logo").forEach(function(el){
+    if(!el.querySelector("img")){
+      const img=document.createElement("img");
+      img.src="zippzo-logo.jpg";
+      img.alt="Zippzo";
+      img.style.cssText="width:148px;max-height:55px;object-fit:contain;object-position:left center;";
+      el.prepend(img);
+    }
+  });
+});
+</script>
+
+</body>
+</html>

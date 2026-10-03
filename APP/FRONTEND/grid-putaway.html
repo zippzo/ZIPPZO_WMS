@@ -1,0 +1,379 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Zippzo Grid Putaway</title>
+<style>
+*{box-sizing:border-box}body{margin:0;font-family:Arial,Helvetica,sans-serif;background:#f5f7fb;color:#172033}
+.topbar{height:64px;background:#111827;color:#fff;display:flex;align-items:center;justify-content:space-between;padding:0 22px;position:sticky;top:0;z-index:20}.brand{font-size:22px;font-weight:800;letter-spacing:1px}.top-user{font-size:13px}
+.layout{display:flex;min-height:calc(100vh - 64px)}.sidebar{width:245px;background:#172033;color:#dbe4f0;padding:18px 12px;position:sticky;top:64px;height:calc(100vh - 64px);overflow:auto}.sidebar-title{font-size:11px;text-transform:uppercase;color:#91a0b5;margin:18px 10px 7px}.nav-button{width:100%;display:block;border:0;background:transparent;color:#dbe4f0;text-align:left;padding:10px 12px;border-radius:8px;margin:2px 0;cursor:pointer}.nav-button:hover{background:#26334a}.nav-button.active{background:#fff;color:#111827;font-weight:700}
+.content{flex:1;padding:24px;min-width:0}.page-header{display:flex;justify-content:space-between;gap:18px;align-items:flex-start;margin-bottom:18px}.page-title{margin:0;font-size:28px}.page-subtitle{margin:6px 0 0;color:#667085}.cards{display:grid;grid-template-columns:repeat(6,minmax(130px,1fr));gap:12px;margin-bottom:18px}.card,.section,.stat-card{background:#fff;border:1px solid #e5e9f0;border-radius:12px;box-shadow:0 2px 8px rgba(16,24,40,.04)}.card{padding:15px}.card-label{font-size:12px;color:#667085}.card-value{font-size:24px;font-weight:800;margin-top:5px}.section{padding:18px;margin-bottom:18px}.section h2{font-size:17px;margin:0 0 14px}
+.filters{display:grid;grid-template-columns:2fr repeat(5,1fr);gap:10px}.filters input,.filters select,.form-group input,.form-group select,.form-group textarea{width:100%;padding:10px;border:1px solid #d0d5dd;border-radius:8px;background:#fff}.form-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:12px}.form-group label{display:block;font-size:12px;font-weight:700;margin-bottom:6px}.form-group.full{grid-column:1/-1}.btn{border:0;border-radius:8px;padding:10px 14px;cursor:pointer;font-weight:700;background:#111827;color:#fff}.btn.secondary{background:#eef2f6;color:#172033}.btn.success{background:#15803d}.btn.warn{background:#b45309}.btn.danger{background:#b42318}.btn.small{padding:7px 9px;font-size:12px}.actions{display:flex;gap:7px;flex-wrap:wrap}
+.table-container{overflow:auto;border:1px solid #e5e9f0;border-radius:10px}table{width:100%;border-collapse:collapse;min-width:1050px;background:#fff}th,td{padding:11px 10px;border-bottom:1px solid #edf0f4;text-align:left;font-size:13px;white-space:nowrap}th{background:#f8fafc;color:#475467;font-size:11px;text-transform:uppercase;position:sticky;top:0;z-index:2}.badge{display:inline-flex;padding:4px 8px;border-radius:999px;font-size:11px;font-weight:800}.badge.pending{background:#fff7ed;color:#9a3412}.badge.sorting{background:#eff6ff;color:#1d4ed8}.badge.ready{background:#ecfdf3;color:#047857}.badge.hold{background:#fef2f2;color:#b42318}.badge.released{background:#f3e8ff;color:#7e22ce}
+.grid-board{display:grid;grid-template-columns:repeat(6,1fr);gap:10px}.slot{border:1px solid #dfe5ed;border-radius:10px;padding:12px;background:#fff;min-height:105px}.slot.occupied{border-color:#f59e0b;background:#fffbeb}.slot.ready{border-color:#10b981;background:#ecfdf5}.slot-code{font-weight:800}.slot-meta{font-size:11px;color:#667085;margin-top:5px}.empty{padding:30px;text-align:center;color:#667085}.alert{padding:11px 13px;border-radius:8px;margin-bottom:12px;display:none}.alert.show{display:block}.alert.error{background:#fef3f2;color:#b42318}.alert.ok{background:#ecfdf3;color:#027a48}
+.modal{position:fixed;inset:0;background:rgba(15,23,42,.55);display:none;align-items:center;justify-content:center;padding:20px;z-index:50}.modal.show{display:flex}.modal-box{width:min(850px,100%);max-height:90vh;overflow:auto;background:#fff;border-radius:14px;padding:20px}.modal-head{display:flex;justify-content:space-between;align-items:center;margin-bottom:15px}.close{border:0;background:#eef2f6;border-radius:8px;padding:8px 12px;cursor:pointer}.detail-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:10px}.detail{background:#f8fafc;padding:10px;border-radius:8px}.detail small{display:block;color:#667085}.detail b{display:block;margin-top:3px}
+@media(max-width:1100px){.cards{grid-template-columns:repeat(3,1fr)}.filters{grid-template-columns:repeat(3,1fr)}.form-grid{grid-template-columns:repeat(2,1fr)}.grid-board{grid-template-columns:repeat(3,1fr)}}@media(max-width:760px){.sidebar{display:none}.content{padding:14px}.cards{grid-template-columns:repeat(2,1fr)}.filters,.form-grid{grid-template-columns:1fr}.grid-board{grid-template-columns:repeat(2,1fr)}}
+</style>
+
+<link rel="stylesheet" href="zippzo-standard.css">
+<script src="zippzo-standard.js" defer></script>
+</head>
+<body>
+<header class="topbar">
+  <div class="brand">ZIPPZO</div>
+  <div class="top-user" id="topUser">Grid Putaway</div>
+</header>
+
+<div class="layout">
+<aside class="sidebar">
+  <div class="sidebar-title">Main</div>
+  <button class="nav-button" onclick="go('index.html')">Dashboard</button>
+  <div class="sidebar-title">Master Data</div>
+  <button class="nav-button" onclick="go('products.html')">Products</button>
+  <button class="nav-button" onclick="go('suppliers.html')">Suppliers</button>
+  <button class="nav-button" onclick="go('locations.html')">Locations</button>
+  <button class="nav-button" onclick="go('employees.html')">Employees</button>
+  <div class="sidebar-title">Warehouse</div>
+  <button class="nav-button" onclick="go('inventory.html')">Inventory</button>
+  <button class="nav-button" onclick="go('bins.html')">Bins</button>
+  <button class="nav-button" onclick="go('stock-movements.html')">Stock Movements</button>
+  <div class="sidebar-title">Inbound</div>
+  <button class="nav-button" onclick="go('purchase-orders.html')">Purchase Orders</button>
+  <button class="nav-button" onclick="go('grn.html')">GRN</button>
+  <button class="nav-button" onclick="go('putaway.html')">Putaway</button>
+  <button class="nav-button active">Grid Putaway</button>
+  <div class="sidebar-title">Orders</div>
+  <button class="nav-button" onclick="go('orders.html')">Orders</button>
+  <button class="nav-button" onclick="go('create-batch.html')">Create Batch</button>
+  <button class="nav-button" onclick="go('picking.html')">Picking</button>
+  <button class="nav-button" onclick="go('sorting.html')">Sorting</button>
+  <button class="nav-button" onclick="go('dropping.html')">Dropping</button>
+  <div class="sidebar-title">Dispatch</div>
+  <button class="nav-button" onclick="go('vehicle-arrival.html')">Vehicle Arrival</button>
+  <button class="nav-button" onclick="go('dispatch.html')">Dispatch</button>
+  <button class="nav-button" onclick="go('store-receiving.html')">Store Receiving</button>
+  <div class="sidebar-title">Session</div>
+  <button class="nav-button" onclick="logout()">Logout</button>
+</aside>
+
+<main class="content">
+  <div class="page-header">
+    <div>
+      <h1 class="page-title">Grid Putaway</h1>
+      <p class="page-subtitle">Outbound store-dispatch staging: Store Order → Batch → Picking → Sorting → Dropping → Grid Putaway → Dispatch → Vehicle → Store</p>
+    </div>
+    <div class="actions">
+      <button class="btn secondary" onclick="loadAll()">Refresh</button>
+      <button class="btn" onclick="openCreate()">Create Grid Task</button>
+    </div>
+  </div>
+
+  <div id="alert" class="alert"></div>
+
+  <div class="cards">
+    <div class="card"><div class="card-label">Total Tasks</div><div class="card-value" id="kTotal">0</div></div>
+    <div class="card"><div class="card-label">Pending</div><div class="card-value" id="kPending">0</div></div>
+    <div class="card"><div class="card-label">In Grid</div><div class="card-value" id="kGrid">0</div></div>
+    <div class="card"><div class="card-label">Ready</div><div class="card-value" id="kReady">0</div></div>
+    <div class="card"><div class="card-label">On Hold</div><div class="card-value" id="kHold">0</div></div>
+    <div class="card"><div class="card-label">Units</div><div class="card-value" id="kUnits">0</div></div>
+  </div>
+
+  <section class="section">
+    <h2>Grid Slot Board</h2>
+    <div id="gridBoard" class="grid-board"><div class="empty">Loading grid slots...</div></div>
+  </section>
+
+  <section class="section">
+    <h2>Grid Putaway Control Tower</h2>
+    <div class="filters">
+      <input id="search" placeholder="Search order, batch, store, SKU, product, slot..." oninput="render()">
+      <select id="statusFilter" onchange="render()"><option value="">All Status</option><option>PENDING</option><option>IN_GRID</option><option>READY</option><option>HOLD</option><option>RELEASED</option></select>
+      <select id="storeFilter" onchange="render()"><option value="">All Stores</option></select>
+      <select id="slotFilter" onchange="render()"><option value="">All Grid Slots</option></select>
+      <select id="priorityFilter" onchange="render()"><option value="">All Priority</option><option>NORMAL</option><option>HIGH</option><option>URGENT</option></select>
+      <select id="agingFilter" onchange="render()"><option value="">All Age</option><option value="15">15+ min</option><option value="30">30+ min</option><option value="60">60+ min</option></select>
+    </div>
+  </section>
+
+  <section class="section">
+    <div class="table-container">
+      <table>
+        <thead>
+          <tr>
+            <th>Task</th><th>Order</th><th>Batch</th><th>Store</th><th>SKU / Product</th>
+            <th>Qty</th><th>Grid Slot</th><th>Priority</th><th>Age</th><th>Status</th><th>Vehicle</th><th>Actions</th>
+          </tr>
+        </thead>
+        <tbody id="tbody"><tr><td colspan="12" class="empty">Loading...</td></tr></tbody>
+      </table>
+    </div>
+  </section>
+</main>
+</div>
+
+<div class="modal" id="taskModal">
+  <div class="modal-box">
+    <div class="modal-head"><h2 id="modalTitle">Grid Task</h2><button class="close" onclick="closeModal()">Close</button></div>
+    <div id="modalBody"></div>
+  </div>
+</div>
+
+<script>
+const API = window.location.origin;
+const TOKEN_KEY = "zippzo_session_token";
+const USER_KEY = "zippzo_user";
+let tasks = [];
+let slots = [];
+let vehicles = [];
+
+function token(){return localStorage.getItem(TOKEN_KEY)||""}
+function headers(json=false){
+  const h={};
+  if(json) h["Content-Type"]="application/json";
+  if(token()) h["Authorization"]="Bearer "+token();
+  return h;
+}
+async function api(path, options={}){
+  const res=await fetch(API+path,{...options,headers:{...headers(!!options.body),...(options.headers||{})}});
+  if(res.status===401){show("Session expired. Please login again.","error");throw new Error("Authorization required")}
+  const text=await res.text();
+  let data={};
+  try{data=text?JSON.parse(text):{}}catch{data={detail:text}}
+  if(!res.ok) throw new Error(data.detail||data.message||("HTTP "+res.status));
+  return data;
+}
+function go(page){location.href=page}
+function show(msg,type="ok"){const a=document.getElementById("alert");a.textContent=msg;a.className="alert show "+(type==="error"?"error":"ok");setTimeout(()=>a.className="alert",3500)}
+function esc(v){return String(v??"").replace(/[&<>"']/g,m=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[m]))}
+function arr(data){return Array.isArray(data)?data:(data?.items||data?.data||data?.tasks||data?.results||[])}
+function pick(o,...keys){for(const k of keys){if(o?.[k]!==undefined&&o?.[k]!==null)return o[k]}return ""}
+function minutesOld(t){
+  if(!t)return 0;
+  const d=new Date(t);
+  if(Number.isNaN(d.getTime()))return 0;
+  return Math.max(0,Math.floor((Date.now()-d.getTime())/60000));
+}
+function statusClass(s){
+  s=String(s||"").toUpperCase();
+  if(s==="READY")return"ready";
+  if(s==="HOLD")return"hold";
+  if(s==="RELEASED")return"released";
+  if(s==="IN_GRID")return"sorting";
+  return"pending";
+}
+
+async function loadTasks(){
+  let data;
+  try{data=await api("/api/grid-putaway")}catch{
+    try{data=await api("/api/grid-putaway/tasks")}catch(e){tasks=[];throw e}
+  }
+  tasks=arr(data);
+}
+async function loadSlots(){
+  try{slots=arr(await api("/api/grid-slots"))}
+  catch{try{slots=arr(await api("/api/grid-putaway/slots"))}catch{slots=[]}}
+}
+async function loadVehicles(){
+  try{vehicles=arr(await api("/api/vehicles"))}
+  catch{try{vehicles=arr(await api("/api/riders"))}catch{vehicles=[]}}
+}
+function normalizeSlot(s){
+  return {
+    id:pick(s,"id","slot_id"),
+    code:pick(s,"code","slot_code","grid_code","name")||("GRID-"+pick(s,"id","slot_id")),
+    status:String(pick(s,"status")||"AVAILABLE").toUpperCase(),
+    taskId:pick(s,"task_id","grid_task_id","occupied_task_id"),
+    store:pick(s,"store_name","location_name","destination"),
+    order:pick(s,"order_number","order_no")
+  }
+}
+function normalizeTask(t){
+  return {
+    id:pick(t,"id","task_id"),
+    task:pick(t,"task_number","grid_task_number","reference","number")||("GPT-"+pick(t,"id","task_id")),
+    order:pick(t,"order_number","order_no","order_id"),
+    batch:pick(t,"batch_number","batch_no","batch_id"),
+    store:pick(t,"store_name","destination_store","location_name","store","destination"),
+    sku:pick(t,"sku","product_sku"),
+    product:pick(t,"product_name","name","product"),
+    qty:Number(pick(t,"quantity","qty","required_quantity","units")||0),
+    slot:pick(t,"grid_slot_code","slot_code","grid_slot","slot"),
+    slotId:pick(t,"grid_slot_id","slot_id"),
+    priority:String(pick(t,"priority")||"NORMAL").toUpperCase(),
+    status:String(pick(t,"status")||"PENDING").toUpperCase(),
+    vehicle:pick(t,"vehicle_number","vehicle_no","vehicle"),
+    created:pick(t,"created_at","created_on","timestamp"),
+    updated:pick(t,"updated_at","updated_on"),
+    remarks:pick(t,"remarks","remark","notes"),
+    source:t
+  }
+}
+function filtered(){
+  const q=document.getElementById("search").value.trim().toLowerCase();
+  const st=document.getElementById("statusFilter").value;
+  const store=document.getElementById("storeFilter").value;
+  const slot=document.getElementById("slotFilter").value;
+  const pri=document.getElementById("priorityFilter").value;
+  const age=document.getElementById("agingFilter").value;
+  return tasks.map(normalizeTask).filter(t=>{
+    const hay=[t.task,t.order,t.batch,t.store,t.sku,t.product,t.slot,t.vehicle].join(" ").toLowerCase();
+    if(q&&!hay.includes(q))return false;
+    if(st&&t.status!==st)return false;
+    if(store&&t.store!==store)return false;
+    if(slot&&t.slot!==slot)return false;
+    if(pri&&t.priority!==pri)return false;
+    if(age&&minutesOld(t.created)<Number(age))return false;
+    return true;
+  });
+}
+function fillFilters(){
+  const stores=[...new Set(tasks.map(t=>normalizeTask(t).store).filter(Boolean))].sort();
+  const slotsList=[...new Set([...slots.map(normalizeSlot),...tasks.map(t=>normalizeTask(t).slot)].map(x=>typeof x==="string"?x:x.code).filter(Boolean))].sort();
+  const sf=document.getElementById("storeFilter"), oldS=sf.value;
+  sf.innerHTML='<option value="">All Stores</option>'+stores.map(x=>`<option>${esc(x)}</option>`).join("");
+  sf.value=oldS;
+  const xf=document.getElementById("slotFilter"), oldX=xf.value;
+  xf.innerHTML='<option value="">All Grid Slots</option>'+slotsList.map(x=>`<option>${esc(x)}</option>`).join("");
+  xf.value=oldX;
+}
+function updateKpis(){
+  const ns=tasks.map(normalizeTask);
+  document.getElementById("kTotal").textContent=ns.length;
+  document.getElementById("kPending").textContent=ns.filter(x=>x.status==="PENDING").length;
+  document.getElementById("kGrid").textContent=ns.filter(x=>x.status==="IN_GRID").length;
+  document.getElementById("kReady").textContent=ns.filter(x=>x.status==="READY").length;
+  document.getElementById("kHold").textContent=ns.filter(x=>x.status==="HOLD").length;
+  document.getElementById("kUnits").textContent=ns.reduce((a,x)=>a+x.qty,0);
+}
+function renderBoard(){
+  const board=document.getElementById("gridBoard");
+  const list=slots.map(normalizeSlot);
+  if(!list.length){board.innerHTML='<div class="empty">No grid-slot API data available.</div>';return}
+  board.innerHTML=list.map(s=>{
+    const task=tasks.map(normalizeTask).find(t=>String(t.slotId)===String(s.id)||t.slot===s.code||String(s.taskId)===String(t.id));
+    const occupied=!!task||s.status==="OCCUPIED";
+    const ready=task?.status==="READY";
+    return `<div class="slot ${ready?"ready":occupied?"occupied":""}">
+      <div class="slot-code">${esc(s.code)}</div>
+      <div class="slot-meta">${occupied?esc(task?.store||s.store||"Occupied"):"AVAILABLE"}</div>
+      <div class="slot-meta">${occupied?esc(task?.order||s.order||"Assigned"):"Ready for assignment"}</div>
+    </div>`;
+  }).join("");
+}
+function render(){
+  updateKpis();fillFilters();renderBoard();
+  const body=document.getElementById("tbody"), list=filtered();
+  if(!list.length){body.innerHTML='<tr><td colspan="12" class="empty">No grid putaway tasks found.</td></tr>';return}
+  body.innerHTML=list.map(t=>`<tr>
+    <td><b>${esc(t.task)}</b></td><td>${esc(t.order)}</td><td>${esc(t.batch)}</td><td>${esc(t.store)}</td>
+    <td><b>${esc(t.sku)}</b><br>${esc(t.product)}</td><td>${t.qty}</td><td>${esc(t.slot||"—")}</td>
+    <td><span class="badge ${t.priority==="URGENT"?"hold":t.priority==="HIGH"?"sorting":"pending"}">${esc(t.priority)}</span></td>
+    <td>${minutesOld(t.created)} min</td><td><span class="badge ${statusClass(t.status)}">${esc(t.status)}</span></td>
+    <td>${esc(t.vehicle||"—")}</td>
+    <td><div class="actions">
+      <button class="btn small secondary" onclick="details(${JSON.stringify(t.id)})">View</button>
+      ${!t.slot?`<button class="btn small" onclick="assign(${JSON.stringify(t.id)})">Assign</button>`:""}
+      ${t.slot&&t.status!=="READY"&&t.status!=="RELEASED"?`<button class="btn small success" onclick="scan(${JSON.stringify(t.id)})">Scan</button>`:""}
+      ${t.status!=="READY"&&t.status!=="RELEASED"?`<button class="btn small warn" onclick="ready(${JSON.stringify(t.id)})">Ready</button>`:""}
+      ${t.status!=="HOLD"&&t.status!=="RELEASED"?`<button class="btn small danger" onclick="hold(${JSON.stringify(t.id)})">Hold</button>`:""}
+      ${t.status==="READY"?`<button class="btn small" onclick="release(${JSON.stringify(t.id)})">Release</button>`:""}
+    </div></td>
+  </tr>`).join("");
+}
+async function action(id,kind,payload={}){
+  const paths={
+    assign:[`/api/grid-putaway/${id}/assign`],
+    scan:[`/api/grid-putaway/${id}/scan`],
+    ready:[`/api/grid-putaway/${id}/ready`],
+    hold:[`/api/grid-putaway/${id}/hold`],
+    release:[`/api/grid-putaway/${id}/release`]
+  }[kind]||[];
+  let last;
+  for(const p of paths){try{return await api(p,{method:"PUT",body:JSON.stringify(payload)})}catch(e){last=e}}
+  throw last||new Error("Action failed");
+}
+async function assign(id){
+  const slot=prompt("Enter Grid Slot Code:");
+  if(!slot)return;
+  const slotObj=slots.map(normalizeSlot).find(s=>s.code.toLowerCase()===slot.trim().toLowerCase());
+  const payload={slot_code:slot.trim(),grid_slot_code:slot.trim()};
+  if(slotObj?.id)payload.slot_id=Number(slotObj.id);
+  try{await action(id,"assign",payload);show("Grid slot assigned.");await loadAll()}catch(e){show(e.message,"error")}
+}
+async function scan(id){
+  const sku=prompt("Scan / enter SKU:");
+  if(!sku)return;
+  const qty=prompt("Confirm quantity:");
+  if(qty===null)return;
+  const t=tasks.map(normalizeTask).find(x=>String(x.id)===String(id));
+  try{await action(id,"scan",{sku,scanned_sku:sku,quantity:Number(qty),confirmed_quantity:Number(qty),grid_slot_code:t?.slot||""});show("Grid scan confirmed.");await loadAll()}catch(e){show(e.message,"error")}
+}
+async function ready(id){
+  if(!confirm("Mark this grid task READY FOR DISPATCH?"))return;
+  try{await action(id,"ready",{});show("Task marked ready for dispatch.");await loadAll()}catch(e){show(e.message,"error")}
+}
+async function hold(id){
+  const remarks=prompt("Hold reason:");
+  if(remarks===null)return;
+  try{await action(id,"hold",{remarks});show("Task placed on hold.");await loadAll()}catch(e){show(e.message,"error")}
+}
+async function release(id){
+  if(!confirm("Release this task to dispatch?"))return;
+  try{await action(id,"release",{});show("Task released to dispatch.");await loadAll()}catch(e){show(e.message,"error")}
+}
+function details(id){
+  const t=tasks.map(normalizeTask).find(x=>String(x.id)===String(id));
+  if(!t)return;
+  document.getElementById("modalTitle").textContent=t.task;
+  document.getElementById("modalBody").innerHTML=`<div class="detail-grid">
+    ${detail("Task",t.task)}${detail("Order",t.order)}${detail("Batch",t.batch)}
+    ${detail("Store",t.store)}${detail("SKU",t.sku)}${detail("Product",t.product)}
+    ${detail("Quantity",t.qty)}${detail("Grid Slot",t.slot||"Not assigned")}${detail("Priority",t.priority)}
+    ${detail("Status",t.status)}${detail("Vehicle",t.vehicle||"Not assigned")}${detail("Age",minutesOld(t.created)+" min")}
+    ${detail("Created",t.created||"—")}${detail("Updated",t.updated||"—")}${detail("Remarks",t.remarks||"—")}
+  </div><hr><h3>Dispatch Handoff</h3>
+  <p>This task is considered ready for the next outbound step only after grid slot assignment, SKU/quantity verification and READY status.</p>`;
+  document.getElementById("taskModal").classList.add("show");
+}
+function detail(a,b){return`<div class="detail"><small>${esc(a)}</small><b>${esc(b)}</b></div>`}
+function closeModal(){document.getElementById("taskModal").classList.remove("show")}
+function openCreate(){
+  document.getElementById("modalTitle").textContent="Create Grid Putaway Task";
+  document.getElementById("modalBody").innerHTML=`<div class="form-grid">
+    <div class="form-group"><label>Order Number</label><input id="cOrder"></div>
+    <div class="form-group"><label>Batch Number</label><input id="cBatch"></div>
+    <div class="form-group"><label>Store / Destination</label><input id="cStore"></div>
+    <div class="form-group"><label>SKU</label><input id="cSku"></div>
+    <div class="form-group"><label>Product</label><input id="cProduct"></div>
+    <div class="form-group"><label>Quantity</label><input id="cQty" type="number" min="1"></div>
+    <div class="form-group"><label>Priority</label><select id="cPriority"><option>NORMAL</option><option>HIGH</option><option>URGENT</option></select></div>
+    <div class="form-group"><label>Grid Slot</label><input id="cSlot"></div>
+    <div class="form-group full"><label>Remarks</label><textarea id="cRemarks"></textarea></div>
+  </div><div class="actions" style="margin-top:15px"><button class="btn" onclick="createTask()">Create</button><button class="btn secondary" onclick="closeModal()">Cancel</button></div>`;
+  document.getElementById("taskModal").classList.add("show");
+}
+async function createTask(){
+  const p={order_number:cOrder.value,batch_number:cBatch.value,store_name:cStore.value,sku:cSku.value,product_name:cProduct.value,quantity:Number(cQty.value),priority:cPriority.value,grid_slot_code:cSlot.value,remarks:cRemarks.value};
+  if(!p.order_number||!p.sku||!p.quantity){show("Order, SKU and quantity are required.","error");return}
+  try{await api("/api/grid-putaway",{method:"POST",body:JSON.stringify(p)});show("Grid putaway task created.");closeModal();await loadAll()}catch(e){show(e.message,"error")}
+}
+async function loadAll(){
+  try{
+    await Promise.all([loadTasks(),loadSlots(),loadVehicles()]);
+    render();
+  }catch(e){show(e.message||"Unable to load grid putaway data.","error");render()}
+}
+async function logout(){
+  try{if(token())await api("/api/auth/logout",{method:"POST",body:JSON.stringify({session_token:token()})})}catch{}
+  localStorage.removeItem(TOKEN_KEY);localStorage.removeItem(USER_KEY);location.href="index.html";
+}
+function initUser(){
+  try{const u=JSON.parse(localStorage.getItem(USER_KEY)||"null");document.getElementById("topUser").textContent=u?(u.full_name||u.name||u.employee_id||"Grid Putaway"):"Grid Putaway"}catch{}
+}
+initUser();loadAll();
+setInterval(loadAll,10000);
+</script>
+</body>
+</html>

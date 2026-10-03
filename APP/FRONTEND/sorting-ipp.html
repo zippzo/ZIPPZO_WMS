@@ -1,0 +1,2193 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Zippzo Sorting IPP</title>
+
+<style>
+*{box-sizing:border-box}
+body{margin:0;font-family:Arial,Helvetica,sans-serif;background:#f5f7fb;color:#172033}
+
+.topbar{
+    height:64px;
+    background:#111827;
+    color:#fff;
+    display:flex;
+    align-items:center;
+    justify-content:space-between;
+    padding:0 22px;
+    position:sticky;
+    top:0;
+    z-index:20;
+}
+
+.brand{font-size:22px;font-weight:800;letter-spacing:1px}
+.top-user{font-size:13px}
+
+.layout{display:flex;min-height:calc(100vh - 64px)}
+
+.sidebar{
+    width:245px;
+    background:#172033;
+    color:#dbe4f0;
+    padding:18px 12px;
+    position:sticky;
+    top:64px;
+    height:calc(100vh - 64px);
+    overflow:auto;
+}
+
+.sidebar-title{
+    font-size:11px;
+    text-transform:uppercase;
+    color:#91a0b5;
+    margin:18px 10px 7px;
+}
+
+.nav-button{
+    width:100%;
+    display:block;
+    border:0;
+    background:transparent;
+    color:#dbe4f0;
+    text-align:left;
+    padding:10px 12px;
+    border-radius:8px;
+    margin:2px 0;
+    cursor:pointer;
+}
+
+.nav-button:hover{background:#26334a}
+
+.nav-button.active{
+    background:#fff;
+    color:#111827;
+    font-weight:700;
+}
+
+.content{
+    flex:1;
+    padding:24px;
+    min-width:0;
+}
+
+.page-header{
+    display:flex;
+    justify-content:space-between;
+    gap:18px;
+    align-items:flex-start;
+    margin-bottom:18px;
+}
+
+.page-title{
+    margin:0;
+    font-size:28px;
+}
+
+.page-subtitle{
+    margin:6px 0 0;
+    color:#667085;
+}
+
+.actions{
+    display:flex;
+    gap:8px;
+    flex-wrap:wrap;
+}
+
+.btn{
+    border:0;
+    border-radius:8px;
+    padding:10px 14px;
+    cursor:pointer;
+    font-weight:700;
+    background:#111827;
+    color:#fff;
+}
+
+.btn.secondary{
+    background:#eef2f6;
+    color:#172033;
+}
+
+.btn.small{
+    padding:7px 9px;
+    font-size:12px;
+}
+
+.cards{
+    display:grid;
+    grid-template-columns:repeat(8,minmax(110px,1fr));
+    gap:12px;
+    margin-bottom:18px;
+}
+
+.card,.section{
+    background:#fff;
+    border:1px solid #e5e9f0;
+    border-radius:12px;
+    box-shadow:0 2px 8px rgba(16,24,40,.04);
+}
+
+.card{padding:14px}
+
+.card-label{
+    font-size:11px;
+    color:#667085;
+}
+
+.card-value{
+    font-size:22px;
+    font-weight:800;
+    margin-top:5px;
+}
+
+.section{
+    padding:18px;
+    margin-bottom:18px;
+}
+
+.section h2{
+    font-size:17px;
+    margin:0 0 14px;
+}
+
+.filters{
+    display:grid;
+    grid-template-columns:2fr repeat(6,1fr);
+    gap:10px;
+}
+
+.filters input,
+.filters select{
+    width:100%;
+    padding:10px;
+    border:1px solid #d0d5dd;
+    border-radius:8px;
+    background:#fff;
+}
+
+.summary-grid{
+    display:grid;
+    grid-template-columns:repeat(6,1fr);
+    gap:10px;
+}
+
+.summary-box{
+    padding:13px;
+    background:#f8fafc;
+    border-radius:9px;
+}
+
+.summary-box small{
+    display:block;
+    color:#667085;
+}
+
+.summary-box b{
+    display:block;
+    margin-top:5px;
+    font-size:18px;
+}
+
+.table-container{
+    overflow:auto;
+    border:1px solid #e5e9f0;
+    border-radius:10px;
+}
+
+table{
+    width:100%;
+    border-collapse:collapse;
+    min-width:2200px;
+    background:#fff;
+}
+
+th,td{
+    padding:10px;
+    border-bottom:1px solid #edf0f4;
+    text-align:left;
+    font-size:12px;
+    white-space:nowrap;
+}
+
+th{
+    background:#f8fafc;
+    color:#475467;
+    font-size:10px;
+    text-transform:uppercase;
+    position:sticky;
+    top:0;
+    z-index:2;
+}
+
+.badge{
+    display:inline-flex;
+    padding:4px 8px;
+    border-radius:999px;
+    font-size:10px;
+    font-weight:800;
+}
+
+.good{background:#ecfdf3;color:#047857}
+.pending{background:#fff7ed;color:#9a3412}
+.qc{background:#eff6ff;color:#1d4ed8}
+.damage{background:#fef2f2;color:#b42318}
+.hold{background:#f3f4f6;color:#475467}
+
+.alert{
+    padding:11px 13px;
+    border-radius:8px;
+    margin-bottom:12px;
+    display:none;
+}
+
+.alert.show{display:block}
+.alert.error{background:#fef3f2;color:#b42318}
+.alert.ok{background:#ecfdf3;color:#027a48}
+
+.empty{
+    padding:30px;
+    text-align:center;
+    color:#667085;
+}
+
+.modal{
+    position:fixed;
+    inset:0;
+    background:rgba(15,23,42,.55);
+    display:none;
+    align-items:center;
+    justify-content:center;
+    padding:20px;
+    z-index:50;
+}
+
+.modal.show{display:flex}
+
+.modal-box{
+    width:min(1200px,100%);
+    max-height:92vh;
+    overflow:auto;
+    background:#fff;
+    border-radius:14px;
+    padding:20px;
+}
+
+.modal-head{
+    display:flex;
+    justify-content:space-between;
+    align-items:center;
+    margin-bottom:15px;
+}
+
+.close{
+    border:0;
+    background:#eef2f6;
+    border-radius:8px;
+    padding:8px 12px;
+    cursor:pointer;
+}
+
+.detail-grid{
+    display:grid;
+    grid-template-columns:repeat(4,1fr);
+    gap:10px;
+}
+
+.detail{
+    background:#f8fafc;
+    padding:10px;
+    border-radius:8px;
+}
+
+.detail small{
+    display:block;
+    color:#667085;
+}
+
+.detail b{
+    display:block;
+    margin-top:4px;
+}
+
+@media(max-width:1350px){
+    .cards{grid-template-columns:repeat(4,1fr)}
+    .filters{grid-template-columns:repeat(3,1fr)}
+    .summary-grid{grid-template-columns:repeat(3,1fr)}
+    .detail-grid{grid-template-columns:repeat(2,1fr)}
+}
+
+@media(max-width:760px){
+    .sidebar{display:none}
+    .content{padding:14px}
+    .cards{grid-template-columns:repeat(2,1fr)}
+    .filters,.summary-grid,.detail-grid{grid-template-columns:1fr}
+}
+
+@media print{
+    .sidebar,.topbar,.actions,.filters{display:none!important}
+    .content{padding:0}
+    .section{box-shadow:none}
+}
+</style>
+
+<link rel="stylesheet" href="zippzo-standard.css">
+<script src="zippzo-standard.js" defer></script>
+</head>
+
+<body>
+
+<header class="topbar">
+<div class="brand">ZIPPZO</div>
+<div class="top-user" id="topUser">Sorting IPP</div>
+</header>
+
+<div class="layout">
+
+<aside class="sidebar">
+
+<div class="sidebar-title">Main</div>
+<button class="nav-button" onclick="go('index.html')">Dashboard</button>
+
+<div class="sidebar-title">Master Data</div>
+<button class="nav-button" onclick="go('products.html')">Products</button>
+<button class="nav-button" onclick="go('suppliers.html')">Suppliers</button>
+<button class="nav-button" onclick="go('locations.html')">Locations</button>
+<button class="nav-button" onclick="go('employees.html')">Employees</button>
+
+<div class="sidebar-title">Warehouse</div>
+<button class="nav-button" onclick="go('inventory.html')">Inventory</button>
+<button class="nav-button" onclick="go('bins.html')">Bins</button>
+<button class="nav-button" onclick="go('stock-movements.html')">Stock Movements</button>
+
+<div class="sidebar-title">Inbound</div>
+<button class="nav-button" onclick="go('purchase-orders.html')">Purchase Orders</button>
+<button class="nav-button" onclick="go('grn.html')">GRN</button>
+<button class="nav-button" onclick="go('putaway.html')">Putaway</button>
+<button class="nav-button" onclick="go('grid-putaway.html')">Grid Putaway</button>
+
+<div class="sidebar-title">Orders</div>
+<button class="nav-button" onclick="go('orders.html')">Orders</button>
+<button class="nav-button" onclick="go('create-batch.html')">Create Batch</button>
+<button class="nav-button" onclick="go('picking.html')">Picking</button>
+<button class="nav-button" onclick="go('sorting.html')">Sorting</button>
+<button class="nav-button" onclick="go('dropping.html')">Dropping</button>
+
+<div class="sidebar-title">Dispatch</div>
+<button class="nav-button" onclick="go('vehicle-arrival.html')">Vehicle Arrival</button>
+<button class="nav-button" onclick="go('dispatch.html')">Dispatch</button>
+<button class="nav-button" onclick="go('store-receiving.html')">Store Receiving</button>
+
+<div class="sidebar-title">Reports</div>
+<button class="nav-button" onclick="go('stock-report.html')">Stock Report</button>
+<button class="nav-button" onclick="go('grn-report.html')">GRN Report</button>
+<button class="nav-button" onclick="go('putaway-report.html')">Putaway Report</button>
+<button class="nav-button" onclick="go('order-report.html')">Order Report</button>
+<button class="nav-button" onclick="go('picking-report.html')">Picking Report</button>
+<button class="nav-button" onclick="go('sorting-report.html')">Sorting Report</button>
+<button class="nav-button" onclick="go('picking-ipp.html')">Picking IPP</button>
+<button class="nav-button active">Sorting IPP</button>
+<button class="nav-button" onclick="go('delivery-report.html')">Delivery Report</button>
+
+<div class="sidebar-title">Session</div>
+<button class="nav-button" onclick="logout()">Logout</button>
+
+</aside>
+
+<main class="content">
+
+<div class="page-header">
+
+<div>
+<h1 class="page-title">Sorting IPP</h1>
+
+<p class="page-subtitle">
+Sorter productivity dashboard using sorting task quantities,
+completion status, scan verification and recorded timestamps.
+</p>
+</div>
+
+<div class="actions">
+
+<button class="btn secondary" onclick="loadAll()">
+Refresh
+</button>
+
+<button class="btn secondary" onclick="exportCSV()">
+Export CSV
+</button>
+
+<button class="btn" onclick="window.print()">
+Print
+</button>
+
+</div>
+
+</div>
+
+<div id="alert" class="alert"></div>
+
+<div class="cards">
+
+<div class="card">
+<div class="card-label">Total Sorters</div>
+<div class="card-value" id="kSorters">0</div>
+</div>
+
+<div class="card">
+<div class="card-label">Total Tasks</div>
+<div class="card-value" id="kTasks">0</div>
+</div>
+
+<div class="card">
+<div class="card-label">Required Units</div>
+<div class="card-value" id="kRequired">0</div>
+</div>
+
+<div class="card">
+<div class="card-label">Sorted Units</div>
+<div class="card-value" id="kSorted">0</div>
+</div>
+
+<div class="card">
+<div class="card-label">Completed Tasks</div>
+<div class="card-value" id="kCompleted">0</div>
+</div>
+
+<div class="card">
+<div class="card-label">Sort Rate</div>
+<div class="card-value" id="kSortRate">0%</div>
+</div>
+
+<div class="card">
+<div class="card-label">Units / Task</div>
+<div class="card-value" id="kUnitsTask">0</div>
+</div>
+
+<div class="card">
+<div class="card-label">Verified Scans</div>
+<div class="card-value" id="kScans">0</div>
+</div>
+
+</div>
+
+<section class="section">
+
+<h2>Sorting IPP Filters</h2>
+
+<div class="filters">
+
+<input
+id="search"
+placeholder="Search sorter, task, batch, order, SKU, product..."
+oninput="render()"
+>
+
+<select id="sorterFilter" onchange="render()">
+<option value="">All Sorters</option>
+</select>
+
+<select id="locationFilter" onchange="render()">
+<option value="">All Stores / Locations</option>
+</select>
+
+<select id="statusFilter" onchange="render()">
+<option value="">All Status</option>
+<option>PENDING</option>
+<option>ASSIGNED</option>
+<option>IN_SORTING</option>
+<option>SORTING</option>
+<option>SORTED</option>
+<option>READY</option>
+<option>HOLD</option>
+<option>CANCELLED</option>
+</select>
+
+<select id="priorityFilter" onchange="render()">
+<option value="">All Priority</option>
+<option>NORMAL</option>
+<option>HIGH</option>
+<option>URGENT</option>
+</select>
+
+<select id="dateFilter" onchange="render()">
+<option value="">All Dates</option>
+<option value="today">Today</option>
+<option value="7">Last 7 Days</option>
+<option value="30">Last 30 Days</option>
+</select>
+
+<select id="scanFilter" onchange="render()">
+<option value="">All Scan Status</option>
+<option value="verified">Verified</option>
+<option value="pending">Pending</option>
+</select>
+
+</div>
+
+</section>
+
+<section class="section">
+
+<h2>Sorting IPP Summary</h2>
+
+<div class="summary-grid">
+
+<div class="summary-box">
+<small>Units / Sorter</small>
+<b id="sUnitsSorter">0</b>
+</div>
+
+<div class="summary-box">
+<small>Tasks / Sorter</small>
+<b id="sTasksSorter">0</b>
+</div>
+
+<div class="summary-box">
+<small>Completed / Sorter</small>
+<b id="sCompletedSorter">0</b>
+</div>
+
+<div class="summary-box">
+<small>Units / Completed Task</small>
+<b id="sUnitsCompleted">0</b>
+</div>
+
+<div class="summary-box">
+<small>Scan Verification</small>
+<b id="sVerification">0%</b>
+</div>
+
+<div class="summary-box">
+<small>Completion Rate</small>
+<b id="sCompletion">0%</b>
+</div>
+
+</div>
+
+</section>
+
+<section class="section">
+
+<h2>Sorter Performance</h2>
+
+<div class="table-container">
+
+<table>
+
+<thead>
+
+<tr>
+
+<th>Sorter Employee</th>
+<th>Tasks</th>
+<th>Required Units</th>
+<th>Sorted Units</th>
+<th>Units / Task</th>
+<th>Tasks Completed</th>
+<th>Completion %</th>
+<th>Sort Rate %</th>
+<th>SKU Scans</th>
+<th>Order Scans</th>
+<th>Verified Tasks</th>
+<th>Last Activity</th>
+<th>Action</th>
+
+</tr>
+
+</thead>
+
+<tbody id="sorterBody">
+
+<tr>
+<td colspan="13" class="empty">
+Loading...
+</td>
+</tr>
+
+</tbody>
+
+</table>
+
+</div>
+
+</section>
+
+<section class="section">
+
+<h2>Sorting Task Detail</h2>
+
+<div class="table-container">
+
+<table>
+
+<thead>
+
+<tr>
+
+<th>Task</th>
+<th>Sorter</th>
+<th>Batch</th>
+<th>Order</th>
+<th>SKU</th>
+<th>Product</th>
+<th>Store</th>
+<th>Slot</th>
+<th>Tote / Grid</th>
+<th>Required</th>
+<th>Sorted</th>
+<th>Progress</th>
+<th>Status</th>
+<th>Priority</th>
+<th>Created</th>
+<th>Started</th>
+<th>Completed</th>
+<th>Action</th>
+
+</tr>
+
+</thead>
+
+<tbody id="taskBody">
+
+<tr>
+<td colspan="18" class="empty">
+Loading...
+</td>
+</tr>
+
+</tbody>
+
+</table>
+
+</div>
+
+</section>
+
+</main>
+</div>
+
+<div class="modal" id="modal">
+
+<div class="modal-box">
+
+<div class="modal-head">
+
+<h2 id="modalTitle">
+Sorter Detail
+</h2>
+
+<button class="close" onclick="closeModal()">
+Close
+</button>
+
+</div>
+
+<div id="modalBody"></div>
+
+</div>
+
+</div>
+
+<script>
+
+const API=window.location.origin;
+const TOKEN_KEY="zippzo_session_token";
+const USER_KEY="zippzo_user";
+
+let tasks=[];
+let sorterSummary=[];
+
+
+function token(){
+    return localStorage.getItem(TOKEN_KEY)||"";
+}
+
+
+function headers(json=false){
+
+    const h={};
+
+    if(json){
+        h["Content-Type"]="application/json";
+    }
+
+    const t=token();
+
+    if(t){
+        h["Authorization"]="Bearer "+t;
+    }
+
+    return h;
+}
+
+
+async function api(path,options={}){
+
+    const response=await fetch(
+        API+path,
+        {
+            ...options,
+            headers:{
+                ...headers(!!options.body),
+                ...(options.headers||{})
+            }
+        }
+    );
+
+    const text=await response.text();
+
+    let data={};
+
+    try{
+        data=text?JSON.parse(text):{};
+    }catch{
+        data={detail:text};
+    }
+
+    if(response.status===401){
+
+        show(
+            "Session expired. Please login again.",
+            "error"
+        );
+
+        throw new Error(
+            "Authorization required"
+        );
+    }
+
+    if(!response.ok){
+
+        throw new Error(
+            data.detail||
+            data.message||
+            ("HTTP "+response.status)
+        );
+    }
+
+    return data;
+}
+
+
+function arr(data){
+
+    if(Array.isArray(data)){
+        return data;
+    }
+
+    return data?.items||
+           data?.data||
+           data?.results||
+           data?.tasks||
+           [];
+}
+
+
+function pick(obj,...keys){
+
+    for(const key of keys){
+
+        if(
+            obj?.[key]!==undefined &&
+            obj?.[key]!==null
+        ){
+            return obj[key];
+        }
+    }
+
+    return "";
+}
+
+
+function esc(value){
+
+    return String(
+        value??""
+    ).replace(
+        /[&<>"']/g,
+        m=>({
+            "&":"&amp;",
+            "<":"&lt;",
+            ">":"&gt;",
+            '"':"&quot;",
+            "'":"&#39;"
+        }[m])
+    );
+}
+
+
+function go(page){
+    window.location.href=page;
+}
+
+
+function show(message,type="ok"){
+
+    const box=document.getElementById("alert");
+
+    box.textContent=message;
+
+    box.className=
+        "alert show "+
+        (
+            type==="error"
+                ?"error"
+                :"ok"
+        );
+
+    setTimeout(
+        ()=>{
+            box.className="alert";
+        },
+        3500
+    );
+}
+
+
+function dateObject(value){
+
+    if(!value){
+        return null;
+    }
+
+    const d=new Date(value);
+
+    return Number.isNaN(d.getTime())
+        ?null
+        :d;
+}
+
+
+function formatDate(value){
+
+    const d=dateObject(value);
+
+    if(!d){
+        return value||"";
+    }
+
+    return d.toLocaleDateString("en-IN");
+}
+
+
+function formatTime(value){
+
+    const d=dateObject(value);
+
+    if(!d){
+        return value||"";
+    }
+
+    return d.toLocaleTimeString(
+        "en-IN",
+        {
+            hour:"2-digit",
+            minute:"2-digit",
+            second:"2-digit",
+            hour12:false
+        }
+    );
+}
+
+
+function lastTouch(row){
+
+    return pick(
+        row,
+        "last_touch_employee_name",
+        "last_touched_by_name",
+        "last_action_employee_name",
+        "updated_by_name",
+        "modified_by_name",
+        "completed_by_name",
+        "assigned_employee_name",
+        "employee_name"
+    )||"—";
+}
+
+
+function normalize(row){
+
+    const required=Number(
+        pick(
+            row,
+            "required_quantity",
+            "quantity",
+            "expected_quantity",
+            "picked_quantity"
+        )||0
+    );
+
+    const sorted=Number(
+        pick(
+            row,
+            "sorted_quantity",
+            "completed_quantity",
+            "confirmed_quantity",
+            "quantity_sorted"
+        )||0
+    );
+
+    return {
+
+        raw:row,
+
+        id:pick(
+            row,
+            "id",
+            "task_id"
+        ),
+
+        task:pick(
+            row,
+            "task_number",
+            "task_no",
+            "number"
+        )||(
+            "SORT-"+
+            pick(
+                row,
+                "id",
+                "task_id"
+            )
+        ),
+
+        sorter:pick(
+            row,
+            "sorter_name",
+            "sorter_employee_name",
+            "employee_name",
+            "assigned_employee_name",
+            "sorter",
+            "assigned_employee_id"
+        )||"Unassigned",
+
+        batch:pick(
+            row,
+            "batch_number",
+            "batch_no",
+            "batch",
+            "batch_id"
+        ),
+
+        order:pick(
+            row,
+            "order_number",
+            "order_no",
+            "order_id"
+        ),
+
+        sku:pick(
+            row,
+            "sku",
+            "product_sku"
+        ),
+
+        product:pick(
+            row,
+            "product_name",
+            "product"
+        ),
+
+        location:pick(
+            row,
+            "store_name",
+            "destination_store",
+            "location_name",
+            "location",
+            "location_id"
+        ),
+
+        slot:pick(
+            row,
+            "sorting_slot",
+            "sort_slot",
+            "slot_code",
+            "slot"
+        ),
+
+        tote:pick(
+            row,
+            "tote_number",
+            "tote_code",
+            "grid_slot",
+            "grid_code",
+            "container_code"
+        ),
+
+        required,
+        sorted,
+
+        status:String(
+            pick(row,"status")||
+            "PENDING"
+        ).toUpperCase(),
+
+        priority:String(
+            pick(row,"priority")||
+            "NORMAL"
+        ).toUpperCase(),
+
+        scannedSku:pick(
+            row,
+            "scanned_sku",
+            "sku_scanned",
+            "sku_scan"
+        ),
+
+        scannedOrder:pick(
+            row,
+            "scanned_order",
+            "order_scanned",
+            "scanned_order_number",
+            "order_scan"
+        ),
+
+        created:pick(
+            row,
+            "created_at",
+            "created_date",
+            "created_time"
+        ),
+
+        assignedAt:pick(
+            row,
+            "assigned_at"
+        ),
+
+        startedAt:pick(
+            row,
+            "started_at",
+            "sorting_started_at"
+        ),
+
+        completedAt:pick(
+            row,
+            "completed_at",
+            "sorting_completed_at"
+        ),
+
+        updatedAt:pick(
+            row,
+            "updated_at",
+            "last_touched_at",
+            "modified_at",
+            "completed_at",
+            "started_at",
+            "assigned_at",
+            "created_at"
+        ),
+
+        lastTouch:lastTouch(row)
+
+    };
+}
+
+
+function fillFilter(id,label,values){
+
+    const el=document.getElementById(id);
+
+    const old=el.value;
+
+    const unique=[
+        ...new Set(
+            values
+                .filter(Boolean)
+                .map(String)
+        )
+    ].sort();
+
+    el.innerHTML=
+        `<option value="">${label}</option>`+
+        unique.map(
+            v=>
+                `<option value="${esc(v)}">
+                ${esc(v)}
+                </option>`
+        ).join("");
+
+    el.value=old;
+}
+
+
+function statusBadge(status){
+
+    status=String(status||"").toUpperCase();
+
+    if(
+        status==="SORTED"||
+        status==="READY"||
+        status==="COMPLETED"
+    ){
+        return "good";
+    }
+
+    if(status==="PENDING"){
+        return "pending";
+    }
+
+    if(
+        status==="HOLD"||
+        status==="CANCELLED"
+    ){
+        return "damage";
+    }
+
+    return "qc";
+}
+
+
+function render(){
+
+    const data=tasks.map(normalize);
+
+    fillFilter(
+        "sorterFilter",
+        "All Sorters",
+        data.map(x=>x.sorter)
+    );
+
+    fillFilter(
+        "locationFilter",
+        "All Stores / Locations",
+        data.map(x=>x.location)
+    );
+
+    const search=document
+        .getElementById("search")
+        .value
+        .toLowerCase()
+        .trim();
+
+    const sorterFilter=
+        document.getElementById(
+            "sorterFilter"
+        ).value;
+
+    const locationFilter=
+        document.getElementById(
+            "locationFilter"
+        ).value;
+
+    const statusFilter=
+        document.getElementById(
+            "statusFilter"
+        ).value;
+
+    const priorityFilter=
+        document.getElementById(
+            "priorityFilter"
+        ).value;
+
+    const dateFilter=
+        document.getElementById(
+            "dateFilter"
+        ).value;
+
+    const scanFilter=
+        document.getElementById(
+            "scanFilter"
+        ).value;
+
+    const now=new Date();
+
+    const filtered=data.filter(x=>{
+
+        const searchable=[
+            x.sorter,
+            x.task,
+            x.batch,
+            x.order,
+            x.sku,
+            x.product,
+            x.location,
+            x.slot,
+            x.tote,
+            x.status,
+            x.priority
+        ]
+        .join(" ")
+        .toLowerCase();
+
+        if(
+            search &&
+            !searchable.includes(search)
+        ){
+            return false;
+        }
+
+        if(
+            sorterFilter &&
+            x.sorter!==sorterFilter
+        ){
+            return false;
+        }
+
+        if(
+            locationFilter &&
+            String(x.location)!==
+            locationFilter
+        ){
+            return false;
+        }
+
+        if(
+            statusFilter &&
+            x.status!==statusFilter
+        ){
+            return false;
+        }
+
+        if(
+            priorityFilter &&
+            x.priority!==priorityFilter
+        ){
+            return false;
+        }
+
+        if(
+            scanFilter==="verified" &&
+            !(x.scannedSku&&x.scannedOrder)
+        ){
+            return false;
+        }
+
+        if(
+            scanFilter==="pending" &&
+            x.scannedSku &&
+            x.scannedOrder
+        ){
+            return false;
+        }
+
+        if(dateFilter){
+
+            const d=dateObject(x.created);
+
+            if(!d){
+                return false;
+            }
+
+            const start=new Date(now);
+
+            start.setHours(0,0,0,0);
+
+            if(
+                dateFilter==="today"
+            ){
+
+                if(d<start){
+                    return false;
+                }
+
+            }else{
+
+                const cutoff=new Date(
+                    now.getTime()-
+                    Number(dateFilter)*
+                    86400000
+                );
+
+                if(d<cutoff){
+                    return false;
+                }
+            }
+        }
+
+        return true;
+    });
+
+    buildSorterSummary(filtered);
+    buildTaskTable(filtered);
+    updateOverall(filtered);
+}
+
+
+function buildSorterSummary(data){
+
+    const map=new Map();
+
+    data.forEach(x=>{
+
+        const key=String(x.sorter);
+
+        if(!map.has(key)){
+
+            map.set(
+                key,
+                {
+                    sorter:key,
+                    tasks:0,
+                    required:0,
+                    sorted:0,
+                    completed:0,
+                    skuScans:0,
+                    orderScans:0,
+                    verified:0,
+                    lastActivity:null
+                }
+            );
+        }
+
+        const item=map.get(key);
+
+        item.tasks++;
+        item.required+=x.required;
+        item.sorted+=x.sorted;
+
+        if(x.status==="SORTED"||
+           x.status==="READY"||
+           x.status==="COMPLETED"){
+            item.completed++;
+        }
+
+        if(x.scannedSku){
+            item.skuScans++;
+        }
+
+        if(x.scannedOrder){
+            item.orderScans++;
+        }
+
+        if(
+            x.scannedSku &&
+            x.scannedOrder
+        ){
+            item.verified++;
+        }
+
+        const activity=
+            dateObject(x.updatedAt);
+
+        if(
+            activity &&
+            (
+                !item.lastActivity ||
+                activity>item.lastActivity
+            )
+        ){
+            item.lastActivity=activity;
+        }
+
+    });
+
+    sorterSummary=[...map.values()];
+
+    const body=
+        document.getElementById(
+            "sorterBody"
+        );
+
+    if(!sorterSummary.length){
+
+        body.innerHTML=
+            `<tr>
+            <td colspan="13" class="empty">
+            No sorter data found.
+            </td>
+            </tr>`;
+
+        return;
+    }
+
+    body.innerHTML=
+        sorterSummary.map(x=>{
+
+            const unitsTask=
+                x.tasks
+                    ?x.sorted/x.tasks
+                    :0;
+
+            const completion=
+                x.tasks
+                    ?x.completed/x.tasks*100
+                    :0;
+
+            const sortRate=
+                x.required
+                    ?x.sorted/x.required*100
+                    :0;
+
+            return `
+<tr>
+
+<td><b>${esc(x.sorter)}</b></td>
+
+<td>${x.tasks}</td>
+
+<td>${x.required}</td>
+
+<td>${x.sorted}</td>
+
+<td>${unitsTask.toFixed(1)}</td>
+
+<td>${x.completed}</td>
+
+<td>${completion.toFixed(1)}%</td>
+
+<td>
+
+<span class="badge ${
+    sortRate>=100
+        ?"good"
+        :
+    sortRate>=80
+        ?"qc"
+        :"pending"
+}">
+${sortRate.toFixed(1)}%
+</span>
+
+</td>
+
+<td>${x.skuScans}</td>
+
+<td>${x.orderScans}</td>
+
+<td>${x.verified}</td>
+
+<td>
+${
+    x.lastActivity
+        ?formatDate(x.lastActivity)+
+         " "+
+         formatTime(x.lastActivity)
+        :"—"
+}
+</td>
+
+<td>
+
+<button
+class="btn small secondary"
+onclick="showSorter('${encodeURIComponent(x.sorter)}')">
+View
+</button>
+
+</td>
+
+</tr>
+`;
+
+        }).join("");
+}
+
+
+function buildTaskTable(data){
+
+    const body=
+        document.getElementById(
+            "taskBody"
+        );
+
+    if(!data.length){
+
+        body.innerHTML=
+            `<tr>
+            <td colspan="18" class="empty">
+            No sorting tasks found.
+            </td>
+            </tr>`;
+
+        return;
+    }
+
+    body.innerHTML=
+        data.map(x=>{
+
+            const progress=
+                x.required
+                    ?Math.min(
+                        100,
+                        x.sorted/
+                        x.required*
+                        100
+                    )
+                    :0;
+
+            return `
+<tr>
+
+<td><b>${esc(x.task)}</b></td>
+
+<td>${esc(x.sorter)}</td>
+
+<td>${esc(x.batch)}</td>
+
+<td>${esc(x.order)}</td>
+
+<td>${esc(x.sku)}</td>
+
+<td>${esc(x.product)}</td>
+
+<td>${esc(x.location)}</td>
+
+<td>${esc(x.slot)}</td>
+
+<td>${esc(x.tote)}</td>
+
+<td>${x.required}</td>
+
+<td>${x.sorted}</td>
+
+<td>${progress.toFixed(0)}%</td>
+
+<td>
+<span class="badge ${statusBadge(x.status)}">
+${esc(x.status)}
+</span>
+</td>
+
+<td>${esc(x.priority)}</td>
+
+<td>
+${esc(formatDate(x.created))}
+<br>
+${esc(formatTime(x.created))}
+</td>
+
+<td>${esc(formatTime(x.startedAt))}</td>
+
+<td>${esc(formatTime(x.completedAt))}</td>
+
+<td>
+
+<button
+class="btn small secondary"
+onclick="showTask(${JSON.stringify(x.id)})">
+View
+</button>
+
+</td>
+
+</tr>
+`;
+
+        }).join("");
+}
+
+
+function updateOverall(data){
+
+    const sorters=
+        new Set(
+            data.map(x=>x.sorter)
+        );
+
+    const taskCount=data.length;
+
+    const required=
+        data.reduce(
+            (s,x)=>s+x.required,
+            0
+        );
+
+    const sorted=
+        data.reduce(
+            (s,x)=>s+x.sorted,
+            0
+        );
+
+    const completed=
+        data.filter(
+            x=>
+                x.status==="SORTED"||
+                x.status==="READY"||
+                x.status==="COMPLETED"
+        ).length;
+
+    const verified=
+        data.filter(
+            x=>
+                x.scannedSku &&
+                x.scannedOrder
+        ).length;
+
+    kSorters.textContent=
+        sorters.size;
+
+    kTasks.textContent=
+        taskCount;
+
+    kRequired.textContent=
+        required;
+
+    kSorted.textContent=
+        sorted;
+
+    kCompleted.textContent=
+        completed;
+
+    const sortRate=
+        required
+            ?sorted/required*100
+            :0;
+
+    kSortRate.textContent=
+        sortRate.toFixed(1)+"%";
+
+    kUnitsTask.textContent=
+        taskCount
+            ?(
+                sorted/
+                taskCount
+            ).toFixed(1)
+            :"0";
+
+    kScans.textContent=
+        verified;
+
+    sUnitsSorter.textContent=
+        sorters.size
+            ?(
+                sorted/
+                sorters.size
+            ).toFixed(1)
+            :"0";
+
+    sTasksSorter.textContent=
+        sorters.size
+            ?(
+                taskCount/
+                sorters.size
+            ).toFixed(1)
+            :"0";
+
+    sCompletedSorter.textContent=
+        sorters.size
+            ?(
+                completed/
+                sorters.size
+            ).toFixed(1)
+            :"0";
+
+    sUnitsCompleted.textContent=
+        completed
+            ?(
+                sorted/
+                completed
+            ).toFixed(1)
+            :"0";
+
+    sVerification.textContent=
+        taskCount
+            ?(
+                verified/
+                taskCount*
+                100
+            ).toFixed(1)+"%"
+            :"0%";
+
+    sCompletion.textContent=
+        taskCount
+            ?(
+                completed/
+                taskCount*
+                100
+            ).toFixed(1)+"%"
+            :"0%";
+}
+
+
+function detailBox(title,value){
+
+    return `
+<div class="detail">
+<small>${esc(title)}</small>
+<b>${esc(value??"—")}</b>
+</div>
+`;
+}
+
+
+function showTask(id){
+
+    const task=
+        tasks
+            .map(normalize)
+            .find(
+                x=>
+                    String(x.id)===
+                    String(id)
+            );
+
+    if(!task){
+        return;
+    }
+
+    const progress=
+        task.required
+            ?(
+                task.sorted/
+                task.required*
+                100
+            ).toFixed(1)+"%"
+            :"0%";
+
+    document.getElementById(
+        "modalTitle"
+    ).textContent=
+        task.task+
+        " — Sorting Detail";
+
+    document.getElementById(
+        "modalBody"
+    ).innerHTML=`
+
+<div class="detail-grid">
+
+${detailBox("Task",task.task)}
+
+${detailBox("Sorter",task.sorter)}
+
+${detailBox("Batch",task.batch)}
+
+${detailBox("Order",task.order)}
+
+${detailBox("SKU",task.sku)}
+
+${detailBox("Product",task.product)}
+
+${detailBox("Store / Location",task.location)}
+
+${detailBox("Sorting Slot",task.slot)}
+
+${detailBox("Tote / Grid",task.tote)}
+
+${detailBox("Required Quantity",task.required)}
+
+${detailBox("Sorted Quantity",task.sorted)}
+
+${detailBox("Progress",progress)}
+
+${detailBox("Status",task.status)}
+
+${detailBox("Priority",task.priority)}
+
+${detailBox(
+    "SKU Scan",
+    task.scannedSku||"Not scanned"
+)}
+
+${detailBox(
+    "Order Scan",
+    task.scannedOrder||"Not scanned"
+)}
+
+${detailBox(
+    "Created Date",
+    formatDate(task.created)
+)}
+
+${detailBox(
+    "Created Time",
+    formatTime(task.created)
+)}
+
+${detailBox(
+    "Assigned Time",
+    formatTime(task.assignedAt)
+)}
+
+${detailBox(
+    "Started Time",
+    formatTime(task.startedAt)
+)}
+
+${detailBox(
+    "Completed Time",
+    formatTime(task.completedAt)
+)}
+
+${detailBox(
+    "Last Touch Employee",
+    task.lastTouch
+)}
+
+${detailBox(
+    "Last Touch Date",
+    formatDate(task.updatedAt)
+)}
+
+${detailBox(
+    "Last Touch Time",
+    formatTime(task.updatedAt)
+)}
+
+</div>
+`;
+
+    document
+        .getElementById("modal")
+        .classList
+        .add("show");
+}
+
+
+function showSorter(encoded){
+
+    const sorter=
+        decodeURIComponent(encoded);
+
+    const item=
+        sorterSummary.find(
+            x=>x.sorter===sorter
+        );
+
+    if(!item){
+        return;
+    }
+
+    const sortRate=
+        item.required
+            ?item.sorted/
+             item.required*
+             100
+            :0;
+
+    const completion=
+        item.tasks
+            ?item.completed/
+             item.tasks*
+             100
+            :0;
+
+    document.getElementById(
+        "modalTitle"
+    ).textContent=
+        sorter+
+        " — Sorting IPP";
+
+    document.getElementById(
+        "modalBody"
+    ).innerHTML=`
+
+<div class="detail-grid">
+
+${detailBox("Sorter Employee",item.sorter)}
+
+${detailBox("Total Tasks",item.tasks)}
+
+${detailBox("Required Units",item.required)}
+
+${detailBox("Sorted Units",item.sorted)}
+
+${detailBox(
+    "Units / Task",
+    item.tasks
+        ?(
+            item.sorted/
+            item.tasks
+        ).toFixed(1)
+        :"0"
+)}
+
+${detailBox(
+    "Completed Tasks",
+    item.completed
+)}
+
+${detailBox(
+    "Completion %",
+    completion.toFixed(1)+"%"
+)}
+
+${detailBox(
+    "Sort Rate %",
+    sortRate.toFixed(1)+"%"
+)}
+
+${detailBox(
+    "SKU Scans",
+    item.skuScans
+)}
+
+${detailBox(
+    "Order Scans",
+    item.orderScans
+)}
+
+${detailBox(
+    "Verified Tasks",
+    item.verified
+)}
+
+${detailBox(
+    "Last Activity",
+    item.lastActivity
+        ?formatDate(item.lastActivity)+
+         " "+
+         formatTime(item.lastActivity)
+        :"—"
+)}
+
+</div>
+`;
+
+    document
+        .getElementById("modal")
+        .classList
+        .add("show");
+}
+
+
+function closeModal(){
+
+    document
+        .getElementById("modal")
+        .classList
+        .remove("show");
+}
+
+
+function exportCSV(){
+
+    const data=
+        tasks.map(normalize);
+
+    if(!data.length){
+
+        show(
+            "No sorting data to export.",
+            "error"
+        );
+
+        return;
+    }
+
+    const header=[
+
+        "Sorter Employee",
+        "Task",
+        "Batch",
+        "Order",
+        "SKU",
+        "Product",
+        "Store / Location",
+        "Sorting Slot",
+        "Tote / Grid",
+        "Required Quantity",
+        "Sorted Quantity",
+        "Progress",
+        "Status",
+        "Priority",
+        "SKU Scan",
+        "Order Scan",
+        "Created Date",
+        "Created Time",
+        "Assigned Time",
+        "Started Time",
+        "Completed Time",
+        "Last Touch Employee",
+        "Last Touch Date",
+        "Last Touch Time"
+
+    ];
+
+    const rows=[
+        header,
+
+        ...data.map(x=>[
+
+            x.sorter,
+            x.task,
+            x.batch,
+            x.order,
+            x.sku,
+            x.product,
+            x.location,
+            x.slot,
+            x.tote,
+            x.required,
+            x.sorted,
+
+            x.required
+                ?(
+                    x.sorted/
+                    x.required*
+                    100
+                ).toFixed(1)+"%"
+                :"0%",
+
+            x.status,
+            x.priority,
+            x.scannedSku,
+            x.scannedOrder,
+
+            formatDate(x.created),
+            formatTime(x.created),
+            formatTime(x.assignedAt),
+            formatTime(x.startedAt),
+            formatTime(x.completedAt),
+
+            x.lastTouch,
+
+            formatDate(x.updatedAt),
+            formatTime(x.updatedAt)
+
+        ])
+    ];
+
+    const csv=
+        rows
+            .map(
+                row=>
+                    row
+                        .map(
+                            value=>
+                                `"${String(
+                                    value??""
+                                ).replace(
+                                    /"/g,
+                                    '""'
+                                )}"`
+                        )
+                        .join(",")
+            )
+            .join("\n");
+
+    const url=
+        URL.createObjectURL(
+            new Blob(
+                [csv],
+                {
+                    type:
+                        "text/csv;charset=utf-8"
+                }
+            )
+        );
+
+    const link=
+        document.createElement("a");
+
+    link.href=url;
+
+    link.download=
+        "zippzo_sorting_ipp.csv";
+
+    document.body.appendChild(link);
+
+    link.click();
+
+    link.remove();
+
+    URL.revokeObjectURL(url);
+}
+
+
+async function loadAll(){
+
+    try{
+
+        tasks=
+            arr(
+                await api(
+                    "/api/sorting"
+                )
+            );
+
+        render();
+
+    }catch(error){
+
+        tasks=[];
+
+        render();
+
+        show(
+            error.message||
+            "Unable to load sorting IPP.",
+            "error"
+        );
+    }
+}
+
+
+async function logout(){
+
+    try{
+
+        if(token()){
+
+            await api(
+                "/api/auth/logout",
+                {
+                    method:"POST",
+
+                    body:
+                        JSON.stringify(
+                            {
+                                session_token:
+                                    token()
+                            }
+                        )
+                }
+            );
+        }
+
+    }catch(error){
+
+        console.log(
+            "Logout error",
+            error
+        );
+    }
+
+    localStorage.removeItem(
+        TOKEN_KEY
+    );
+
+    localStorage.removeItem(
+        USER_KEY
+    );
+
+    window.location.href=
+        "index.html";
+}
+
+
+try{
+
+    const user=
+        JSON.parse(
+            localStorage.getItem(
+                USER_KEY
+            )||"null"
+        );
+
+    document.getElementById(
+        "topUser"
+    ).textContent=
+        user
+            ?(
+                user.full_name||
+                user.name||
+                user.employee_id||
+                "Sorting IPP"
+            )
+            :"Sorting IPP";
+
+}catch(error){
+
+    console.log(
+        "User display error",
+        error
+    );
+}
+
+
+loadAll();
+
+setInterval(
+    loadAll,
+    10000
+);
+
+</script>
+
+</body>
+</html>

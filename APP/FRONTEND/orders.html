@@ -1,0 +1,117 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1.0">
+<title>Zippzo WMS — Orders</title>
+<link rel="stylesheet" href="/style.css">
+<style>
+:root{--blue:#0b63f6;--green:#16a34a;--orange:#f59e0b;--red:#dc2626;--ink:#0f172a;--muted:#64748b;--line:#e5e7eb;--bg:#f5f7fb}
+body{background:var(--bg)}.orders{display:grid;gap:16px}.kpis{display:grid;grid-template-columns:repeat(9,1fr);gap:10px}
+.kpi,.panel{background:#fff;border:1px solid var(--line);border-radius:14px;box-shadow:0 2px 8px #00000008}.kpi{padding:13px}.kpi small{display:block;color:var(--muted);font-size:11px}.kpi b{display:block;font-size:23px;margin-top:4px}.blue{color:var(--blue)}.green{color:var(--green)}.orange{color:var(--orange)}.red{color:var(--red)}
+.panel{padding:16px}.toolbar{display:grid;grid-template-columns:2fr repeat(4,1fr) auto;gap:9px}input,select,textarea{width:100%;box-sizing:border-box;padding:10px 11px;border:1px solid #d7dee9;border-radius:9px;background:#fff}.btn{border:0;border-radius:9px;padding:9px 13px;font-weight:700;cursor:pointer}.primary{background:var(--blue);color:#fff}.greenbtn{background:var(--green);color:#fff}.orangebtn{background:var(--orange);color:#fff}.light{background:#eef3f9;color:#172033}.danger{background:var(--red);color:#fff}
+.table-scroll{overflow:auto;max-height:560px}table{width:100%;border-collapse:collapse}th,td{padding:10px;border-bottom:1px solid #edf0f5;text-align:left;font-size:12px}th{background:#f8fafc;position:sticky;top:0;z-index:1}
+.badge{display:inline-block;padding:4px 8px;border-radius:999px;font-size:10px;font-weight:800}.new{background:#dbeafe;color:#1d4ed8}.allocated{background:#ede9fe;color:#6d28d9}.picking{background:#fef3c7;color:#92400e}.packing{background:#ffedd5;color:#c2410c}.ready{background:#dcfce7;color:#15803d}.dispatched{background:#cffafe;color:#0e7490}.delivered{background:#dcfce7;color:#166534}.cancelled{background:#fee2e2;color:#991b1b}
+.layout2{display:grid;grid-template-columns:1.65fr .85fr;gap:16px}.form-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:10px}.form-grid .full{grid-column:1/-1}.item-row{display:grid;grid-template-columns:1fr 1.2fr 1.7fr .7fr .9fr 38px;gap:7px;margin-bottom:7px}.item-row input{min-width:0}.charge{margin-top:12px;background:#f8fafc;border:1px solid var(--line);border-radius:10px;padding:12px}.charge-row{display:flex;justify-content:space-between;padding:6px 0;border-bottom:1px solid #e5e7eb}.charge-row:last-child{border:0}.grand{font-size:18px;font-weight:800;padding-top:10px}.free{color:#15803d;font-weight:800}.detail{display:flex;justify-content:space-between;gap:10px;padding:8px 0;border-bottom:1px solid #edf0f5}.detail span:first-child{color:var(--muted)}.workflow{display:flex;flex-wrap:wrap;gap:5px;margin:12px 0}.step{padding:5px 7px;border-radius:6px;background:#f1f5f9;font-size:10px}.step.active{background:#dbeafe;color:#1d4ed8;font-weight:800}.items-list{margin-top:12px}.notice{padding:11px 14px;border-radius:10px;background:#eff6ff;color:#1e40af;font-size:12px}.error{background:#fef2f2;color:#991b1b}.modal{display:none;position:fixed;inset:0;background:#0008;z-index:1000;align-items:center;justify-content:center}.modal.open{display:flex}.modal-card{width:min(850px,94vw);max-height:90vh;overflow:auto;background:#fff;border-radius:16px;padding:20px}.modal-head{display:flex;justify-content:space-between;align-items:center}.empty{text-align:center;padding:30px;color:var(--muted)}
+@media(max-width:1250px){.kpis{grid-template-columns:repeat(5,1fr)}.toolbar{grid-template-columns:repeat(3,1fr)}.layout2{grid-template-columns:1fr}}
+@media(max-width:800px){.kpis{grid-template-columns:repeat(2,1fr)}.toolbar,.form-grid{grid-template-columns:1fr}.item-row{grid-template-columns:1fr}.form-grid .full{grid-column:auto}}
+</style>
+
+<link rel="stylesheet" href="zippzo-standard.css">
+<script src="zippzo-standard.js" defer></script>
+</head>
+<body>
+<div class="topbar"><div class="brand"><strong>ZIPPZO</strong><span>Warehouse Management System</span></div><div class="top-user"><span id="userName">Loading...</span><button class="btn light" onclick="logout()">Logout</button></div></div>
+<div class="layout">
+<aside class="sidebar">
+<div class="sidebar-title">WMS CONTROL</div><button class="nav-button" onclick="go('index.html')">Dashboard</button>
+<div class="sidebar-title">MASTER DATA</div><button class="nav-button" onclick="go('products.html')">Products</button><button class="nav-button" onclick="go('suppliers.html')">Suppliers</button><button class="nav-button" onclick="go('locations.html')">Locations</button><button class="nav-button" onclick="go('employees.html')">Employees</button>
+<div class="sidebar-title">WAREHOUSE</div><button class="nav-button" onclick="go('inventory.html')">Inventory</button><button class="nav-button" onclick="go('bins.html')">Bins</button><button class="nav-button" onclick="go('stock-movements.html')">Stock Movements</button>
+<div class="sidebar-title">INBOUND</div><button class="nav-button" onclick="go('purchase-orders.html')">Purchase Orders</button><button class="nav-button" onclick="go('grn.html')">GRN</button><button class="nav-button" onclick="go('putaway.html')">Putaway</button>
+<div class="sidebar-title">STORE ORDER FLOW</div><button class="nav-button active" onclick="go('orders.html')">Orders</button><button class="nav-button" onclick="go('create-batch.html')">Batch</button><button class="nav-button" onclick="go('picking.html')">Picking</button><button class="nav-button" onclick="go('sorting.html')">Sorting</button><button class="nav-button" onclick="go('dropping.html')">Dropping</button><button class="nav-button" onclick="go('grid-putaway.html')">Grid Putaway</button><button class="nav-button" onclick="go('vehicle-arrival.html')">Vehicle Arrival</button><button class="nav-button" onclick="go('dispatch.html')">Dispatch</button>
+<div class="sidebar-title">STORE</div><button class="nav-button" onclick="go('store-receiving.html')">Store Receiving</button><button class="nav-button" onclick="go('riders.html')">Vehicles / Riders</button>
+<div class="sidebar-title">REPORTS</div><button class="nav-button" onclick="go('stock-report.html')">Stock Report</button><button class="nav-button" onclick="go('order-report.html')">Order Report</button><button class="nav-button" onclick="go('delivery-report.html')">Delivery Report</button>
+</aside>
+<main class="content">
+<div class="page-header"><div><div class="page-title">Orders</div><div class="page-subtitle">Store/customer order control tower → allocation → picking → packing → fulfillment</div></div><div style="display:flex;gap:8px"><button class="btn light" onclick="loadOrders()">Refresh</button><button class="btn greenbtn" onclick="focusCreate()">Create Order</button></div></div>
+<div id="notice" class="notice">Live order data only. No sample orders are generated by this page.</div>
+<div class="orders">
+<section class="kpis">
+<div class="kpi blue"><small>Total Orders</small><b id="kTotal">0</b></div><div class="kpi"><small>New</small><b id="kNew">0</b></div><div class="kpi"><small>Allocated</small><b id="kAllocated">0</b></div><div class="kpi orange"><small>Picking</small><b id="kPicking">0</b></div><div class="kpi"><small>Packing</small><b id="kPacking">0</b></div><div class="kpi green"><small>Ready</small><b id="kReady">0</b></div><div class="kpi"><small>Dispatched</small><b id="kDispatched">0</b></div><div class="kpi green"><small>Delivered</small><b id="kDelivered">0</b></div><div class="kpi red"><small>Cancelled</small><b id="kCancelled">0</b></div>
+</section>
+
+<section class="panel"><div class="toolbar">
+<input id="search" placeholder="Search order / customer / phone / SKU">
+<select id="status"><option value="">All Status</option><option>NEW</option><option>ALLOCATED</option><option>PICKING</option><option>PACKING</option><option>READY</option><option>DISPATCHED</option><option>DELIVERED</option><option>CANCELLED</option></select>
+<select id="payment"><option value="">All Payments</option><option>COD</option><option>ONLINE</option><option>UPI</option></select>
+<select id="location"><option value="">All Locations</option></select>
+<input id="date" type="date"><button class="btn primary" onclick="render()">Apply</button>
+</div></section>
+
+<div class="layout2">
+<section class="panel">
+<div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:10px"><strong>Order Queue</strong><span id="count" class="badge new">0</span></div>
+<div class="table-scroll"><table><thead><tr><th>ID</th><th>Order</th><th>Customer</th><th>Location</th><th>Items</th><th>Total</th><th>Payment</th><th>Status</th><th>Created</th><th></th></tr></thead><tbody id="ordersTable"></tbody></table></div>
+</section>
+
+<section class="panel" id="createPanel">
+<h3 style="margin-top:0">Create Order</h3>
+<div class="form-grid">
+<input id="orderNumber" placeholder="Order Number *"><input id="customerName" placeholder="Customer Name *"><input id="customerPhone" placeholder="Customer Phone">
+<input id="city" placeholder="City"><input id="locationId" type="number" placeholder="Store Location ID"><select id="paymentMode"><option value="COD">COD</option><option value="ONLINE">Online</option><option value="UPI">UPI</option></select>
+<input id="deliveryAddress" class="full" placeholder="Delivery Address *">
+<input id="discount" type="number" min="0" value="0" placeholder="Discount">
+</div>
+<div class="charge">
+<div class="charge-row"><span>Subtotal</span><strong id="previewSubtotal">₹0.00</strong></div>
+<div class="charge-row"><span>Delivery</span><strong id="previewDelivery">₹0.00</strong></div>
+<div class="charge-row"><span>Handling</span><strong id="previewHandling">₹0.00</strong></div>
+<div class="charge-row"><span>Discount</span><strong id="previewDiscount">₹0.00</strong></div>
+<div class="charge-row grand"><span>Grand Total</span><strong id="previewTotal">₹0.00</strong></div>
+</div>
+<div style="margin-top:14px"><strong>Order Items</strong><div id="itemsContainer" style="margin-top:8px"></div><button class="btn light" onclick="addItemRow()">+ Add Product</button></div>
+<div style="margin-top:14px"><button class="btn primary" onclick="createOrder()">Create Order</button></div>
+</section>
+</div>
+</div>
+</main></div>
+
+<div id="modal" class="modal" onclick="if(event.target===this)closeModal()"><div class="modal-card">
+<div class="modal-head"><h3 id="modalTitle">Order Details</h3><button class="btn light" onclick="closeModal()">Close</button></div><div id="details"></div>
+</div></div>
+
+<script>
+const API=window.location.origin,TOKEN_KEY="zippzo_session_token";const DELIVERY_CHARGE=50,HANDLING_CHARGE=5,FREE_DELIVERY_LIMIT=100;
+let orders=[],products=[],locations=[],selected=null;
+const $=id=>document.getElementById(id);
+function token(){return localStorage.getItem(TOKEN_KEY)}
+function headers(json=false){const h={};if(json)h["Content-Type"]="application/json";if(token())h.Authorization=`Bearer ${token()}`;return h}
+async function api(path,opt={}){const r=await fetch(API+path,{...opt,headers:{...headers(!!opt.body),...(opt.headers||{})}});if(r.status===401){alert("Session expired. Please login again.");location.href="index.html";throw Error("Unauthorized")}if(!r.ok){let d={};try{d=await r.json()}catch{}throw Error(d.detail||`API ${r.status}`)}return r}
+async function get(path){return await (await api(path)).json()}
+function arr(x){return Array.isArray(x)?x:(x?.items||x?.data||x?.results||[])}
+function esc(v){return String(v??"").replace(/[&<>"']/g,m=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[m]))}
+function go(p){location.href=p}function logout(){localStorage.removeItem(TOKEN_KEY);localStorage.removeItem("zippzo_user");location.href="index.html"}
+async function loadUser(){try{const d=await get("/api/auth/me");$("userName").textContent=d.full_name||d.name||d.employee_name||d.identifier||"Zippzo User"}catch{$("userName").textContent="Zippzo User"}}
+async function loadOrders(){try{await loadUser();orders=arr(await get("/api/orders"));try{products=arr(await get("/api/products"))}catch{products=[]}try{locations=arr(await get("/api/locations"))}catch{locations=[]}renderLocationFilter();render();if(!$("itemsContainer").children.length)addItemRow()}catch(e){$("notice").textContent=e.message;$("notice").classList.add("error")}}
+function renderLocationFilter(){$("location").innerHTML='<option value="">All Locations</option>'+locations.map(x=>`<option value="${x.id}">${esc(x.name||x.code||("Location "+x.id))}</option>`).join("")}
+function statusBadge(s){let c=String(s||"").toLowerCase();return `<span class="badge ${c}">${esc(s||"—")}</span>`}
+function itemCount(o){return (o.items||[]).reduce((n,i)=>n+Number(i.quantity||0),0)}
+function filtered(){const q=$("search").value.toLowerCase(),st=$("status").value,pay=$("payment").value,loc=$("location").value,date=$("date").value;return orders.filter(o=>(!q||[o.order_number,o.customer_name,o.customer_phone,...(o.items||[]).flatMap(i=>[i.sku,i.product_name])].join(" ").toLowerCase().includes(q))&&(!st||o.status===st)&&(!pay||o.payment_mode===pay)&&(!loc||String(o.location_id||"")===loc)&&(!date||String(o.created_at||"").slice(0,10)===date))}
+function render(){const a=orders,d=filtered();for(const [id,st] of [["kTotal",""],["kNew","NEW"],["kAllocated","ALLOCATED"],["kPicking","PICKING"],["kPacking","PACKING"],["kReady","READY"],["kDispatched","DISPATCHED"],["kDelivered","DELIVERED"],["kCancelled","CANCELLED"]])$(id).textContent=st?a.filter(x=>x.status===st).length:a.length;$("count").textContent=d.length;$("ordersTable").innerHTML=d.map(o=>`<tr><td>${o.id}</td><td><b>${esc(o.order_number)}</b></td><td>${esc(o.customer_name)}<br><small>${esc(o.customer_phone||"")}</small></td><td>${esc(locationName(o.location_id))}</td><td>${itemCount(o)}</td><td>₹${Number(o.total_amount||0).toFixed(2)}</td><td>${esc(o.payment_mode||"—")}</td><td>${statusBadge(o.status)}</td><td>${esc(o.created_at||"")}</td><td><button class="btn light" onclick="selectOrder(${o.id})">View</button></td></tr>`).join("")||'<tr><td colspan="10" class="empty">No orders found.</td></tr>'}
+function locationName(id){const x=locations.find(l=>Number(l.id)===Number(id));return x?(x.name||x.code||("Location "+id)):(id?"Location #"+id:"—")}
+function selectOrder(id){selected=orders.find(o=>Number(o.id)===Number(id));if(selected)renderDetails()}
+function renderDetails(){const o=selected,items=o.items||[];let actions="";if(o.status==="NEW")actions='<button class="btn primary" onclick="changeStatus(\'ALLOCATED\')">Allocate Store</button>';else if(o.status==="ALLOCATED")actions='<button class="btn orangebtn" onclick="changeStatus(\'PICKING\')">Start Picking</button>';else if(o.status==="PICKING")actions='<button class="btn orangebtn" onclick="changeStatus(\'PACKING\')">Start Packing</button>';else if(o.status==="PACKING")actions='<button class="btn greenbtn" onclick="changeStatus(\'READY\')">Mark Ready</button>';else if(o.status==="READY")actions='<button class="btn primary" onclick="changeStatus(\'DISPATCHED\')">Dispatch</button>';else if(o.status==="DISPATCHED")actions='<button class="btn greenbtn" onclick="completeOrder()">Complete Delivery</button>';
+$("modalTitle").textContent=`Order ${o.order_number}`;$("details").innerHTML=`<div class="detail"><span>Customer</span><strong>${esc(o.customer_name)}</strong></div><div class="detail"><span>Phone</span><span>${esc(o.customer_phone||"—")}</span></div><div class="detail"><span>Address</span><span>${esc(o.delivery_address||"—")}</span></div><div class="detail"><span>Location</span><span>${esc(locationName(o.location_id))}</span></div><div class="detail"><span>Payment</span><span>${esc(o.payment_mode||"—")}</span></div><div class="detail"><span>Subtotal</span><strong>₹${Number(o.subtotal||0).toFixed(2)}</strong></div><div class="detail"><span>Delivery</span><strong class="${Number(o.delivery_charge||0)===0?'free':''}">${Number(o.delivery_charge||0)===0?'FREE':'₹'+Number(o.delivery_charge).toFixed(2)}</strong></div><div class="detail"><span>Handling</span><strong>₹${Number(o.handling_charge||0).toFixed(2)}</strong></div><div class="detail"><span>Discount</span><strong>₹${Number(o.discount||0).toFixed(2)}</strong></div><div class="detail"><span>Total</span><strong>₹${Number(o.total_amount||0).toFixed(2)}</strong></div><div class="detail"><span>Status</span>${statusBadge(o.status)}</div><h3>Fulfillment Workflow</h3><div class="workflow">${["NEW","ALLOCATED","PICKING","PACKING","READY","DISPATCHED","DELIVERED"].map(s=>`<span class="step ${s===o.status?'active':''}">${s}</span>`).join(" → ")}</div><h3>Order Items</h3><div class="items-list">${items.map(i=>`<div class="detail"><span>${esc(i.product_name||i.sku)} × ${Number(i.quantity||0)}</span><strong>₹${Number(i.total_price||0).toFixed(2)}</strong></div>`).join("")||"<p>No items</p>"}</div><div style="display:flex;gap:8px;flex-wrap:wrap;margin-top:16px">${actions}</div>`;$("modal").classList.add("open")}
+function closeModal(){$("modal").classList.remove("open")}
+function calculate(){let sub=0;document.querySelectorAll(".item-row").forEach(r=>sub+=(Number(r.querySelector(".qty").value)||0)*(Number(r.querySelector(".price").value)||0));const discount=Math.max(0,Number($("discount").value)||0),delivery=sub>FREE_DELIVERY_LIMIT?0:sub>0?DELIVERY_CHARGE:0,handling=sub>0?HANDLING_CHARGE:0,total=Math.max(0,sub+delivery+handling-discount);$("previewSubtotal").textContent="₹"+sub.toFixed(2);$("previewDelivery").innerHTML=delivery===0&&sub>100?'<span class="free">FREE</span>':"₹"+delivery.toFixed(2);$("previewHandling").textContent="₹"+handling.toFixed(2);$("previewDiscount").textContent="₹"+discount.toFixed(2);$("previewTotal").textContent="₹"+total.toFixed(2);return{subtotal:sub,delivery_charge:delivery,handling_charge:handling,discount,total_amount:total}}
+function addItemRow(){const r=document.createElement("div");r.className="item-row";r.innerHTML=`<select class="product" onchange="fillProduct(this)"><option value="">Product</option>${products.map(p=>`<option value="${p.id}">${esc(p.sku||"")} — ${esc(p.name||p.product_name||"")}</option>`).join("")}</select><input class="sku" placeholder="SKU"><input class="name" placeholder="Product Name"><input class="qty" type="number" min="1" value="1" oninput="calculate()"><input class="price" type="number" min="0" value="0" oninput="calculate()"><button class="btn danger" onclick="this.parentElement.remove();calculate()">×</button>`;$("itemsContainer").appendChild(r);calculate()}
+function fillProduct(sel){const p=products.find(x=>Number(x.id)===Number(sel.value)),r=sel.closest(".item-row");if(!p)return;r.querySelector(".sku").value=p.sku||"";r.querySelector(".name").value=p.name||p.product_name||"";r.querySelector(".price").value=p.selling_price??p.mrp??0;calculate()}
+async function createOrder(){const items=[];document.querySelectorAll(".item-row").forEach(r=>{const pid=Number(r.querySelector(".product").value),qty=Number(r.querySelector(".qty").value),price=Number(r.querySelector(".price").value);if(pid&&qty>0)items.push({product_id:pid,sku:r.querySelector(".sku").value,product_name:r.querySelector(".name").value,quantity:qty,unit_price:price})});if(!items.length){alert("Add at least one product.");return}const c=calculate(),data={order_number:$("orderNumber").value.trim(),customer_name:$("customerName").value.trim(),customer_phone:$("customerPhone").value.trim(),delivery_address:$("deliveryAddress").value.trim(),city:$("city").value.trim(),location_id:Number($("locationId").value)||null,payment_mode:$("paymentMode").value,...c,items};if(!data.order_number||!data.customer_name||!data.delivery_address){alert("Order number, customer name and delivery address are required.");return}try{const result=await (await api("/api/orders",{method:"POST",body:JSON.stringify(data)})).json();alert("Order created successfully.");$("orderNumber").value=$("customerName").value=$("customerPhone").value=$("deliveryAddress").value=$("city").value=$("locationId").value="";$("discount").value=0;$("itemsContainer").innerHTML="";addItemRow();await loadOrders();if(result?.id)selectOrder(result.id)}catch(e){alert(e.message)}}
+async function changeStatus(status){if(!selected)return;try{await api(`/api/orders/${selected.id}/status`,{method:"POST",body:JSON.stringify({status})});await loadOrders();const id=selected.id;closeModal();setTimeout(()=>selectOrder(id),200)}catch(e){alert(e.message)}}
+async function completeOrder(){if(!selected)return;try{await api(`/api/orders/${selected.id}/complete`,{method:"POST"});await loadOrders();const id=selected.id;closeModal();setTimeout(()=>selectOrder(id),200)}catch(e){alert(e.message)}}
+function focusCreate(){$("createPanel").scrollIntoView({behavior:"smooth",block:"start"});$("orderNumber").focus()}
+$("search").addEventListener("input",render);["status","payment","location","date"].forEach(id=>$(id).addEventListener("change",render));$("discount").addEventListener("input",calculate);
+loadOrders();setInterval(loadOrders,10000);
+</script>
+</body>
+</html>

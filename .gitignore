@@ -1,0 +1,14 @@
+﻿__pycache__/
+*.pyc
+.venv/
+venv/
+.env
+*.log
+*.db
+*.db-shm
+*.db-wal
+APP/__pycache__/
+APP/FRONTEND_OLD/
+*.backup
+*.before_*
+*.pre_v4_migration

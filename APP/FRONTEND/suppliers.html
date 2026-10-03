@@ -1,0 +1,221 @@
+<!DOCTYPE html><html lang="en"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><meta name="theme-color" content="#24085F"><title>Zippzo WMS — Supplier Master</title><style>*{box-sizing:border-box}html,body{margin:0;padding:0;font-family:Inter,Segoe UI,Arial,sans-serif;background:#f5f3fa;color:#241b3a}body{min-height:100vh}.z-topbar{height:70px;background:#fff;border-bottom:1px solid #e8e1f4;display:flex;align-items:center;justify-content:space-between;padding:0 24px 0 260px;position:fixed;top:0;left:0;right:0;z-index:900;box-shadow:0 2px 12px rgba(36,8,95,.05)}.z-brand{display:flex;align-items:center;gap:11px}.z-brand img{width:40px;height:40px;object-fit:contain;border-radius:9px}.z-brand strong{font-size:19px;font-weight:900;color:#331084}.z-brand span{display:block;font-size:10px;color:#756b8a;margin-top:2px}.z-user{display:flex;align-items:center;gap:12px;font-size:13px;font-weight:800}.z-online{display:flex;align-items:center;gap:6px;color:#554b68}.z-dot{width:9px;height:9px;border-radius:50%;background:#16a34a}.z-logout{border:0;border-radius:9px;background:#331084;color:#fff;padding:9px 13px;font-weight:800;cursor:pointer}.z-logout:hover{background:#24085f}.z-sidebar{position:fixed;left:0;top:0;bottom:0;width:240px;background:#24085F;color:#fff;z-index:1000;padding:16px 11px;overflow:auto}.z-logo{display:flex;align-items:center;gap:10px;padding:7px 10px 17px;border-bottom:1px solid rgba(255,255,255,.12);margin-bottom:9px}.z-logo img{width:40px;height:40px;object-fit:contain;background:#fff;border-radius:9px}.z-logo strong{font-size:21px;letter-spacing:.3px}.z-logo small{display:block;color:#d9d0eb;font-size:9px;margin-top:2px}.z-section{font-size:10px;color:#cbbde2;font-weight:900;letter-spacing:.7px;padding:13px 11px 6px;text-transform:uppercase}.z-nav{display:block;width:100%;border:0;background:transparent;color:#eee8f7;text-align:left;text-decoration:none;padding:9px 11px;border-radius:8px;margin:2px 0;font-size:12px;font-weight:650;cursor:pointer}.z-nav:hover{background:rgba(254,177,3,.12);color:#fff}.z-nav.active{background:#FEB103;color:#24085F;font-weight:900}.z-main{margin-left:240px;padding-top:70px;min-height:100vh}.content{padding:24px}.supplier-page{max-width:1800px;margin:0 auto}.page-header{display:flex;justify-content:space-between;align-items:flex-start;gap:15px;margin-bottom:18px}.page-title{margin:0;font-size:27px;font-weight:900;color:#24085F}.page-subtitle{margin:5px 0 0;color:#6d6480;font-size:13px}.header-actions{display:flex;gap:8px;flex-wrap:wrap}.btn{border:1px solid #ddd4eb;background:#fff;color:#332747;border-radius:9px;padding:9px 12px;font-weight:800;cursor:pointer}.btn:hover{background:#f7f3fb}.btn-primary{background:#331084;color:#fff;border-color:#331084}.btn-primary:hover{background:#24085F}.btn-danger{background:#fff1f0;color:#b42318;border-color:#f5c2bf}.btn-secondary{background:#f8f5fc}.summary-grid{display:grid;grid-template-columns:repeat(6,minmax(0,1fr));gap:12px;margin-bottom:16px}.summary-card{background:#fff;border:1px solid #e5def0;border-radius:13px;padding:15px;box-shadow:0 4px 15px rgba(51,16,132,.05);position:relative;overflow:hidden}.summary-card:before{content:"";position:absolute;left:0;top:0;bottom:0;width:4px;background:#FEB103}.summary-label{font-size:10px;color:#746987;text-transform:uppercase;font-weight:900;letter-spacing:.4px}.summary-value{font-size:25px;font-weight:900;margin-top:6px;color:#24085F}.summary-meta{font-size:10px;color:#9a90aa;margin-top:4px}.toolbar{background:#fff;border:1px solid #e5def0;border-radius:13px;padding:13px;margin-bottom:15px;display:grid;grid-template-columns:2.2fr 1fr 1fr 1fr auto auto;gap:8px;box-shadow:0 4px 15px rgba(51,16,132,.04)}.toolbar input,.toolbar select{width:100%;height:40px;border:1px solid #d9d0e7;border-radius:8px;padding:0 11px;background:#fff;outline:none;color:#332747}.toolbar input:focus,.toolbar select:focus{border-color:#331084;box-shadow:0 0 0 3px rgba(51,16,132,.08)}.table-card{background:#fff;border:1px solid #e5def0;border-radius:13px;overflow:hidden;box-shadow:0 4px 15px rgba(51,16,132,.04)}.table-header{padding:13px 15px;border-bottom:1px solid #ebe5f3;display:flex;justify-content:space-between;align-items:center;gap:10px}.table-header strong{font-size:14px;color:#24085F}.table-header span{font-size:11px;color:#756b8a}.table-wrapper{overflow:auto}table{width:100%;min-width:1400px;border-collapse:collapse}th{background:#24085F;color:#fff;font-size:10px;text-align:left;padding:11px 12px;border-bottom:1px solid #e5def0;white-space:nowrap;position:sticky;top:0;z-index:1}td{padding:11px 12px;border-bottom:1px solid #f0ebf5;font-size:12px;white-space:nowrap}tbody tr:hover td{background:#fcfaff}.supplier-name{font-weight:800;color:#2c2042}.supplier-code{color:#331084;font-size:10px;margin-top:3px}.muted{color:#6d6480}.badge{display:inline-flex;padding:4px 8px;border-radius:999px;font-size:10px;font-weight:800}.badge-active{background:#e8f7ed;color:#137333}.badge-inactive{background:#f1edf6;color:#6d6480}.badge-credit{background:#fff4d6;color:#8a5a00}.badge-cod{background:#eeeaf4;color:#5b5269}.actions{display:flex;gap:6px}.action-btn{border:1px solid #d8cfe5;background:#fff;padding:6px 9px;border-radius:7px;cursor:pointer;font-size:11px;font-weight:700;color:#331084}.action-btn:hover{background:#f7f2fc;border-color:#331084}.empty{text-align:center;padding:45px;color:#6d6480}.modal-overlay{position:fixed;inset:0;background:rgba(36,8,95,.58);display:none;align-items:center;justify-content:center;z-index:1200;padding:20px}.modal-overlay.show{display:flex}.modal{background:#fff;width:min(820px,100%);max-height:92vh;overflow:auto;border-radius:15px;box-shadow:0 25px 70px rgba(36,8,95,.25)}.modal-header{padding:19px 21px;border-bottom:1px solid #e8e1f0;display:flex;justify-content:space-between;align-items:center}.modal-header h2{margin:0;font-size:19px;color:#24085F}.close-btn{border:0;background:#f1edf6;color:#331084;font-size:22px;border-radius:8px;padding:4px 11px;cursor:pointer}.modal-body{padding:21px}.form-grid{display:grid;grid-template-columns:1fr 1fr;gap:13px}.form-group{display:flex;flex-direction:column;gap:5px}.form-group.full{grid-column:1/-1}.form-label{font-size:11px;font-weight:800;color:#463b57}.required{color:#dc2626}.form-control{width:100%;height:41px;box-sizing:border-box;border:1px solid #d8cfe5;border-radius:8px;padding:0 11px;outline:none;background:#fff}.form-control:focus{border-color:#331084;box-shadow:0 0 0 3px rgba(51,16,132,.1)}textarea.form-control{height:78px;padding-top:10px;resize:vertical}.modal-footer{padding:15px 21px;border-top:1px solid #e8e1f0;display:flex;justify-content:flex-end;gap:9px}.toast{position:fixed;right:22px;bottom:22px;background:#24085F;color:#fff;padding:12px 16px;border-radius:9px;font-size:12px;display:none;z-index:2000;box-shadow:0 10px 30px rgba(36,8,95,.2)}.toast.show{display:block}.detail-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:9px}.detail-item{border:1px solid #e5def0;border-radius:8px;padding:10px}.detail-item span{display:block;color:#756b8a;font-size:9px;text-transform:uppercase;font-weight:800}.detail-item strong{display:block;margin-top:3px;font-size:12px;color:#2c2042}@media(max-width:1200px){.summary-grid{grid-template-columns:repeat(3,1fr)}.toolbar{grid-template-columns:2fr 1fr 1fr}.toolbar .search{grid-column:span 2}}@media(max-width:800px){.z-sidebar{width:72px;padding:10px 7px}.z-logo strong,.z-logo small,.z-section{display:none}.z-logo{justify-content:center;border:0}.z-logo img{width:42px}.z-nav{font-size:0;text-align:center;padding:11px 5px}.z-nav:before{content:"•";font-size:18px;color:#FEB103}.z-main{margin-left:72px}.z-topbar{padding-left:92px}.summary-grid{grid-template-columns:repeat(2,1fr)}.page-header{flex-direction:column}.toolbar{grid-template-columns:1fr}.toolbar .search{grid-column:auto}.form-grid{grid-template-columns:1fr}.form-group.full{grid-column:auto}}@media(max-width:480px){.summary-grid{grid-template-columns:1fr}.z-brand span,.z-online{display:none}.z-user{gap:5px}.content{padding:13px}}</style>
+<link rel="stylesheet" href="zippzo-standard.css">
+<script src="zippzo-standard.js" defer></script>
+</head><body><header class="z-topbar"><div class="z-brand"><img src="zippzo-logo.jpg" alt="Zippzo"><div><strong>ZIPPZO</strong><span>Warehouse Management System</span></div></div><div class="z-user"><div class="z-online"><span class="z-dot"></span>System Online</div><span id="userName">Loading...</span><button class="z-logout" onclick="logout()">Logout</button></div></header><aside class="z-sidebar"><div class="z-logo"><img src="zippzo-logo.jpg" alt="Zippzo"><div><strong>ZIPPZO</strong><small>Warehouse Management System</small></div></div><div class="z-section">Main</div><button class="z-nav" onclick="location.href='index.html'">Dashboard</button><div class="z-section">Master Data</div><button class="z-nav" onclick="location.href='products.html'">Products</button><button class="z-nav active">Suppliers</button><button class="z-nav" onclick="location.href='locations.html'">Locations</button><button class="z-nav" onclick="location.href='hr-dashboard.html'">HR Dashboard</button><button class="z-nav" onclick="location.href='hr-live.html'">HR Live</button><button class="z-nav" onclick="location.href='employees.html'">Employees</button><div class="z-section">Warehouse</div><button class="z-nav" onclick="location.href='inventory.html'">Inventory</button><button class="z-nav" onclick="location.href='bins.html'">Bins</button><button class="z-nav" onclick="location.href='stock-movements.html'">Stock Movements</button><div class="z-section">Inbound</div><button class="z-nav" onclick="location.href='purchase-orders.html'">Purchase Orders</button><button class="z-nav" onclick="location.href='grn.html'">GRN</button><button class="z-nav" onclick="location.href='putaway.html'">Putaway</button><button class="z-nav" onclick="location.href='grid-putaway.html'">Grid Putaway</button><div class="z-section">Orders</div><button class="z-nav" onclick="location.href='orders.html'">Orders</button><button class="z-nav" onclick="location.href='create-batch.html'">Create Batch</button><button class="z-nav" onclick="location.href='picking.html'">Picking</button><button class="z-nav" onclick="location.href='sorting.html'">Sorting</button><button class="z-nav" onclick="location.href='dispatch.html'">Dispatch</button><div class="z-section">Delivery</div><button class="z-nav" onclick="location.href='vehicle-arrival.html'">Vehicle Arrival</button><button class="z-nav" onclick="location.href='store-receiving.html'">Store Receiving</button><div class="z-section">Reports</div><button class="z-nav" onclick="location.href='stock-report.html'">Stock Report</button><button class="z-nav" onclick="location.href='grn-report.html'">GRN Report</button><button class="z-nav" onclick="location.href='putaway-report.html'">Putaway Report</button><button class="z-nav" onclick="location.href='order-report.html'">Order Report</button><button class="z-nav" onclick="location.href='picking-report.html'">Picking Report</button><button class="z-nav" onclick="location.href='sorting-report.html'">Sorting Report</button><button class="z-nav" onclick="location.href='picking-ipp.html'">Picking IPP</button><button class="z-nav" onclick="location.href='sorting-ipp.html'">Sorting IPP</button><button class="z-nav" onclick="location.href='grid-putaway-report.html'">Grid Putaway</button><button class="z-nav" onclick="location.href='vehicle-arrival-report.html'">Vehicle Arrival</button><button class="z-nav" onclick="location.href='dispatch-report.html'">Dispatch</button><button class="z-nav" onclick="location.href='store-receiving-report.html'">Store Receiving</button><div class="z-section">Admin</div><button class="z-nav" onclick="location.href='access-control.html'">Access Control</button><button class="z-nav" onclick="location.href='audit-logs.html'">Audit Logs</button><button class="z-nav" onclick="location.href='system-settings.html'">System Settings</button></aside><main class="z-main">
+<div class="supplier-page">
+  <div class="page-header">
+    <div><div class="page-title">Supplier Master</div><div class="page-subtitle">Central supplier and distributor registry for Zippzo purchasing and inbound operations.</div></div>
+    <div class="header-actions"><button class="btn btn-secondary" onclick="exportCSV()">Export CSV</button><button class="btn btn-primary" onclick="openAddModal()">+ Add Supplier</button></div>
+  </div>
+
+  <div class="summary-grid">
+    <div class="summary-card"><div class="summary-label">Total Suppliers</div><div id="totalSuppliers" class="summary-value">0</div><div class="summary-meta">Live supplier records</div></div>
+    <div class="summary-card"><div class="summary-label">Active Suppliers</div><div id="activeSuppliers" class="summary-value">0</div><div class="summary-meta">Available for purchasing</div></div>
+    <div class="summary-card"><div class="summary-label">Inactive</div><div id="inactiveSuppliers" class="summary-value">0</div><div class="summary-meta">Disabled records</div></div>
+    <div class="summary-card"><div class="summary-label">Credit Suppliers</div><div id="creditSuppliers" class="summary-value">0</div><div class="summary-meta">Credit payment terms</div></div>
+    <div class="summary-card"><div class="summary-label">Immediate / COD</div><div id="codSuppliers" class="summary-value">0</div><div class="summary-meta">Immediate settlement terms</div></div>
+    <div class="summary-card"><div class="summary-label">Cities</div><div id="cityCount" class="summary-value">0</div><div class="summary-meta">Supplier locations</div></div>
+  </div>
+
+  <div class="toolbar">
+    <div class="search search-box"><input id="searchInput" type="text" placeholder="Search company, code, contact, phone, email, GSTIN, city..." oninput="renderSuppliers()"></div>
+    <select id="statusFilter" onchange="renderSuppliers()"><option value="ALL">All Status</option><option value="ACTIVE">Active</option><option value="INACTIVE">Inactive</option></select>
+    <select id="creditFilter" onchange="renderSuppliers()"><option value="ALL">All Payment Terms</option><option value="CREDIT">Credit</option><option value="COD">COD / Immediate</option></select>
+    <select id="cityFilter" onchange="renderSuppliers()"><option value="">All Cities</option></select>
+    <button class="btn btn-secondary" onclick="clearFilters()">Clear</button>
+    <button class="btn btn-secondary" onclick="loadSuppliers()">↻ Refresh</button>
+  </div>
+
+  <div class="table-card">
+    <div class="table-header"><div><strong>Supplier Directory</strong> <span id="resultCount">0 suppliers</span></div><span id="syncStatus">Live database</span></div>
+    <div class="table-wrapper">
+      <table>
+        <thead><tr><th>SUPPLIER</th><th>CONTACT</th><th>PHONE</th><th>EMAIL</th><th>GSTIN</th><th>PAYMENT TERMS</th><th>LOCATION</th><th>STATUS</th><th>ACTIONS</th></tr></thead>
+        <tbody id="supplierTableBody"><tr><td colspan="9" class="empty">Loading suppliers...</td></tr></tbody>
+      </table>
+    </div>
+  </div>
+</div>
+</main>
+<div class="modal-overlay" id="supplierModal">
+<div class="modal">
+  <div class="modal-header"><h2 id="modalTitle">Add Supplier</h2><button class="close-btn" onclick="closeModal()">×</button></div>
+  <div class="modal-body">
+    <form id="supplierForm" onsubmit="saveSupplier(event)">
+      <input type="hidden" id="editId">
+      <div class="form-grid">
+        <div class="form-group"><label class="form-label">Supplier Code <span class="required">*</span></label><input id="supplierCode" class="form-control" required></div>
+        <div class="form-group"><label class="form-label">Company Name <span class="required">*</span></label><input id="companyName" class="form-control" required></div>
+        <div class="form-group"><label class="form-label">Contact Person</label><input id="contactPerson" class="form-control"></div>
+        <div class="form-group"><label class="form-label">Phone</label><input id="phone" class="form-control"></div>
+        <div class="form-group"><label class="form-label">Email</label><input id="email" type="email" class="form-control"></div>
+        <div class="form-group"><label class="form-label">GSTIN</label><input id="gstin" class="form-control" maxlength="15" style="text-transform:uppercase"></div>
+        <div class="form-group"><label class="form-label">Payment Terms</label><select id="paymentTerms" class="form-control"><option value="0">COD / Immediate</option><option value="7">7 Days Credit</option><option value="15">15 Days Credit</option><option value="30">30 Days Credit</option><option value="45">45 Days Credit</option><option value="60">60 Days Credit</option><option value="90">90 Days Credit</option></select></div>
+        <div class="form-group"><label class="form-label">Status</label><select id="active" class="form-control"><option value="true">Active</option><option value="false">Inactive</option></select></div>
+        <div class="form-group full"><label class="form-label">Address</label><textarea id="address" class="form-control"></textarea></div>
+        <div class="form-group"><label class="form-label">City</label><input id="city" class="form-control"></div>
+        <div class="form-group"><label class="form-label">State</label><input id="state" class="form-control"></div>
+        <div class="form-group"><label class="form-label">Pincode</label><input id="pincode" class="form-control" inputmode="numeric" maxlength="6"></div>
+        <div class="form-group"><label class="form-label">Location / Store ID</label><input id="locationId" type="number" min="1" class="form-control"></div>
+      </div>
+    </form>
+  </div>
+  <div class="modal-footer"><button class="btn btn-secondary" onclick="closeModal()">Cancel</button><button class="btn btn-primary" id="saveSupplierBtn" onclick="document.getElementById('supplierForm').requestSubmit()">Save Supplier</button></div>
+</div>
+</div>
+
+<div class="toast" id="toast"></div>
+
+<script>
+"use strict";
+const API_BASE=window.location.origin,TOKEN_KEY="zippzo_session_token",USER_KEY="zippzo_user";
+let suppliers=[];
+
+function getToken(){return localStorage.getItem(TOKEN_KEY)}
+function esc(v){return String(v??"").replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#039;"}[c]))}
+function activeValue(s){return s.active===true||s.active===1||s.active==="true"}
+function creditDays(s){return Number(s.payment_terms??s.credit_days??0)||0}
+
+async function api(path,options={}){
+  const t=getToken(),headers={...(options.headers||{})};
+  if(options.body&&!headers["Content-Type"])headers["Content-Type"]="application/json";
+  if(t)headers.Authorization=`Bearer ${t}`;
+  const response=await fetch(API_BASE+path,{...options,headers});
+  if(response.status===401){localStorage.removeItem(TOKEN_KEY);localStorage.removeItem(USER_KEY);location.href="index.html";throw new Error("Session expired")}
+  const type=response.headers.get("content-type")||"";let data=null;
+  try{data=type.includes("application/json")?await response.json():await response.text()}catch(_){}
+  if(!response.ok){throw new Error(data?.detail||data?.message||data||`Request failed: ${response.status}`)}
+  return data;
+}
+function showToast(message){const t=document.getElementById("toast");t.textContent=message;t.classList.add("show");clearTimeout(window.toastTimer);window.toastTimer=setTimeout(()=>t.classList.remove("show"),3000)}
+
+async function checkAuth(){
+  const user=await api("/api/auth/me");
+  localStorage.setItem(USER_KEY,JSON.stringify(user));
+  document.getElementById("userName").textContent=user.name||user.full_name||user.employee_id||user.email||"Zippzo User";
+}
+
+async function loadSuppliers(){
+  document.getElementById("syncStatus").textContent="Refreshing...";
+  try{
+    const data=await api("/api/suppliers");
+    suppliers=Array.isArray(data)?data:(Array.isArray(data?.suppliers)?data.suppliers:Array.isArray(data?.items)?data.items:[]);
+    buildCityFilter();renderSuppliers();updateSummary();
+    document.getElementById("syncStatus").textContent=`Live · ${new Date().toLocaleTimeString("en-IN")}`;
+  }catch(e){
+    document.getElementById("supplierTableBody").innerHTML=`<tr><td colspan="9" class="empty">${esc(e.message)}</td></tr>`;
+    document.getElementById("syncStatus").textContent="Connection error";showToast(e.message);
+  }
+}
+function buildCityFilter(){
+  const select=document.getElementById("cityFilter"),old=select.value;
+  const cities=[...new Set(suppliers.map(s=>s.city).filter(Boolean))].sort();
+  select.innerHTML='<option value="">All Cities</option>'+cities.map(c=>`<option value="${esc(c)}">${esc(c)}</option>`).join("");
+  select.value=old;
+}
+function renderSuppliers(){
+  const q=document.getElementById("searchInput").value.trim().toLowerCase(),status=document.getElementById("statusFilter").value,credit=document.getElementById("creditFilter").value,city=document.getElementById("cityFilter").value;
+  const filtered=suppliers.filter(s=>{
+    const text=[s.supplier_code,s.company_name,s.contact_person,s.phone,s.email,s.gstin,s.city,s.state,s.pincode].join(" ").toLowerCase();
+    const active=activeValue(s),days=creditDays(s);
+    return(!q||text.includes(q))&&(!status||(status==="ACTIVE"?active:!active))&&(!credit||(credit==="CREDIT"?days>0:days<=0))&&(!city||s.city===city);
+  });
+  document.getElementById("resultCount").textContent=`${filtered.length} supplier${filtered.length===1?"":"s"}`;
+  const body=document.getElementById("supplierTableBody");
+  if(!filtered.length){body.innerHTML='<tr><td colspan="9" class="empty">No suppliers found.</td></tr>';return}
+  body.innerHTML=filtered.map(s=>{
+    const days=creditDays(s),active=activeValue(s),location=[s.city,s.state].filter(Boolean).join(", ")||"—";
+    return `<tr>
+      <td><div class="supplier-name">${esc(s.company_name||"—")}</div><div class="supplier-code">${esc(s.supplier_code||"—")}</div></td>
+      <td>${esc(s.contact_person||"—")}</td><td>${esc(s.phone||"—")}</td><td>${esc(s.email||"—")}</td><td>${esc(s.gstin||"—")}</td>
+      <td>${days>0?`<span class="badge badge-credit">${days} Days Credit</span>`:'<span class="badge badge-cod">COD / Immediate</span>'}</td>
+      <td>${esc(location)}</td><td><span class="badge ${active?"badge-active":"badge-inactive"}">${active?"ACTIVE":"INACTIVE"}</span></td>
+      <td><div class="actions"><button class="action-btn" onclick="editSupplier(${Number(s.id)})">Edit</button><button class="action-btn" onclick="viewSupplier(${Number(s.id)})">View</button></div></td>
+    </tr>`;
+  }).join("");
+}
+function updateSummary(){
+  const total=suppliers.length,active=suppliers.filter(activeValue).length,credit=suppliers.filter(s=>creditDays(s)>0).length;
+  document.getElementById("totalSuppliers").textContent=total;document.getElementById("activeSuppliers").textContent=active;
+  document.getElementById("inactiveSuppliers").textContent=total-active;document.getElementById("creditSuppliers").textContent=credit;
+  document.getElementById("codSuppliers").textContent=total-credit;
+  document.getElementById("cityCount").textContent=new Set(suppliers.map(s=>s.city).filter(Boolean)).size;
+}
+function clearFilters(){document.getElementById("searchInput").value="";document.getElementById("statusFilter").value="ALL";document.getElementById("creditFilter").value="ALL";document.getElementById("cityFilter").value="";renderSuppliers()}
+function openAddModal(){
+  document.getElementById("supplierForm").reset();document.getElementById("editId").value="";document.getElementById("active").value="true";document.getElementById("paymentTerms").value="0";
+  document.getElementById("modalTitle").textContent="Add Supplier";document.getElementById("saveSupplierBtn").textContent="Save Supplier";document.getElementById("supplierModal").classList.add("show");
+}
+function closeModal(){document.getElementById("supplierModal").classList.remove("show")}
+function editSupplier(id){
+  const s=suppliers.find(x=>Number(x.id)===Number(id));if(!s)return;
+  document.getElementById("modalTitle").textContent="Edit Supplier";document.getElementById("saveSupplierBtn").textContent="Update Supplier";document.getElementById("editId").value=s.id||"";
+  document.getElementById("supplierCode").value=s.supplier_code||"";document.getElementById("companyName").value=s.company_name||"";
+  document.getElementById("contactPerson").value=s.contact_person||"";document.getElementById("phone").value=s.phone||"";
+  document.getElementById("email").value=s.email||"";document.getElementById("gstin").value=s.gstin||"";
+  document.getElementById("paymentTerms").value=creditDays(s);document.getElementById("active").value=activeValue(s)?"true":"false";
+  document.getElementById("address").value=s.address||"";document.getElementById("city").value=s.city||"";document.getElementById("state").value=s.state||"";
+  document.getElementById("pincode").value=s.pincode||"";document.getElementById("locationId").value=s.location_id||"";
+  document.getElementById("supplierModal").classList.add("show");
+}
+async function saveSupplier(event){
+  event.preventDefault();const form=document.getElementById("supplierForm");if(!form.checkValidity()){form.reportValidity();return}
+  const id=document.getElementById("editId").value,btn=document.getElementById("saveSupplierBtn");btn.disabled=true;btn.textContent="Saving...";
+  const data={
+    supplier_code:document.getElementById("supplierCode").value.trim(),
+    company_name:document.getElementById("companyName").value.trim(),
+    contact_person:document.getElementById("contactPerson").value.trim(),
+    phone:document.getElementById("phone").value.trim(),
+    email:document.getElementById("email").value.trim(),
+    gstin:document.getElementById("gstin").value.trim().toUpperCase(),
+    address:document.getElementById("address").value.trim(),
+    city:document.getElementById("city").value.trim(),
+    state:document.getElementById("state").value.trim(),
+    pincode:document.getElementById("pincode").value.trim(),
+    payment_terms:Number(document.getElementById("paymentTerms").value),
+    active:document.getElementById("active").value==="true",
+    location_id:Number(document.getElementById("locationId").value)||null
+  };
+  try{
+    if(id)await api(`/api/suppliers/${id}`,{method:"PUT",body:JSON.stringify(data)});
+    else await api("/api/suppliers",{method:"POST",body:JSON.stringify(data)});
+    closeModal();showToast(id?"Supplier updated successfully":"Supplier added successfully");await loadSuppliers();
+  }catch(e){showToast(e.message)}finally{btn.disabled=false;btn.textContent=id?"Update Supplier":"Save Supplier"}
+}
+function viewSupplier(id){
+  const s=suppliers.find(x=>Number(x.id)===Number(id));if(!s)return;
+  const days=creditDays(s);
+  const modal=document.getElementById("supplierModal");
+  document.getElementById("modalTitle").textContent="Supplier Details";
+  document.getElementById("supplierForm").innerHTML=`<div class="detail-grid">
+    <div class="detail-item"><span>Company</span><strong>${esc(s.company_name||"—")}</strong></div>
+    <div class="detail-item"><span>Supplier Code</span><strong>${esc(s.supplier_code||"—")}</strong></div>
+    <div class="detail-item"><span>Contact Person</span><strong>${esc(s.contact_person||"—")}</strong></div>
+    <div class="detail-item"><span>Phone</span><strong>${esc(s.phone||"—")}</strong></div>
+    <div class="detail-item"><span>Email</span><strong>${esc(s.email||"—")}</strong></div>
+    <div class="detail-item"><span>GSTIN</span><strong>${esc(s.gstin||"—")}</strong></div>
+    <div class="detail-item"><span>Payment Terms</span><strong>${days>0?days+" Days Credit":"COD / Immediate"}</strong></div>
+    <div class="detail-item"><span>Status</span><strong>${activeValue(s)?"ACTIVE":"INACTIVE"}</strong></div>
+    <div class="detail-item"><span>City</span><strong>${esc(s.city||"—")}</strong></div>
+    <div class="detail-item"><span>State</span><strong>${esc(s.state||"—")}</strong></div>
+    <div class="detail-item"><span>Pincode</span><strong>${esc(s.pincode||"—")}</strong></div>
+    <div class="detail-item"><span>Location ID</span><strong>${esc(s.location_id||"—")}</strong></div>
+    <div class="detail-item" style="grid-column:1/-1"><span>Address</span><strong>${esc(s.address||"—")}</strong></div>
+  </div>`;
+  document.getElementById("saveSupplierBtn").style.display="none";modal.classList.add("show");
+}
+function exportCSV(){
+  if(!suppliers.length){showToast("No suppliers to export");return}
+  const cols=["supplier_code","company_name","contact_person","phone","email","gstin","payment_terms","address","city","state","pincode","active"];
+  const header=["Supplier Code","Company Name","Contact Person","Phone","Email","GSTIN","Payment Terms","Address","City","State","Pincode","Status"];
+  const rows=suppliers.map(s=>cols.map(k=>{let v=s[k]??"";if(k==="payment_terms")v=creditDays(s)>0?`${creditDays(s)} Days Credit`:"COD / Immediate";if(k==="active")v=activeValue(s)?"ACTIVE":"INACTIVE";return `"${String(v).replace(/"/g,'""')}"`}));
+  const csv=[header,...rows].map(r=>r.join(",")).join("\n"),url=URL.createObjectURL(new Blob([csv],{type:"text/csv;charset=utf-8;"})),a=document.createElement("a");
+  a.href=url;a.download=`Zippzo_Suppliers_${new Date().toISOString().slice(0,10)}.csv`;a.click();URL.revokeObjectURL(url);showToast("Supplier CSV exported");
+}
+document.getElementById("supplierModal").addEventListener("click",e=>{if(e.target.id==="supplierModal")closeModal()});
+document.addEventListener("keydown",e=>{if(e.key==="Escape")closeModal()});
+async function logout(){const t=getToken();try{if(t)await fetch(`${API_BASE}/api/auth/logout`,{method:"POST",headers:{"Content-Type":"application/json","Authorization":`Bearer ${t}`},body:JSON.stringify({session_token:t})})}catch(_){}localStorage.removeItem(TOKEN_KEY);localStorage.removeItem(USER_KEY);location.href="index.html"}
+(async()=>{try{await checkAuth();await loadSuppliers()}catch(e){console.error(e)}})();
+</script>
+</body>
+</html>

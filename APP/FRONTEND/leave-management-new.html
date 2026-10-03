@@ -1,0 +1,219 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1.0">
+<title>Zippzo Leave Management</title>
+<style>
+*{box-sizing:border-box}:root{--dark:#111827;--blue:#2563eb;--green:#16a34a;--orange:#ea580c;--red:#dc2626;--purple:#7c3aed;--muted:#64748b;--line:#e2e8f0;--bg:#f4f7fb}
+body{margin:0;background:var(--bg);color:#172033;font-family:Inter,Segoe UI,Arial,sans-serif}.top{height:68px;background:var(--dark);color:#fff;display:flex;align-items:center;gap:16px;padding:0 22px;position:sticky;top:0;z-index:20}.logo{font-size:25px;font-weight:900;letter-spacing:1px}.title{font-size:14px;color:#cbd5e1}.spacer{flex:1}.top button{background:#1f2937;border:1px solid #475569;color:#fff;border-radius:8px;padding:9px 13px;cursor:pointer}
+.layout{display:grid;grid-template-columns:235px 1fr;min-height:calc(100vh - 68px)}nav{background:#fff;border-right:1px solid var(--line);padding:14px 10px;position:sticky;top:68px;height:calc(100vh - 68px);overflow:auto}nav h4{font-size:10px;color:#94a3b8;text-transform:uppercase;margin:12px}nav a{display:block;text-decoration:none;color:#334155;padding:9px 12px;border-radius:8px;font-size:12px;margin:2px 0}nav a:hover,nav a.active{background:#eff6ff;color:#1d4ed8;font-weight:700}
+main{padding:22px;min-width:0}.head{display:flex;align-items:center;justify-content:space-between;gap:15px;margin-bottom:18px}.head h1{font-size:25px;margin:0}.sub{font-size:13px;color:var(--muted);margin-top:5px}.actions{display:flex;gap:8px;flex-wrap:wrap}.btn{border:1px solid var(--line);background:#fff;border-radius:8px;padding:9px 13px;cursor:pointer;font-size:12px}.btn.primary{background:var(--blue);border-color:var(--blue);color:#fff}.btn.success{background:var(--green);border-color:var(--green);color:#fff}.btn.danger{color:var(--red)}.btn.small{padding:6px 9px;font-size:11px}
+.kpis{display:grid;grid-template-columns:repeat(8,1fr);gap:10px}.card{background:#fff;border:1px solid var(--line);border-radius:12px;padding:14px;box-shadow:0 1px 2px #00000008}.label{font-size:10px;color:var(--muted);text-transform:uppercase}.value{font-size:23px;font-weight:850;margin-top:6px}.note{font-size:10px;color:var(--muted);margin-top:4px}
+.section{margin-top:18px}.section-head{display:flex;align-items:center;justify-content:space-between;gap:10px;margin-bottom:10px}.section-head h2{font-size:16px;margin:0}.filters{display:flex;gap:8px;flex-wrap:wrap}.filters input,.filters select{height:37px;border:1px solid var(--line);border-radius:8px;background:#fff;padding:0 10px;font-size:12px;color:#172033}.filters .search{min-width:340px}
+.summary{display:grid;grid-template-columns:repeat(8,1fr);gap:10px}.summary strong{display:block;font-size:21px;margin-top:5px}.summary span{font-size:10px;color:var(--muted)}
+.table-wrap{overflow:auto;background:#fff;border:1px solid var(--line);border-radius:10px}.table{width:100%;border-collapse:collapse;font-size:12px}.table th{background:#f8fafc;color:#64748b;font-size:10px;text-transform:uppercase;text-align:left;position:sticky;top:0;z-index:2}.table th,.table td{padding:10px;border-bottom:1px solid #edf2f7;white-space:nowrap}.table tr:hover td{background:#f8fafc}
+.tag{display:inline-block;border-radius:999px;padding:4px 8px;font-size:10px;font-weight:700;background:#eef2ff;color:#3730a3}.tag.good{background:#f0fdf4;color:#15803d}.tag.warn{background:#fff7ed;color:#c2410c}.tag.bad{background:#fef2f2;color:#b91c1c}.tag.info{background:#eff6ff;color:#1d4ed8}.tag.purple{background:#f5f3ff;color:#6d28d9}.muted{color:var(--muted)}.empty{text-align:center;padding:30px;color:#94a3b8}
+.grid2{display:grid;grid-template-columns:1.1fr .9fr;gap:14px}.list{background:#fff;border:1px solid var(--line);border-radius:10px;overflow:hidden}.list-row{display:flex;justify-content:space-between;gap:10px;padding:11px 13px;border-bottom:1px solid #edf2f7;font-size:12px}.list-row:last-child{border:0}.list-row b{display:block}
+.modal{display:none;position:fixed;inset:0;background:#0008;z-index:50;align-items:center;justify-content:center;padding:20px}.modal.show{display:flex}.modal-box{background:#fff;border-radius:14px;width:min(1120px,100%);max-height:92vh;overflow:auto;padding:20px}.modal-head{display:flex;justify-content:space-between;align-items:center}.modal-head h2{font-size:18px;margin:0}.close{border:0;background:#f1f5f9;border-radius:8px;padding:7px 10px;cursor:pointer}
+.form-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:11px;margin-top:16px}.field{display:flex;flex-direction:column;gap:5px}.field label{font-size:10px;color:var(--muted);text-transform:uppercase;font-weight:700}.field input,.field select,.field textarea{border:1px solid var(--line);border-radius:8px;padding:9px;font:inherit;font-size:12px;background:#fff}.field textarea{min-height:75px;resize:vertical}.span2{grid-column:span 2}.span3{grid-column:span 3}.modal-actions{display:flex;justify-content:flex-end;gap:8px;margin-top:18px}
+.detail-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:9px;margin-top:15px}.detail{border:1px solid var(--line);border-radius:8px;padding:10px}.detail small{display:block;color:var(--muted);font-size:10px}.detail b{display:block;margin-top:4px;font-size:12px;word-break:break-word}.timeline{margin-top:18px;border-left:2px solid #dbeafe;padding-left:18px}.timeline-item{position:relative;margin:0 0 15px}.timeline-item:before{content:"";position:absolute;left:-25px;top:2px;width:10px;height:10px;background:var(--blue);border-radius:50%}.timeline-item b{display:block;font-size:12px}.timeline-item span{font-size:10px;color:var(--muted)}
+.toast{position:fixed;right:20px;bottom:20px;background:#111827;color:#fff;padding:12px 15px;border-radius:8px;display:none;z-index:100;font-size:13px}.loading{opacity:.65;pointer-events:none}
+@media(max-width:1450px){.kpis{grid-template-columns:repeat(4,1fr)}.summary{grid-template-columns:repeat(4,1fr)}}@media(max-width:1050px){.layout{grid-template-columns:1fr}nav{display:none}.grid2{grid-template-columns:1fr}.detail-grid{grid-template-columns:repeat(2,1fr)}.form-grid{grid-template-columns:repeat(2,1fr)}.span3{grid-column:span 2}}@media(max-width:650px){main{padding:13px}.kpis,.summary{grid-template-columns:repeat(2,1fr)}.head{align-items:flex-start;flex-direction:column}.filters .search{min-width:100%}.detail-grid,.form-grid{grid-template-columns:1fr}.span2,.span3{grid-column:span 1}}@media print{.top,nav,.actions,.filters,.pagination,.no-print{display:none!important}.layout{display:block}main{padding:0}.card{box-shadow:none}}
+</style>
+
+<style id="zippzo-master-theme">
+/* ZIPPZO MASTER FRONTEND THEME — visual layer only */
+:root{
+ --z-purple:#331084;--z-dark:#24085F;--z-yellow:#FEB103;
+ --z-bg:#F5F6FB;--z-card:#FFFFFF;--z-text:#171A4A;--z-muted:#69708F;
+ --z-line:#E6E8F0;--z-shadow:0 5px 18px rgba(36,8,95,.07);
+}
+html,body{background:var(--z-bg)!important;color:var(--z-text)!important}
+body{font-family:Inter,Segoe UI,Arial,sans-serif!important}
+.topbar,.header,.top-header,.top-nav,.app-header{
+ background:linear-gradient(90deg,var(--z-dark),var(--z-purple))!important;
+ color:#fff!important;border-color:transparent!important;
+}
+.sidebar,.side-nav,.left-sidebar,.navigation{
+ background:linear-gradient(180deg,#25105F,#180743)!important;
+ color:#fff!important;border-color:transparent!important;
+}
+.brand{color:#fff!important}
+.sidebar .nav-button,.sidebar button,.side-nav button,.left-sidebar button,
+.navigation button,.nav-button{
+ color:#fff!important;background:transparent!important;border-radius:8px!important;
+ border-color:transparent!important;
+}
+.sidebar .nav-button:hover,.sidebar button:hover,.side-nav button:hover,
+.left-sidebar button:hover,.navigation button:hover,.nav-button:hover{
+ background:rgba(255,255,255,.09)!important;
+}
+.sidebar .nav-button.active,.sidebar .nav-button[aria-current="page"],
+.nav-button.active,.nav-button.selected,.nav-button.current{
+ background:var(--z-yellow)!important;color:#15112F!important;font-weight:900!important;
+}
+.sidebar-title,.section-title,.nav-section{
+ color:#B9A9E8!important;letter-spacing:.7px!important;font-weight:900!important;
+}
+.content,.main-content,.page-content,.workspace{background:var(--z-bg)!important}
+.card,.panel,.table-card,.summary-card,.kpi-card,.stat-card,.form-card,
+.modal-content,.toolbar,.filter-bar,.table-container{
+ background:#fff!important;border-color:var(--z-line)!important;
+ box-shadow:var(--z-shadow)!important;border-radius:12px!important;
+}
+.btn-primary,.primary-btn,.button-primary,.add-btn,.save-btn{
+ background:var(--z-yellow)!important;color:#17113B!important;border-color:var(--z-yellow)!important;
+}
+.btn-secondary,.secondary-btn{background:#fff!important;color:var(--z-text)!important;border-color:var(--z-line)!important}
+input,select,textarea{
+ border-color:#DFE2EB!important;border-radius:8px!important;background:#fff!important;color:var(--z-text)!important;
+}
+input:focus,select:focus,textarea:focus{
+ border-color:var(--z-purple)!important;box-shadow:0 0 0 3px rgba(51,16,132,.08)!important;
+}
+table{background:#fff!important}
+thead th{background:#F7F8FC!important;color:#626987!important}
+tbody td{border-color:#EDF0F5!important}
+tbody tr:hover td{background:#FAFAFF!important}
+.badge,.status-badge{border-radius:999px!important}
+.page-title,h1,h2{color:var(--z-text)!important}
+.muted,.subtitle,.page-subtitle,.help-text{color:var(--z-muted)!important}
+</style>
+
+
+<link rel="stylesheet" href="zippzo-standard.css">
+<script src="zippzo-standard.js" defer></script>
+</head>
+<body>
+<header class="top"><div class="logo">ZIPPZO</div><div class="title">Leave Management</div><div class="spacer"></div><span id="userName" class="title">Loading...</span><button onclick="loadAll()">↻ Refresh</button><button onclick="logout()">Logout</button></header>
+<div class="layout"><nav id="nav"></nav><main>
+<div class="head"><div><h1>Leave Management</h1><div class="sub">Employee → Leave Request → Approval → Balance → Leave Calendar → Attendance</div></div><div class="actions"><button class="btn" onclick="exportCSV()">Export CSV</button><button class="btn" onclick="printReport()">Print</button><button class="btn primary" onclick="openCreate()">+ New Leave Request</button></div></div>
+
+<div class="kpis">
+<div class="card"><div class="label">TOTAL REQUESTS</div><div class="value" id="kTotal">—</div><div class="note">Leave records</div></div>
+<div class="card"><div class="label">PENDING</div><div class="value" id="kPending">—</div><div class="note">Awaiting approval</div></div>
+<div class="card"><div class="label">APPROVED</div><div class="value" id="kApproved">—</div><div class="note">Approved requests</div></div>
+<div class="card"><div class="label">REJECTED</div><div class="value" id="kRejected">—</div><div class="note">Rejected requests</div></div>
+<div class="card"><div class="label">CANCELLED</div><div class="value" id="kCancelled">—</div><div class="note">Cancelled requests</div></div>
+<div class="card"><div class="label">LEAVE DAYS</div><div class="value" id="kDays">—</div><div class="note">Requested days</div></div>
+<div class="card"><div class="label">EMPLOYEES</div><div class="value" id="kEmployees">—</div><div class="note">Employees requesting</div></div>
+<div class="card"><div class="label">ALERTS</div><div class="value" id="kAlerts">—</div><div class="note">Missing / conflicting data</div></div>
+</div>
+
+<section class="section"><div class="card"><div class="section-head"><h2>Leave Filters</h2><button class="btn" onclick="clearFilters()">Clear Filters</button></div>
+<div class="filters">
+<input class="search" id="search" placeholder="Employee / leave type / reason / request ID..." oninput="applyFilters()">
+<input id="dateFrom" type="date" onchange="applyFilters()">
+<input id="dateTo" type="date" onchange="applyFilters()">
+<select id="status" onchange="applyFilters()"><option value="">All Status</option></select>
+<select id="leaveType" onchange="applyFilters()"><option value="">All Leave Types</option></select>
+<select id="department" onchange="applyFilters()"><option value="">All Departments</option></select>
+<select id="location" onchange="applyFilters()"><option value="">All Locations</option></select>
+<select id="sort" onchange="applyFilters()"><option value="newest">Newest</option><option value="start">Leave Start</option><option value="name">Employee A-Z</option><option value="days">Days ↓</option></select>
+<select id="pageSize" onchange="applyFilters()"><option>25</option><option>50</option><option>100</option></select>
+</div></div></section>
+
+<section class="section summary">
+<div class="card"><div class="label">FILTERED</div><strong id="sTotal">0</strong><span>requests</span></div>
+<div class="card"><div class="label">PENDING</div><strong id="sPending">0</strong><span>approval</span></div>
+<div class="card"><div class="label">APPROVED</div><strong id="sApproved">0</strong><span>approved</span></div>
+<div class="card"><div class="label">REJECTED</div><strong id="sRejected">0</strong><span>rejected</span></div>
+<div class="card"><div class="label">DAYS</div><strong id="sDays">0</strong><span>requested</span></div>
+<div class="card"><div class="label">EMPLOYEES</div><strong id="sEmployees">0</strong><span>unique</span></div>
+<div class="card"><div class="label">ALERTS</div><strong id="sAlerts">0</strong><span>review</span></div>
+<div class="card"><div class="label">TODAY</div><strong id="sToday">0</strong><span>active today</span></div>
+</section>
+
+<section class="section grid2">
+<div class="card"><div class="section-head"><h2>Leave Status Summary</h2><span class="muted" id="statusCount">0 requests</span></div><div class="list" id="statusList"></div></div>
+<div class="card"><div class="section-head"><h2>Leave Exceptions</h2><span class="tag warn" id="exceptionCount">0</span></div><div class="list" id="exceptionList"></div></div>
+</section>
+
+<section class="section"><div class="section-head"><h2>Leave Register</h2><span class="muted" id="resultCount">0 requests</span></div>
+<div class="table-wrap"><table class="table"><thead><tr><th>Request ID</th><th>Employee</th><th>Department</th><th>Leave Type</th><th>From</th><th>To</th><th>Days</th><th>Reason</th><th>Status</th><th>Requested By</th><th>Approved By</th><th>Action</th></tr></thead><tbody id="body"></tbody></table></div>
+<div class="pagination"><span id="pageInfo">Page 1</span><div id="pager" style="display:flex;gap:5px"></div></div></section>
+</main></div>
+
+<div class="modal" id="formModal"><div class="modal-box"><div class="modal-head"><h2>New Leave Request</h2><button class="close" onclick="closeForm()">✕</button></div>
+<form id="leaveForm" onsubmit="saveLeave(event)">
+<div class="form-grid">
+<div class="field"><label>Employee *</label><select id="fEmployee" required><option value="">Select employee</option></select></div>
+<div class="field"><label>Leave Type *</label><select id="fType" required><option value="">Select type</option><option>CASUAL</option><option>SICK</option><option>ANNUAL</option><option>PRIVILEGE</option><option>EMERGENCY</option><option>UNPAID</option><option>MATERNITY</option><option>PATERNITY</option><option>COMP_OFF</option><option>OTHER</option></select></div>
+<div class="field"><label>Status</label><select id="fStatus"><option value="PENDING">PENDING</option><option value="APPROVED">APPROVED</option><option value="REJECTED">REJECTED</option><option value="CANCELLED">CANCELLED</option></select></div>
+<div class="field"><label>From Date *</label><input id="fFrom" type="date" required onchange="calcDays()"></div>
+<div class="field"><label>To Date *</label><input id="fTo" type="date" required onchange="calcDays()"></div>
+<div class="field"><label>Days</label><input id="fDays" type="number" min="0.5" step="0.5" readonly></div>
+<div class="field"><label>Half Day</label><select id="fHalf"><option value="NO">NO</option><option value="YES">YES</option></select></div>
+<div class="field"><label>Contact During Leave</label><input id="fContact" placeholder="Phone / email"></div>
+<div class="field"><label>Requested On</label><input id="fRequested" type="date"></div>
+<div class="field span3"><label>Reason *</label><textarea id="fReason" required placeholder="Reason for leave"></textarea></div>
+<div class="field span3"><label>Remarks</label><textarea id="fRemarks" placeholder="HR remarks"></textarea></div>
+</div>
+<div class="modal-actions"><button type="button" class="btn" onclick="closeForm()">Cancel</button><button class="btn primary">Save Leave Request</button></div>
+</form></div></div>
+
+<div class="modal" id="detailModal"><div class="modal-box"><div class="modal-head"><h2>Leave Details</h2><button class="close" onclick="closeDetail()">✕</button></div><div id="detail"></div></div></div>
+<div class="toast" id="toast"></div>
+<script>
+const API=window.location.origin,TOKEN_KEY="zippzo_session_token";let token=localStorage.getItem(TOKEN_KEY),rows=[],employees=[],filtered=[],page=1;
+const navLinks=[["index.html","Dashboard"],["hr-dashboard.html","HR Dashboard"],["employees.html","Employees"],["attendance.html","Attendance"],["shift-management.html","Shift Management"],["leave-management.html","Leave Management"],["payroll.html","Payroll"],["employee-documents.html","Employee Documents"],["employee-performance.html","Performance"],["hr-reports.html","HR Reports"],["products.html","Products"],["suppliers.html","Suppliers"],["locations.html","Locations"],["inventory.html","Inventory"],["stock-movements.html","Stock Movements"],["bins.html","Bins"],["purchase-orders.html","Purchase Orders"],["grn.html","GRN"],["putaway.html","Putaway"],["create-batch.html","Create Batch"],["picking.html","Picking"],["sorting.html","Sorting"],["grid-putaway.html","Grid Putaway"],["vehicle-arrival.html","Vehicle Arrival"],["dispatch.html","Dispatch"],["store-receiving.html","Store Receiving"],["orders.html","Orders"],["order-report.html","Order Report"],["access-control.html","Access Control"],["audit-logs.html","Audit Logs"],["system-settings.html","System Settings"]];
+function esc(v){return String(v??"").replace(/[&<>"']/g,m=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#039;"}[m]))}
+function arr(d){if(Array.isArray(d))return d;if(Array.isArray(d?.items))return d.items;if(Array.isArray(d?.data))return d.data;if(Array.isArray(d?.results))return d.results;return[]}
+function field(x,...keys){for(const k of keys)if(x?.[k]!==undefined&&x?.[k]!==null&&x?.[k]!=="")return x[k];return""}
+function num(v){return Number(v||0)}
+function toast(s){const x=document.getElementById("toast");x.textContent=s;x.style.display="block";clearTimeout(window.tt);window.tt=setTimeout(()=>x.style.display="none",3200)}
+async function api(path,opt={}){const h={"Content-Type":"application/json",...(opt.headers||{})};if(token)h.Authorization="Bearer "+token;const r=await fetch(API+path,{...opt,headers:h});if(r.status===401){localStorage.removeItem(TOKEN_KEY);localStorage.removeItem("zippzo_user");location.href="index.html";throw Error("Session expired")}const t=await r.text();let d={};try{d=t?JSON.parse(t):{}}catch{}if(!r.ok)throw Error(d.detail||d.message||"Request failed");return d}
+async function tryGet(paths){let e;for(const p of paths){try{return await api(p)}catch(x){e=x}}throw e||Error("API unavailable")}
+function nav(){document.getElementById("nav").innerHTML="<h4>HR & Admin</h4>"+navLinks.slice(0,10).map(x=>`<a href="${x[0]}" class="${location.pathname.endsWith(x[0])?"active":""}">${x[1]}</a>`).join("")+"<h4>Operations</h4>"+navLinks.slice(10).map(x=>`<a href="${x[0]}">${x[1]}</a>`).join("")}
+function rid(x){return String(field(x,"request_id","leave_request_id","code","id")||"—")}function eid(x){return String(field(x,"employee_id","emp_id","employee_code")||"—")}function name(x){return String(field(x,"employee_name","name","full_name")||"—")}function type(x){return String(field(x,"leave_type","type","category")||"—").toUpperCase()}function from(x){return String(field(x,"from_date","start_date","leave_from")||"—")}function to(x){return String(field(x,"to_date","end_date","leave_to")||"—")}function days(x){const v=field(x,"days","leave_days","number_of_days");if(v!=="")return num(v);const a=Date.parse(from(x)),b=Date.parse(to(x));return Number.isFinite(a)&&Number.isFinite(b)&&b>=a?(b-a)/86400000+1:0}function reason(x){return String(field(x,"reason","leave_reason","remarks")||"—")}function status(x){return String(field(x,"status","leave_status")||"PENDING").toUpperCase()}function dept(x){return String(field(x,"department","department_name")||"—")}function loc(x){return String(field(x,"location_name","location","site","city")||"—")}function requestedBy(x){return String(field(x,"requested_by_name","requested_by","created_by")||"—")}function approvedBy(x){return String(field(x,"approved_by_name","approved_by")||"—")}function statusClass(s){return s==="APPROVED"?"good":s==="PENDING"?"warn":s==="REJECTED"||s==="CANCELLED"?"bad":"info"}
+async function loadAll(){document.body.classList.add("loading");try{const [ld,ed]=await Promise.all([tryGet(["/api/leave","/api/leaves","/api/leave-requests"]),tryGet(["/api/employees"])]);rows=arr(ld);employees=arr(ed);try{const me=await api("/api/auth/me");document.getElementById("userName").textContent=me.employee?.name||me.name||me.user?.name||"Zippzo User"}catch{}buildFilters();buildEmployees();applyFilters();renderKpis();toast("Leave data refreshed")}catch(e){toast(e.message||"Leave API is not available yet")}finally{document.body.classList.remove("loading")}}
+function fill(id,values,label){const el=document.getElementById(id),old=el.value;el.innerHTML=`<option value="">${label}</option>`+values.map(v=>`<option value="${esc(v)}">${esc(v)}</option>`).join("");if(values.includes(old))el.value=old}
+function buildFilters(){fill("status",[...new Set(rows.map(status))].sort(),"All Status");fill("leaveType",[...new Set(rows.map(type).filter(x=>x!=="—"))].sort(),"All Leave Types");fill("department",[...new Set(rows.map(dept).filter(x=>x!=="—"))].sort(),"All Departments");fill("location",[...new Set(rows.map(loc).filter(x=>x!=="—"))].sort(),"All Locations")}
+function buildEmployees(){document.getElementById("fEmployee").innerHTML='<option value="">Select employee</option>'+employees.map(x=>`<option value="${esc(field(x,"id","employee_id","emp_id"))}">${esc(field(x,"employee_id","emp_id","code","id"))} · ${esc(field(x,"name","full_name","employee_name"))}</option>`).join("")}
+function applyFilters(){const q=document.getElementById("search").value.toLowerCase().trim(),df=document.getElementById("dateFrom").value,dt=document.getElementById("dateTo").value,st=document.getElementById("status").value,ty=document.getElementById("leaveType").value,de=document.getElementById("department").value,lo=document.getElementById("location").value;filtered=rows.filter(x=>{const d=from(x).slice(0,10),b=JSON.stringify(x).toLowerCase(),end=to(x).slice(0,10);return(!q||b.includes(q))&&(!df||end>=df)&&(!dt||d<=dt)&&(!st||status(x)===st)&&(!ty||type(x)===ty)&&(!de||dept(x)===de)&&(!lo||loc(x)===lo)});const sort=document.getElementById("sort").value;filtered.sort((a,b)=>sort==="start"?from(a).localeCompare(from(b)):sort==="name"?name(a).localeCompare(name(b)):sort==="days"?days(b)-days(a):String(b.created_at||b.requested_on||rid(b)).localeCompare(String(a.created_at||a.requested_on||rid(a))));page=1;render()}
+function count(s){return rows.filter(x=>status(x)===s).length}
+function renderKpis(){document.getElementById("kTotal").textContent=rows.length;document.getElementById("kPending").textContent=count("PENDING");document.getElementById("kApproved").textContent=count("APPROVED");document.getElementById("kRejected").textContent=count("REJECTED");document.getElementById("kCancelled").textContent=count("CANCELLED");document.getElementById("kDays").textContent=rows.reduce((s,x)=>s+days(x),0).toFixed(1);document.getElementById("kEmployees").textContent=new Set(rows.map(eid).filter(x=>x!=="—")).size;document.getElementById("kAlerts").textContent=rows.filter(alertFor).length}
+function alertFor(x){return from(x)==="—"||to(x)==="—"||days(x)<=0||reason(x)==="—"}
+function render(){const pending=filtered.filter(x=>status(x)==="PENDING").length,approved=filtered.filter(x=>status(x)==="APPROVED").length,rejected=filtered.filter(x=>status(x)==="REJECTED").length,totalDays=filtered.reduce((s,x)=>s+days(x),0),emps=new Set(filtered.map(eid).filter(x=>x!=="—")).size,today=new Date().toISOString().slice(0,10),activeToday=filtered.filter(x=>status(x)==="APPROVED"&&from(x).slice(0,10)<=today&&to(x).slice(0,10)>=today).length;document.getElementById("sTotal").textContent=filtered.length;document.getElementById("sPending").textContent=pending;document.getElementById("sApproved").textContent=approved;document.getElementById("sRejected").textContent=rejected;document.getElementById("sDays").textContent=totalDays.toFixed(1);document.getElementById("sEmployees").textContent=emps;document.getElementById("sAlerts").textContent=filtered.filter(alertFor).length;document.getElementById("sToday").textContent=activeToday;document.getElementById("resultCount").textContent=filtered.length+" requests";renderStatus();renderExceptions();renderTable();renderPager()}
+function renderStatus(){const vals=["PENDING","APPROVED","REJECTED","CANCELLED"],labels={PENDING:"Awaiting approval",APPROVED:"Approved",REJECTED:"Rejected",CANCELLED:"Cancelled"};document.getElementById("statusCount").textContent=filtered.length+" requests";document.getElementById("statusList").innerHTML=vals.map(s=>`<div class="list-row"><div><b>${s}</b><span class="muted">${labels[s]}</span></div><span class="tag ${statusClass(s)}">${filtered.filter(x=>status(x)===s).length}</span></div>`).join("")}
+function renderExceptions(){const d=filtered.filter(alertFor).slice(0,15);document.getElementById("exceptionCount").textContent=filtered.filter(alertFor).length;document.getElementById("exceptionList").innerHTML=d.length?d.map(x=>`<div class="list-row"><div><b>${esc(rid(x))} · ${esc(name(x))}</b><span class="muted">${from(x)} → ${to(x)}</span></div><span class="tag warn">${days(x)<=0?"Invalid dates":"Missing reason"}</span></div>`).join(""):`<div class="empty">No leave exceptions.</div>`}
+function renderTable(){const size=Number(document.getElementById("pageSize").value||25),pages=Math.max(1,Math.ceil(filtered.length/size));if(page>pages)page=pages;const d=filtered.slice((page-1)*size,page*size);document.getElementById("body").innerHTML=d.length?d.map((x,i)=>`<tr><td><b>${esc(rid(x))}</b></td><td>${esc(eid(x))} · ${esc(name(x))}</td><td>${esc(dept(x))}</td><td>${esc(type(x))}</td><td>${esc(from(x))}</td><td>${esc(to(x))}</td><td>${days(x).toFixed(1)}</td><td title="${esc(reason(x))}">${esc(reason(x).slice(0,35))}${reason(x).length>35?"…":""}</td><td><span class="tag ${statusClass(status(x))}">${esc(status(x))}</span></td><td>${esc(requestedBy(x))}</td><td>${esc(approvedBy(x))}</td><td><button class="btn small" onclick="details(${(page-1)*size+i})">View</button></td></tr>`).join(""):`<tr><td colspan="12" class="empty">No leave requests match the selected filters.</td></tr>`}
+function renderPager(){const size=Number(document.getElementById("pageSize").value||25),pages=Math.max(1,Math.ceil(filtered.length/size));document.getElementById("pageInfo").textContent=`Page ${page} of ${pages} · ${filtered.length} requests`;let b="",s=Math.max(1,page-2),e=Math.min(pages,s+4);if(page>1)b+=`<button class="btn" onclick="gotoPage(${page-1})">‹</button>`;for(let p=s;p<=e;p++)b+=`<button class="btn ${p===page?"primary":""}" onclick="gotoPage(${p})">${p}</button>`;if(page<pages)b+=`<button class="btn" onclick="gotoPage(${page+1})">›</button>`;document.getElementById("pager").innerHTML=b}
+function gotoPage(p){page=p;renderTable();renderPager()}
+function clearFilters(){["search","dateFrom","dateTo"].forEach(id=>document.getElementById(id).value="");["status","leaveType","department","location"].forEach(id=>document.getElementById(id).value="");document.getElementById("sort").value="newest";document.getElementById("pageSize").value="25";applyFilters()}
+function calcDays(){const a=document.getElementById("fFrom").value,b=document.getElementById("fTo").value;if(!a||!b){document.getElementById("fDays").value="";return}const d=(Date.parse(b)-Date.parse(a))/86400000+1;document.getElementById("fDays").value=d>0?d:""}
+function openCreate(){document.getElementById("leaveForm").reset();document.getElementById("fStatus").value="PENDING";document.getElementById("fRequested").value=new Date().toISOString().slice(0,10);document.getElementById("formModal").classList.add("show")}function closeForm(){document.getElementById("formModal").classList.remove("show")}
+async function saveLeave(e){e.preventDefault();const employeeId=document.getElementById("fEmployee").value,employee=employees.find(x=>String(field(x,"id","employee_id","emp_id"))===String(employeeId));const data={employee_id:employeeId,employee_name:employee?field(employee,"name","full_name","employee_name"):"",leave_type:document.getElementById("fType").value,status:document.getElementById("fStatus").value,from_date:document.getElementById("fFrom").value,to_date:document.getElementById("fTo").value,days:Number(document.getElementById("fDays").value||0),half_day:document.getElementById("fHalf").value,contact_during_leave:document.getElementById("fContact").value,requested_on:document.getElementById("fRequested").value,reason:document.getElementById("fReason").value,remarks:document.getElementById("fRemarks").value};try{let e2;for(const p of ["/api/leave","/api/leaves","/api/leave-requests"]){try{await api(p,{method:"POST",body:JSON.stringify(data)});e2=null;break}catch(x){e2=x}}if(e2)throw e2;closeForm();await loadAll();toast("Leave request created successfully")}catch(x){toast(x.message||"Leave save API is not available yet")}}
+function D(a,b){return`<div class="detail"><small>${esc(a)}</small><b>${esc(b??"—")}</b></div>`}
+function details(i){const x=filtered[i];if(!x)return;document.getElementById("detail").innerHTML=`<div class="detail-grid">${D("Request ID",rid(x))}${D("Employee ID",eid(x))}${D("Employee",name(x))}${D("Department",dept(x))}${D("Location",loc(x))}${D("Leave Type",type(x))}${D("From",from(x))}${D("To",to(x))}${D("Days",days(x).toFixed(1))}${D("Status",status(x))}${D("Reason",reason(x))}${D("Requested By",requestedBy(x))}${D("Approved By",approvedBy(x))}${D("Requested On",field(x,"requested_on","created_at")||"—")}${D("Approved On",field(x,"approved_at","approved_on")||"—")}${D("Half Day",field(x,"half_day")||"—")}${D("Contact",field(x,"contact_during_leave","contact")||"—")}${D("Remarks",field(x,"remarks","notes")||"—")}</div><div class="timeline"><div class="timeline-item"><b>Leave Request</b><span>${esc(rid(x))} · ${esc(type(x))}</span></div><div class="timeline-item"><b>Leave Period</b><span>${esc(from(x))} → ${esc(to(x))} · ${days(x).toFixed(1)} day(s)</span></div><div class="timeline-item"><b>Approval Status</b><span>${esc(status(x))} · Requested by ${esc(requestedBy(x))}</span></div>${approvedBy(x)!=="—"?`<div class="timeline-item"><b>Approval</b><span>Approved/reviewed by ${esc(approvedBy(x))}</span></div>`:""}</div>`;document.getElementById("detailModal").classList.add("show")}
+function closeDetail(){document.getElementById("detailModal").classList.remove("show")}
+function exportCSV(){const h=["Request ID","Employee ID","Employee","Department","Location","Leave Type","From","To","Days","Reason","Status","Requested By","Approved By"];const d=filtered.map(x=>[rid(x),eid(x),name(x),dept(x),loc(x),type(x),from(x),to(x),days(x).toFixed(1),reason(x),status(x),requestedBy(x),approvedBy(x)]);const csv=[h,...d].map(r=>r.map(v=>`"${String(v??"").replaceAll('"','""')}"`).join(",")).join("\n");const a=document.createElement("a");a.href=URL.createObjectURL(new Blob([csv],{type:"text/csv;charset=utf-8"}));a.download="zippzo_leave_management.csv";a.click()}
+function printReport(){window.print()}
+async function logout(){try{if(token)await api("/api/auth/logout",{method:"POST",body:JSON.stringify({session_token:token})})}catch{}localStorage.removeItem(TOKEN_KEY);localStorage.removeItem("zippzo_user");location.href="index.html"}
+document.getElementById("formModal").addEventListener("click",e=>{if(e.target.id==="formModal")closeForm()});document.getElementById("detailModal").addEventListener("click",e=>{if(e.target.id==="detailModal")closeDetail()});(async()=>{nav();await loadAll()})();
+</script>
+
+<script id="zippzo-master-frontend">
+document.addEventListener("DOMContentLoaded", function(){
+  // Hide the retired Dropping module everywhere.
+  document.querySelectorAll("a,button").forEach(function(el){
+    const t=(el.textContent||"").trim().toLowerCase();
+    if(t==="dropping" || t.includes("dropping")) el.style.display="none";
+  });
+
+  // Use the real Zippzo logo wherever a common brand element exists.
+  document.querySelectorAll(".brand,.logo,.brand-logo").forEach(function(el){
+    if(!el.querySelector("img")){
+      const img=document.createElement("img");
+      img.src="zippzo-logo.jpg";
+      img.alt="Zippzo";
+      img.style.cssText="width:148px;max-height:55px;object-fit:contain;object-position:left center;";
+      el.prepend(img);
+    }
+  });
+});
+</script>
+
+</body>
+</html>

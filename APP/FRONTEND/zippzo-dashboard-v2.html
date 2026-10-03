@@ -1,0 +1,349 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1.0">
+<title>Zippzo WMS | Dashboard V2</title>
+<style>
+:root{
+  --purple:#331084;
+  --dark:#24085F;
+  --yellow:#FEB103;
+  --bg:#f5f6fa;
+  --text:#202124;
+  --muted:#737783;
+  --white:#fff;
+  --border:#e8e8ef;
+  --green:#16a34a;
+  --red:#dc2626;
+  --shadow:0 8px 25px rgba(36,8,95,.08);
+}
+*{box-sizing:border-box}
+body{margin:0;font-family:Inter,Segoe UI,Arial,sans-serif;background:var(--bg);color:var(--text)}
+button,input{font:inherit}
+.app{display:flex;min-height:100vh}
+.sidebar{width:255px;background:var(--dark);color:#fff;position:fixed;inset:0 auto 0 0;overflow:auto;padding:18px 14px;z-index:10}
+.brand{display:flex;align-items:center;gap:11px;padding:8px 10px 22px;border-bottom:1px solid rgba(255,255,255,.12)}
+.brand img{width:42px;height:42px;object-fit:contain;background:#fff;border-radius:10px;padding:4px}
+.brand strong{font-size:21px;letter-spacing:.5px}
+.brand small{display:block;color:#cfc7e5;font-size:10px;margin-top:2px}
+.nav{padding-top:18px}
+.nav-title{font-size:10px;color:#a99bc7;text-transform:uppercase;font-weight:700;padding:13px 12px 7px;letter-spacing:1px}
+.nav a{display:flex;align-items:center;gap:11px;color:#e9e4f4;text-decoration:none;padding:11px 12px;border-radius:9px;margin:3px 0;font-size:13px}
+.nav a:hover,.nav a.active{background:var(--yellow);color:#241300;font-weight:700}
+.main{margin-left:255px;width:calc(100% - 255px);min-width:0}
+.topbar{height:70px;background:var(--purple);display:flex;align-items:center;gap:18px;padding:0 26px;color:#fff;position:sticky;top:0;z-index:8}
+.search{flex:1;max-width:560px;position:relative}
+.search input{width:100%;border:0;border-radius:9px;padding:12px 16px;background:rgba(255,255,255,.14);color:#fff;outline:0}
+.search input::placeholder{color:#ddd5ef}
+.profile{margin-left:auto;display:flex;align-items:center;gap:10px}
+.avatar{width:38px;height:38px;border-radius:50%;background:var(--yellow);color:#271200;display:grid;place-items:center;font-weight:800}
+.profile small{color:#d9d0eb}
+.content{padding:26px}
+.page-head{display:flex;justify-content:space-between;align-items:center;margin-bottom:22px}
+.page-head h1{margin:0;font-size:27px;color:var(--dark)}
+.page-head p{margin:5px 0 0;color:var(--muted);font-size:13px}
+.actions{display:flex;gap:9px}
+.btn{border:0;border-radius:8px;padding:10px 14px;cursor:pointer;font-weight:700}
+.btn-primary{background:var(--purple);color:#fff}
+.btn-yellow{background:var(--yellow);color:#241300}
+.btn-light{background:#fff;border:1px solid var(--border);color:var(--dark)}
+.kpis{display:grid;grid-template-columns:repeat(5,minmax(0,1fr));gap:16px}
+.card{background:#fff;border:1px solid var(--border);border-radius:12px;box-shadow:var(--shadow)}
+.kpi{padding:19px}
+.kpi .label{font-size:12px;color:var(--muted);font-weight:600}
+.kpi .value{font-size:28px;font-weight:800;color:var(--dark);margin-top:8px}
+.kpi .sub{font-size:11px;color:var(--muted);margin-top:6px}
+.grid{display:grid;gap:18px;margin-top:18px}
+.grid-3{grid-template-columns:2fr 1fr 1fr}
+.grid-2{grid-template-columns:1fr 1fr}
+.panel{padding:19px}
+.panel-head{display:flex;justify-content:space-between;align-items:center;margin-bottom:15px}
+.panel-head h3{margin:0;font-size:16px;color:var(--dark)}
+.panel-head span{font-size:11px;color:var(--muted)}
+.chart{height:235px;display:flex;align-items:end;gap:12px;padding:10px 8px 4px}
+.bar-wrap{flex:1;height:100%;display:flex;flex-direction:column;justify-content:end;align-items:center;gap:7px}
+.bar{width:70%;max-width:42px;background:var(--purple);border-radius:6px 6px 2px 2px;min-height:5px}
+.bar-wrap small{font-size:10px;color:var(--muted)}
+.bar-wrap b{font-size:10px;color:var(--dark)}
+.list{display:flex;flex-direction:column;gap:11px}
+.list-item{display:flex;align-items:center;justify-content:space-between;padding:11px 12px;border:1px solid var(--border);border-radius:9px}
+.list-item strong{font-size:12px}.list-item small{display:block;color:var(--muted);margin-top:3px}
+.badge{padding:5px 8px;border-radius:20px;font-size:10px;font-weight:800}
+.badge.green{background:#e9f8ee;color:var(--green)}
+.badge.yellow{background:#fff5d9;color:#946900}
+.badge.red{background:#feecec;color:var(--red)}
+.quick{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.quick button{text-align:left;border:1px solid var(--border);background:#fff;padding:14px;border-radius:9px;cursor:pointer;color:var(--dark);font-weight:700}
+.quick button:hover{border-color:var(--yellow);background:#fffaf0}
+.table-wrap{overflow:auto}
+table{width:100%;border-collapse:collapse}
+th,td{text-align:left;padding:12px 10px;border-bottom:1px solid var(--border);font-size:12px;white-space:nowrap}
+th{font-size:10px;text-transform:uppercase;color:var(--muted);letter-spacing:.5px;background:#fafafd}
+.status{font-weight:800}
+.footer-cards{display:grid;grid-template-columns:repeat(4,1fr);gap:16px;margin-top:18px}
+.summary{padding:17px}.summary small{color:var(--muted);font-size:11px}.summary strong{display:block;font-size:21px;color:var(--dark);margin-top:5px}
+.loading{color:var(--muted);font-size:13px}
+.toast{position:fixed;right:22px;bottom:22px;background:var(--dark);color:#fff;padding:12px 16px;border-radius:8px;display:none;z-index:99}
+.login{position:fixed;inset:0;background:linear-gradient(135deg,var(--dark),var(--purple));display:none;align-items:center;justify-content:center;z-index:100}
+.login-box{width:390px;background:#fff;border-radius:16px;padding:32px;box-shadow:0 20px 60px rgba(0,0,0,.25)}
+.login-logo{text-align:center}.login-logo img{width:70px;height:70px;object-fit:contain}
+.login-box h2{text-align:center;color:var(--dark);margin:12px 0 5px}.login-box p{text-align:center;color:var(--muted);font-size:12px}
+.field{margin-top:15px}.field label{display:block;font-size:11px;font-weight:700;color:#555;margin-bottom:6px}
+.field input{width:100%;padding:11px;border:1px solid var(--border);border-radius:8px;outline:0}
+.login-btn{width:100%;margin-top:20px;padding:12px;border:0;border-radius:8px;background:var(--yellow);font-weight:800;color:#241300;cursor:pointer}
+.error{color:var(--red);font-size:12px;margin-top:10px;text-align:center}
+@media(max-width:1200px){.kpis{grid-template-columns:repeat(3,1fr)}.grid-3{grid-template-columns:1fr 1fr}.footer-cards{grid-template-columns:repeat(2,1fr)}}
+@media(max-width:800px){.sidebar{width:70px}.brand strong,.brand small,.nav-title,.nav a span{display:none}.brand{justify-content:center;padding:8px}.main{margin-left:70px;width:calc(100% - 70px)}.content{padding:15px}.kpis,.grid-3,.grid-2{grid-template-columns:1fr}.footer-cards{grid-template-columns:1fr 1fr}.topbar{padding:0 12px}}
+</style>
+</head>
+<body>
+
+<div id="loginScreen" class="login">
+  <div class="login-box">
+    <div class="login-logo"><img src="zippzo-logo.jpg" alt="Zippzo"></div>
+    <h2>Zippzo WMS</h2>
+    <p>Warehouse Management System</p>
+    <div class="field"><label>Employee ID / Email / Mobile</label><input id="identifier" autocomplete="username"></div>
+    <div class="field"><label>Password</label><input id="password" type="password" autocomplete="current-password"></div>
+    <div id="loginError" class="error"></div>
+    <button class="login-btn" onclick="login()">LOGIN</button>
+  </div>
+</div>
+
+<div class="app">
+<aside class="sidebar">
+  <div class="brand">
+    <img src="zippzo-logo.jpg" alt="Zippzo">
+    <div><strong>ZIPPZO</strong><small>WAREHOUSE MANAGEMENT</small></div>
+  </div>
+  <nav class="nav">
+    <div class="nav-title">Main</div>
+    <a class="active" href="index.html">▣ <span>Dashboard</span></a>
+    <a href="products.html">▦ <span>Products</span></a>
+    <a href="suppliers.html">♜ <span>Suppliers</span></a>
+    <a href="locations.html">⌖ <span>Locations</span></a>
+    <a href="inventory.html">▤ <span>Inventory</span></a>
+    <div class="nav-title">Warehouse</div>
+    <a href="purchase-orders.html">▣ <span>Purchase Orders</span></a>
+    <a href="grn.html">✓ <span>GRN</span></a>
+    <a href="putaway.html">⇩ <span>Putaway</span></a>
+    <a href="bins.html">▥ <span>Bins</span></a>
+    <a href="stock-movements.html">↔ <span>Stock Movements</span></a>
+    <div class="nav-title">Fulfilment</div>
+    <a href="orders.html">▱ <span>Orders</span></a>
+    <a href="picking-report.html">⌁ <span>Picking</span></a>
+    <a href="sorting.html">⇄ <span>Sorting</span></a>
+    <a href="dispatch.html">➜ <span>Dispatch</span></a>
+    <a href="riders.html">♟ <span>Riders</span></a>
+    <div class="nav-title">Reports & Admin</div>
+    <a href="stock-report.html">▥ <span>Stock Report</span></a>
+    <a href="order-report.html">▤ <span>Order Report</span></a>
+    <a href="audit-logs.html">◷ <span>Audit Logs</span></a>
+    <a href="access-control.html">⚿ <span>Access Control</span></a>
+    <a href="system-settings.html">⚙ <span>Settings</span></a>
+  </nav>
+</aside>
+
+<main class="main">
+<header class="topbar">
+  <div class="search"><input id="globalSearch" placeholder="Search products, orders, SKU, locations..." onkeydown="if(event.key==='Enter')globalSearch()"></div>
+  <div class="profile">
+    <div><b id="userName">Zippzo Admin</b><br><small id="userRole">Administrator</small></div>
+    <div class="avatar" id="avatar">ZA</div>
+    <button class="btn btn-light" onclick="logout()">Logout</button>
+  </div>
+</header>
+
+<section class="content">
+  <div class="page-head">
+    <div><h1>Zippzo Operations Dashboard</h1><p>Real-time overview of Zippzo warehouse and fulfilment operations.</p></div>
+    <div class="actions"><button class="btn btn-light" onclick="loadDashboard()">↻ Refresh</button><button class="btn btn-yellow" onclick="location.href='orders.html'">+ New Order</button></div>
+  </div>
+
+  <div class="kpis">
+    <div class="card kpi"><div class="label">TOTAL PRODUCTS</div><div id="productsKpi" class="value">0</div><div class="sub">Active catalogue</div></div>
+    <div class="card kpi"><div class="label">TOTAL STOCK</div><div id="stockKpi" class="value">0</div><div class="sub">Available units</div></div>
+    <div class="card kpi"><div class="label">TODAY / TOTAL ORDERS</div><div id="ordersKpi" class="value">0</div><div class="sub">Orders in system</div></div>
+    <div class="card kpi"><div class="label">LOCATIONS</div><div id="locationsKpi" class="value">0</div><div class="sub">Warehouse & dark stores</div></div>
+    <div class="card kpi"><div class="label">ORDER VALUE</div><div id="valueKpi" class="value">₹0</div><div class="sub">Total recorded value</div></div>
+  </div>
+
+  <div class="grid grid-3">
+    <div class="card panel">
+      <div class="panel-head"><h3>Order Activity</h3><span>Live system data</span></div>
+      <div id="orderChart" class="chart"><div class="loading">Loading...</div></div>
+    </div>
+    <div class="card panel">
+      <div class="panel-head"><h3>Quick Actions</h3><span>Operations</span></div>
+      <div class="quick">
+        <button onclick="location.href='purchase-orders.html'">＋ Purchase Order</button>
+        <button onclick="location.href='grn.html'">✓ Create GRN</button>
+        <button onclick="location.href='putaway.html'">⇩ Putaway</button>
+        <button onclick="location.href='inventory.html'">▤ Inventory</button>
+        <button onclick="location.href='orders.html'">▱ Orders</button>
+        <button onclick="location.href='sorting.html'">⇄ Sorting</button>
+        <button onclick="location.href='dispatch.html'">➜ Dispatch</button>
+        <button onclick="location.href='stock-report.html'">▥ Reports</button>
+      </div>
+    </div>
+    <div class="card panel">
+      <div class="panel-head"><h3>System Summary</h3><span>Status</span></div>
+      <div id="summaryList" class="list"></div>
+    </div>
+  </div>
+
+  <div class="grid grid-2">
+    <div class="card panel">
+      <div class="panel-head"><h3>Recent Orders</h3><button class="btn btn-light" onclick="location.href='orders.html'">View All</button></div>
+      <div class="table-wrap">
+        <table><thead><tr><th>Order</th><th>Customer</th><th>Amount</th><th>Status</th><th>Time</th></tr></thead>
+        <tbody id="ordersTable"><tr><td colspan="5" class="loading">Loading...</td></tr></tbody></table>
+      </div>
+    </div>
+    <div class="card panel">
+      <div class="panel-head"><h3>Stock by Location</h3><span>Available quantity</span></div>
+      <div id="locationList" class="list"></div>
+    </div>
+  </div>
+
+  <div class="grid grid-2">
+    <div class="card panel">
+      <div class="panel-head"><h3>Pending Warehouse Tasks</h3><span>Putaway / fulfilment</span></div>
+      <div id="tasksList" class="list"></div>
+    </div>
+    <div class="card panel">
+      <div class="panel-head"><h3>Top Products</h3><span>Catalogue</span></div>
+      <div id="productsList" class="list"></div>
+    </div>
+  </div>
+
+  <div class="footer-cards">
+    <div class="card summary"><small>Riders</small><strong id="ridersSummary">0</strong></div>
+    <div class="card summary"><small>Suppliers</small><strong id="suppliersSummary">0</strong></div>
+    <div class="card summary"><small>Purchase Orders</small><strong id="poSummary">0</strong></div>
+    <div class="card summary"><small>GRNs</small><strong id="grnSummary">0</strong></div>
+  </div>
+</section>
+</main>
+</div>
+
+<div id="toast" class="toast"></div>
+
+<script>
+const API=window.location.origin;
+const TOKEN_KEY="zippzo_session_token";
+const USER_KEY="zippzo_user";
+
+function token(){return localStorage.getItem(TOKEN_KEY)}
+async function api(path,options={}){
+  const headers={"Content-Type":"application/json",...(options.headers||{})};
+  const t=token(); if(t) headers.Authorization="Bearer "+t;
+  const res=await fetch(API+path,{...options,headers});
+  let data={}; try{data=await res.json()}catch{}
+  if(res.status===401){localStorage.removeItem(TOKEN_KEY);localStorage.removeItem(USER_KEY);showLogin();throw new Error("Session expired")}
+  if(!res.ok) throw new Error(data.detail||"Request failed");
+  return data;
+}
+function showLogin(){document.getElementById("loginScreen").style.display="flex"}
+async function login(){
+  const identifier=document.getElementById("identifier").value.trim();
+  const password=document.getElementById("password").value;
+  const err=document.getElementById("loginError");
+  err.textContent="";
+  if(!identifier||!password){err.textContent="Enter login details";return}
+  try{
+    const data=await fetch(API+"/api/auth/login",{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify({identifier,password})}).then(async r=>{const d=await r.json();if(!r.ok)throw new Error(d.detail||"Login failed");return d});
+    localStorage.setItem(TOKEN_KEY,data.session_token);
+    localStorage.setItem(USER_KEY,JSON.stringify(data.user));
+    document.getElementById("loginScreen").style.display="none";
+    applyUser(data.user);loadDashboard();
+  }catch(e){err.textContent=e.message}
+}
+async function logout(){
+  const t=token();
+  try{if(t)await fetch(API+"/api/auth/logout",{method:"POST",headers:{"Content-Type":"application/json","Authorization":"Bearer "+t},body:JSON.stringify({session_token:t})})}catch{}
+  localStorage.removeItem(TOKEN_KEY);localStorage.removeItem(USER_KEY);showLogin();
+}
+function applyUser(u){
+  if(!u)return;
+  document.getElementById("userName").textContent=u.full_name||"Zippzo Admin";
+  document.getElementById("userRole").textContent=u.role||u.department||"Administrator";
+  const initials=(u.full_name||"ZA").split(" ").map(x=>x[0]).slice(0,2).join("").toUpperCase();
+  document.getElementById("avatar").textContent=initials;
+}
+function money(n){return "₹"+Number(n||0).toLocaleString("en-IN",{maximumFractionDigits:2})}
+function esc(s){return String(s??"").replace(/[&<>"']/g,m=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#039;"}[m]))}
+function statusBadge(s){
+  const x=String(s||"PENDING").toUpperCase();
+  const cls=["COMPLETED","DELIVERED","ACTIVE","CONFIRMED","RECEIVED"].includes(x)?"green":["CANCELLED","FAILED","DAMAGED"].includes(x)?"red":"yellow";
+  return `<span class="badge ${cls}">${esc(x)}</span>`;
+}
+async function loadDashboard(){
+  try{
+    const [d,orders,locations,inventory,products,putaway]=await Promise.all([
+      api("/api/dashboard"),api("/api/orders"),api("/api/locations"),api("/api/inventory"),api("/api/products"),api("/api/putaway").catch(()=>[])
+    ]);
+    document.getElementById("productsKpi").textContent=d.total_products??products.length;
+    document.getElementById("stockKpi").textContent=Number(d.total_stock||0).toLocaleString("en-IN");
+    document.getElementById("ordersKpi").textContent=d.total_orders??orders.length;
+    document.getElementById("locationsKpi").textContent=d.total_locations??locations.length;
+    document.getElementById("valueKpi").textContent=money(d.total_order_value);
+    document.getElementById("ridersSummary").textContent=d.total_riders??0;
+    document.getElementById("suppliersSummary").textContent=d.total_suppliers??0;
+    document.getElementById("poSummary").textContent=d.total_purchase_orders??0;
+    document.getElementById("grnSummary").textContent=d.total_grns??0;
+    renderOrders(orders);
+    renderLocations(locations,inventory);
+    renderProducts(products);
+    renderTasks(putaway);
+    renderSummary(d,putaway);
+    renderChart(orders);
+  }catch(e){toast(e.message)}
+}
+function renderOrders(data){
+  const rows=(data||[]).slice(0,8).map(o=>`<tr><td><b>${esc(o.order_number||o.order_no||("#"+o.id))}</b></td><td>${esc(o.customer_name||o.customer||"Customer")}</td><td>${money(o.total_amount||o.order_value)}</td><td>${statusBadge(o.status)}</td><td>${esc(o.created_at||o.order_time||"-")}</td></tr>`).join("");
+  document.getElementById("ordersTable").innerHTML=rows||`<tr><td colspan="5" class="loading">No orders found.</td></tr>`;
+}
+function renderLocations(locations,inventory){
+  const map={};(inventory||[]).forEach(x=>{const k=x.location_id;map[k]=(map[k]||0)+Number(x.available_qty||0)});
+  document.getElementById("locationList").innerHTML=(locations||[]).slice(0,8).map(l=>`<div class="list-item"><div><strong>${esc(l.location_name||l.name||l.code)}</strong><small>${esc(l.location_code||l.code||"")}</small></div><b>${Number(map[l.id]||0).toLocaleString("en-IN")}</b></div>`).join("")||`<div class="loading">No locations found.</div>`;
+}
+function renderProducts(products){
+  document.getElementById("productsList").innerHTML=(products||[]).slice(0,6).map(p=>`<div class="list-item"><div><strong>${esc(p.product_name||p.name)}</strong><small>${esc(p.sku||"")}</small></div><span class="badge green">${esc(p.active===false?"INACTIVE":"ACTIVE")}</span></div>`).join("")||`<div class="loading">No products found.</div>`;
+}
+function renderTasks(tasks){
+  const pending=(tasks||[]).filter(x=>String(x.status||"").toUpperCase()!=="COMPLETED").slice(0,6);
+  document.getElementById("tasksList").innerHTML=pending.map(x=>`<div class="list-item"><div><strong>${esc(x.task_number||("PTW-"+x.id))}</strong><small>${esc(x.product_name||x.sku||"Product")} · Qty ${x.quantity||0}</small></div>${statusBadge(x.status)}</div>`).join("")||`<div class="list-item"><div><strong>No pending putaway</strong><small>Warehouse tasks are clear.</small></div><span class="badge green">CLEAR</span></div>`;
+}
+function renderSummary(d,tasks){
+  const pending=(tasks||[]).filter(x=>String(x.status||"").toUpperCase()!=="COMPLETED").length;
+  document.getElementById("summaryList").innerHTML=[
+    ["System","ONLINE","green"],["Products",d.total_products||0,"green"],["Pending Putaway",pending,pending?"yellow":"green"],["Warehouse Locations",d.total_locations||0,"green"]
+  ].map(x=>`<div class="list-item"><div><strong>${esc(x[0])}</strong></div><span class="badge ${x[2]}">${esc(x[1])}</span></div>`).join("");
+}
+function renderChart(orders){
+  const days=["Mon","Tue","Wed","Thu","Fri","Sat","Sun"],counts=days.map(()=>0);
+  (orders||[]).forEach(o=>{const dt=new Date(String(o.created_at||"").replace(" ","T"));if(!isNaN(dt))counts[dt.getDay()===0?6:dt.getDay()-1]++});
+  const max=Math.max(...counts,1);
+  document.getElementById("orderChart").innerHTML=days.map((d,i)=>`<div class="bar-wrap"><b>${counts[i]}</b><div class="bar" style="height:${Math.max(5,counts[i]/max*180)}px"></div><small>${d}</small></div>`).join("");
+}
+function globalSearch(){
+  const q=document.getElementById("globalSearch").value.trim().toLowerCase();
+  if(!q)return;
+  if(q.includes("product")||q.includes("sku"))location.href="products.html";
+  else if(q.includes("order"))location.href="orders.html";
+  else if(q.includes("stock")||q.includes("inventory"))location.href="inventory.html";
+  else if(q.includes("putaway"))location.href="putaway.html";
+  else if(q.includes("supplier"))location.href="suppliers.html";
+  else toast("Search term: "+q);
+}
+function toast(msg){const x=document.getElementById("toast");x.textContent=msg;x.style.display="block";setTimeout(()=>x.style.display="none",2500)}
+(async function init(){
+  const u=localStorage.getItem(USER_KEY);
+  if(!token()){showLogin();return}
+  try{const me=await api("/api/auth/me");applyUser(me.user);await loadDashboard()}catch(e){showLogin()}
+})();
+</script>
+</body>
+</html>

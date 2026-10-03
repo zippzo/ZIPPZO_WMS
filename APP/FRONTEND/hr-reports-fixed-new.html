@@ -1,0 +1,186 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1.0">
+<title>Zippzo HR Reports</title>
+<style>
+*{box-sizing:border-box}:root{--dark:#111827;--blue:#2563eb;--green:#16a34a;--orange:#ea580c;--red:#dc2626;--purple:#7c3aed;--muted:#64748b;--line:#e2e8f0;--bg:#f4f7fb}
+body{margin:0;background:var(--bg);color:#172033;font-family:Inter,Segoe UI,Arial,sans-serif}.top{height:68px;background:var(--dark);color:#fff;display:flex;align-items:center;gap:16px;padding:0 22px;position:sticky;top:0;z-index:20}.logo{font-size:25px;font-weight:900;letter-spacing:1px}.title{font-size:14px;color:#cbd5e1}.spacer{flex:1}.top button{background:#1f2937;border:1px solid #475569;color:#fff;border-radius:8px;padding:9px 13px;cursor:pointer}
+.layout{display:grid;grid-template-columns:235px 1fr;min-height:calc(100vh - 68px)}nav{background:#fff;border-right:1px solid var(--line);padding:14px 10px;position:sticky;top:68px;height:calc(100vh - 68px);overflow:auto}nav h4{font-size:10px;color:#94a3b8;text-transform:uppercase;margin:12px}nav a{display:block;text-decoration:none;color:#334155;padding:9px 12px;border-radius:8px;font-size:12px;margin:2px 0}nav a:hover,nav a.active{background:#eff6ff;color:#1d4ed8;font-weight:700}
+main{padding:22px;min-width:0}.head{display:flex;align-items:center;justify-content:space-between;gap:15px;margin-bottom:18px}.head h1{font-size:25px;margin:0}.sub{font-size:13px;color:var(--muted);margin-top:5px}.actions{display:flex;gap:8px;flex-wrap:wrap}.btn{border:1px solid var(--line);background:#fff;border-radius:8px;padding:9px 13px;cursor:pointer;font-size:12px}.btn.primary{background:var(--blue);border-color:var(--blue);color:#fff}.btn.small{padding:6px 9px;font-size:11px}
+.kpis{display:grid;grid-template-columns:repeat(8,1fr);gap:10px}.card{background:#fff;border:1px solid var(--line);border-radius:12px;padding:14px;box-shadow:0 1px 2px #00000008}.label{font-size:10px;color:var(--muted);text-transform:uppercase}.value{font-size:23px;font-weight:850;margin-top:6px}.note{font-size:10px;color:var(--muted);margin-top:4px}
+.section{margin-top:18px}.section-head{display:flex;align-items:center;justify-content:space-between;gap:10px;margin-bottom:10px}.section-head h2{font-size:16px;margin:0}.filters{display:flex;gap:8px;flex-wrap:wrap}.filters input,.filters select{height:37px;border:1px solid var(--line);border-radius:8px;background:#fff;padding:0 10px;font-size:12px;color:#172033}.filters .search{min-width:330px}
+.grid2{display:grid;grid-template-columns:1fr 1fr;gap:14px}.list{background:#fff;border:1px solid var(--line);border-radius:10px;overflow:hidden}.list-row{padding:12px 13px;border-bottom:1px solid #edf2f7;font-size:12px}.list-row:last-child{border:0}.rowtop{display:flex;justify-content:space-between;gap:10px}.list-row b{display:block}.muted{color:var(--muted)}
+.bar{height:8px;background:#e2e8f0;border-radius:99px;overflow:hidden;margin-top:7px}.bar i{display:block;height:100%;background:var(--blue)}
+.tag{display:inline-block;border-radius:999px;padding:4px 8px;font-size:10px;font-weight:700;background:#eef2ff;color:#3730a3}.tag.good{background:#f0fdf4;color:#15803d}.tag.warn{background:#fff7ed;color:#c2410c}.tag.bad{background:#fef2f2;color:#b91c1c}.tag.info{background:#eff6ff;color:#1d4ed8}.tag.purple{background:#f5f3ff;color:#6d28d9}
+.table-wrap{overflow:auto;background:#fff;border:1px solid var(--line);border-radius:10px}.table{width:100%;border-collapse:collapse;font-size:12px}.table th{background:#f8fafc;color:#64748b;font-size:10px;text-transform:uppercase;text-align:left;position:sticky;top:0}.table th,.table td{padding:10px;border-bottom:1px solid #edf2f7;white-space:nowrap}.table tr:hover td{background:#f8fafc}.empty{text-align:center;padding:30px;color:#94a3b8}
+.modal{display:none;position:fixed;inset:0;background:#0008;z-index:50;align-items:center;justify-content:center;padding:20px}.modal.show{display:flex}.modal-box{background:#fff;border-radius:14px;width:min(1100px,100%);max-height:92vh;overflow:auto;padding:20px}.modal-head{display:flex;justify-content:space-between;align-items:center}.modal-head h2{font-size:18px;margin:0}.close{border:0;background:#f1f5f9;border-radius:8px;padding:7px 10px;cursor:pointer}
+.detail-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:9px;margin-top:15px}.detail{border:1px solid var(--line);border-radius:8px;padding:10px}.detail small{display:block;color:var(--muted);font-size:10px}.detail b{display:block;margin-top:4px;font-size:12px;word-break:break-word}
+.toast{position:fixed;right:20px;bottom:20px;background:#111827;color:#fff;padding:12px 15px;border-radius:8px;display:none;z-index:100;font-size:13px}.loading{opacity:.65;pointer-events:none}
+@media(max-width:1450px){.kpis{grid-template-columns:repeat(4,1fr)}}@media(max-width:1050px){.layout{grid-template-columns:1fr}nav{display:none}.grid2{grid-template-columns:1fr}.detail-grid{grid-template-columns:repeat(2,1fr)}}@media(max-width:650px){main{padding:13px}.kpis{grid-template-columns:repeat(2,1fr)}.head{align-items:flex-start;flex-direction:column}.filters .search{min-width:100%}.detail-grid{grid-template-columns:1fr}}@media print{.top,nav,.actions,.filters,.no-print{display:none!important}.layout{display:block}main{padding:0}.card{box-shadow:none}}
+</style>
+
+<style id="zippzo-master-theme">
+/* ZIPPZO MASTER FRONTEND THEME — visual layer only */
+:root{
+ --z-purple:#331084;--z-dark:#24085F;--z-yellow:#FEB103;
+ --z-bg:#F5F6FB;--z-card:#FFFFFF;--z-text:#171A4A;--z-muted:#69708F;
+ --z-line:#E6E8F0;--z-shadow:0 5px 18px rgba(36,8,95,.07);
+}
+html,body{background:var(--z-bg)!important;color:var(--z-text)!important}
+body{font-family:Inter,Segoe UI,Arial,sans-serif!important}
+.topbar,.header,.top-header,.top-nav,.app-header{
+ background:linear-gradient(90deg,var(--z-dark),var(--z-purple))!important;
+ color:#fff!important;border-color:transparent!important;
+}
+.sidebar,.side-nav,.left-sidebar,.navigation{
+ background:linear-gradient(180deg,#25105F,#180743)!important;
+ color:#fff!important;border-color:transparent!important;
+}
+.brand{color:#fff!important}
+.sidebar .nav-button,.sidebar button,.side-nav button,.left-sidebar button,
+.navigation button,.nav-button{
+ color:#fff!important;background:transparent!important;border-radius:8px!important;
+ border-color:transparent!important;
+}
+.sidebar .nav-button:hover,.sidebar button:hover,.side-nav button:hover,
+.left-sidebar button:hover,.navigation button:hover,.nav-button:hover{
+ background:rgba(255,255,255,.09)!important;
+}
+.sidebar .nav-button.active,.sidebar .nav-button[aria-current="page"],
+.nav-button.active,.nav-button.selected,.nav-button.current{
+ background:var(--z-yellow)!important;color:#15112F!important;font-weight:900!important;
+}
+.sidebar-title,.section-title,.nav-section{
+ color:#B9A9E8!important;letter-spacing:.7px!important;font-weight:900!important;
+}
+.content,.main-content,.page-content,.workspace{background:var(--z-bg)!important}
+.card,.panel,.table-card,.summary-card,.kpi-card,.stat-card,.form-card,
+.modal-content,.toolbar,.filter-bar,.table-container{
+ background:#fff!important;border-color:var(--z-line)!important;
+ box-shadow:var(--z-shadow)!important;border-radius:12px!important;
+}
+.btn-primary,.primary-btn,.button-primary,.add-btn,.save-btn{
+ background:var(--z-yellow)!important;color:#17113B!important;border-color:var(--z-yellow)!important;
+}
+.btn-secondary,.secondary-btn{background:#fff!important;color:var(--z-text)!important;border-color:var(--z-line)!important}
+input,select,textarea{
+ border-color:#DFE2EB!important;border-radius:8px!important;background:#fff!important;color:var(--z-text)!important;
+}
+input:focus,select:focus,textarea:focus{
+ border-color:var(--z-purple)!important;box-shadow:0 0 0 3px rgba(51,16,132,.08)!important;
+}
+table{background:#fff!important}
+thead th{background:#F7F8FC!important;color:#626987!important}
+tbody td{border-color:#EDF0F5!important}
+tbody tr:hover td{background:#FAFAFF!important}
+.badge,.status-badge{border-radius:999px!important}
+.page-title,h1,h2{color:var(--z-text)!important}
+.muted,.subtitle,.page-subtitle,.help-text{color:var(--z-muted)!important}
+</style>
+
+
+<link rel="stylesheet" href="zippzo-standard.css">
+<script src="zippzo-standard.js" defer></script>
+</head>
+<body>
+<header class="top"><div class="logo">ZIPPZO</div><div class="title">HR Reports</div><div class="spacer"></div><span id="userName" class="title">Loading...</span><button onclick="loadAll()">↻ Refresh</button><button onclick="logout()">Logout</button></header>
+<div class="layout"><nav id="nav"></nav><main>
+<div class="head"><div><h1>HR Reports</h1><div class="sub">Employees → Attendance → Leave → Payroll → Documents → Performance → HR Control Reports</div></div><div class="actions"><button class="btn" onclick="exportCSV()">Export CSV</button><button class="btn" onclick="printReport()">Print</button></div></div>
+
+<div class="kpis">
+<div class="card"><div class="label">EMPLOYEES</div><div class="value" id="kEmployees">—</div><div class="note">Employee master</div></div>
+<div class="card"><div class="label">ACTIVE</div><div class="value" id="kActive">—</div><div class="note">Active employees</div></div>
+<div class="card"><div class="label">ATTENDANCE</div><div class="value" id="kAttendance">—</div><div class="note">Average attendance</div></div>
+<div class="card"><div class="label">LEAVE</div><div class="value" id="kLeave">—</div><div class="note">Leave records</div></div>
+<div class="card"><div class="label">PAYROLL NET</div><div class="value" id="kPayroll">₹0</div><div class="note">Loaded payroll data</div></div>
+<div class="card"><div class="label">DOCUMENT ALERTS</div><div class="value" id="kDocs">—</div><div class="note">Expiry / missing</div></div>
+<div class="card"><div class="label">PERFORMANCE</div><div class="value" id="kPerformance">—</div><div class="note">Average score</div></div>
+<div class="card"><div class="label">HR ALERTS</div><div class="value" id="kAlerts">—</div><div class="note">Items requiring review</div></div>
+</div>
+
+<section class="section"><div class="card"><div class="section-head"><h2>Report Filters</h2><button class="btn" onclick="clearFilters()">Clear Filters</button></div>
+<div class="filters">
+<input class="search" id="search" placeholder="Employee / department / location..." oninput="applyFilters()">
+<input id="dateFrom" type="date" onchange="applyFilters()"><input id="dateTo" type="date" onchange="applyFilters()">
+<select id="department" onchange="applyFilters()"><option value="">All Departments</option></select>
+<select id="location" onchange="applyFilters()"><option value="">All Locations</option></select>
+<select id="status" onchange="applyFilters()"><option value="">All Employee Status</option></select>
+<select id="sort" onchange="applyFilters()"><option value="name">Employee A-Z</option><option value="attendance">Attendance ↓</option><option value="performance">Performance ↓</option><option value="payroll">Payroll ↓</option></select>
+</div></div></section>
+
+<section class="section grid2">
+<div class="card"><div class="section-head"><h2>Department Summary</h2><span id="deptCount" class="muted">0 departments</span></div><div id="deptList" class="list"></div></div>
+<div class="card"><div class="section-head"><h2>HR Alerts</h2><span id="alertCount" class="tag warn">0</span></div><div id="alertList" class="list"></div></div>
+</section>
+
+<section class="section grid2">
+<div class="card"><div class="section-head"><h2>Attendance Overview</h2><span class="muted">Loaded records</span></div><div id="attendanceList" class="list"></div></div>
+<div class="card"><div class="section-head"><h2>Payroll Overview</h2><span class="muted">Loaded records</span></div><div id="payrollList" class="list"></div></div>
+</section>
+
+<section class="section"><div class="section-head"><h2>Employee HR Report</h2><span id="resultCount" class="muted">0 employees</span></div>
+<div class="table-wrap"><table class="table"><thead><tr><th>Employee</th><th>Department</th><th>Location</th><th>Status</th><th>Attendance</th><th>Leave</th><th>Payroll Net</th><th>Documents</th><th>Performance</th><th>Alerts</th><th>Action</th></tr></thead><tbody id="body"></tbody></table></div>
+</section>
+</main></div>
+
+<div class="modal" id="detailModal"><div class="modal-box"><div class="modal-head"><h2>Employee HR Summary</h2><button class="close" onclick="closeDetail()">✕</button></div><div id="detail"></div></div></div>
+<div class="toast" id="toast"></div>
+<script>
+const API=window.location.origin,TOKEN_KEY="zippzo_session_token";let token=localStorage.getItem(TOKEN_KEY),employees=[],attendance=[],leaves=[],payroll=[],docs=[],performance=[],filtered=[];
+const navLinks=[["index.html","Dashboard"],["hr-dashboard.html","HR Dashboard"],["employees.html","Employees"],["attendance.html","Attendance"],["shift-management.html","Shift Management"],["leave-management.html","Leave Management"],["payroll.html","Payroll"],["employee-documents.html","Employee Documents"],["employee-performance.html","Performance"],["hr-reports.html","HR Reports"],["products.html","Products"],["suppliers.html","Suppliers"],["locations.html","Locations"],["inventory.html","Inventory"],["stock-movements.html","Stock Movements"],["bins.html","Bins"],["purchase-orders.html","Purchase Orders"],["grn.html","GRN"],["putaway.html","Putaway"],["create-batch.html","Create Batch"],["picking.html","Picking"],["sorting.html","Sorting"],["grid-putaway.html","Grid Putaway"],["vehicle-arrival.html","Vehicle Arrival"],["dispatch.html","Dispatch"],["store-receiving.html","Store Receiving"],["orders.html","Orders"],["order-report.html","Order Report"],["access-control.html","Access Control"],["audit-logs.html","Audit Logs"],["system-settings.html","System Settings"]];
+function esc(v){return String(v??"").replace(/[&<>"']/g,m=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#039;"}[m]))}function arr(d){if(Array.isArray(d))return d;if(Array.isArray(d?.items))return d.items;if(Array.isArray(d?.data))return d.data;if(Array.isArray(d?.results))return d.results;return[]}function field(x,...ks){for(const k of ks)if(x?.[k]!==undefined&&x?.[k]!==null&&x?.[k]!=="")return x[k];return""}function num(v){return Number(v||0)}function money(v){return"₹"+num(v).toLocaleString("en-IN",{maximumFractionDigits:2})}
+function toast(s){const x=document.getElementById("toast");x.textContent=s;x.style.display="block";clearTimeout(window.tt);window.tt=setTimeout(()=>x.style.display="none",3200)}
+async function api(path,opt={}){const h={"Content-Type":"application/json",...(opt.headers||{})};if(token)h.Authorization="Bearer "+token;const r=await fetch(API+path,{...opt,headers:h});if(r.status===401){localStorage.removeItem(TOKEN_KEY);localStorage.removeItem("zippzo_user");location.href="index.html";throw Error("Session expired")}const t=await r.text();let d={};try{d=t?JSON.parse(t):{}}catch{}if(!r.ok)throw Error(d.detail||d.message||"Request failed");return d}
+async function tryGet(paths){for(const p of paths){try{return await api(p)}catch{}}return[]}
+function nav(){document.getElementById("nav").innerHTML="<h4>HR & Admin</h4>"+navLinks.slice(0,10).map(x=>`<a href="${x[0]}" class="${location.pathname.endsWith(x[0])?"active":""}">${x[1]}</a>`).join("")+"<h4>Operations</h4>"+navLinks.slice(10).map(x=>`<a href="${x[0]}">${x[1]}</a>`).join("")}
+function eid(x){return String(field(x,"employee_id","emp_id","employee_code","id")||"—")}function name(x){return String(field(x,"employee_name","name","full_name")||"—")}function dept(x){return String(field(x,"department","department_name")||"—")}function loc(x){return String(field(x,"location_name","location","site","city")||"—")}function estatus(x){return String(field(x,"status","employee_status")||"ACTIVE").toUpperCase()}
+function empKey(x){return String(field(x,"id","employee_id","emp_id","employee_code")||"")}
+function same(a,b){return String(a||"")===String(b||"")}function belongs(r,e){const a=[field(r,"employee_id","emp_id","employee_code"),field(r,"employee_name","name","full_name")].map(String),b=[field(e,"id","employee_id","emp_id","employee_code"),field(e,"name","full_name","employee_name")].map(String);return a.some(v=>v&&v!=="")&&((b[0]&&a.includes(b[0]))||(b[1]&&a.includes(b[1])))}
+function attendancePct(e){const rs=attendance.filter(r=>belongs(r,e));if(!rs.length)return 0;const vals=rs.map(r=>{const v=field(r,"attendance_percent","attendance_percentage","percentage");if(v!=="")return num(v);const st=String(field(r,"status","attendance_status")||"").toUpperCase();return st==="PRESENT"||st==="FULL_DAY"?100:st==="HALF_DAY"?50:0});return vals.reduce((a,b)=>a+b,0)/vals.length}
+function leaveCount(e){return leaves.filter(r=>belongs(r,e)).length}
+function payrollNet(e){return payroll.filter(r=>belongs(r,e)).reduce((s,r)=>s+num(field(r,"net_pay","net_salary","net")),0)}
+function docAlerts(e){return docs.filter(r=>belongs(r,e)&&(["EXPIRED","REJECTED"].includes(String(field(r,"status","verification_status")||"").toUpperCase())||!field(r,"file_url","file_name","document_url","file_path","attachment")||(()=>{const d=Date.parse(field(r,"expiry_date","expires_on","valid_until"));return Number.isFinite(d)&&d<Date.now()+30*86400000})())).length}
+function perfScore(e){const rs=performance.filter(r=>belongs(r,e)).map(r=>num(field(r,"overall_score","score","performance_score","rating_score"))).filter(v=>v>0);return rs.length?rs.reduce((a,b)=>a+b,0)/rs.length:0}
+function alertCount(e){let c=0;const a=attendancePct(e);if(a&&a<85)c++;if(docAlerts(e)>0)c++;if(perfScore(e)>0&&perfScore(e)<60)c++;if(estatus(e)!=="ACTIVE")c++;return c}
+async function loadAll(){document.body.classList.add("loading");try{const r=await Promise.all([tryGet(["/api/employees"]),tryGet(["/api/attendance","/api/employee-attendance"]),tryGet(["/api/leaves","/api/leave","/api/leave-management"]),tryGet(["/api/payroll","/api/payrolls","/api/payroll-records"]),tryGet(["/api/employee-documents","/api/employee_documents","/api/documents"]),tryGet(["/api/employee-performance","/api/employee_performance","/api/performance","/api/performance-reviews"])]);employees=arr(r[0]);attendance=arr(r[1]);leaves=arr(r[2]);payroll=arr(r[3]);docs=arr(r[4]);performance=arr(r[5]);try{const me=await api("/api/auth/me");document.getElementById("userName").textContent=me.employee?.name||me.name||me.user?.name||"Zippzo User"}catch{}buildFilters();applyFilters();renderKpis();toast("HR reports refreshed")}catch(e){toast(e.message||"HR report data could not be loaded")}finally{document.body.classList.remove("loading")}}
+function fill(id,values,label){const el=document.getElementById(id),old=el.value;el.innerHTML=`<option value="">${label}</option>`+values.map(v=>`<option value="${esc(v)}">${esc(v)}</option>`).join("");if(values.includes(old))el.value=old}
+function buildFilters(){fill("department",[...new Set(employees.map(dept).filter(x=>x!=="—"))].sort(),"All Departments");fill("location",[...new Set(employees.map(loc).filter(x=>x!=="—"))].sort(),"All Locations");fill("status",[...new Set(employees.map(estatus))].sort(),"All Employee Status")}
+function applyFilters(){const q=document.getElementById("search").value.toLowerCase().trim(),df=document.getElementById("dateFrom").value,dt=document.getElementById("dateTo").value,de=document.getElementById("department").value,lo=document.getElementById("location").value,st=document.getElementById("status").value;filtered=employees.filter(e=>{const raw=JSON.stringify(e).toLowerCase();const created=String(field(e,"joining_date","date_of_joining","created_at")||"").slice(0,10);return(!q||raw.includes(q))&&(!df||created>=df)&&(!dt||created<=dt)&&(!de||dept(e)===de)&&(!lo||loc(e)===lo)&&(!st||estatus(e)===st)});const s=document.getElementById("sort").value;filtered.sort((a,b)=>s==="attendance"?attendancePct(b)-attendancePct(a):s==="performance"?perfScore(b)-perfScore(a):s==="payroll"?payrollNet(b)-payrollNet(a):name(a).localeCompare(name(b)));render()}
+function renderKpis(){document.getElementById("kEmployees").textContent=employees.length;document.getElementById("kActive").textContent=employees.filter(e=>estatus(e)==="ACTIVE").length;const aps=employees.map(attendancePct).filter(v=>v>0);document.getElementById("kAttendance").textContent=aps.length?(aps.reduce((a,b)=>a+b,0)/aps.length).toFixed(1)+"%":"—";document.getElementById("kLeave").textContent=leaves.length;document.getElementById("kPayroll").textContent=money(payroll.reduce((s,r)=>s+num(field(r,"net_pay","net_salary","net")),0));document.getElementById("kDocs").textContent=docs.filter(r=>{const d=Date.parse(field(r,"expiry_date","expires_on","valid_until"));return ["EXPIRED","REJECTED"].includes(String(field(r,"status","verification_status")||"").toUpperCase())||(!field(r,"file_url","file_name","document_url","file_path","attachment"))||(Number.isFinite(d)&&d<Date.now()+30*86400000)}).length;const ps=performance.map(r=>num(field(r,"overall_score","score","performance_score","rating_score"))).filter(v=>v>0);document.getElementById("kPerformance").textContent=ps.length?(ps.reduce((a,b)=>a+b,0)/ps.length).toFixed(1):"—";document.getElementById("kAlerts").textContent=employees.reduce((s,e)=>s+alertCount(e),0)}
+function render(){document.getElementById("resultCount").textContent=filtered.length+" employees";renderDepartments();renderAlerts();renderAttendance();renderPayroll();renderTable()}
+function renderDepartments(){const m={};filtered.forEach(e=>{const d=dept(e);if(!m[d])m[d]={n:0,a:0,p:0};m[d].n++;m[d].a+=attendancePct(e);m[d].p+=perfScore(e)});const entries=Object.entries(m).sort((a,b)=>b[1].n-a[1].n);document.getElementById("deptCount").textContent=entries.length+" departments";document.getElementById("deptList").innerHTML=entries.length?entries.map(([d,v])=>{const ap=v.a/v.n,pp=v.p/v.n;return`<div class="list-row"><div class="rowtop"><b>${esc(d)}</b><span class="tag info">${v.n}</span></div><span class="muted">Attendance ${ap?ap.toFixed(1)+"%":"—"} · Performance ${pp?pp.toFixed(1):"—"}</span><div class="bar"><i style="width:${Math.min(100,Math.max(0,ap||0))}%"></i></div></div>`}).join(""):`<div class="empty">No department data.</div>`}
+function renderAlerts(){const a=[];filtered.forEach(e=>{if(attendancePct(e)>0&&attendancePct(e)<85)a.push([e,"Low attendance"]);if(docAlerts(e)>0)a.push([e,"Document compliance"]);if(perfScore(e)>0&&perfScore(e)<60)a.push([e,"Low performance"]);if(estatus(e)!=="ACTIVE")a.push([e,"Employee inactive"])});document.getElementById("alertCount").textContent=a.length;document.getElementById("alertList").innerHTML=a.slice(0,15).map(([e,m])=>`<div class="list-row"><div class="rowtop"><b>${esc(eid(e))} · ${esc(name(e))}</b><span class="tag warn">${m}</span></div><span class="muted">${esc(dept(e))} · ${esc(loc(e))}</span></div>`).join("")||`<div class="empty">No HR alerts for selected employees.</div>`}
+function renderAttendance(){const a=filtered.map(e=>[e,attendancePct(e)]).filter(x=>x[1]>0).sort((a,b)=>b[1]-a[1]).slice(0,10);document.getElementById("attendanceList").innerHTML=a.length?a.map(([e,v])=>`<div class="list-row"><div class="rowtop"><b>${esc(name(e))}</b><span>${v.toFixed(1)}%</span></div><span class="muted">${esc(dept(e))}</span><div class="bar"><i style="width:${Math.min(100,v)}%"></i></div></div>`).join(""):`<div class="empty">No attendance data loaded.</div>`}
+function renderPayroll(){const a=filtered.map(e=>[e,payrollNet(e)]).filter(x=>x[1]>0).sort((a,b)=>b[1]-a[1]).slice(0,10);document.getElementById("payrollList").innerHTML=a.length?a.map(([e,v])=>`<div class="list-row"><div class="rowtop"><b>${esc(name(e))}</b><strong>${money(v)}</strong></div><span class="muted">${esc(dept(e))} · ${esc(loc(e))}</span></div>`).join(""):`<div class="empty">No payroll data loaded.</div>`}
+function renderTable(){document.getElementById("body").innerHTML=filtered.length?filtered.map((e,i)=>{const ap=attendancePct(e),lc=leaveCount(e),pn=payrollNet(e),da=docAlerts(e),ps=perfScore(e),ac=alertCount(e);return`<tr><td><b>${esc(eid(e))}</b> · ${esc(name(e))}</td><td>${esc(dept(e))}</td><td>${esc(loc(e))}</td><td><span class="tag ${estatus(e)==="ACTIVE"?"good":"warn"}">${esc(estatus(e))}</span></td><td>${ap?ap.toFixed(1)+"%":"—"}</td><td>${lc}</td><td>${pn?money(pn):"—"}</td><td>${da?`<span class="tag bad">${da}</span>`:"<span class=\"tag good\">OK</span>"}</td><td>${ps?ps.toFixed(1):"—"}</td><td>${ac?`<span class="tag warn">${ac}</span>`:"<span class=\"tag good\">0</span>"}</td><td><button class="btn small" onclick="details(${i})">View</button></td></tr>`}).join(""):`<tr><td colspan="11" class="empty">No employees match the selected filters.</td></tr>`}
+function details(i){const e=filtered[i];if(!e)return;const ap=attendancePct(e),lc=leaveCount(e),pn=payrollNet(e),da=docAlerts(e),ps=perfScore(e);document.getElementById("detail").innerHTML=`<div class="detail-grid">${D("Employee ID",eid(e))}${D("Employee",name(e))}${D("Department",dept(e))}${D("Location",loc(e))}${D("Status",estatus(e))}${D("Joining Date",field(e,"joining_date","date_of_joining")||"—")}${D("Attendance",ap?ap.toFixed(1)+"%":"—")}${D("Leave Records",lc)}${D("Payroll Net",pn?money(pn):"—")}${D("Document Alerts",da)}${D("Performance",ps?ps.toFixed(1):"—")}${D("HR Alerts",alertCount(e))}</div><div class="section-head" style="margin-top:18px"><h2>HR Data Coverage</h2></div><div class="list"><div class="list-row"><b>Attendance</b><span class="muted">${attendance.filter(r=>belongs(r,e)).length} records loaded</span></div><div class="list-row"><b>Leave</b><span class="muted">${lc} records loaded</span></div><div class="list-row"><b>Payroll</b><span class="muted">${payroll.filter(r=>belongs(r,e)).length} records loaded · ${pn?money(pn):"₹0"}</span></div><div class="list-row"><b>Documents</b><span class="muted">${docs.filter(r=>belongs(r,e)).length} records loaded · ${da} alerts</span></div><div class="list-row"><b>Performance</b><span class="muted">${performance.filter(r=>belongs(r,e)).length} reviews loaded · ${ps?ps.toFixed(1):"No score"}</span></div></div>`;document.getElementById("detailModal").classList.add("show")}
+function D(a,b){return`<div class="detail"><small>${esc(a)}</small><b>${esc(b??"—")}</b></div>`}function closeDetail(){document.getElementById("detailModal").classList.remove("show")}
+function clearFilters(){["search","dateFrom","dateTo"].forEach(id=>document.getElementById(id).value="");["department","location","status"].forEach(id=>document.getElementById(id).value="");document.getElementById("sort").value="name";applyFilters()}
+function exportCSV(){const h=["Employee ID","Employee","Department","Location","Status","Attendance %","Leave Records","Payroll Net","Document Alerts","Performance Score","HR Alerts"];const d=filtered.map(e=>[eid(e),name(e),dept(e),loc(e),estatus(e),attendancePct(e),leaveCount(e),payrollNet(e),docAlerts(e),perfScore(e),alertCount(e)]);const csv=[h,...d].map(r=>r.map(v=>`"${String(v??"").replaceAll('"','""')}"`).join(",")).join("\n");const a=document.createElement("a");a.href=URL.createObjectURL(new Blob([csv],{type:"text/csv;charset=utf-8"}));a.download="zippzo_hr_report.csv";a.click()}function printReport(){window.print()}
+async function logout(){try{if(token)await api("/api/auth/logout",{method:"POST",body:JSON.stringify({session_token:token})})}catch{}localStorage.removeItem(TOKEN_KEY);localStorage.removeItem("zippzo_user");location.href="index.html"}
+document.getElementById("detailModal").addEventListener("click",e=>{if(e.target.id==="detailModal")closeDetail()});(async()=>{nav();await loadAll()})();
+</script>
+
+<script id="zippzo-master-frontend">
+document.addEventListener("DOMContentLoaded", function(){
+  // Hide the retired Dropping module everywhere.
+  document.querySelectorAll("a,button").forEach(function(el){
+    const t=(el.textContent||"").trim().toLowerCase();
+    if(t==="dropping" || t.includes("dropping")) el.style.display="none";
+  });
+
+  // Use the real Zippzo logo wherever a common brand element exists.
+  document.querySelectorAll(".brand,.logo,.brand-logo").forEach(function(el){
+    if(!el.querySelector("img")){
+      const img=document.createElement("img");
+      img.src="zippzo-logo.jpg";
+      img.alt="Zippzo";
+      img.style.cssText="width:148px;max-height:55px;object-fit:contain;object-position:left center;";
+      el.prepend(img);
+    }
+  });
+});
+</script>
+
+</body></html>

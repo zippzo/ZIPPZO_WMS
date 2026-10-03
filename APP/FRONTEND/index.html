@@ -1,0 +1,548 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="theme-color" content="#331084">
+<title>Zippzo WMS — Control Tower</title>
+<style>
+*{box-sizing:border-box}
+:root{
+  --zippzo-purple:#331084;--zippzo-yellow:#FEB103;--zippzo-dark:#24085f;
+  --bg:#f6f7fb;--panel:#fff;--text:#172033;--muted:#64748b;--line:#e2e8f0;
+  --dark:#24085f;--dark2:#331084;--green:#16a34a;--amber:#d97706;--red:#dc2626;
+  --blue:#2563eb;--shadow:0 8px 25px rgba(15,23,42,.06)
+}
+html,body{margin:0;min-height:100%;font-family:Inter,Arial,Helvetica,sans-serif;background:var(--bg);color:var(--text)}
+button,input,select{font:inherit}
+button{cursor:pointer}
+#loadingScreen{position:fixed;inset:0;background:rgba(255,255,255,.96);z-index:9999;display:flex;align-items:center;justify-content:center;font-weight:700;color:#111827}
+#loginScreen{min-height:100vh;display:none;align-items:center;justify-content:center;padding:20px;background:linear-gradient(135deg,#24085f,#331084 55%,#4b1aa8)}
+.login-card{width:100%;max-width:430px;background:#fff;border-radius:20px;padding:34px;box-shadow:0 25px 70px rgba(0,0,0,.28)}
+.logo{text-align:center;font-size:36px;font-weight:900;letter-spacing:3px;margin-bottom:5px}
+.login-subtitle{text-align:center;color:var(--muted);font-size:14px;margin-bottom:28px}
+.login-card label{display:block;font-size:13px;font-weight:700;margin:0 0 7px}
+.login-card input{width:100%;height:48px;border:1px solid #d1d5db;border-radius:10px;padding:0 14px;margin-bottom:17px;outline:none}
+.login-card input:focus{border-color:#111827;box-shadow:0 0 0 3px rgba(17,24,39,.08)}
+.login-button{width:100%;height:48px;border:0;border-radius:10px;background:#331084;color:#fff;font-weight:800}
+.login-button:disabled{opacity:.6}
+#loginMessage{display:none;margin-top:14px;padding:11px;border-radius:9px;text-align:center;font-size:13px}
+.error-message{background:#fee2e2;color:#991b1b}.success-message{background:#dcfce7;color:#166534}
+
+#dashboardScreen{display:none;min-height:100vh}
+.topbar{height:68px;background:var(--dark);color:#fff;display:flex;align-items:center;justify-content:space-between;padding:0 22px;position:sticky;top:0;z-index:100}
+.brand{font-size:23px;font-weight:900;letter-spacing:2px}
+.brand small{font-size:10px;display:block;letter-spacing:1px;color:#9ca3af;margin-top:-2px}
+.top-user{display:flex;align-items:center;gap:12px}.user-info{text-align:right}.user-name{font-weight:800;font-size:13px}.user-role{font-size:10px;color:#cbd5e1;margin-top:2px}
+.logout-button{background:#ef4444;color:#fff;border:0;border-radius:8px;padding:9px 14px;font-weight:800}.logout-button:hover{background:#dc2626}
+.layout{display:flex;min-height:calc(100vh - 68px)}
+.sidebar{width:245px;flex:0 0 245px;background:#fff;border-right:1px solid var(--line);padding:15px 11px;overflow-y:auto;height:calc(100vh - 68px);position:sticky;top:68px}
+.sidebar-title{font-size:10px;font-weight:900;color:#9ca3af;text-transform:uppercase;letter-spacing:.8px;margin:14px 11px 7px}
+.nav-button{width:100%;border:0;background:transparent;text-align:left;padding:10px 11px;border-radius:8px;margin-bottom:2px;color:#374151;font-size:13px;font-weight:600}
+.nav-button:hover{background:#f3f4f6}.nav-button.active{background:#331084;color:#fff}
+.content{flex:1;min-width:0;padding:22px;overflow-x:auto}
+.page-head{display:flex;justify-content:space-between;align-items:flex-start;gap:16px;margin-bottom:18px}
+.page-title{font-size:25px;font-weight:900;margin:0 0 4px}.page-subtitle{color:var(--muted);font-size:13px}
+.head-actions{display:flex;gap:8px;flex-wrap:wrap}
+.btn{border:1px solid var(--line);background:#fff;border-radius:8px;padding:9px 12px;font-weight:700;color:#374151}.btn:hover{background:#f9fafb}.btn-dark{background:#331084;color:#fff;border-color:#111827}.btn-dark:hover{background:#24085f}
+.welcome-box{background:linear-gradient(120deg,#24085f,#331084);color:#fff;border-radius:14px;padding:20px;margin-bottom:18px;box-shadow:var(--shadow)}
+.welcome-box h2{margin:0 0 6px;font-size:20px}.welcome-box p{margin:0;color:#d1d5db;font-size:13px}
+.live-strip{display:flex;align-items:center;gap:10px;margin-top:14px;font-size:12px;color:#d1d5db}.live-dot{width:8px;height:8px;background:#22c55e;border-radius:50%;box-shadow:0 0 0 4px rgba(34,197,94,.13)}
+.cards{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:14px}
+.card{background:#fff;border:1px solid var(--line);border-radius:12px;padding:17px;box-shadow:var(--shadow);min-width:0}
+.card-label{font-size:11px;color:var(--muted);font-weight:800;text-transform:uppercase;letter-spacing:.4px}
+.card-value{font-size:27px;font-weight:900;margin-top:7px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.card-meta{font-size:11px;color:var(--muted);margin-top:5px}
+.section{background:#fff;border:1px solid var(--line);border-radius:12px;padding:17px;margin-top:16px;box-shadow:var(--shadow)}
+.section-head{display:flex;align-items:center;justify-content:space-between;gap:10px;margin-bottom:13px}
+.section-title{font-size:16px;font-weight:900}.section-subtitle{font-size:11px;color:var(--muted)}
+.quick-links{display:grid;grid-template-columns:repeat(6,minmax(0,1fr));gap:9px}
+.quick-link{border:1px solid var(--line);background:#fff;border-radius:9px;padding:13px 8px;text-align:center;font-weight:800;font-size:12px;color:#374151}
+.quick-link:hover{background:#f9fafb;transform:translateY(-1px)}
+.ops-grid{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:10px}
+.ops-card{border:1px solid var(--line);border-radius:10px;padding:13px;background:#fafafa}
+.ops-top{display:flex;justify-content:space-between;gap:8px}.ops-name{font-size:12px;font-weight:800}.ops-count{font-size:18px;font-weight:900;margin-top:7px}
+.badge{display:inline-flex;padding:4px 7px;border-radius:999px;font-size:9px;font-weight:900;text-transform:uppercase}
+.badge-green{background:#dcfce7;color:#166534}.badge-amber{background:#fef3c7;color:#92400e}.badge-gray{background:#f3f4f6;color:#4b5563}
+.grid-2{display:grid;grid-template-columns:1.35fr .65fr;gap:16px}
+.table-wrap{overflow:auto;border:1px solid var(--line);border-radius:9px}
+table{width:100%;border-collapse:collapse;min-width:620px}
+th,td{padding:10px 11px;border-bottom:1px solid var(--line);text-align:left;font-size:11px;white-space:nowrap}
+th{background:#f8fafc;color:#6b7280;text-transform:uppercase;font-size:9px;letter-spacing:.4px}
+tr:last-child td{border-bottom:0}
+.empty{text-align:center;color:var(--muted);padding:25px}
+.metric-list{display:grid;gap:9px}.metric{display:flex;justify-content:space-between;align-items:center;padding:10px;border:1px solid var(--line);border-radius:8px}.metric span{font-size:11px;color:var(--muted)}.metric strong{font-size:14px}
+.user-panel{display:grid;grid-template-columns:repeat(3,1fr);gap:10px}.user-field{border:1px solid var(--line);border-radius:9px;padding:11px}.user-field span{display:block;font-size:9px;color:var(--muted);text-transform:uppercase;font-weight:800}.user-field strong{display:block;font-size:12px;margin-top:4px;overflow:hidden;text-overflow:ellipsis}
+.footer-note{margin-top:18px;text-align:center;color:#9ca3af;font-size:10px}
+@media(max-width:1150px){.cards{grid-template-columns:repeat(2,1fr)}.quick-links{grid-template-columns:repeat(3,1fr)}.ops-grid{grid-template-columns:repeat(2,1fr)}.grid-2{grid-template-columns:1fr}}
+@media(max-width:760px){.sidebar{width:190px;flex-basis:190px}.content{padding:15px}.page-head{display:block}.head-actions{margin-top:10px}.cards{grid-template-columns:1fr}.quick-links{grid-template-columns:repeat(2,1fr)}.user-panel{grid-template-columns:1fr}.top-user .user-info{display:none}.brand{font-size:19px}}
+</style>
+
+<link rel="stylesheet" href="zippzo-standard.css">
+<script src="zippzo-standard.js" defer></script>
+</head>
+<body>
+
+<div id="loadingScreen">Checking Zippzo session...</div>
+
+<div id="loginScreen">
+  <div class="login-card">
+    <div class="logo"><img src="zippzo-logo.jpg" alt="Zippzo" style="width:170px;max-height:70px;object-fit:contain;"></div>
+    <div class="login-subtitle">Warehouse Management System · Control Tower</div>
+    <form id="loginForm">
+      <label for="identifier">Employee ID / Email</label>
+      <input id="identifier" type="text" placeholder="Enter Employee ID or Email" autocomplete="username" required>
+      <label for="password">Password</label>
+      <input id="password" type="password" placeholder="Enter password" autocomplete="current-password" required>
+      <button id="loginButton" class="login-button" type="submit">Login</button>
+    </form>
+    <div id="loginMessage"></div>
+  </div>
+</div>
+
+<div id="dashboardScreen">
+  <header class="topbar">
+    <div class="brand"><img src="zippzo-logo.jpg" alt="Zippzo" style="width:130px;max-height:48px;object-fit:contain;"><small>WMS CONTROL TOWER</small></div>
+    <div class="top-user">
+      <div class="user-info">
+        <div class="user-name" id="topUserName">User</div>
+        <div class="user-role" id="topUserRole">EMPLOYEE</div>
+      </div>
+      <button class="logout-button" onclick="logout()">Logout</button>
+    </div>
+  </header>
+
+  <div class="layout">
+    <aside class="sidebar">
+      <div class="sidebar-title">Main</div>
+      <button class="nav-button active" onclick="showDashboard()">Dashboard</button>
+
+      <div class="sidebar-title">Master Data</div>
+      <button class="nav-button" onclick="openPage('products.html')">Products</button>
+      <button class="nav-button" onclick="openPage('suppliers.html')">Suppliers</button>
+      <button class="nav-button" onclick="openPage('locations.html')">Locations</button>
+      <button class="nav-button" onclick="openPage('hr-dashboard.html')">HR Dashboard</button>
+      <button class="nav-button" onclick="openPage('hr-live.html')">HR Live</button>
+      <button class="nav-button" onclick="openPage('employees.html')">Employees</button>
+
+      <div class="sidebar-title">Warehouse</div>
+      <button class="nav-button" onclick="openPage('inventory.html')">Inventory</button>
+      <button class="nav-button" onclick="openPage('bins.html')">Bins</button>
+      <button class="nav-button" onclick="openPage('stock-movements.html')">Stock Movements</button>
+
+      <div class="sidebar-title">Inbound</div>
+      <button class="nav-button" onclick="openPage('purchase-orders.html')">Purchase Orders</button>
+      <button class="nav-button" onclick="openPage('grn.html')">GRN</button>
+      <button class="nav-button" onclick="openPage('putaway.html')">Putaway</button>
+      <button class="nav-button" onclick="openPage('grid-putaway.html')">Grid Putaway</button>
+
+      <div class="sidebar-title">Orders</div>
+      <button class="nav-button" onclick="openPage('orders.html')">Orders</button>
+      <button class="nav-button" onclick="openPage('create-batch.html')">Create Batch</button>
+      <button class="nav-button" onclick="openPage('picking.html')">Picking</button>
+      <button class="nav-button" onclick="openPage('sorting.html')">Sorting</button>
+      <button class="nav-button" onclick="openPage('dispatch.html')">Dispatch</button>
+
+      <div class="sidebar-title">Delivery</div>
+      <button class="nav-button" onclick="openPage('riders.html')">Riders — Dark Store</button>
+       <button class="nav-button" onclick="openPage('vehicle-arrival.html')">Vehicle Arrival</button>
+       <button class="nav-button" onclick="openPage('store-receiving.html')">Store Receiving</button>
+
+      <div class="sidebar-title">Reports</div>
+      <button class="nav-button" onclick="openPage('stock-report.html')">Stock Report</button>
+      <button class="nav-button" onclick="openPage('grn-report.html')">GRN Report</button>
+      <button class="nav-button" onclick="openPage('putaway-report.html')">Putaway Report</button>
+      <button class="nav-button" onclick="openPage('order-report.html')">Order Report</button>
+      <button class="nav-button" onclick="openPage('picking-report.html')">Picking Report</button>
+      <button class="nav-button" onclick="openPage('sorting-report.html')">Sorting Report</button>
+      <button class="nav-button" onclick="openPage('picking-ipp.html')">Picking IPP</button>
+      <button class="nav-button" onclick="openPage('sorting-ipp.html')">Sorting IPP</button>
+      <button class="nav-button" onclick="openPage('delivery-report.html')">Delivery Report</button>
+       <button class="nav-button" onclick="openPage('grid-putaway-report.html')">Grid Putaway Report</button>
+       <button class="nav-button" onclick="openPage('vehicle-arrival-report.html')">Vehicle Arrival Report</button>
+       <button class="nav-button" onclick="openPage('dispatch-report.html')">Dispatch Report</button>
+       <button class="nav-button" onclick="openPage('store-receiving-report.html')">Store Receiving Report</button>
+
+       <div class="sidebar-title">Administration</div>
+       <button class="nav-button" onclick="openPage('access-control.html')">Access Control</button>
+       <button class="nav-button" onclick="openPage('audit-logs.html')">Audit Logs</button>
+       <button class="nav-button" onclick="openPage('system-settings.html')">System Settings</button>
+    </aside>
+
+    <main class="content">
+      <div class="page-head">
+        <div>
+          <h1 class="page-title">Operations Dashboard</h1>
+          <div class="page-subtitle">Live Zippzo warehouse, dark-store, inbound, order and delivery control tower</div>
+        </div>
+        <div class="head-actions">
+          <button class="btn" onclick="refreshDashboard()">↻ Refresh</button>
+          <button class="btn btn-dark" onclick="openPage('orders.html')">Open Orders</button>
+        </div>
+      </div>
+
+      <div class="welcome-box">
+        <h2>Welcome to Zippzo WMS</h2>
+        <p>Central operational control for inventory, inbound, order processing, fulfilment and dark-store delivery.</p>
+        <div class="live-strip"><span class="live-dot"></span><span id="systemStatusText">System online · syncing live data</span><span id="lastUpdated"></span></div>
+      </div>
+
+      <div class="cards">
+        <div class="card"><div class="card-label">Products</div><div class="card-value" id="totalProducts">0</div><div class="card-meta">Product master records</div></div>
+        <div class="card"><div class="card-label">Stock Units</div><div class="card-value" id="totalStock">0</div><div class="card-meta">Available inventory quantity</div></div>
+        <div class="card"><div class="card-label">Orders</div><div class="card-value" id="totalOrders">0</div><div class="card-meta">Orders in system</div></div>
+        <div class="card"><div class="card-label">Locations</div><div class="card-value" id="totalLocations">0</div><div class="card-meta">Warehouse / dark-store locations</div></div>
+        <div class="card"><div class="card-label">Reserved</div><div class="card-value" id="totalReserved">0</div><div class="card-meta">Reserved stock units</div></div>
+        <div class="card"><div class="card-label">Damaged</div><div class="card-value" id="totalDamaged">0</div><div class="card-meta">Damaged stock units</div></div>
+        <div class="card"><div class="card-label">Putaway Pending</div><div class="card-value" id="pendingPutaway">0</div><div class="card-meta">Tasks waiting for completion</div></div>
+        <div class="card"><div class="card-label">Riders</div><div class="card-value" id="totalRiders">0</div><div class="card-meta">Dark-store rider records</div></div>
+      </div>
+
+      <div class="section">
+        <div class="section-head"><div><div class="section-title">Quick Operations</div><div class="section-subtitle">Jump directly into active workflows</div></div></div>
+        <div class="quick-links">
+          <button class="quick-link" onclick="openPage('purchase-orders.html')">Purchase Orders</button>
+          <button class="quick-link" onclick="openPage('grn.html')">GRN Receiving</button>
+          <button class="quick-link" onclick="openPage('putaway.html')">Putaway Queue</button>
+          <button class="quick-link" onclick="openPage('inventory.html')">Inventory</button>
+          <button class="quick-link" onclick="openPage('create-batch.html')">Create Batch</button>
+          <button class="quick-link" onclick="openPage('picking.html')">Picking</button>
+          <button class="quick-link" onclick="openPage('sorting.html')">Sorting</button>
+          <button class="quick-link" onclick="openPage('dispatch.html')">Dispatch</button>
+          <button class="quick-link" onclick="openPage('riders.html')">Dark-Store Riders</button>
+          <button class="quick-link" onclick="openPage('stock-report.html')">Stock Report</button>
+          <button class="quick-link" onclick="openPage('order-report.html')">Order Report</button>
+        </div>
+      </div>
+
+      <div class="section">
+        <div class="section-head"><div><div class="section-title">Operations Pipeline</div><div class="section-subtitle">Live records returned by the Zippzo APIs</div></div></div>
+        <div class="ops-grid">
+          <div class="ops-card"><div class="ops-top"><span class="ops-name">Products</span><span class="badge badge-green">Master</span></div><div class="ops-count" id="opsProducts">0</div></div>
+          <div class="ops-card"><div class="ops-top"><span class="ops-name">Locations</span><span class="badge badge-green">Active</span></div><div class="ops-count" id="opsLocations">0</div></div>
+          <div class="ops-card"><div class="ops-top"><span class="ops-name">Inventory Records</span><span class="badge badge-green">Live</span></div><div class="ops-count" id="opsInventory">0</div></div>
+          <div class="ops-card"><div class="ops-top"><span class="ops-name">Putaway Tasks</span><span class="badge badge-amber">Inbound</span></div><div class="ops-count" id="opsPutaway">0</div></div>
+        </div>
+      </div>
+
+      <div class="grid-2">
+        <div class="section">
+          <div class="section-head"><div><div class="section-title">Inventory Snapshot</div><div class="section-subtitle">Aggregated from live inventory records</div></div><button class="btn" onclick="openPage('inventory.html')">View</button></div>
+          <div class="table-wrap"><table><thead><tr><th>Location</th><th>SKU</th><th>Product</th><th>Available</th><th>Reserved</th><th>Damaged</th></tr></thead><tbody id="inventoryRows"><tr><td colspan="6" class="empty">Loading inventory...</td></tr></tbody></table></div>
+        </div>
+        <div class="section">
+          <div class="section-head"><div><div class="section-title">Control Metrics</div><div class="section-subtitle">Current operational totals</div></div></div>
+          <div class="metric-list">
+            <div class="metric"><span>Inventory Records</span><strong id="metricInventory">0</strong></div>
+            <div class="metric"><span>Available Units</span><strong id="metricAvailable">0</strong></div>
+            <div class="metric"><span>Reserved Units</span><strong id="metricReserved">0</strong></div>
+            <div class="metric"><span>Damaged Units</span><strong id="metricDamaged">0</strong></div>
+            <div class="metric"><span>Pending Putaway</span><strong id="metricPending">0</strong></div>
+          </div>
+        </div>
+      </div>
+
+      <div class="section">
+        <div class="section-head"><div><div class="section-title">Logged-in User</div><div class="section-subtitle">Authenticated Zippzo employee/session</div></div></div>
+        <div class="user-panel" id="userDetails"><div class="empty">Loading user information...</div></div>
+      </div>
+
+      <div class="footer-note">Zippzo WMS · Live operational dashboard · Data is loaded from the connected Zippzo backend</div>
+    </main>
+  </div>
+</div>
+
+<script>
+"use strict";
+
+const API_BASE = window.location.origin;
+const TOKEN_KEY = "zippzo_session_token";
+const USER_KEY = "zippzo_user";
+let refreshTimer = null;
+let dashboardLoading = false;
+
+const $ = id => document.getElementById(id);
+
+function getToken(){ return localStorage.getItem(TOKEN_KEY); }
+
+function saveLogin(data){
+  if(data && data.session_token) localStorage.setItem(TOKEN_KEY,data.session_token);
+  if(data && data.user) localStorage.setItem(USER_KEY,JSON.stringify(data.user));
+}
+
+function clearLogin(){
+  localStorage.removeItem(TOKEN_KEY);
+  localStorage.removeItem(USER_KEY);
+}
+
+function escapeHtml(value){
+  return String(value ?? "")
+    .replaceAll("&","&amp;").replaceAll("<","&lt;")
+    .replaceAll(">","&gt;").replaceAll('"',"&quot;")
+    .replaceAll("'","&#039;");
+}
+
+function showLoginMessage(message,success=false){
+  const box=$("loginMessage");
+  box.style.display="block";
+  box.textContent=message;
+  box.className=success ? "success-message" : "error-message";
+}
+
+async function api(path,options={}){
+  const token=getToken();
+  const headers={...(options.headers||{})};
+  if(options.body && !headers["Content-Type"]) headers["Content-Type"]="application/json";
+  if(token) headers["Authorization"]="Bearer "+token;
+
+  const response=await fetch(API_BASE+path,{...options,headers});
+
+  if(response.status===401){
+    clearLogin();
+    showLogin();
+    throw new Error("Session expired. Please login again.");
+  }
+  return response;
+}
+
+async function readJson(path,options={}){
+  const response=await api(path,options);
+  let data=null;
+  try{ data=await response.json(); }catch(_){}
+  if(!response.ok){
+    throw new Error(data?.detail || data?.message || ("API error: "+response.status));
+  }
+  return data;
+}
+
+function showLogin(){
+  $("loadingScreen").style.display="none";
+  $("dashboardScreen").style.display="none";
+  $("loginScreen").style.display="flex";
+}
+
+function showDashboardScreen(user){
+  $("loadingScreen").style.display="none";
+  $("loginScreen").style.display="none";
+  $("dashboardScreen").style.display="block";
+
+  $("topUserName").textContent=user?.name || user?.employee_id || "User";
+  $("topUserRole").textContent=user?.role || "EMPLOYEE";
+
+  $("userDetails").innerHTML=`
+    <div class="user-field"><span>Name</span><strong>${escapeHtml(user?.name || "-")}</strong></div>
+    <div class="user-field"><span>Employee ID</span><strong>${escapeHtml(user?.employee_id || "-")}</strong></div>
+    <div class="user-field"><span>Email</span><strong>${escapeHtml(user?.email || "-")}</strong></div>
+    <div class="user-field"><span>Mobile</span><strong>${escapeHtml(user?.mobile || "-")}</strong></div>
+    <div class="user-field"><span>Role</span><strong>${escapeHtml(user?.role || "-")}</strong></div>
+    <div class="user-field"><span>Status</span><strong>${escapeHtml(user?.status || "ACTIVE")}</strong></div>`;
+}
+
+async function login(event){
+  event.preventDefault();
+  const identifier=$("identifier").value.trim();
+  const password=$("password").value;
+  if(!identifier || !password){ showLoginMessage("Please enter Employee ID / Email and password."); return; }
+
+  $("loginButton").disabled=true;
+  $("loginButton").textContent="Logging in...";
+  $("loginMessage").style.display="none";
+
+  try{
+    const response=await fetch(API_BASE+"/api/auth/login",{
+      method:"POST",
+      headers:{"Content-Type":"application/json"},
+      body:JSON.stringify({identifier,password})
+    });
+    let data={};
+    try{data=await response.json()}catch(_){}
+    if(!response.ok) throw new Error(data.detail || data.message || "Login failed.");
+    saveLogin(data);
+    $("password").value="";
+    showDashboardScreen(data.user || {});
+    await refreshDashboardInternal();
+  }catch(error){
+    console.error(error);
+    showLoginMessage(error.message || "Unable to login.");
+  }finally{
+    $("loginButton").disabled=false;
+    $("loginButton").textContent="Login";
+  }
+}
+
+async function checkSession(){
+  const token=getToken();
+  if(!token){ showLogin(); return; }
+
+  try{
+    const user=await readJson("/api/auth/me");
+    localStorage.setItem(USER_KEY,JSON.stringify(user));
+    showDashboardScreen(user);
+    await refreshDashboardInternal();
+  }catch(error){
+    console.warn("Session check:",error.message);
+    clearLogin();
+    showLogin();
+  }
+}
+
+function numberValue(value){
+  const n=Number(value);
+  return Number.isFinite(n) ? n : 0;
+}
+
+function formatNumber(value){
+  return numberValue(value).toLocaleString("en-IN");
+}
+
+function normalizeArray(data){
+  if(Array.isArray(data)) return data;
+  if(Array.isArray(data?.items)) return data.items;
+  if(Array.isArray(data?.data)) return data.data;
+  if(Array.isArray(data?.results)) return data.results;
+  return [];
+}
+
+async function safeArray(path){
+  try{
+    return normalizeArray(await readJson(path));
+  }catch(error){
+    console.warn(path,error.message);
+    return [];
+  }
+}
+
+function renderInventory(rows){
+  const body=$("inventoryRows");
+  if(!rows.length){
+    body.innerHTML='<tr><td colspan="6" class="empty">No inventory records available.</td></tr>';
+    return;
+  }
+
+  body.innerHTML=rows.slice(0,10).map(row=>`
+    <tr>
+      <td>${escapeHtml(row.location_name || row.location_code || row.location_id || "-")}</td>
+      <td>${escapeHtml(row.sku || "-")}</td>
+      <td>${escapeHtml(row.product_name || row.name || "-")}</td>
+      <td>${formatNumber(row.available_qty)}</td>
+      <td>${formatNumber(row.reserved_qty)}</td>
+      <td>${formatNumber(row.damaged_qty)}</td>
+    </tr>`).join("");
+}
+
+function updateInventoryMetrics(rows){
+  let available=0,reserved=0,damaged=0;
+  rows.forEach(row=>{
+    available+=numberValue(row.available_qty);
+    reserved+=numberValue(row.reserved_qty);
+    damaged+=numberValue(row.damaged_qty);
+  });
+
+  $("totalStock").textContent=formatNumber(available);
+  $("totalReserved").textContent=formatNumber(reserved);
+  $("totalDamaged").textContent=formatNumber(damaged);
+  $("metricInventory").textContent=formatNumber(rows.length);
+  $("metricAvailable").textContent=formatNumber(available);
+  $("metricReserved").textContent=formatNumber(reserved);
+  $("metricDamaged").textContent=formatNumber(damaged);
+  $("opsInventory").textContent=formatNumber(rows.length);
+}
+
+async function refreshDashboardInternal(){
+  if(dashboardLoading || !getToken()) return;
+  dashboardLoading=true;
+
+  try{
+    const dashboard=await readJson("/api/dashboard").catch(()=>({}));
+
+    const [products,locations,inventory,putaway,riders]=await Promise.all([
+      safeArray("/api/products"),
+      safeArray("/api/locations"),
+      safeArray("/api/inventory"),
+      safeArray("/api/putaway"),
+      safeArray("/api/riders")
+    ]);
+
+    const totalProducts=dashboard.total_products !== undefined
+      ? numberValue(dashboard.total_products) : products.length;
+
+    const totalOrders=dashboard.total_orders !== undefined
+      ? numberValue(dashboard.total_orders) : 0;
+
+    $("totalProducts").textContent=formatNumber(totalProducts);
+    $("totalOrders").textContent=formatNumber(totalOrders);
+    $("totalLocations").textContent=formatNumber(
+      dashboard.total_locations !== undefined ? dashboard.total_locations : locations.length
+    );
+    $("totalRiders").textContent=formatNumber(
+      dashboard.total_riders !== undefined ? dashboard.total_riders : riders.length
+    );
+
+    $("opsProducts").textContent=formatNumber(totalProducts);
+    $("opsLocations").textContent=formatNumber(locations.length);
+
+    updateInventoryMetrics(inventory);
+
+    const pending=putaway.filter(t=>{
+      const status=String(t.status || "").toUpperCase();
+      return !["COMPLETED","CANCELLED","CLOSED"].includes(status);
+    }).length;
+
+    $("pendingPutaway").textContent=formatNumber(pending);
+    $("metricPending").textContent=formatNumber(pending);
+    $("opsPutaway").textContent=formatNumber(pending);
+
+    renderInventory(inventory);
+
+    const now=new Date();
+    $("lastUpdated").textContent="· Updated "+now.toLocaleTimeString("en-IN",{hour:"2-digit",minute:"2-digit",second:"2-digit"});
+    $("systemStatusText").textContent="System online · live backend data connected";
+  }catch(error){
+    console.error("Dashboard refresh:",error);
+    $("systemStatusText").textContent="Backend connection issue · retrying";
+  }finally{
+    dashboardLoading=false;
+  }
+}
+
+async function logout(){
+  const token=getToken();
+  try{
+    if(token){
+      await fetch(API_BASE+"/api/auth/logout",{
+        method:"POST",
+        headers:{
+          "Content-Type":"application/json",
+          "Authorization":"Bearer "+token
+        },
+        body:JSON.stringify({session_token:token})
+      });
+    }
+  }catch(error){console.warn("Logout:",error)}
+  clearLogin();
+  if(refreshTimer) clearInterval(refreshTimer);
+  $("password").value="";
+  showLogin();
+}
+
+function openPage(page){ window.location.href=page; }
+function showDashboard(){ window.location.href="index.html"; }
+function refreshDashboard(){ return window.__zippzoRefreshDashboard ? window.__zippzoRefreshDashboard() : refreshDashboardInternal(); }
+
+$("loginForm").addEventListener("submit",login);
+
+window.addEventListener("keydown",event=>{
+  if(event.key==="Escape" && $("loginScreen").style.display==="flex"){
+    $("loginMessage").style.display="none";
+  }
+});
+
+$("loadingScreen").style.display="flex";
+checkSession();
+window.__zippzoRefreshDashboard = refreshDashboardInternal;
+refreshTimer=setInterval(()=>{
+  if($("dashboardScreen").style.display!=="none") refreshDashboardInternal();
+},10000);
+</script>
+</body>
+</html>

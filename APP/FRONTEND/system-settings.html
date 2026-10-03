@@ -1,0 +1,3219 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1.0">
+<title>Zippzo System Settings</title>
+
+<style>
+*{box-sizing:border-box}
+
+body{
+    margin:0;
+    font-family:Arial,Helvetica,sans-serif;
+    background:#f5f7fb;
+    color:#172033
+}
+
+.topbar{
+    height:64px;
+    background:#111827;
+    color:#fff;
+    display:flex;
+    align-items:center;
+    justify-content:space-between;
+    padding:0 22px;
+    position:sticky;
+    top:0;
+    z-index:50
+}
+
+.brand{
+    font-size:22px;
+    font-weight:800;
+    letter-spacing:1px
+}
+
+.top-user{
+    font-size:13px
+}
+
+.layout{
+    display:flex;
+    min-height:calc(100vh - 64px)
+}
+
+.sidebar{
+    width:245px;
+    background:#172033;
+    color:#dbe4f0;
+    padding:18px 12px;
+    position:sticky;
+    top:64px;
+    height:calc(100vh - 64px);
+    overflow:auto;
+    flex-shrink:0
+}
+
+.sidebar-title{
+    font-size:11px;
+    color:#91a0b5;
+    text-transform:uppercase;
+    margin:18px 10px 7px
+}
+
+.nav-button{
+    width:100%;
+    display:block;
+    border:0;
+    background:transparent;
+    color:#dbe4f0;
+    text-align:left;
+    padding:10px 12px;
+    border-radius:8px;
+    margin:2px 0;
+    cursor:pointer
+}
+
+.nav-button:hover{
+    background:#26334a
+}
+
+.nav-button.active{
+    background:#fff;
+    color:#111827;
+    font-weight:700
+}
+
+.content{
+    flex:1;
+    min-width:0;
+    padding:24px
+}
+
+.page-header{
+    display:flex;
+    justify-content:space-between;
+    align-items:flex-start;
+    gap:20px;
+    margin-bottom:18px
+}
+
+.page-title{
+    margin:0;
+    font-size:28px
+}
+
+.page-subtitle{
+    margin:6px 0 0;
+    color:#667085
+}
+
+.actions{
+    display:flex;
+    gap:8px;
+    flex-wrap:wrap
+}
+
+.btn{
+    border:0;
+    border-radius:8px;
+    padding:10px 14px;
+    cursor:pointer;
+    font-weight:700;
+    background:#111827;
+    color:#fff
+}
+
+.btn.secondary{
+    background:#eef2f6;
+    color:#172033
+}
+
+.btn.danger{
+    background:#b42318;
+    color:#fff
+}
+
+.btn.small{
+    padding:7px 10px;
+    font-size:12px
+}
+
+.alert{
+    display:none;
+    padding:11px 14px;
+    border-radius:8px;
+    margin-bottom:14px
+}
+
+.alert.show{
+    display:block
+}
+
+.alert.ok{
+    background:#ecfdf3;
+    color:#027a48
+}
+
+.alert.error{
+    background:#fef3f2;
+    color:#b42318
+}
+
+.kpi-grid{
+    display:grid;
+    grid-template-columns:repeat(6,1fr);
+    gap:12px;
+    margin-bottom:18px
+}
+
+.kpi{
+    background:#fff;
+    border:1px solid #e5e9f0;
+    border-radius:12px;
+    padding:15px;
+    box-shadow:0 2px 8px rgba(16,24,40,.04)
+}
+
+.kpi-label{
+    font-size:11px;
+    color:#667085
+}
+
+.kpi-value{
+    margin-top:6px;
+    font-size:23px;
+    font-weight:800
+}
+
+.section{
+    background:#fff;
+    border:1px solid #e5e9f0;
+    border-radius:12px;
+    padding:18px;
+    margin-bottom:18px;
+    box-shadow:0 2px 8px rgba(16,24,40,.04)
+}
+
+.section h2{
+    margin:0 0 14px;
+    font-size:17px
+}
+
+.tabs{
+    display:flex;
+    gap:8px;
+    flex-wrap:wrap;
+    margin-bottom:18px
+}
+
+.tab{
+    border:1px solid #d0d5dd;
+    background:#fff;
+    color:#475467;
+    padding:9px 14px;
+    border-radius:8px;
+    cursor:pointer;
+    font-weight:700
+}
+
+.tab.active{
+    background:#111827;
+    color:#fff;
+    border-color:#111827
+}
+
+.form-grid{
+    display:grid;
+    grid-template-columns:repeat(2,1fr);
+    gap:14px
+}
+
+.field{
+    display:flex;
+    flex-direction:column;
+    gap:6px
+}
+
+.field.full{
+    grid-column:1/-1
+}
+
+.field label{
+    font-size:11px;
+    font-weight:700;
+    color:#475467
+}
+
+.field input,
+.field select,
+.field textarea{
+    width:100%;
+    padding:10px;
+    border:1px solid #d0d5dd;
+    border-radius:8px;
+    outline:none;
+    background:#fff
+}
+
+.field textarea{
+    min-height:90px;
+    resize:vertical
+}
+
+.field input:focus,
+.field select:focus,
+.field textarea:focus{
+    border-color:#667085
+}
+
+.switch-row{
+    display:flex;
+    justify-content:space-between;
+    align-items:center;
+    gap:15px;
+    padding:12px 0;
+    border-bottom:1px solid #edf0f4
+}
+
+.switch-row:last-child{
+    border-bottom:0
+}
+
+.switch-title{
+    font-weight:700;
+    font-size:13px
+}
+
+.switch-description{
+    margin-top:4px;
+    font-size:10px;
+    color:#667085
+}
+
+.switch{
+    position:relative;
+    width:48px;
+    height:26px;
+    flex-shrink:0
+}
+
+.switch input{
+    opacity:0;
+    width:0;
+    height:0
+}
+
+.slider{
+    position:absolute;
+    inset:0;
+    cursor:pointer;
+    background:#d0d5dd;
+    border-radius:999px;
+    transition:.2s
+}
+
+.slider:before{
+    content:"";
+    position:absolute;
+    height:20px;
+    width:20px;
+    left:3px;
+    top:3px;
+    background:#fff;
+    border-radius:50%;
+    transition:.2s
+}
+
+.switch input:checked + .slider{
+    background:#111827
+}
+
+.switch input:checked + .slider:before{
+    transform:translateX(22px)
+}
+
+.info-grid{
+    display:grid;
+    grid-template-columns:repeat(4,1fr);
+    gap:10px
+}
+
+.info-card{
+    background:#f8fafc;
+    border-radius:9px;
+    padding:13px
+}
+
+.info-card small{
+    display:block;
+    color:#667085;
+    font-size:10px
+}
+
+.info-card b{
+    display:block;
+    margin-top:5px;
+    font-size:13px
+}
+
+.form-actions{
+    display:flex;
+    justify-content:flex-end;
+    gap:8px;
+    margin-top:18px
+}
+
+.table-container{
+    overflow:auto;
+    border:1px solid #e5e9f0;
+    border-radius:10px
+}
+
+table{
+    width:100%;
+    min-width:900px;
+    border-collapse:collapse
+}
+
+th,td{
+    padding:10px;
+    border-bottom:1px solid #edf0f4;
+    text-align:left;
+    font-size:12px
+}
+
+th{
+    background:#f8fafc;
+    color:#475467;
+    font-size:10px;
+    text-transform:uppercase
+}
+
+.badge{
+    display:inline-flex;
+    padding:4px 8px;
+    border-radius:999px;
+    font-size:10px;
+    font-weight:800
+}
+
+.good{
+    background:#ecfdf3;
+    color:#047857
+}
+
+.info{
+    background:#eff6ff;
+    color:#1d4ed8
+}
+
+.gray{
+    background:#f2f4f7;
+    color:#475467
+}
+
+.warning{
+    background:#fff7ed;
+    color:#9a3412
+}
+
+.empty{
+    padding:30px;
+    text-align:center;
+    color:#667085
+}
+
+.modal{
+    position:fixed;
+    inset:0;
+    background:rgba(15,23,42,.55);
+    display:none;
+    align-items:center;
+    justify-content:center;
+    padding:20px;
+    z-index:100
+}
+
+.modal.show{
+    display:flex
+}
+
+.modal-box{
+    width:min(850px,100%);
+    max-height:92vh;
+    overflow:auto;
+    background:#fff;
+    border-radius:14px;
+    padding:20px
+}
+
+.modal-head{
+    display:flex;
+    justify-content:space-between;
+    align-items:center;
+    margin-bottom:18px
+}
+
+.modal-head h2{
+    margin:0
+}
+
+.close{
+    border:0;
+    background:#eef2f6;
+    border-radius:8px;
+    padding:8px 12px;
+    cursor:pointer
+}
+
+@media(max-width:1350px){
+    .kpi-grid{
+        grid-template-columns:repeat(3,1fr)
+    }
+
+    .info-grid{
+        grid-template-columns:repeat(2,1fr)
+    }
+}
+
+@media(max-width:850px){
+    .form-grid{
+        grid-template-columns:1fr
+    }
+
+    .field.full{
+        grid-column:auto
+    }
+}
+
+@media(max-width:760px){
+    .sidebar{
+        display:none
+    }
+
+    .content{
+        padding:14px
+    }
+
+    .kpi-grid{
+        grid-template-columns:repeat(2,1fr)
+    }
+
+    .info-grid{
+        grid-template-columns:1fr
+    }
+}
+
+@media print{
+    .sidebar,
+    .topbar,
+    .actions,
+    .tabs,
+    .btn{
+        display:none!important
+    }
+
+    .content{
+        padding:0
+    }
+}
+</style>
+
+<link rel="stylesheet" href="zippzo-standard.css">
+<script src="zippzo-standard.js" defer></script>
+</head>
+
+<body>
+
+<header class="topbar">
+
+<div class="brand">ZIPPZO</div>
+
+<div
+class="top-user"
+id="topUser">
+System Settings
+</div>
+
+</header>
+
+
+<div class="layout">
+
+<aside class="sidebar">
+
+<div class="sidebar-title">Main</div>
+
+<button
+class="nav-button"
+onclick="go('index.html')">
+Dashboard
+</button>
+
+<button
+class="nav-button"
+onclick="go('warehouse-dashboard.html')">
+Warehouse Dashboard
+</button>
+
+
+<div class="sidebar-title">Master Data</div>
+
+<button
+class="nav-button"
+onclick="go('products.html')">
+Products
+</button>
+
+<button
+class="nav-button"
+onclick="go('suppliers.html')">
+Suppliers
+</button>
+
+<button
+class="nav-button"
+onclick="go('locations.html')">
+Locations
+</button>
+
+<button
+class="nav-button"
+onclick="go('employees.html')">
+Employees
+</button>
+
+<button
+class="nav-button"
+onclick="go('access-control.html')">
+Access Control
+</button>
+
+<button
+class="nav-button"
+onclick="go('audit-logs.html')">
+Audit Logs
+</button>
+
+<button
+class="nav-button active">
+System Settings
+</button>
+
+
+<div class="sidebar-title">Warehouse</div>
+
+<button
+class="nav-button"
+onclick="go('inventory.html')">
+Inventory
+</button>
+
+<button
+class="nav-button"
+onclick="go('bins.html')">
+Bins
+</button>
+
+<button
+class="nav-button"
+onclick="go('stock-movements.html')">
+Stock Movements
+</button>
+
+
+<div class="sidebar-title">Inbound</div>
+
+<button
+class="nav-button"
+onclick="go('purchase-orders.html')">
+Purchase Orders
+</button>
+
+<button
+class="nav-button"
+onclick="go('grn.html')">
+GRN
+</button>
+
+<button
+class="nav-button"
+onclick="go('putaway.html')">
+Putaway
+</button>
+
+<button
+class="nav-button"
+onclick="go('grid-putaway.html')">
+Grid Putaway
+</button>
+
+
+<div class="sidebar-title">Orders</div>
+
+<button
+class="nav-button"
+onclick="go('orders.html')">
+Orders
+</button>
+
+<button
+class="nav-button"
+onclick="go('create-batch.html')">
+Create Batch
+</button>
+
+<button
+class="nav-button"
+onclick="go('picking.html')">
+Picking
+</button>
+
+<button
+class="nav-button"
+onclick="go('sorting.html')">
+Sorting
+</button>
+
+
+<div class="sidebar-title">Dispatch</div>
+
+<button
+class="nav-button"
+onclick="go('vehicle-arrival.html')">
+Vehicle Arrival
+</button>
+
+<button
+class="nav-button"
+onclick="go('dispatch.html')">
+Dispatch
+</button>
+
+<button
+class="nav-button"
+onclick="go('store-receiving.html')">
+Store Receiving
+</button>
+
+
+<div class="sidebar-title">Reports</div>
+
+<button
+class="nav-button"
+onclick="go('stock-report.html')">
+Stock Report
+</button>
+
+<button
+class="nav-button"
+onclick="go('grn-report.html')">
+GRN Report
+</button>
+
+<button
+class="nav-button"
+onclick="go('putaway-report.html')">
+Putaway Report
+</button>
+
+<button
+class="nav-button"
+onclick="go('order-report.html')">
+Order Report
+</button>
+
+<button
+class="nav-button"
+onclick="go('picking-report.html')">
+Picking Report
+</button>
+
+<button
+class="nav-button"
+onclick="go('sorting-report.html')">
+Sorting Report
+</button>
+
+<button
+class="nav-button"
+onclick="go('delivery-report.html')">
+Delivery Report
+</button>
+
+<button
+class="nav-button"
+onclick="go('store-receiving-report.html')">
+Store Receiving Report
+</button>
+
+<button
+class="nav-button"
+onclick="go('picking-ipp.html')">
+Picking IPP
+</button>
+
+<button
+class="nav-button"
+onclick="go('sorting-ipp.html')">
+Sorting IPP
+</button>
+
+
+<div class="sidebar-title">Session</div>
+
+<button
+class="nav-button"
+onclick="logout()">
+Logout
+</button>
+
+</aside>
+
+
+<main class="content">
+
+<div class="page-header">
+
+<div>
+
+<h1 class="page-title">
+System Settings
+</h1>
+
+<p class="page-subtitle">
+Zippzo WMS configuration, operational rules and system preferences.
+</p>
+
+</div>
+
+<div class="actions">
+
+<button
+class="btn secondary"
+onclick="loadSettings()">
+Refresh
+</button>
+
+<button
+class="btn secondary"
+onclick="resetForm()">
+Reset Form
+</button>
+
+<button
+class="btn"
+onclick="saveSettings()">
+Save Settings
+</button>
+
+</div>
+
+</div>
+
+
+<div
+id="alert"
+class="alert">
+</div>
+
+
+<section class="kpi-grid">
+
+<div class="kpi">
+<div class="kpi-label">System</div>
+<div class="kpi-value">WMS</div>
+</div>
+
+<div class="kpi">
+<div class="kpi-label">Version</div>
+<div class="kpi-value" id="kVersion">3.0</div>
+</div>
+
+<div class="kpi">
+<div class="kpi-label">Currency</div>
+<div class="kpi-value" id="kCurrency">INR</div>
+</div>
+
+<div class="kpi">
+<div class="kpi-label">Delivery Limit</div>
+<div class="kpi-value" id="kDeliveryLimit">₹100</div>
+</div>
+
+<div class="kpi">
+<div class="kpi-label">Delivery Charge</div>
+<div class="kpi-value" id="kDeliveryCharge">₹50</div>
+</div>
+
+<div class="kpi">
+<div class="kpi-label">Handling Charge</div>
+<div class="kpi-value" id="kHandlingCharge">₹5</div>
+</div>
+
+</section>
+
+
+<div class="tabs">
+
+<button
+class="tab active"
+id="tabGeneral"
+onclick="switchTab('general')">
+General
+</button>
+
+<button
+class="tab"
+id="tabOrders"
+onclick="switchTab('orders')">
+Orders & Delivery
+</button>
+
+<button
+class="tab"
+id="tabWarehouse"
+onclick="switchTab('warehouse')">
+Warehouse
+</button>
+
+<button
+class="tab"
+id="tabNotifications"
+onclick="switchTab('notifications')">
+Notifications
+</button>
+
+<button
+class="tab"
+id="tabSystem"
+onclick="switchTab('system')">
+System
+</button>
+
+</div>
+
+
+<!-- GENERAL -->
+
+<section
+class="section"
+id="generalSection">
+
+<h2>
+Company & General Configuration
+</h2>
+
+<div class="form-grid">
+
+<div class="field">
+
+<label>
+Company Name
+</label>
+
+<input
+id="companyName"
+value="Zippzo">
+</div>
+
+<div class="field">
+
+<label>
+Application Name
+</label>
+
+<input
+id="applicationName"
+value="Zippzo WMS">
+</div>
+
+<div class="field">
+
+<label>
+Currency
+</label>
+
+<select id="currency">
+
+<option value="INR">
+INR - Indian Rupee
+</option>
+
+<option value="USD">
+USD - US Dollar
+</option>
+
+</select>
+
+</div>
+
+<div class="field">
+
+<label>
+Timezone
+</label>
+
+<select id="timezone">
+
+<option value="Asia/Kolkata">
+Asia/Kolkata
+</option>
+
+<option value="UTC">
+UTC
+</option>
+
+</select>
+
+</div>
+
+<div class="field">
+
+<label>
+Date Format
+</label>
+
+<select id="dateFormat">
+
+<option value="DD-MM-YYYY">
+DD-MM-YYYY
+</option>
+
+<option value="YYYY-MM-DD">
+YYYY-MM-DD
+</option>
+
+<option value="DD/MM/YYYY">
+DD/MM/YYYY
+</option>
+
+</select>
+
+</div>
+
+<div class="field">
+
+<label>
+Time Format
+</label>
+
+<select id="timeFormat">
+
+<option value="24H">
+24 Hour
+</option>
+
+<option value="12H">
+12 Hour
+</option>
+
+</select>
+
+</div>
+
+<div class="field full">
+
+<label>
+Company Address
+</label>
+
+<textarea
+id="companyAddress"
+placeholder="Company / registered office address">
+</textarea>
+
+</div>
+
+<div class="field">
+
+<label>
+Support Email
+</label>
+
+<input
+id="supportEmail"
+type="email"
+placeholder="support@zippzo...">
+</div>
+
+<div class="field">
+
+<label>
+Support Phone
+</label>
+
+<input
+id="supportPhone"
+placeholder="Customer support number">
+</div>
+
+</div>
+
+</section>
+
+
+<!-- ORDERS -->
+
+<section
+class="section"
+id="ordersSection"
+style="display:none">
+
+<h2>
+Orders & Delivery Rules
+</h2>
+
+<div class="form-grid">
+
+<div class="field">
+
+<label>
+Free Delivery Order Value
+</label>
+
+<input
+id="freeDeliveryLimit"
+type="number"
+min="0"
+step="0.01"
+value="100">
+</div>
+
+<div class="field">
+
+<label>
+Delivery Charge
+</label>
+
+<input
+id="deliveryCharge"
+type="number"
+min="0"
+step="0.01"
+value="50">
+</div>
+
+<div class="field">
+
+<label>
+Handling Charge
+</label>
+
+<input
+id="handlingCharge"
+type="number"
+min="0"
+step="0.01"
+value="5">
+</div>
+
+<div class="field">
+
+<label>
+Minimum Order Value
+</label>
+
+<input
+id="minimumOrderValue"
+type="number"
+min="0"
+step="0.01"
+value="0">
+</div>
+
+<div class="field">
+
+<label>
+Default Payment Mode
+</label>
+
+<select id="paymentMode">
+
+<option value="COD">
+COD
+</option>
+
+<option value="ONLINE">
+ONLINE
+</option>
+
+<option value="UPI">
+UPI
+</option>
+
+</select>
+
+</div>
+
+<div class="field">
+
+<label>
+Default Order Status
+</label>
+
+<select id="defaultOrderStatus">
+
+<option value="NEW">
+NEW
+</option>
+
+<option value="ALLOCATED">
+ALLOCATED
+</option>
+
+</select>
+
+</div>
+
+</div>
+
+<br>
+
+<div class="switch-row">
+
+<div>
+
+<div class="switch-title">
+Enable Free Delivery Rule
+</div>
+
+<div class="switch-description">
+Orders at or above the configured threshold receive zero delivery charge.
+</div>
+
+</div>
+
+<label class="switch">
+
+<input
+type="checkbox"
+id="enableFreeDelivery"
+checked>
+
+<span class="slider"></span>
+
+</label>
+
+</div>
+
+
+<div class="switch-row">
+
+<div>
+
+<div class="switch-title">
+Allow COD
+</div>
+
+<div class="switch-description">
+Allow cash-on-delivery orders.
+</div>
+
+</div>
+
+<label class="switch">
+
+<input
+type="checkbox"
+id="allowCOD"
+checked>
+
+<span class="slider"></span>
+
+</label>
+
+</div>
+
+
+<div class="switch-row">
+
+<div>
+
+<div class="switch-title">
+Allow Order Cancellation
+</div>
+
+<div class="switch-description">
+Allow cancellation before the configured fulfillment stage.
+</div>
+
+</div>
+
+<label class="switch">
+
+<input
+type="checkbox"
+id="allowCancellation"
+checked>
+
+<span class="slider"></span>
+
+</label>
+
+</div>
+
+</section>
+
+
+<!-- WAREHOUSE -->
+
+<section
+class="section"
+id="warehouseSection"
+style="display:none">
+
+<h2>
+Warehouse Configuration
+</h2>
+
+<div class="form-grid">
+
+<div class="field">
+
+<label>
+Default Warehouse
+</label>
+
+<select id="defaultWarehouse">
+
+<option value="">
+Select Warehouse
+</option>
+
+</select>
+
+</div>
+
+<div class="field">
+
+<label>
+Default Dark Store
+</label>
+
+<select id="defaultDarkStore">
+
+<option value="">
+Select Dark Store
+</option>
+
+</select>
+
+</div>
+
+<div class="field">
+
+<label>
+Low Stock Threshold %
+</label>
+
+<input
+id="lowStockThreshold"
+type="number"
+min="0"
+max="100"
+value="20">
+</div>
+
+<div class="field">
+
+<label>
+Putaway Priority
+</label>
+
+<select id="putawayPriority">
+
+<option value="NORMAL">
+NORMAL
+</option>
+
+<option value="HIGH">
+HIGH
+</option>
+
+<option value="URGENT">
+URGENT
+</option>
+
+</select>
+
+</div>
+
+<div class="field">
+
+<label>
+Picking Priority
+</label>
+
+<select id="pickingPriority">
+
+<option value="NORMAL">
+NORMAL
+</option>
+
+<option value="HIGH">
+HIGH
+</option>
+
+<option value="URGENT">
+URGENT
+</option>
+
+</select>
+
+</div>
+
+<div class="field">
+
+<label>
+Default Batch Size
+</label>
+
+<input
+id="batchSize"
+type="number"
+min="1"
+value="20">
+</div>
+
+</div>
+
+<br>
+
+<div class="switch-row">
+
+<div>
+
+<div class="switch-title">
+Enable Barcode Scanning
+</div>
+
+<div class="switch-description">
+Use SKU/barcode verification during warehouse operations.
+</div>
+
+</div>
+
+<label class="switch">
+
+<input
+type="checkbox"
+id="barcodeScanning"
+checked>
+
+<span class="slider"></span>
+
+</label>
+
+</div>
+
+
+<div class="switch-row">
+
+<div>
+
+<div class="switch-title">
+Require Bin Scan
+</div>
+
+<div class="switch-description">
+Require source/destination bin confirmation where supported.
+</div>
+
+</div>
+
+<label class="switch">
+
+<input
+type="checkbox"
+id="requireBinScan"
+checked>
+
+<span class="slider"></span>
+
+</label>
+
+</div>
+
+
+<div class="switch-row">
+
+<div>
+
+<div class="switch-title">
+Require Location Scan During Sorting
+</div>
+
+<div class="switch-description">
+Sorting task completion requires destination location verification.
+</div>
+
+</div>
+
+<label class="switch">
+
+<input
+type="checkbox"
+id="requireLocationScan"
+checked>
+
+<span class="slider"></span>
+
+</label>
+
+</div>
+
+
+<div class="switch-row">
+
+<div>
+
+<div class="switch-title">
+Prevent Negative Inventory
+</div>
+
+<div class="switch-description">
+Prevent transactions from creating negative available stock.
+</div>
+
+</div>
+
+<label class="switch">
+
+<input
+type="checkbox"
+id="preventNegativeInventory"
+checked>
+
+<span class="slider"></span>
+
+</label>
+
+</div>
+
+</section>
+
+
+<!-- NOTIFICATIONS -->
+
+<section
+class="section"
+id="notificationsSection"
+style="display:none">
+
+<h2>
+Notifications
+</h2>
+
+<div class="switch-row">
+
+<div>
+
+<div class="switch-title">
+Order Notifications
+</div>
+
+<div class="switch-description">
+Enable operational order status notifications.
+</div>
+
+</div>
+
+<label class="switch">
+
+<input
+type="checkbox"
+id="orderNotifications"
+checked>
+
+<span class="slider"></span>
+
+</label>
+
+</div>
+
+
+<div class="switch-row">
+
+<div>
+
+<div class="switch-title">
+Low Stock Alerts
+</div>
+
+<div class="switch-description">
+Notify when products reach the configured low-stock threshold.
+</div>
+
+</div>
+
+<label class="switch">
+
+<input
+type="checkbox"
+id="lowStockAlerts"
+checked>
+
+<span class="slider"></span>
+
+</label>
+
+</div>
+
+
+<div class="switch-row">
+
+<div>
+
+<div class="switch-title">
+Putaway Alerts
+</div>
+
+<div class="switch-description">
+Notify for pending or urgent putaway tasks.
+</div>
+
+</div>
+
+<label class="switch">
+
+<input
+type="checkbox"
+id="putawayAlerts"
+checked>
+
+<span class="slider"></span>
+
+</label>
+
+</div>
+
+
+<div class="switch-row">
+
+<div>
+
+<div class="switch-title">
+Dispatch Alerts
+</div>
+
+<div class="switch-description">
+Notify when dispatch is ready or delayed.
+</div>
+
+</div>
+
+<label class="switch">
+
+<input
+type="checkbox"
+id="dispatchAlerts"
+checked>
+
+<span class="slider"></span>
+
+</label>
+
+</div>
+
+
+<div class="switch-row">
+
+<div>
+
+<div class="switch-title">
+Email Notifications
+</div>
+
+<div class="switch-description">
+Allow supported system notifications through email.
+</div>
+
+</div>
+
+<label class="switch">
+
+<input
+type="checkbox"
+id="emailNotifications">
+
+<span class="slider"></span>
+
+</label>
+
+</div>
+
+</section>
+
+
+<!-- SYSTEM -->
+
+<section
+class="section"
+id="systemSection"
+style="display:none">
+
+<h2>
+System Information
+</h2>
+
+<div class="info-grid">
+
+<div class="info-card">
+<small>Application</small>
+<b id="infoApplication">Zippzo WMS</b>
+</div>
+
+<div class="info-card">
+<small>Version</small>
+<b id="infoVersion">3.0.0</b>
+</div>
+
+<div class="info-card">
+<small>Database</small>
+<b id="infoDatabase">SQLite</b>
+</div>
+
+<div class="info-card">
+<small>Environment</small>
+<b id="infoEnvironment">Local</b>
+</div>
+
+<div class="info-card">
+<small>API</small>
+<b id="infoAPI">FastAPI</b>
+</div>
+
+<div class="info-card">
+<small>Frontend</small>
+<b id="infoFrontend">HTML / CSS / JS</b>
+</div>
+
+<div class="info-card">
+<small>Authentication</small>
+<b id="infoAuth">Session Token</b>
+</div>
+
+<div class="info-card">
+<small>Current Host</small>
+<b id="infoHost">—</b>
+</div>
+
+</div>
+
+<br>
+
+<div class="switch-row">
+
+<div>
+
+<div class="switch-title">
+Auto Refresh
+</div>
+
+<div class="switch-description">
+Automatically refresh supported dashboard data.
+</div>
+
+</div>
+
+<label class="switch">
+
+<input
+type="checkbox"
+id="autoRefresh"
+checked>
+
+<span class="slider"></span>
+
+</label>
+
+</div>
+
+
+<div class="switch-row">
+
+<div>
+
+<div class="switch-title">
+Audit Logging
+</div>
+
+<div class="switch-description">
+Record supported system activities for operational traceability.
+</div>
+
+</div>
+
+<label class="switch">
+
+<input
+type="checkbox"
+id="auditLogging"
+checked>
+
+<span class="slider"></span>
+
+</label>
+
+</div>
+
+</section>
+
+
+<div class="form-actions">
+
+<button
+class="btn secondary"
+onclick="resetForm()">
+Reset
+</button>
+
+<button
+class="btn"
+onclick="saveSettings()">
+Save Settings
+</button>
+
+</div>
+
+
+</main>
+
+</div>
+
+
+<div
+class="modal"
+id="confirmModal">
+
+<div class="modal-box">
+
+<div class="modal-head">
+
+<h2>
+Confirm Settings
+</h2>
+
+<button
+class="close"
+onclick="closeConfirm()">
+Close
+</button>
+
+</div>
+
+<p>
+Save the current Zippzo WMS settings?
+</p>
+
+<div class="form-actions">
+
+<button
+class="btn secondary"
+onclick="closeConfirm()">
+Cancel
+</button>
+
+<button
+class="btn"
+onclick="confirmSave()">
+Save
+</button>
+
+</div>
+
+</div>
+
+</div>
+
+
+<script>
+
+const API=
+    window.location.origin;
+
+const TOKEN_KEY=
+    "zippzo_session_token";
+
+const USER_KEY=
+    "zippzo_user";
+
+let locations=[];
+
+let serverSettings={};
+
+let pendingSave=false;
+
+
+function token(){
+
+    return localStorage.getItem(
+        TOKEN_KEY
+    )||"";
+
+}
+
+
+function headers(){
+
+    const h={
+        "Content-Type":
+            "application/json"
+    };
+
+    const t=token();
+
+    if(t){
+
+        h.Authorization=
+            "Bearer "+t;
+
+    }
+
+    return h;
+
+}
+
+
+async function api(
+    path,
+    options={}
+){
+
+    const response=
+        await fetch(
+            API+path,
+            {
+                ...options,
+                headers:{
+                    ...headers(),
+                    ...(options.headers||{})
+                }
+            }
+        );
+
+    const text=
+        await response.text();
+
+    let data={};
+
+    try{
+
+        data=
+            text
+                ?JSON.parse(text)
+                :{};
+
+    }catch{
+
+        data={
+            detail:text
+        };
+
+    }
+
+    if(
+        response.status===401
+    ){
+
+        throw new Error(
+            "Authorization required"
+        );
+
+    }
+
+    if(!response.ok){
+
+        throw new Error(
+            data.detail||
+            data.message||
+            `HTTP ${response.status}`
+        );
+
+    }
+
+    return data;
+
+}
+
+
+function arr(data){
+
+    if(Array.isArray(data)){
+
+        return data;
+
+    }
+
+    return data?.items||
+           data?.data||
+           data?.results||
+           data?.locations||
+           [];
+
+}
+
+
+function pick(
+    obj,
+    ...keys
+){
+
+    for(
+        const key of keys
+    ){
+
+        if(
+            obj?.[key]!==undefined &&
+            obj?.[key]!==null
+        ){
+
+            return obj[key];
+
+        }
+
+    }
+
+    return "";
+
+}
+
+
+function esc(value){
+
+    return String(
+        value??""
+    ).replace(
+        /[&<>"']/g,
+        m=>({
+            "&":"&amp;",
+            "<":"&lt;",
+            ">":"&gt;",
+            '"':"&quot;",
+            "'":"&#39;"
+        }[m])
+    );
+
+}
+
+
+function go(page){
+
+    window.location.href=
+        page;
+
+}
+
+
+function showAlert(
+    message,
+    type="ok"
+){
+
+    const box=
+        document.getElementById(
+            "alert"
+        );
+
+    box.textContent=
+        message;
+
+    box.className=
+        "alert show "+
+        (
+            type==="error"
+                ?"error"
+                :"ok"
+        );
+
+    setTimeout(
+        ()=>{
+            box.className=
+                "alert";
+        },
+        3500
+    );
+
+}
+
+
+function switchTab(
+    tab
+){
+
+    const sections=[
+        "general",
+        "orders",
+        "warehouse",
+        "notifications",
+        "system"
+    ];
+
+    sections.forEach(
+        name=>{
+
+            const section=
+                document.getElementById(
+                    name+
+                    "Section"
+                );
+
+            const button=
+                document.getElementById(
+                    "tab"+
+                    name.charAt(0).toUpperCase()+
+                    name.slice(1)
+                );
+
+            if(section){
+
+                section.style.display=
+                    name===tab
+                        ?"block"
+                        :"none";
+
+            }
+
+            if(button){
+
+                button.classList.toggle(
+                    "active",
+                    name===tab
+                );
+
+            }
+
+        }
+    );
+
+}
+
+
+function setValue(
+    id,
+    value
+){
+
+    const element=
+        document.getElementById(
+            id
+        );
+
+    if(
+        element &&
+        value!==undefined &&
+        value!==null
+    ){
+
+        element.value=
+            value;
+
+    }
+
+}
+
+
+function setChecked(
+    id,
+    value
+){
+
+    const element=
+        document.getElementById(
+            id
+        );
+
+    if(
+        element &&
+        value!==undefined &&
+        value!==null
+    ){
+
+        element.checked=
+            Boolean(value);
+
+    }
+
+}
+
+
+function getSettings(){
+
+    return{
+
+        company_name:
+            document.getElementById(
+                "companyName"
+            ).value.trim(),
+
+        application_name:
+            document.getElementById(
+                "applicationName"
+            ).value.trim(),
+
+        currency:
+            document.getElementById(
+                "currency"
+            ).value,
+
+        timezone:
+            document.getElementById(
+                "timezone"
+            ).value,
+
+        date_format:
+            document.getElementById(
+                "dateFormat"
+            ).value,
+
+        time_format:
+            document.getElementById(
+                "timeFormat"
+            ).value,
+
+        company_address:
+            document.getElementById(
+                "companyAddress"
+            ).value.trim(),
+
+        support_email:
+            document.getElementById(
+                "supportEmail"
+            ).value.trim(),
+
+        support_phone:
+            document.getElementById(
+                "supportPhone"
+            ).value.trim(),
+
+        free_delivery_limit:
+            Number(
+                document.getElementById(
+                    "freeDeliveryLimit"
+                ).value||0
+            ),
+
+        delivery_charge:
+            Number(
+                document.getElementById(
+                    "deliveryCharge"
+                ).value||0
+            ),
+
+        handling_charge:
+            Number(
+                document.getElementById(
+                    "handlingCharge"
+                ).value||0
+            ),
+
+        minimum_order_value:
+            Number(
+                document.getElementById(
+                    "minimumOrderValue"
+                ).value||0
+            ),
+
+        payment_mode:
+            document.getElementById(
+                "paymentMode"
+            ).value,
+
+        default_order_status:
+            document.getElementById(
+                "defaultOrderStatus"
+            ).value,
+
+        enable_free_delivery:
+            document.getElementById(
+                "enableFreeDelivery"
+            ).checked,
+
+        allow_cod:
+            document.getElementById(
+                "allowCOD"
+            ).checked,
+
+        allow_cancellation:
+            document.getElementById(
+                "allowCancellation"
+            ).checked,
+
+        default_warehouse:
+            document.getElementById(
+                "defaultWarehouse"
+            ).value,
+
+        default_dark_store:
+            document.getElementById(
+                "defaultDarkStore"
+            ).value,
+
+        low_stock_threshold:
+            Number(
+                document.getElementById(
+                    "lowStockThreshold"
+                ).value||0
+            ),
+
+        putaway_priority:
+            document.getElementById(
+                "putawayPriority"
+            ).value,
+
+        picking_priority:
+            document.getElementById(
+                "pickingPriority"
+            ).value,
+
+        batch_size:
+            Number(
+                document.getElementById(
+                    "batchSize"
+                ).value||1
+            ),
+
+        barcode_scanning:
+            document.getElementById(
+                "barcodeScanning"
+            ).checked,
+
+        require_bin_scan:
+            document.getElementById(
+                "requireBinScan"
+            ).checked,
+
+        require_location_scan:
+            document.getElementById(
+                "requireLocationScan"
+            ).checked,
+
+        prevent_negative_inventory:
+            document.getElementById(
+                "preventNegativeInventory"
+            ).checked,
+
+        order_notifications:
+            document.getElementById(
+                "orderNotifications"
+            ).checked,
+
+        low_stock_alerts:
+            document.getElementById(
+                "lowStockAlerts"
+            ).checked,
+
+        putaway_alerts:
+            document.getElementById(
+                "putawayAlerts"
+            ).checked,
+
+        dispatch_alerts:
+            document.getElementById(
+                "dispatchAlerts"
+            ).checked,
+
+        email_notifications:
+            document.getElementById(
+                "emailNotifications"
+            ).checked,
+
+        auto_refresh:
+            document.getElementById(
+                "autoRefresh"
+            ).checked,
+
+        audit_logging:
+            document.getElementById(
+                "auditLogging"
+            ).checked
+
+    };
+
+}
+
+
+function applySettings(
+data
+){
+
+    if(!data){
+        return;
+    }
+
+    const s=
+        data.settings||
+        data.data||
+        data;
+
+    serverSettings=
+        s||{};
+
+    setValue(
+        "companyName",
+        pick(
+            s,
+            "company_name",
+            "companyName"
+        )
+    );
+
+    setValue(
+        "applicationName",
+        pick(
+            s,
+            "application_name",
+            "applicationName"
+        )
+    );
+
+    setValue(
+        "currency",
+        pick(
+            s,
+            "currency"
+        )
+    );
+
+    setValue(
+        "timezone",
+        pick(
+            s,
+            "timezone"
+        )
+    );
+
+    setValue(
+        "dateFormat",
+        pick(
+            s,
+            "date_format"
+        )
+    );
+
+    setValue(
+        "timeFormat",
+        pick(
+            s,
+            "time_format"
+        )
+    );
+
+    setValue(
+        "companyAddress",
+        pick(
+            s,
+            "company_address"
+        )
+    );
+
+    setValue(
+        "supportEmail",
+        pick(
+            s,
+            "support_email"
+        )
+    );
+
+    setValue(
+        "supportPhone",
+        pick(
+            s,
+            "support_phone"
+        )
+    );
+
+    setValue(
+        "freeDeliveryLimit",
+        pick(
+            s,
+            "free_delivery_limit"
+        )
+    );
+
+    setValue(
+        "deliveryCharge",
+        pick(
+            s,
+            "delivery_charge"
+        )
+    );
+
+    setValue(
+        "handlingCharge",
+        pick(
+            s,
+            "handling_charge"
+        )
+    );
+
+    setValue(
+        "minimumOrderValue",
+        pick(
+            s,
+            "minimum_order_value"
+        )
+    );
+
+    setValue(
+        "paymentMode",
+        pick(
+            s,
+            "payment_mode"
+        )
+    );
+
+    setValue(
+        "defaultOrderStatus",
+        pick(
+            s,
+            "default_order_status"
+        )
+    );
+
+    setChecked(
+        "enableFreeDelivery",
+        pick(
+            s,
+            "enable_free_delivery"
+        )
+    );
+
+    setChecked(
+        "allowCOD",
+        pick(
+            s,
+            "allow_cod"
+        )
+    );
+
+    setChecked(
+        "allowCancellation",
+        pick(
+            s,
+            "allow_cancellation"
+        )
+    );
+
+    setValue(
+        "defaultWarehouse",
+        pick(
+            s,
+            "default_warehouse"
+        )
+    );
+
+    setValue(
+        "defaultDarkStore",
+        pick(
+            s,
+            "default_dark_store"
+        )
+    );
+
+    setValue(
+        "lowStockThreshold",
+        pick(
+            s,
+            "low_stock_threshold"
+        )
+    );
+
+    setValue(
+        "putawayPriority",
+        pick(
+            s,
+            "putaway_priority"
+        )
+    );
+
+    setValue(
+        "pickingPriority",
+        pick(
+            s,
+            "picking_priority"
+        )
+    );
+
+    setValue(
+        "batchSize",
+        pick(
+            s,
+            "batch_size"
+        )
+    );
+
+    setChecked(
+        "barcodeScanning",
+        pick(
+            s,
+            "barcode_scanning"
+        )
+    );
+
+    setChecked(
+        "requireBinScan",
+        pick(
+            s,
+            "require_bin_scan"
+        )
+    );
+
+    setChecked(
+        "requireLocationScan",
+        pick(
+            s,
+            "require_location_scan"
+        )
+    );
+
+    setChecked(
+        "preventNegativeInventory",
+        pick(
+            s,
+            "prevent_negative_inventory"
+        )
+    );
+
+    setChecked(
+        "orderNotifications",
+        pick(
+            s,
+            "order_notifications"
+        )
+    );
+
+    setChecked(
+        "lowStockAlerts",
+        pick(
+            s,
+            "low_stock_alerts"
+        )
+    );
+
+    setChecked(
+        "putawayAlerts",
+        pick(
+            s,
+            "putaway_alerts"
+        )
+    );
+
+    setChecked(
+        "dispatchAlerts",
+        pick(
+            s,
+            "dispatch_alerts"
+        )
+    );
+
+    setChecked(
+        "emailNotifications",
+        pick(
+            s,
+            "email_notifications"
+        )
+    );
+
+    setChecked(
+        "autoRefresh",
+        pick(
+            s,
+            "auto_refresh"
+        )
+    );
+
+    setChecked(
+        "auditLogging",
+        pick(
+            s,
+            "audit_logging"
+        )
+    );
+
+    updateKpis();
+
+}
+
+
+async function loadLocations(){
+
+    try{
+
+        const data=
+            await api(
+                "/api/locations"
+            );
+
+        locations=
+            arr(data);
+
+        populateLocationSelects();
+
+    }catch(error){
+
+        console.log(
+            "Location loading failed:",
+            error
+        );
+
+    }
+
+}
+
+
+function populateLocationSelects(){
+
+    const warehouse=
+        document.getElementById(
+            "defaultWarehouse"
+        );
+
+    const darkStore=
+        document.getElementById(
+            "defaultDarkStore"
+        );
+
+    const warehouses=
+        locations.filter(
+            x=>
+                String(
+                    pick(
+                        x,
+                        "location_type",
+                        "type"
+                    )
+                )
+                .toUpperCase()
+                .includes(
+                    "WAREHOUSE"
+                )
+        );
+
+    const darkStores=
+        locations.filter(
+            x=>
+                String(
+                    pick(
+                        x,
+                        "location_type",
+                        "type"
+                    )
+                )
+                .toUpperCase()
+                .includes(
+                    "DARK"
+                )
+        );
+
+    const makeOptions=
+        data=>
+            `<option value="">
+            Select Location
+            </option>`+
+            data.map(
+                x=>`
+
+<option value="${esc(
+    pick(
+        x,
+        "id",
+        "code"
+    )
+)}">
+
+${esc(
+    pick(
+        x,
+        "name",
+        "location_name",
+        "code"
+    )
+)}
+
+</option>
+
+`
+            ).join("");
+
+    const oldWarehouse=
+        warehouse.value;
+
+    const oldDarkStore=
+        darkStore.value;
+
+    warehouse.innerHTML=
+        makeOptions(
+            warehouses
+        );
+
+    darkStore.innerHTML=
+        makeOptions(
+            darkStores
+        );
+
+    warehouse.value=
+        oldWarehouse;
+
+    darkStore.value=
+        oldDarkStore;
+
+}
+
+
+function updateKpis(){
+
+    const delivery=
+        Number(
+            document.getElementById(
+                "deliveryCharge"
+            ).value||0
+        );
+
+    const handling=
+        Number(
+            document.getElementById(
+                "handlingCharge"
+            ).value||0
+        );
+
+    const limit=
+        Number(
+            document.getElementById(
+                "freeDeliveryLimit"
+            ).value||0
+        );
+
+    document.getElementById(
+        "kDeliveryLimit"
+    ).textContent=
+        "₹"+
+        limit;
+
+    document.getElementById(
+        "kDeliveryCharge"
+    ).textContent=
+        "₹"+
+        delivery;
+
+    document.getElementById(
+        "kHandlingCharge"
+    ).textContent=
+        "₹"+
+        handling;
+
+    document.getElementById(
+        "kCurrency"
+    ).textContent=
+        document.getElementById(
+            "currency"
+        ).value;
+
+}
+
+
+function resetForm(){
+
+    const defaults={
+
+        companyName:"Zippzo",
+        applicationName:"Zippzo WMS",
+        currency:"INR",
+        timezone:"Asia/Kolkata",
+        dateFormat:"DD-MM-YYYY",
+        timeFormat:"24H",
+        companyAddress:"",
+        supportEmail:"",
+        supportPhone:"",
+        freeDeliveryLimit:100,
+        deliveryCharge:50,
+        handlingCharge:5,
+        minimumOrderValue:0,
+        paymentMode:"COD",
+        defaultOrderStatus:"NEW",
+        enableFreeDelivery:true,
+        allowCOD:true,
+        allowCancellation:true,
+        lowStockThreshold:20,
+        putawayPriority:"NORMAL",
+        pickingPriority:"NORMAL",
+        batchSize:20,
+        barcodeScanning:true,
+        requireBinScan:true,
+        requireLocationScan:true,
+        preventNegativeInventory:true,
+        orderNotifications:true,
+        lowStockAlerts:true,
+        putawayAlerts:true,
+        dispatchAlerts:true,
+        emailNotifications:false,
+        autoRefresh:true,
+        auditLogging:true
+
+    };
+
+    Object.entries(
+        defaults
+    ).forEach(
+        ([key,value])=>{
+
+            const element=
+                document.getElementById(
+                    key
+                );
+
+            if(!element){
+                return;
+            }
+
+            if(
+                element.type==="checkbox"
+            ){
+
+                element.checked=
+                    Boolean(value);
+
+            }else{
+
+                element.value=
+                    value;
+
+            }
+
+        }
+    );
+
+    updateKpis();
+
+}
+
+
+function openConfirm(){
+
+    document.getElementById(
+        "confirmModal"
+    ).classList.add(
+        "show"
+    );
+
+}
+
+
+function closeConfirm(){
+
+    document.getElementById(
+        "confirmModal"
+    ).classList.remove(
+        "show"
+    );
+
+}
+
+
+function saveSettings(){
+
+    pendingSave=true;
+
+    openConfirm();
+
+}
+
+
+async function confirmSave(){
+
+    if(!pendingSave){
+
+        return;
+
+    }
+
+    closeConfirm();
+
+    const payload=
+        getSettings();
+
+    try{
+
+        let saved=false;
+
+        try{
+
+            await api(
+                "/api/settings",
+                {
+                    method:"PUT",
+                    body:
+                        JSON.stringify(
+                            payload
+                        )
+                }
+            );
+
+            saved=true;
+
+        }catch(error){
+
+            try{
+
+                await api(
+                    "/api/system-settings",
+                    {
+                        method:"PUT",
+                        body:
+                            JSON.stringify(
+                                payload
+                            )
+                    }
+                );
+
+                saved=true;
+
+            }catch(secondError){
+
+                try{
+
+                    await api(
+                        "/api/settings",
+                        {
+                            method:"POST",
+                            body:
+                                JSON.stringify(
+                                    payload
+                                )
+                        }
+                    );
+
+                    saved=true;
+
+                }catch(thirdError){
+
+                    throw secondError;
+
+                }
+
+            }
+
+        }
+
+        if(saved){
+
+            showAlert(
+                "System settings saved successfully."
+            );
+
+            await loadSettings();
+
+        }
+
+    }catch(error){
+
+        showAlert(
+            error.message||
+            "Unable to save system settings.",
+            "error"
+        );
+
+    }
+
+    pendingSave=false;
+
+}
+
+
+async function loadSettings(){
+
+    try{
+
+        await loadLocations();
+
+        let data;
+
+        try{
+
+            data=
+                await api(
+                    "/api/settings"
+                );
+
+        }catch(error){
+
+            try{
+
+                data=
+                    await api(
+                        "/api/system-settings"
+                    );
+
+            }catch(secondError){
+
+                data=null;
+
+            }
+
+        }
+
+        if(data){
+
+            applySettings(
+                data
+            );
+
+        }else{
+
+            updateKpis();
+
+        }
+
+        document.getElementById(
+            "infoHost"
+        ).textContent=
+            window.location.host;
+
+    }catch(error){
+
+        updateKpis();
+
+        showAlert(
+            error.message||
+            "Unable to load system settings.",
+            "error"
+        );
+
+    }
+
+}
+
+
+function setupLiveKpis(){
+
+    [
+        "currency",
+        "freeDeliveryLimit",
+        "deliveryCharge",
+        "handlingCharge"
+    ].forEach(
+        id=>{
+
+            document.getElementById(
+                id
+            ).addEventListener(
+                "input",
+                updateKpis
+            );
+
+            document.getElementById(
+                id
+            ).addEventListener(
+                "change",
+                updateKpis
+            );
+
+        }
+    );
+
+}
+
+
+async function logout(){
+
+    try{
+
+        if(token()){
+
+            await fetch(
+                API+
+                "/api/auth/logout",
+                {
+                    method:"POST",
+                    headers:{
+                        ...headers()
+                    },
+                    body:
+                        JSON.stringify({
+                            session_token:
+                                token()
+                        })
+                }
+            );
+
+        }
+
+    }catch(error){
+
+        console.log(
+            "Logout error:",
+            error
+        );
+
+    }
+
+    localStorage.removeItem(
+        TOKEN_KEY
+    );
+
+    localStorage.removeItem(
+        USER_KEY
+    );
+
+    window.location.href=
+        "index.html";
+
+}
+
+
+try{
+
+    const user=
+        JSON.parse(
+            localStorage.getItem(
+                USER_KEY
+            )||"null"
+        );
+
+    document.getElementById(
+        "topUser"
+    ).textContent=
+        user
+            ?(
+                user.full_name||
+                user.name||
+                user.employee_id||
+                "System Settings"
+            )
+            :"System Settings";
+
+}catch(error){
+
+    console.log(
+        "User display error:",
+        error
+    );
+
+}
+
+
+setupLiveKpis();
+
+loadSettings();
+
+setInterval(
+    ()=>{
+        if(
+            document.getElementById(
+                "autoRefresh"
+            ).checked
+        ){
+
+            loadSettings();
+
+        }
+    },
+    30000
+);
+
+</script>
+
+</body>
+</html>

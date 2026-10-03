@@ -1,0 +1,271 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1.0">
+<title>Zippzo Putaway Report</title>
+<style>
+*{box-sizing:border-box}:root{--dark:#111827;--blue:#2563eb;--green:#16a34a;--orange:#ea580c;--red:#dc2626;--purple:#7c3aed;--muted:#64748b;--line:#e2e8f0;--bg:#f4f7fb}
+body{margin:0;background:var(--bg);color:#172033;font-family:Inter,Segoe UI,Arial,sans-serif}.top{height:68px;background:var(--dark);color:#fff;display:flex;align-items:center;gap:16px;padding:0 22px;position:sticky;top:0;z-index:20}.logo{font-size:25px;font-weight:900;letter-spacing:1px}.title{font-size:14px;color:#cbd5e1}.spacer{flex:1}.top button{background:#1f2937;border:1px solid #475569;color:#fff;border-radius:8px;padding:9px 13px;cursor:pointer}
+.layout{display:grid;grid-template-columns:235px 1fr;min-height:calc(100vh - 68px)}nav{background:#fff;border-right:1px solid var(--line);padding:14px 10px;position:sticky;top:68px;height:calc(100vh - 68px);overflow:auto}nav h4{font-size:10px;color:#94a3b8;text-transform:uppercase;margin:12px}nav a{display:block;text-decoration:none;color:#334155;padding:9px 12px;border-radius:8px;font-size:12px;margin:2px 0}nav a:hover,nav a.active{background:#eff6ff;color:#1d4ed8;font-weight:700}
+main{padding:22px;min-width:0}.head{display:flex;align-items:center;justify-content:space-between;gap:15px;margin-bottom:18px}.head h1{font-size:25px;margin:0}.sub{font-size:13px;color:var(--muted);margin-top:5px}.actions{display:flex;gap:8px;flex-wrap:wrap}.btn{border:1px solid var(--line);background:#fff;border-radius:8px;padding:9px 13px;cursor:pointer;font-size:12px}.btn.primary{background:var(--blue);border-color:var(--blue);color:#fff}
+.kpis{display:grid;grid-template-columns:repeat(8,minmax(110px,1fr));gap:10px}.card{background:#fff;border:1px solid var(--line);border-radius:12px;padding:14px;box-shadow:0 1px 2px #00000008}.label{font-size:10px;color:var(--muted);text-transform:uppercase}.value{font-size:23px;font-weight:850;margin-top:6px}.note{font-size:10px;color:var(--muted);margin-top:4px}
+.section{margin-top:18px}.section-head{display:flex;align-items:center;justify-content:space-between;gap:10px;margin-bottom:10px}.section-head h2{font-size:16px;margin:0}.filters{display:flex;gap:8px;flex-wrap:wrap}.filters input,.filters select{height:37px;border:1px solid var(--line);border-radius:8px;background:#fff;padding:0 10px;font-size:12px;color:#172033}.filters .search{min-width:280px}
+.summary{display:grid;grid-template-columns:repeat(6,1fr);gap:10px}.summary strong{display:block;font-size:21px;margin-top:5px}.summary span{font-size:10px;color:var(--muted)}
+.table-wrap{overflow:auto;background:#fff;border:1px solid var(--line);border-radius:10px}.table{width:100%;border-collapse:collapse;font-size:12px}.table th{background:#f8fafc;color:#64748b;font-size:10px;text-transform:uppercase;text-align:left;position:sticky;top:0;z-index:2}.table th,.table td{padding:10px;border-bottom:1px solid #edf2f7;white-space:nowrap}.table tr:hover td{background:#f8fafc}
+.tag{display:inline-block;border-radius:999px;padding:4px 8px;font-size:10px;font-weight:700;background:#eef2ff;color:#3730a3}.tag.good{background:#f0fdf4;color:#15803d}.tag.warn{background:#fff7ed;color:#c2410c}.tag.bad{background:#fef2f2;color:#b91c1c}.tag.info{background:#eff6ff;color:#1d4ed8}.muted{color:var(--muted)}.empty{text-align:center;padding:30px;color:#94a3b8}
+.grid2{display:grid;grid-template-columns:1.25fr .75fr;gap:14px}.list{background:#fff;border:1px solid var(--line);border-radius:10px;overflow:hidden}.list-row{display:flex;justify-content:space-between;gap:10px;padding:11px 13px;border-bottom:1px solid #edf2f7;font-size:12px}.list-row:last-child{border:0}.list-row b{display:block}.progress{height:7px;width:90px;background:#e2e8f0;border-radius:99px;overflow:hidden;display:inline-block;vertical-align:middle}.progress i{display:block;height:100%;background:var(--blue)}
+.pagination{display:flex;justify-content:space-between;align-items:center;padding:11px 2px;font-size:11px;color:var(--muted)}.pager{display:flex;gap:5px}.pager button{border:1px solid var(--line);background:#fff;border-radius:7px;padding:7px 10px;cursor:pointer}.pager button.active{background:var(--blue);border-color:var(--blue);color:#fff}
+.modal{display:none;position:fixed;inset:0;background:#0008;z-index:50;align-items:center;justify-content:center;padding:20px}.modal.show{display:flex}.modal-box{background:#fff;border-radius:14px;width:min(1100px,100%);max-height:90vh;overflow:auto;padding:20px}.modal-head{display:flex;justify-content:space-between;align-items:center}.modal-head h2{font-size:18px;margin:0}.close{border:0;background:#f1f5f9;border-radius:8px;padding:7px 10px;cursor:pointer}.detail-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:9px;margin-top:15px}.detail{border:1px solid var(--line);border-radius:8px;padding:10px}.detail small{display:block;color:var(--muted);font-size:10px}.detail b{display:block;margin-top:4px;font-size:12px;word-break:break-word}
+.timeline{margin-top:18px;border-left:2px solid #dbeafe;padding-left:18px}.timeline-item{position:relative;margin:0 0 15px}.timeline-item:before{content:"";position:absolute;left:-25px;top:2px;width:10px;height:10px;background:var(--blue);border-radius:50%}.timeline-item b{display:block;font-size:12px}.timeline-item span{font-size:10px;color:var(--muted)}
+.toast{position:fixed;right:20px;bottom:20px;background:#111827;color:#fff;padding:12px 15px;border-radius:8px;display:none;z-index:100;font-size:13px}.loading{opacity:.65;pointer-events:none}
+@media(max-width:1300px){.kpis{grid-template-columns:repeat(4,1fr)}.summary{grid-template-columns:repeat(3,1fr)}}@media(max-width:950px){.layout{grid-template-columns:1fr}nav{display:none}.grid2{grid-template-columns:1fr}.detail-grid{grid-template-columns:repeat(2,1fr)}}@media(max-width:600px){main{padding:13px}.kpis,.summary{grid-template-columns:repeat(2,1fr)}.head{align-items:flex-start;flex-direction:column}.detail-grid{grid-template-columns:1fr}.filters .search{min-width:100%}}@media print{.top,nav,.actions,.filters,.pagination,.no-print{display:none!important}.layout{display:block}main{padding:0}.card{box-shadow:none}}
+</style>
+
+<style id="zippzo-master-theme">
+/* ZIPPZO MASTER FRONTEND THEME — visual layer only */
+:root{
+ --z-purple:#331084;--z-dark:#24085F;--z-yellow:#FEB103;
+ --z-bg:#F5F6FB;--z-card:#FFFFFF;--z-text:#171A4A;--z-muted:#69708F;
+ --z-line:#E6E8F0;--z-shadow:0 5px 18px rgba(36,8,95,.07);
+}
+html,body{background:var(--z-bg)!important;color:var(--z-text)!important}
+body{font-family:Inter,Segoe UI,Arial,sans-serif!important}
+.topbar,.header,.top-header,.top-nav,.app-header{
+ background:linear-gradient(90deg,var(--z-dark),var(--z-purple))!important;
+ color:#fff!important;border-color:transparent!important;
+}
+.sidebar,.side-nav,.left-sidebar,.navigation{
+ background:linear-gradient(180deg,#25105F,#180743)!important;
+ color:#fff!important;border-color:transparent!important;
+}
+.brand{color:#fff!important}
+.sidebar .nav-button,.sidebar button,.side-nav button,.left-sidebar button,
+.navigation button,.nav-button{
+ color:#fff!important;background:transparent!important;border-radius:8px!important;
+ border-color:transparent!important;
+}
+.sidebar .nav-button:hover,.sidebar button:hover,.side-nav button:hover,
+.left-sidebar button:hover,.navigation button:hover,.nav-button:hover{
+ background:rgba(255,255,255,.09)!important;
+}
+.sidebar .nav-button.active,.sidebar .nav-button[aria-current="page"],
+.nav-button.active,.nav-button.selected,.nav-button.current{
+ background:var(--z-yellow)!important;color:#15112F!important;font-weight:900!important;
+}
+.sidebar-title,.section-title,.nav-section{
+ color:#B9A9E8!important;letter-spacing:.7px!important;font-weight:900!important;
+}
+.content,.main-content,.page-content,.workspace{background:var(--z-bg)!important}
+.card,.panel,.table-card,.summary-card,.kpi-card,.stat-card,.form-card,
+.modal-content,.toolbar,.filter-bar,.table-container{
+ background:#fff!important;border-color:var(--z-line)!important;
+ box-shadow:var(--z-shadow)!important;border-radius:12px!important;
+}
+.btn-primary,.primary-btn,.button-primary,.add-btn,.save-btn{
+ background:var(--z-yellow)!important;color:#17113B!important;border-color:var(--z-yellow)!important;
+}
+.btn-secondary,.secondary-btn{background:#fff!important;color:var(--z-text)!important;border-color:var(--z-line)!important}
+input,select,textarea{
+ border-color:#DFE2EB!important;border-radius:8px!important;background:#fff!important;color:var(--z-text)!important;
+}
+input:focus,select:focus,textarea:focus{
+ border-color:var(--z-purple)!important;box-shadow:0 0 0 3px rgba(51,16,132,.08)!important;
+}
+table{background:#fff!important}
+thead th{background:#F7F8FC!important;color:#626987!important}
+tbody td{border-color:#EDF0F5!important}
+tbody tr:hover td{background:#FAFAFF!important}
+.badge,.status-badge{border-radius:999px!important}
+.page-title,h1,h2{color:var(--z-text)!important}
+.muted,.subtitle,.page-subtitle,.help-text{color:var(--z-muted)!important}
+</style>
+
+
+<link rel="stylesheet" href="zippzo-standard.css">
+<script src="zippzo-standard.js" defer></script>
+</head>
+<body>
+<header class="top"><div class="logo">ZIPPZO</div><div class="title">Putaway Operations Report</div><div class="spacer"></div><span id="userName" class="title">Loading...</span><button onclick="loadAll()">↻ Refresh</button><button onclick="logout()">Logout</button></header>
+<div class="layout"><nav id="nav"></nav><main>
+<div class="head"><div><h1>Putaway Report</h1><div class="sub">GRN → Putaway Task → Employee Assignment → SKU Scan → Bin Scan → Quantity Confirmation → Putaway Complete → Bin Inventory</div></div><div class="actions"><button class="btn" onclick="printReport()">Print</button><button class="btn" onclick="exportCSV()">Export CSV</button><button class="btn primary" onclick="loadAll()">Refresh Data</button></div></div>
+
+<div class="kpis">
+<div class="card"><div class="label">TOTAL TASKS</div><div class="value" id="kTotal">—</div><div class="note">All putaway tasks</div></div>
+<div class="card"><div class="label">PENDING</div><div class="value" id="kPending">—</div><div class="note">Awaiting assignment</div></div>
+<div class="card"><div class="label">ASSIGNED</div><div class="value" id="kAssigned">—</div><div class="note">Employee assigned</div></div>
+<div class="card"><div class="label">IN PROGRESS</div><div class="value" id="kProgress">—</div><div class="note">Active putaway</div></div>
+<div class="card"><div class="label">COMPLETED</div><div class="value" id="kCompleted">—</div><div class="note">Putaway completed</div></div>
+<div class="card"><div class="label">HOLD</div><div class="value" id="kHold">—</div><div class="note">Exceptions / holds</div></div>
+<div class="card"><div class="label">REQUIRED UNITS</div><div class="value" id="kRequired">—</div><div class="note">Units to put away</div></div>
+<div class="card"><div class="label">CONFIRMED UNITS</div><div class="value" id="kConfirmed">—</div><div class="note">Verified quantity</div></div>
+</div>
+
+<section class="section"><div class="card"><div class="section-head"><h2>Advanced Putaway Filters</h2><button class="btn" onclick="clearFilters()">Clear Filters</button></div>
+<div class="filters">
+<input class="search" id="search" placeholder="Task / GRN / SKU / product / bin / employee..." oninput="applyFilters()">
+<select id="status" onchange="applyFilters()"><option value="">All Status</option></select>
+<select id="priority" onchange="applyFilters()"><option value="">All Priority</option></select>
+<select id="location" onchange="applyFilters()"><option value="">All Locations</option></select>
+<select id="employee" onchange="applyFilters()"><option value="">All Employees</option></select>
+<select id="scan" onchange="applyFilters()"><option value="">All Scan Status</option><option value="VERIFIED">Both Verified</option><option value="SKU_PENDING">SKU Pending</option><option value="BIN_PENDING">Bin Pending</option></select>
+<input type="date" id="dateFrom" onchange="applyFilters()"><input type="date" id="dateTo" onchange="applyFilters()">
+<select id="pageSize" onchange="applyFilters()"><option>25</option><option>50</option><option>100</option></select>
+</div></div></section>
+
+<section class="section summary">
+<div class="card"><div class="label">FILTERED REQUIRED</div><strong id="sRequired">0</strong><span>units</span></div>
+<div class="card"><div class="label">FILTERED CONFIRMED</div><strong id="sConfirmed">0</strong><span>units</span></div>
+<div class="card"><div class="label">COMPLETION</div><strong id="sCompletion">0%</strong><span>confirmed / required</span></div>
+<div class="card"><div class="label">SKU VERIFIED</div><strong id="sSku">0</strong><span>tasks</span></div>
+<div class="card"><div class="label">BIN VERIFIED</div><strong id="sBin">0</strong><span>tasks</span></div>
+<div class="card"><div class="label">FULLY VERIFIED</div><strong id="sVerified">0</strong><span>SKU + bin</span></div>
+</section>
+
+<section class="section grid2"><div class="card"><div class="section-head"><h2>Location Putaway Summary</h2><span class="muted" id="locationCount">0 locations</span></div>
+<div class="table-wrap"><table class="table"><thead><tr><th>Location</th><th>Tasks</th><th>Required</th><th>Confirmed</th><th>Completed</th><th>Progress</th></tr></thead><tbody id="locationBody"></tbody></table></div></div>
+<div class="card"><div class="section-head"><h2>Putaway Exceptions</h2><span class="tag warn" id="exceptionCount">0</span></div><div class="list" id="exceptionList"></div></div></section>
+
+<section class="section"><div class="section-head"><h2>Detailed Putaway Report</h2><span class="muted" id="resultCount">0 records</span></div>
+<div class="table-wrap"><table class="table"><thead><tr>
+<th>Task</th><th>GRN</th><th>SKU</th><th>Product</th><th>Location</th><th>Bin</th><th>Employee</th><th>Required</th><th>Confirmed</th><th>Progress</th><th>SKU Scan</th><th>Bin Scan</th><th>Status</th><th>Priority</th><th>Created</th><th>Started</th><th>Completed</th><th>Action</th>
+</tr></thead><tbody id="body"></tbody></table></div><div class="pagination"><span id="pageInfo">Page 1</span><div class="pager" id="pager"></div></div></section>
+</main></div>
+
+<div class="modal" id="modal"><div class="modal-box"><div class="modal-head"><h2>Putaway Task Details</h2><button class="close" onclick="closeModal()">✕</button></div><div id="detail"></div></div></div>
+<div class="toast" id="toast"></div>
+
+<script>
+const API=window.location.origin,TOKEN_KEY="zippzo_session_token";let token=localStorage.getItem(TOKEN_KEY),tasks=[],filtered=[],page=1;
+const navLinks=[["index.html","Dashboard"],["products.html","Products"],["suppliers.html","Suppliers"],["locations.html","Locations"],["inventory.html","Inventory"],["stock-movements.html","Stock Movements"],["bins.html","Bins"],["purchase-orders.html","Purchase Orders"],["grn.html","GRN"],["grn-report.html","GRN Report"],["putaway.html","Putaway"],["putaway-report.html","Putaway Report"],["create-batch.html","Create Batch"],["picking.html","Picking"],["sorting.html","Sorting"],["sorting-report.html","Sorting Report"],["grid-putaway.html","Grid Putaway"],["vehicle-arrival.html","Vehicle Arrival"],["dispatch.html","Dispatch"],["store-receiving.html","Store Receiving"],["store-receiving-report.html","Receiving Report"],["orders.html","Orders"],["stock-report.html","Stock Report"],["picking-report.html","Picking Report"],["picking-ipp.html","Picking IPP"],["sorting-ipp.html","Sorting IPP"],["access-control.html","Access Control"],["audit-logs.html","Audit Logs"],["system-settings.html","System Settings"]];
+function esc(v){return String(v??"").replace(/[&<>"']/g,m=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#039;"}[m]));}
+function num(v){return Number(v||0)}
+function arr(d){if(Array.isArray(d))return d;if(Array.isArray(d?.items))return d.items;if(Array.isArray(d?.data))return d.data;if(Array.isArray(d?.results))return d.results;return[]}
+function field(x,...keys){for(const k of keys)if(x[k]!==undefined&&x[k]!==null&&x[k]!=="")return x[k];return""}
+function toast(s){const x=document.getElementById("toast");x.textContent=s;x.style.display="block";clearTimeout(window.tt);window.tt=setTimeout(()=>x.style.display="none",2800)}
+async function api(path,opt={}){const h={"Content-Type":"application/json",...(opt.headers||{})};if(token)h.Authorization="Bearer "+token;const r=await fetch(API+path,{...opt,headers:h});if(r.status===401){localStorage.removeItem(TOKEN_KEY);localStorage.removeItem("zippzo_user");location.href="index.html";throw Error("Session expired")}const t=await r.text();let d={};try{d=t?JSON.parse(t):{}}catch{}if(!r.ok)throw Error(d.detail||d.message||"Request failed");return d}
+async function tryApi(paths){let e;for(const p of paths){try{return await api(p)}catch(x){e=x}}throw e||Error("API unavailable")}
+function nav(){document.getElementById("nav").innerHTML="<h4>Operations</h4>"+navLinks.map(x=>`<a href="${x[0]}" class="${location.pathname.endsWith(x[0])?"active":""}">${x[1]}</a>`).join("")}
+function statusClass(s){s=String(s||"").toUpperCase();if(s==="COMPLETED")return"good";if(["HOLD","CANCELLED","ERROR"].includes(s))return"bad";if(["PENDING","ASSIGNED","IN_PROGRESS","IN PROGRESS"].includes(s))return"warn";return"info"}
+function required(x){return num(field(x,"quantity","required_quantity","required_qty"))}
+function confirmed(x){return num(field(x,"confirmed_quantity","putaway_quantity","completed_quantity","confirmed_qty"))}
+function employeeName(x){return String(field(x,"employee_name","assigned_employee_name","employee","assigned_to_name")||"—")}
+function locationName(x){return String(field(x,"location_name","location_code","location")||"—")}
+function binCode(x){return String(field(x,"scanned_bin_code","bin_code","assigned_bin_code","bin_name")||"—")}
+function skuScan(x){return String(field(x,"scanned_sku","scan_sku","verified_sku")||"")}
+function binScan(x){return String(field(x,"scanned_bin_code","scan_bin","verified_bin","scanned_bin")||"")}
+function statusOf(x){return String(x.status||"").toUpperCase()}
+async function loadAll(){
+ document.body.classList.add("loading");
+ try{
+  tasks=arr(await tryApi(["/api/putaway"]));
+  try{const me=await api("/api/auth/me");document.getElementById("userName").textContent=me.employee?.name||me.name||me.user?.name||"Zippzo User"}catch{}
+  buildFilters();page=1;applyFilters();toast("Putaway report refreshed");
+ }catch(e){toast(e.message||"Unable to load putaway report")}finally{document.body.classList.remove("loading")}
+}
+function fill(id,values,label){const el=document.getElementById(id),old=el.value;el.innerHTML=`<option value="">${label}</option>`+values.map(v=>`<option value="${esc(v)}">${esc(v)}</option>`).join("");if(values.includes(old))el.value=old}
+function buildFilters(){
+ fill("status",[...new Set(tasks.map(statusOf).filter(Boolean))].sort(),"All Status");
+ fill("priority",[...new Set(tasks.map(x=>String(x.priority||"")).filter(Boolean))].sort(),"All Priority");
+ fill("location",[...new Set(tasks.map(locationName).filter(x=>x!=="—"))].sort(),"All Locations");
+ fill("employee",[...new Set(tasks.map(employeeName).filter(x=>x!=="—"))].sort(),"All Employees");
+}
+function applyFilters(){
+ const q=document.getElementById("search").value.toLowerCase().trim(),st=document.getElementById("status").value,pr=document.getElementById("priority").value,loc=document.getElementById("location").value,emp=document.getElementById("employee").value,scan=document.getElementById("scan").value,from=document.getElementById("dateFrom").value,to=document.getElementById("dateTo").value;
+ filtered=tasks.filter(x=>{
+  const blob=JSON.stringify(x).toLowerCase(),ss=!!skuScan(x),bs=!!binScan(x),dt=String(field(x,"created_at","started_at","completed_at")||"").slice(0,10);
+  return(!q||blob.includes(q))&&(!st||statusOf(x)===st)&&(!pr||String(x.priority||"")===pr)&&(!loc||locationName(x)===loc)&&(!emp||employeeName(x)===emp)&&(!scan||(scan==="VERIFIED"&&ss&&bs)||(scan==="SKU_PENDING"&&!ss)||(scan==="BIN_PENDING"&&!bs))&&(!from||dt>=from)&&(!to||dt<=to);
+ });
+ page=1;render();
+}
+function render(){
+ const requiredAll=tasks.reduce((n,x)=>n+required(x),0),confirmedAll=tasks.reduce((n,x)=>n+confirmed(x),0);
+ const counts={PENDING:0,ASSIGNED:0,IN_PROGRESS:0,COMPLETED:0,HOLD:0};
+ tasks.forEach(x=>{const s=statusOf(x);if(counts[s]!==undefined)counts[s]++});
+ [["kTotal",tasks.length],["kPending",counts.PENDING],["kAssigned",counts.ASSIGNED],["kProgress",counts.IN_PROGRESS],["kCompleted",counts.COMPLETED],["kHold",counts.HOLD],["kRequired",requiredAll],["kConfirmed",confirmedAll]].forEach(([id,v])=>document.getElementById(id).textContent=v.toLocaleString("en-IN"));
+ const rq=filtered.reduce((n,x)=>n+required(x),0),cf=filtered.reduce((n,x)=>n+confirmed(x),0),comp=rq?Math.min(100,Math.round(cf/rq*100)):0;
+ const sku=filtered.filter(x=>!!skuScan(x)).length,bin=filtered.filter(x=>!!binScan(x)).length,verified=filtered.filter(x=>skuScan(x)&&binScan(x)).length;
+ [["sRequired",rq],["sConfirmed",cf],["sSku",sku],["sBin",bin],["sVerified",verified]].forEach(([id,v])=>document.getElementById(id).textContent=v.toLocaleString("en-IN"));
+ document.getElementById("sCompletion").textContent=comp+"%";document.getElementById("resultCount").textContent=filtered.length.toLocaleString("en-IN")+" records";
+ renderLocations();renderExceptions();renderTable();renderPager();
+}
+function renderLocations(){
+ const map=new Map();
+ filtered.forEach(x=>{const k=locationName(x);if(!map.has(k))map.set(k,{tasks:0,r:0,c:0,done:0});const v=map.get(k);v.tasks++;v.r+=required(x);v.c+=confirmed(x);if(statusOf(x)==="COMPLETED")v.done++});
+ const rows=[...map.entries()].sort((a,b)=>b[1].r-a[1].r);document.getElementById("locationCount").textContent=rows.length+" locations";
+ document.getElementById("locationBody").innerHTML=rows.length?rows.map(([k,v])=>`<tr><td><b>${esc(k)}</b></td><td>${v.tasks}</td><td>${v.r}</td><td>${v.c}</td><td>${v.done}</td><td><span class="tag ${v.r&&v.c>=v.r?"good":"warn"}">${v.r?Math.min(100,Math.round(v.c/v.r*100)):0}%</span></td></tr>`).join(""):`<tr><td colspan="6" class="empty">No location putaway data.</td></tr>`;
+}
+function renderExceptions(){
+ const ex=filtered.filter(x=>["HOLD","ERROR"].includes(statusOf(x))||(!skuScan(x)||!binScan(x))).slice(0,15);
+ document.getElementById("exceptionCount").textContent=filtered.filter(x=>["HOLD","ERROR"].includes(statusOf(x))||(!skuScan(x)||!binScan(x))).length;
+ document.getElementById("exceptionList").innerHTML=ex.length?ex.map(x=>{
+  const missing=[];if(!skuScan(x))missing.push("SKU");if(!binScan(x))missing.push("BIN");
+  return `<div class="list-row"><div><b>${esc(field(x,"task_number","task_no")||"#"+x.id)}</b><span class="muted">${esc(x.sku||"—")} · ${esc(locationName(x))}</span></div><div><span class="tag ${["HOLD","ERROR"].includes(statusOf(x))?"bad":"warn"}">${["HOLD","ERROR"].includes(statusOf(x))?statusOf(x):missing.join(" + ")+" SCAN"}</span></div></div>`;
+ }).join(""):`<div class="empty">No active putaway exceptions.</div>`;
+}
+function renderTable(){
+ const size=Number(document.getElementById("pageSize").value||25),pages=Math.max(1,Math.ceil(filtered.length/size));if(page>pages)page=pages;const rows=filtered.slice((page-1)*size,page*size);
+ document.getElementById("body").innerHTML=rows.length?rows.map((x,i)=>{
+  const rq=required(x),cf=confirmed(x),p=rq?Math.min(100,Math.round(cf/rq*100)):0,ss=skuScan(x),bs=binScan(x);
+  return `<tr><td><b>${esc(field(x,"task_number","task_no")||"#"+x.id)}</b></td><td>${esc(field(x,"grn_number","grn_no")||"—")}</td><td>${esc(x.sku||"—")}</td><td>${esc(x.product_name||"—")}</td><td>${esc(locationName(x))}</td><td>${esc(binCode(x))}</td><td>${esc(employeeName(x))}</td><td>${rq}</td><td>${cf}</td><td><span class="progress"><i style="width:${p}%"></i></span> ${p}%</td><td><span class="tag ${ss?"good":"warn"}">${ss?"VERIFIED":"PENDING"}</span></td><td><span class="tag ${bs?"good":"warn"}">${bs?"VERIFIED":"PENDING"}</span></td><td><span class="tag ${statusClass(x.status)}">${esc(x.status||"—")}</span></td><td>${esc(x.priority||"NORMAL")}</td><td>${esc(x.created_at||"—")}</td><td>${esc(x.started_at||"—")}</td><td>${esc(x.completed_at||"—")}</td><td><button class="btn" onclick="details(${(page-1)*size+i})">View</button></td></tr>`;
+ }).join(""):`<tr><td colspan="18" class="empty">No putaway records match the selected filters.</td></tr>`;
+}
+function renderPager(){
+ const size=Number(document.getElementById("pageSize").value||25),pages=Math.max(1,Math.ceil(filtered.length/size));document.getElementById("pageInfo").textContent=`Page ${page} of ${pages} · ${filtered.length.toLocaleString("en-IN")} records`;let b="";const s=Math.max(1,page-2),e=Math.min(pages,s+4);if(page>1)b+=`<button onclick="gotoPage(${page-1})">‹</button>`;for(let p=s;p<=e;p++)b+=`<button class="${p===page?"active":""}" onclick="gotoPage(${p})">${p}</button>`;if(page<pages)b+=`<button onclick="gotoPage(${page+1})">›</button>`;document.getElementById("pager").innerHTML=b;
+}
+function gotoPage(p){page=p;renderTable();renderPager();window.scrollTo({top:document.querySelector(".section:last-of-type").offsetTop-80,behavior:"smooth"})}
+function details(index){
+ const x=filtered[index];if(!x)return;const rq=required(x),cf=confirmed(x),p=rq?Math.round(cf/rq*100):0;
+ document.getElementById("detail").innerHTML=`<div class="detail-grid">
+ ${D("Task Number",field(x,"task_number","task_no")||x.id)}${D("GRN",field(x,"grn_number","grn_no"))}${D("Product",x.product_name)}${D("SKU",x.sku)}
+ ${D("Location",locationName(x))}${D("Assigned Bin",field(x,"assigned_bin_id","bin_code","bin_name"))}${D("Scanned Bin",binScan(x)||"Pending")}${D("Employee",employeeName(x))}
+ ${D("Required Quantity",rq)}${D("Confirmed Quantity",cf)}${D("Completion",p+"%")}${D("Priority",x.priority)}
+ ${D("Status",x.status)}${D("SKU Scan",skuScan(x)||"Pending")}${D("Created",x.created_at)}${D("Assigned",x.assigned_at)}
+ ${D("Started",x.started_at)}${D("Completed",x.completed_at)}${D("Created By",x.created_by)}${D("Completed By",x.completed_by)}
+ ${D("Remarks",x.remarks||"—")}${D("Scanned SKU",x.scanned_sku||"—")}${D("Scanned Bin Code",x.scanned_bin_code||"—")}${D("Putaway Task ID",x.id)}
+ </div>
+ <div class="timeline">
+ <div class="timeline-item"><b>Task Created</b><span>${esc(x.created_at||"—")}</span></div>
+ <div class="timeline-item"><b>Employee Assigned</b><span>${esc(x.assigned_at||"Not assigned")}</span></div>
+ <div class="timeline-item"><b>Putaway Started</b><span>${esc(x.started_at||"Not started")}</span></div>
+ <div class="timeline-item"><b>Putaway Completed</b><span>${esc(x.completed_at||"Not completed")}</span></div>
+ </div>`;
+ document.getElementById("modal").classList.add("show");
+}
+function D(a,b){return`<div class="detail"><small>${esc(a)}</small><b>${esc(b??"—")}</b></div>`}
+function closeModal(){document.getElementById("modal").classList.remove("show")}
+function clearFilters(){["search","dateFrom","dateTo"].forEach(id=>document.getElementById(id).value="");["status","priority","location","employee","scan"].forEach(id=>document.getElementById(id).value="");document.getElementById("pageSize").value="25";page=1;applyFilters()}
+function exportCSV(){
+ const h=["Task","GRN","SKU","Product","Location","Bin","Employee","Required","Confirmed","Progress","SKU Scan","Bin Scan","Status","Priority","Created","Assigned","Started","Completed"];
+ const rows=filtered.map(x=>{const rq=required(x),cf=confirmed(x);return[field(x,"task_number","task_no")||x.id,field(x,"grn_number","grn_no"),x.sku,x.product_name,locationName(x),binCode(x),employeeName(x),rq,cf,rq?Math.round(cf/rq*100)+"%":"0%",skuScan(x)?"VERIFIED":"PENDING",binScan(x)?"VERIFIED":"PENDING",x.status,x.priority,x.created_at,x.assigned_at,x.started_at,x.completed_at]});
+ const csv=[h,...rows].map(r=>r.map(v=>`"${String(v??"").replaceAll('"','""')}"`).join(",")).join("\n"),a=document.createElement("a");a.href=URL.createObjectURL(new Blob([csv],{type:"text/csv;charset=utf-8"}));a.download="zippzo_putaway_report.csv";a.click();
+}
+function printReport(){window.print()}
+async function logout(){try{if(token)await api("/api/auth/logout",{method:"POST",body:JSON.stringify({session_token:token})})}catch{}localStorage.removeItem(TOKEN_KEY);localStorage.removeItem("zippzo_user");location.href="index.html"}
+document.getElementById("modal").addEventListener("click",e=>{if(e.target.id==="modal")closeModal()});
+(async()=>{nav();await loadAll()})();
+</script>
+
+<script id="zippzo-master-frontend">
+document.addEventListener("DOMContentLoaded", function(){
+  // Hide the retired Dropping module everywhere.
+  document.querySelectorAll("a,button").forEach(function(el){
+    const t=(el.textContent||"").trim().toLowerCase();
+    if(t==="dropping" || t.includes("dropping")) el.style.display="none";
+  });
+
+  // Use the real Zippzo logo wherever a common brand element exists.
+  document.querySelectorAll(".brand,.logo,.brand-logo").forEach(function(el){
+    if(!el.querySelector("img")){
+      const img=document.createElement("img");
+      img.src="zippzo-logo.jpg";
+      img.alt="Zippzo";
+      img.style.cssText="width:148px;max-height:55px;object-fit:contain;object-position:left center;";
+      el.prepend(img);
+    }
+  });
+});
+</script>
+
+</body>
+</html>

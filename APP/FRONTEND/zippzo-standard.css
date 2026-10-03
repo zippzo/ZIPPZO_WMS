@@ -1,0 +1,139 @@
+
+/* ZIPPZO MASTER FRONTEND THEME — injected standard layer */
+:root{
+  --z-purple:#331084;
+  --z-purple-dark:#24085F;
+  --z-yellow:#FEB103;
+  --z-bg:#f4f6fb;
+  --z-card:#ffffff;
+  --z-text:#18213a;
+  --z-muted:#718096;
+  --z-line:#e6e9f0;
+  --z-green:#20b86a;
+  --z-blue:#2563eb;
+}
+*{box-sizing:border-box}
+html,body{margin:0;min-height:100%;font-family:Inter,Segoe UI,Arial,sans-serif!important;background:var(--z-bg)!important;color:var(--z-text)!important}
+body{font-size:13px}
+a{text-decoration:none}
+button{font-family:inherit}
+input,select,textarea{font-family:inherit!important}
+table{border-collapse:collapse}
+
+/* Common old sidebar structures */
+.sidebar,
+aside.sidebar,
+nav.sidebar,
+.layout > nav,
+.layout nav{
+  background:var(--z-purple-dark)!important;
+  color:#fff!important;
+}
+.sidebar{width:245px!important}
+.sidebar .logo,.sidebar .brand,.sidebar .brand-logo,
+.layout nav .logo,.layout nav .brand{
+  color:#fff!important;
+  font-weight:900!important;
+}
+.sidebar .sub,.sidebar .subtitle{color:#cfc6e9!important}
+.sidebar .mt,.sidebar h4,.sidebar .section-title,
+.layout nav h4{color:#b9add9!important}
+.sidebar .nav,.sidebar a,.layout nav a{
+  color:#f3efff!important;
+  border-radius:8px!important;
+}
+.sidebar .nav:hover,.sidebar a:hover,.layout nav a:hover{
+  background:rgba(255,255,255,.09)!important;color:#fff!important;
+}
+.sidebar .nav.active,.sidebar a.active,
+.layout nav a.active{
+  background:var(--z-yellow)!important;color:#241000!important;font-weight:800!important;
+}
+
+/* Common content shell */
+.main,.content,.page,.workspace,.app-main,
+.layout > main,.layout > .content{
+  background:var(--z-bg)!important;
+}
+.top,.topbar,.header,.app-header{
+  background:var(--z-purple)!important;
+  color:#fff!important;
+  border-bottom:0!important;
+}
+.top .title,.topbar .title,.header .title{color:#fff!important}
+.top input,.topbar input,.header input{
+  background:#fff!important;color:#334155!important;
+}
+.card,.panel,.kpi,.summary-card,.stat-card,.section,.box,.table-card,
+.content-card,.module-card{
+  background:#fff!important;
+  border:1px solid var(--z-line)!important;
+  border-radius:12px!important;
+  box-shadow:0 4px 18px rgba(35,18,80,.06)!important;
+}
+h1,h2,h3{color:var(--z-text)!important}
+.page-title,.product-header h1,.title-main{color:var(--z-text)!important}
+
+/* Buttons */
+.btn-primary,.primary,.btn.primary,.button-primary,.save-btn{
+  background:var(--z-purple)!important;
+  border-color:var(--z-purple)!important;
+  color:#fff!important;
+}
+.btn-primary:hover,.primary:hover,.btn.primary:hover{
+  background:var(--z-purple-dark)!important;
+}
+.btn-success,.greenbtn,.success,.btn-success{
+  background:var(--z-green)!important;color:#fff!important;
+}
+.btn-warning,.warning,.orangebtn{
+  background:var(--z-yellow)!important;color:#241000!important;
+}
+.btn-danger,.danger{background:#dc2626!important;color:#fff!important}
+
+/* Tables */
+table thead th{
+  background:#f5f2fb!important;
+  color:#4b3a72!important;
+  border-bottom:1px solid var(--z-line)!important;
+}
+table tbody td{border-bottom:1px solid #edf0f5!important}
+table tbody tr:hover{background:#faf9fe!important}
+
+/* Forms */
+input,select,textarea{
+  border:1px solid #dce1ea!important;
+  border-radius:8px!important;
+  background:#fff!important;
+  color:#172033!important;
+}
+input:focus,select:focus,textarea:focus{
+  outline:none!important;
+  border-color:var(--z-purple)!important;
+  box-shadow:0 0 0 3px rgba(51,16,132,.10)!important;
+}
+
+/* Badges/status */
+.badge,.status,.pill{border-radius:999px!important}
+.active-badge,.status-active{background:#dcfce7!important;color:#166534!important}
+
+/* Dashboard-like spacing */
+main,.main-content,.content{padding-bottom:30px}
+.kpis,.summary-grid,.stats-grid{gap:12px!important}
+
+/* Hide retired Dropping navigation everywhere */
+a[href*="dropping"],
+a[onclick*="Dropping"],
+a[onclick*="dropping"],
+.nav:has(span),
+.dropping-link{}
+
+/* Responsive */
+@media(max-width:1000px){
+  .sidebar{width:210px!important}
+  .main{margin-left:210px!important;width:calc(100% - 210px)!important}
+}
+@media(max-width:760px){
+  .sidebar{position:relative!important;width:100%!important;height:auto!important}
+  .main{margin-left:0!important;width:100%!important}
+}

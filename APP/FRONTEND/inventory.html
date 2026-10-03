@@ -1,0 +1,334 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1.0">
+<meta name="theme-color" content="#111827">
+<title>Zippzo WMS — Inventory Control</title>
+<link rel="stylesheet" href="style.css">
+<style>
+.inventory-page{max-width:1850px;margin:0 auto}
+.page-header{display:flex;justify-content:space-between;align-items:flex-start;gap:15px;margin-bottom:17px}
+.page-title{margin:0;font-size:27px;font-weight:900}.page-subtitle{margin:5px 0 0;color:#64748b;font-size:13px}
+.action-group{display:flex;gap:7px;flex-wrap:wrap}
+.btn{border:1px solid #dbe1e8;background:#fff;color:#263244;border-radius:8px;padding:9px 12px;font-weight:800;cursor:pointer}.btn:hover{background:#f8fafc}
+.btn-primary{background:#111827;color:#fff;border-color:#111827}.btn-primary:hover{background:#000}.btn-danger{background:#dc2626;color:#fff;border-color:#dc2626}.btn-secondary{background:#f8fafc}
+.kpis{display:grid;grid-template-columns:repeat(8,minmax(0,1fr));gap:11px;margin-bottom:15px}
+.kpi{background:#fff;border:1px solid #e5e7eb;border-radius:12px;padding:14px;box-shadow:0 4px 15px rgba(0,0,0,.04)}.kpi-label{font-size:10px;color:#64748b;text-transform:uppercase;font-weight:900;letter-spacing:.35px}.kpi-value{font-size:24px;font-weight:900;margin-top:6px}.kpi-meta{font-size:9px;color:#94a3b8;margin-top:4px}
+.kpi-alert{border-color:#fde68a;background:#fffbeb}.kpi-danger{border-color:#fecaca;background:#fff7f7}
+.toolbar{display:grid;grid-template-columns:2fr 1fr 1fr 1fr 1fr auto auto auto;gap:7px;align-items:center;background:#fff;border:1px solid #e5e7eb;border-radius:12px;padding:12px;margin-bottom:14px}
+.toolbar input,.toolbar select{height:39px;border:1px solid #d1d5db;border-radius:8px;padding:0 10px;background:#fff;outline:none;width:100%;box-sizing:border-box}.toolbar input:focus,.toolbar select:focus{border-color:#111827}
+.table-card{background:#fff;border:1px solid #e5e7eb;border-radius:12px;overflow:hidden;box-shadow:0 4px 15px rgba(0,0,0,.04)}
+.table-head{display:flex;justify-content:space-between;align-items:center;padding:13px 15px;border-bottom:1px solid #e5e7eb;gap:10px}.table-head h3{margin:0;font-size:14px}.table-head span{font-size:11px;color:#64748b}
+.table-wrap{overflow:auto}table{width:100%;min-width:1550px;border-collapse:collapse}
+th{background:#f8fafc;color:#64748b;font-size:10px;text-transform:uppercase;padding:11px 10px;text-align:left;white-space:nowrap;border-bottom:1px solid #e5e7eb;position:sticky;top:0;z-index:2}
+td{padding:11px 10px;border-bottom:1px solid #f1f5f9;font-size:11px;white-space:nowrap}tbody tr:hover td{background:#fafcff}
+.sku{font-weight:900;color:#1d4ed8}.product-name{font-weight:800}.muted{color:#64748b}.num{font-variant-numeric:tabular-nums}
+.status{display:inline-flex;padding:4px 8px;border-radius:999px;font-size:9px;font-weight:900}.normal{background:#dcfce7;color:#166534}.low{background:#fef3c7;color:#92400e}.out{background:#fee2e2;color:#991b1b}
+.actions{display:flex;gap:5px}.action-btn{border:1px solid #d1d5db;background:#fff;padding:5px 8px;border-radius:7px;cursor:pointer;font-size:10px;font-weight:700}.action-btn:hover{background:#f8fafc}
+.empty,.loading{text-align:center;padding:45px;color:#64748b}.footer-note{padding:10px 15px;color:#94a3b8;font-size:10px;border-top:1px solid #f1f5f9}
+.modal-overlay{display:none;position:fixed;inset:0;background:rgba(15,23,42,.58);z-index:1000;align-items:center;justify-content:center;padding:20px}.modal-overlay.show{display:flex}
+.modal{width:min(760px,100%);max-height:92vh;overflow:auto;background:#fff;border-radius:15px;box-shadow:0 25px 70px rgba(0,0,0,.25)}
+.modal-header{background:#111827;color:#fff;padding:17px 20px;display:flex;justify-content:space-between;align-items:center}.modal-header h2{margin:0;font-size:18px}.close{border:0;background:transparent;color:#fff;font-size:25px;cursor:pointer}
+.modal-body{padding:20px}.form-grid{display:grid;grid-template-columns:1fr 1fr;gap:13px}.form-group{display:flex;flex-direction:column;gap:6px}.full{grid-column:1/-1}.form-group label{font-size:11px;font-weight:800;color:#475569}.form-group input,.form-group select,.form-group textarea{width:100%;box-sizing:border-box;border:1px solid #d1d5db;border-radius:8px;padding:9px;outline:none;background:#fff}.form-group input:focus,.form-group select:focus,.form-group textarea:focus{border-color:#2563eb}.form-group textarea{min-height:75px;resize:vertical}
+.modal-footer{display:flex;justify-content:flex-end;gap:9px;padding:14px 20px;border-top:1px solid #e5e7eb}
+.toast{position:fixed;right:22px;bottom:22px;background:#0f172a;color:#fff;padding:12px 16px;border-radius:9px;display:none;z-index:2000;font-size:12px}.toast.show{display:block}.toast.success{background:#15803d}.toast.error{background:#b91c1c}
+.detail-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:9px}.detail-item{border:1px solid #e5e7eb;border-radius:8px;padding:10px}.detail-item span{display:block;color:#64748b;font-size:9px;text-transform:uppercase;font-weight:800}.detail-item strong{display:block;margin-top:3px;font-size:12px}.detail-wide{grid-column:1/-1}
+@media(max-width:1400px){.kpis{grid-template-columns:repeat(4,1fr)}.toolbar{grid-template-columns:2fr 1fr 1fr 1fr}.toolbar .search{grid-column:span 2}}
+@media(max-width:850px){.kpis{grid-template-columns:repeat(2,1fr)}.page-header{flex-direction:column}.toolbar{grid-template-columns:1fr}.toolbar .search{grid-column:auto}.form-grid,.detail-grid{grid-template-columns:1fr}.full,.detail-wide{grid-column:auto}}
+@media(max-width:480px){.kpis{grid-template-columns:1fr}}
+</style>
+
+<link rel="stylesheet" href="zippzo-standard.css">
+<script src="zippzo-standard.js" defer></script>
+</head>
+<body>
+
+<header class="topbar">
+  <div class="brand">ZIPPZO <span>WMS</span></div>
+  <div class="top-user"><span id="userName">Loading...</span><button class="btn btn-danger" onclick="logout()">Logout</button></div>
+</header>
+
+<div class="layout">
+<aside class="sidebar">
+  <div class="sidebar-title">MAIN</div><button class="nav-button" onclick="go('index.html')">Dashboard</button>
+  <div class="sidebar-title">MASTER DATA</div><button class="nav-button" onclick="go('products.html')">Products</button><button class="nav-button" onclick="go('suppliers.html')">Suppliers</button><button class="nav-button" onclick="go('locations.html')">Locations</button><button class="nav-button" onclick="go('hr-dashboard.html')">HR Dashboard</button><button class="nav-button" onclick="go('hr-live.html')">HR Live</button><button class="nav-button" onclick="go('employees.html')">Employees</button>
+  <div class="sidebar-title">WAREHOUSE</div><button class="nav-button active">Inventory</button><button class="nav-button" onclick="go('bins.html')">Bins</button><button class="nav-button" onclick="go('stock-movements.html')">Stock Movements</button>
+  <div class="sidebar-title">INBOUND</div><button class="nav-button" onclick="go('purchase-orders.html')">Purchase Orders</button><button class="nav-button" onclick="go('grn.html')">GRN</button><button class="nav-button" onclick="go('putaway.html')">Putaway</button><button class="nav-button" onclick="go('grid-putaway.html')">Grid Putaway</button>
+  <div class="sidebar-title">ORDERS</div><button class="nav-button" onclick="go('orders.html')">Orders</button><button class="nav-button" onclick="go('create-batch.html')">Create Batch</button><button class="nav-button" onclick="go('picking.html')">Picking</button><button class="nav-button" onclick="go('sorting.html')">Sorting</button><button class="nav-button" onclick="go('dropping.html')">Dropping</button><button class="nav-button" onclick="go('dispatch.html')">Dispatch</button>
+  <div class="sidebar-title">DELIVERY</div><button class="nav-button" onclick="go('riders.html')">Riders — Dark Store</button>
+  <div class="sidebar-title">REPORTS</div><button class="nav-button" onclick="go('stock-report.html')">Stock Report</button><button class="nav-button" onclick="go('grn-report.html')">GRN Report</button><button class="nav-button" onclick="go('putaway-report.html')">Putaway Report</button><button class="nav-button" onclick="go('order-report.html')">Order Report</button><button class="nav-button" onclick="go('picking-report.html')">Picking Report</button><button class="nav-button" onclick="go('sorting-report.html')">Sorting Report</button><button class="nav-button" onclick="go('picking-ipp.html')">Picking IPP</button><button class="nav-button" onclick="go('sorting-ipp.html')">Sorting IPP</button><button class="nav-button" onclick="go('delivery-report.html')">Delivery Report</button>
+</aside>
+
+<main class="content">
+<div class="inventory-page">
+  <div class="page-header">
+    <div><div class="page-title">Inventory Control</div><div class="page-subtitle">Live stock by SKU, location and bin — available, reserved, picked, dispatched and exception quantities.</div></div>
+    <div class="action-group"><button class="btn btn-secondary" onclick="loadData()">↻ Refresh</button><button class="btn btn-secondary" onclick="exportCSV()">Export CSV</button><button class="btn btn-primary" onclick="openStock()">+ Add Stock</button><button class="btn btn-secondary" onclick="openTransfer()">⇄ Transfer</button><button class="btn btn-secondary" onclick="openAdjustment()">✎ Adjustment</button></div>
+  </div>
+
+  <div class="kpis">
+    <div class="kpi"><div class="kpi-label">Total Stock</div><div id="totalStock" class="kpi-value">0</div><div class="kpi-meta">All inventory quantity</div></div>
+    <div class="kpi"><div class="kpi-label">Available</div><div id="availableStock" class="kpi-value">0</div><div class="kpi-meta">Ready for allocation</div></div>
+    <div class="kpi"><div class="kpi-label">Reserved</div><div id="reservedStock" class="kpi-value">0</div><div class="kpi-meta">Customer/order reserved</div></div>
+    <div class="kpi"><div class="kpi-label">Picked</div><div id="pickedStock" class="kpi-value">0</div><div class="kpi-meta">Picked quantity</div></div>
+    <div class="kpi"><div class="kpi-label">Packed</div><div id="packedStock" class="kpi-value">0</div><div class="kpi-meta">Packed quantity</div></div>
+    <div class="kpi"><div class="kpi-label">Dispatched</div><div id="dispatchedStock" class="kpi-value">0</div><div class="kpi-meta">Dispatched quantity</div></div>
+    <div class="kpi kpi-alert"><div class="kpi-label">Low Stock</div><div id="lowStock" class="kpi-value">0</div><div class="kpi-meta">At/below reorder level</div></div>
+    <div class="kpi kpi-danger"><div class="kpi-label">Out of Stock</div><div id="outStock" class="kpi-value">0</div><div class="kpi-meta">Zero available quantity</div></div>
+  </div>
+
+  <div class="toolbar">
+    <input class="search" id="searchInput" placeholder="Search SKU, barcode, product, category, brand, location or bin..." oninput="applyFilters()">
+    <select id="locationFilter" onchange="applyFilters()"><option value="">All Locations</option></select>
+    <select id="binFilter" onchange="applyFilters()"><option value="">All Bins</option></select>
+    <select id="categoryFilter" onchange="applyFilters()"><option value="">All Categories</option></select>
+    <select id="statusFilter" onchange="applyFilters()"><option value="">All Status</option><option value="NORMAL">Normal</option><option value="LOW">Low</option><option value="OUT">Out of Stock</option></select>
+    <button class="btn btn-secondary" onclick="clearFilters()">Clear</button>
+    <button class="btn btn-secondary" onclick="go('stock-movements.html')">Movements</button>
+    <button class="btn btn-secondary" onclick="go('bins.html')">Bins</button>
+  </div>
+
+  <div class="table-card">
+    <div class="table-head"><h3>Inventory Records</h3><span id="resultCount">0 records</span><span id="syncStatus">Loading...</span></div>
+    <div class="table-wrap">
+      <table><thead><tr>
+        <th>#</th><th>SKU</th><th>BARCODE</th><th>PRODUCT</th><th>CATEGORY</th><th>BRAND</th><th>LOCATION</th><th>BIN</th><th>TOTAL</th><th>AVAILABLE</th><th>RESERVED</th><th>PICKED</th><th>PACKED</th><th>DISPATCHED</th><th>DAMAGED</th><th>QUARANTINE</th><th>STATUS</th><th>ACTIONS</th>
+      </tr></thead><tbody id="inventoryBody"><tr><td colspan="18" class="loading">Loading inventory...</td></tr></tbody></table>
+    </div>
+    <div class="footer-note">Inventory totals are calculated from the live inventory records returned by the Zippzo WMS API.</div>
+  </div>
+</div>
+</main>
+</div>
+
+<!-- ADD STOCK -->
+<div class="modal-overlay" id="stockModal"><div class="modal">
+  <div class="modal-header"><h2>Add Stock</h2><button class="close" onclick="closeModal('stockModal')">×</button></div>
+  <form onsubmit="saveStock(event)"><div class="modal-body"><div class="form-grid">
+    <div class="form-group full"><label>Product *</label><select id="stockProduct" required></select></div>
+    <div class="form-group"><label>Location *</label><select id="stockLocation" required></select></div><div class="form-group"><label>Bin</label><select id="stockBin"></select></div>
+    <div class="form-group"><label>Quantity *</label><input id="stockQuantity" type="number" min="1" required></div><div class="form-group"><label>Reference</label><input id="stockReference" placeholder="GRN / invoice / reference"></div>
+    <div class="form-group full"><label>Remarks</label><textarea id="stockRemarks"></textarea></div>
+  </div></div><div class="modal-footer"><button type="button" class="btn btn-secondary" onclick="closeModal('stockModal')">Cancel</button><button class="btn btn-primary">Save Stock</button></div></form>
+</div></div>
+
+<!-- TRANSFER -->
+<div class="modal-overlay" id="transferModal"><div class="modal">
+  <div class="modal-header"><h2>Transfer Stock</h2><button class="close" onclick="closeModal('transferModal')">×</button></div>
+  <form onsubmit="saveTransfer(event)"><div class="modal-body"><div class="form-grid">
+    <div class="form-group full"><label>Product *</label><select id="transferProduct" required></select></div>
+    <div class="form-group"><label>From Location *</label><select id="fromLocation" required></select></div><div class="form-group"><label>To Location *</label><select id="toLocation" required></select></div>
+    <div class="form-group"><label>From Bin</label><select id="fromBin"></select></div><div class="form-group"><label>To Bin</label><select id="toBin"></select></div>
+    <div class="form-group"><label>Quantity *</label><input id="transferQuantity" type="number" min="1" required></div><div class="form-group"><label>Reference</label><input id="transferReference"></div>
+    <div class="form-group full"><label>Remarks</label><textarea id="transferRemarks"></textarea></div>
+  </div></div><div class="modal-footer"><button type="button" class="btn btn-secondary" onclick="closeModal('transferModal')">Cancel</button><button class="btn btn-primary">Transfer Stock</button></div></form>
+</div></div>
+
+<!-- ADJUSTMENT -->
+<div class="modal-overlay" id="adjustmentModal"><div class="modal">
+  <div class="modal-header"><h2>Stock Adjustment</h2><button class="close" onclick="closeModal('adjustmentModal')">×</button></div>
+  <form onsubmit="saveAdjustment(event)"><div class="modal-body"><div class="form-grid">
+    <div class="form-group full"><label>Product *</label><select id="adjustProduct" required></select></div>
+    <div class="form-group"><label>Location *</label><select id="adjustLocation" required></select></div><div class="form-group"><label>Bin</label><select id="adjustBin"></select></div>
+    <div class="form-group full"><label>Adjustment Quantity * <small>(negative = reduce stock)</small></label><input id="adjustQuantity" type="number" required></div>
+    <div class="form-group full"><label>Reason *</label><textarea id="adjustReason" required></textarea></div><div class="form-group full"><label>Reference</label><input id="adjustReference"></div>
+  </div></div><div class="modal-footer"><button type="button" class="btn btn-secondary" onclick="closeModal('adjustmentModal')">Cancel</button><button class="btn btn-primary">Save Adjustment</button></div></form>
+</div></div>
+
+<!-- DETAIL -->
+<div class="modal-overlay" id="detailModal"><div class="modal">
+  <div class="modal-header"><h2>Inventory Detail</h2><button class="close" onclick="closeModal('detailModal')">×</button></div>
+  <div class="modal-body" id="detailBody"></div>
+  <div class="modal-footer"><button class="btn btn-secondary" onclick="closeModal('detailModal')">Close</button></div>
+</div></div>
+
+<div class="toast" id="toast"></div>
+
+<script>
+"use strict";
+const API_BASE=window.location.origin,TOKEN_KEY="zippzo_session_token",USER_KEY="zippzo_user";
+let inventoryData=[],products=[],locations=[],bins=[];
+
+function go(page){location.href=page}
+function getToken(){return localStorage.getItem(TOKEN_KEY)}
+function esc(v){return String(v??"").replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#039;"}[c]))}
+function n(v){return Number(v||0)}
+function product(id){return products.find(x=>Number(x.id)===Number(id))}
+function locationObj(id){return locations.find(x=>Number(x.id)===Number(id))}
+function binObj(id){return bins.find(x=>Number(x.id)===Number(id))}
+function pName(r){const p=product(r.product_id);return r.product_name||r.name||p?.name||p?.product_name||"-"}
+function sku(r){return r.sku||product(r.product_id)?.sku||"-"}
+function barcode(r){return r.barcode||product(r.product_id)?.barcode||"-"}
+function category(r){return r.category||product(r.product_id)?.category||"-"}
+function brand(r){return r.brand||product(r.product_id)?.brand||"-"}
+function locName(r){const l=locationObj(r.location_id);return r.location_name||l?.name||l?.location_name||l?.code||"-"}
+function binName(r){const b=binObj(r.bin_id);return r.bin_code||b?.bin_code||"-"}
+function total(r){return n(r.available_qty)+n(r.reserved_qty)+n(r.picked_qty)+n(r.packed_qty)+n(r.dispatched_qty)+n(r.damaged_qty)+n(r.returned_qty)+n(r.quarantine_qty)}
+function status(r){const available=n(r.available_qty),p=product(r.product_id),reorder=n(p?.reorder_level??r.reorder_level);return available<=0?"OUT":reorder>0&&available<=reorder?"LOW":"NORMAL"}
+
+async function api(path,options={}){
+  const token=getToken(),headers={...(options.headers||{})};
+  if(options.body&&!headers["Content-Type"])headers["Content-Type"]="application/json";
+  if(token)headers.Authorization=`Bearer ${token}`;
+  const res=await fetch(API_BASE+path,{...options,headers});
+  if(res.status===401){localStorage.removeItem(TOKEN_KEY);localStorage.removeItem(USER_KEY);location.href="index.html";throw new Error("Session expired")}
+  const type=res.headers.get("content-type")||"";let data=null;
+  try{data=type.includes("application/json")?await res.json():await res.text()}catch(_){}
+  if(!res.ok){let d=data?.detail??data??"Request failed";if(Array.isArray(d))d=d.map(x=>x.msg||JSON.stringify(x)).join(", ");throw new Error(d)}
+  return data;
+}
+function showToast(msg,type=""){const t=document.getElementById("toast");t.textContent=msg;t.className=`toast show ${type}`;clearTimeout(window.toastTimer);window.toastTimer=setTimeout(()=>t.className="toast",3200)}
+function closeModal(id){document.getElementById(id).classList.remove("show")}
+function openModal(id){document.getElementById(id).classList.add("show")}
+
+async function checkAuth(){
+  const u=await api("/api/auth/me");localStorage.setItem(USER_KEY,JSON.stringify(u));
+  document.getElementById("userName").textContent=u.name||u.full_name||u.employee_id||u.email||"Zippzo User";
+}
+async function loadData(){
+  document.getElementById("syncStatus").textContent="Refreshing...";
+  try{
+    const [ir,pr,lr,br]=await Promise.all([api("/api/inventory"),api("/api/products"),api("/api/locations"),api("/api/bins")]);
+    inventoryData=Array.isArray(ir)?ir:(ir?.items||[]);
+    products=Array.isArray(pr)?pr:(pr?.items||[]);
+    locations=Array.isArray(lr)?lr:(lr?.items||[]);
+    bins=Array.isArray(br)?br:(br?.items||[]);
+    populateFilters();populateSelects();render();
+    document.getElementById("syncStatus").textContent=`Live · ${new Date().toLocaleTimeString("en-IN")}`;
+  }catch(e){
+    document.getElementById("inventoryBody").innerHTML=`<tr><td colspan="18" class="empty">${esc(e.message)}</td></tr>`;
+    document.getElementById("syncStatus").textContent="Connection error";showToast(e.message,"error");
+  }
+}
+function populateFilters(){
+  const lf=document.getElementById("locationFilter"),bf=document.getElementById("binFilter"),cf=document.getElementById("categoryFilter");
+  lf.innerHTML='<option value="">All Locations</option>'+locations.map(x=>`<option value="${x.id}">${esc(x.name||x.location_name||x.code||"")}</option>`).join("");
+  bf.innerHTML='<option value="">All Bins</option>'+bins.map(x=>`<option value="${x.id}">${esc(x.bin_code||"")}</option>`).join("");
+  const cats=[...new Set(products.map(x=>x.category).filter(Boolean))].sort();
+  cf.innerHTML='<option value="">All Categories</option>'+cats.map(x=>`<option value="${esc(x)}">${esc(x)}</option>`).join("");
+}
+function productOptions(id){
+  const s=document.getElementById(id);
+  s.innerHTML='<option value="">Select Product</option>'+products.map(p=>`<option value="${p.id}">${esc(p.sku||"")} — ${esc(p.name||p.product_name||"")}</option>`).join("");
+}
+function locationOptions(id){
+  const s=document.getElementById(id);
+  s.innerHTML='<option value="">Select Location</option>'+locations.map(l=>`<option value="${l.id}">${esc(l.name||l.location_name||l.code||"")}</option>`).join("");
+}
+function populateSelects(){
+  ["stockProduct","transferProduct","adjustProduct"].forEach(productOptions);
+  ["stockLocation","fromLocation","toLocation","adjustLocation"].forEach(locationOptions);
+  ["stockBin","fromBin","toBin","adjustBin"].forEach(x=>populateBins(x,""));
+}
+function populateBins(selectId,locationId){
+  const s=document.getElementById(selectId);
+  s.innerHTML='<option value="">Select Bin</option>'+bins.filter(b=>!locationId||Number(b.location_id)===Number(locationId)).map(b=>`<option value="${b.id}">${esc(b.bin_code||"")}</option>`).join("");
+}
+function applyFilters(){
+  const q=document.getElementById("searchInput").value.trim().toLowerCase(),lf=document.getElementById("locationFilter").value,bf=document.getElementById("binFilter").value,cf=document.getElementById("categoryFilter").value,sf=document.getElementById("statusFilter").value;
+  const data=inventoryData.filter(r=>{
+    const text=[sku(r),barcode(r),pName(r),category(r),brand(r),locName(r),binName(r)].join(" ").toLowerCase();
+    return(!q||text.includes(q))&&(!lf||Number(r.location_id)===Number(lf))&&(!bf||Number(r.bin_id)===Number(bf))&&(!cf||category(r)===cf)&&(!sf||status(r)===sf);
+  });
+  renderTable(data);document.getElementById("resultCount").textContent=`${data.length} records`;
+}
+function render(){updateKpis();applyFilters()}
+function renderTable(data){
+  const b=document.getElementById("inventoryBody");
+  if(!data.length){b.innerHTML='<tr><td colspan="18" class="empty">No inventory records found.</td></tr>';return}
+  b.innerHTML=data.map((r,i)=>{
+    const s=status(r),cl=s==="NORMAL"?"normal":s==="LOW"?"low":"out";
+    return `<tr>
+      <td>${i+1}</td><td><strong class="sku">${esc(sku(r))}</strong></td><td>${esc(barcode(r))}</td><td><strong class="product-name">${esc(pName(r))}</strong></td>
+      <td>${esc(category(r))}</td><td>${esc(brand(r))}</td><td>${esc(locName(r))}</td><td>${esc(binName(r))}</td>
+      <td class="num"><strong>${total(r).toLocaleString()}</strong></td><td class="num">${n(r.available_qty).toLocaleString()}</td><td class="num">${n(r.reserved_qty).toLocaleString()}</td>
+      <td class="num">${n(r.picked_qty).toLocaleString()}</td><td class="num">${n(r.packed_qty).toLocaleString()}</td><td class="num">${n(r.dispatched_qty).toLocaleString()}</td>
+      <td class="num">${n(r.damaged_qty).toLocaleString()}</td><td class="num">${n(r.quarantine_qty).toLocaleString()}</td>
+      <td><span class="status ${cl}">${s}</span></td>
+      <td><div class="actions"><button class="action-btn" onclick="viewInventory(${r.id})">View</button><button class="action-btn" onclick="quickAdjust(${r.product_id},${r.location_id},${r.bin_id||"null"})">Adjust</button><button class="action-btn" onclick="quickTransfer(${r.product_id},${r.location_id})">Transfer</button></div></td>
+    </tr>`;
+  }).join("");
+}
+function updateKpis(){
+  let t=0,a=0,r=0,p=0,pk=0,d=0,l=0,o=0;
+  inventoryData.forEach(x=>{t+=total(x);a+=n(x.available_qty);r+=n(x.reserved_qty);p+=n(x.picked_qty);pk+=n(x.packed_qty);d+=n(x.dispatched_qty);if(status(x)==="LOW")l++;if(status(x)==="OUT")o++});
+  [["totalStock",t],["availableStock",a],["reservedStock",r],["pickedStock",p],["packedStock",pk],["dispatchedStock",d],["lowStock",l],["outStock",o]].forEach(([id,v])=>document.getElementById(id).textContent=v.toLocaleString("en-IN"));
+}
+function clearFilters(){["searchInput","locationFilter","binFilter","categoryFilter","statusFilter"].forEach(id=>document.getElementById(id).value="");applyFilters()}
+function openStock(){document.querySelector("#stockModal form").reset();populateBins("stockBin","");openModal("stockModal")}
+function openTransfer(){document.querySelector("#transferModal form").reset();populateBins("fromBin","");populateBins("toBin","");openModal("transferModal")}
+function openAdjustment(){document.querySelector("#adjustmentModal form").reset();populateBins("adjustBin","");openModal("adjustmentModal")}
+
+async function saveStock(e){
+  e.preventDefault();
+  try{
+    await api("/api/inventory/stock-in",{method:"POST",body:JSON.stringify({
+      product_id:n(document.getElementById("stockProduct").value),location_id:n(document.getElementById("stockLocation").value),
+      bin_id:document.getElementById("stockBin").value?n(document.getElementById("stockBin").value):null,quantity:n(document.getElementById("stockQuantity").value),
+      reference_number:document.getElementById("stockReference").value.trim()||null,remarks:document.getElementById("stockRemarks").value.trim()||null
+    })});
+    closeModal("stockModal");showToast("Stock added successfully","success");await loadData();
+  }catch(e){showToast(e.message,"error")}
+}
+async function saveTransfer(e){
+  e.preventDefault();
+  const from=n(document.getElementById("fromLocation").value),to=n(document.getElementById("toLocation").value);
+  if(from===to){showToast("Source and destination must be different","error");return}
+  try{
+    await api("/api/inventory/transfer",{method:"POST",body:JSON.stringify({
+      product_id:n(document.getElementById("transferProduct").value),from_location_id:from,to_location_id:to,
+      quantity:n(document.getElementById("transferQuantity").value),
+      from_bin_id:document.getElementById("fromBin").value?n(document.getElementById("fromBin").value):null,
+      to_bin_id:document.getElementById("toBin").value?n(document.getElementById("toBin").value):null,
+      reference_number:document.getElementById("transferReference").value.trim()||null,remarks:document.getElementById("transferRemarks").value.trim()||null
+    })});
+    closeModal("transferModal");showToast("Stock transferred successfully","success");await loadData();
+  }catch(e){showToast(e.message,"error")}
+}
+async function saveAdjustment(e){
+  e.preventDefault();const q=n(document.getElementById("adjustQuantity").value);
+  if(q===0){showToast("Adjustment quantity cannot be zero","error");return}
+  try{
+    await api("/api/inventory/adjustment",{method:"POST",body:JSON.stringify({
+      product_id:n(document.getElementById("adjustProduct").value),location_id:n(document.getElementById("adjustLocation").value),
+      quantity:q,bin_id:document.getElementById("adjustBin").value?n(document.getElementById("adjustBin").value):null,
+      reason:document.getElementById("adjustReason").value.trim(),reference_number:document.getElementById("adjustReference").value.trim()||null
+    })});
+    closeModal("adjustmentModal");showToast("Stock adjusted successfully","success");await loadData();
+  }catch(e){showToast(e.message,"error")}
+}
+function quickAdjust(pid,lid,bid){
+  openAdjustment();document.getElementById("adjustProduct").value=pid;document.getElementById("adjustLocation").value=lid;populateBins("adjustBin",lid);if(bid)document.getElementById("adjustBin").value=bid;
+}
+function quickTransfer(pid,lid){
+  openTransfer();document.getElementById("transferProduct").value=pid;document.getElementById("fromLocation").value=lid;populateBins("fromBin",lid);
+}
+function viewInventory(id){
+  const r=inventoryData.find(x=>Number(x.id)===Number(id));if(!r)return;
+  const s=status(r),p=product(r.product_id);
+  document.getElementById("detailBody").innerHTML=`<div class="detail-grid">
+    <div class="detail-item"><span>Product</span><strong>${esc(pName(r))}</strong></div><div class="detail-item"><span>SKU</span><strong>${esc(sku(r))}</strong></div><div class="detail-item"><span>Barcode</span><strong>${esc(barcode(r))}</strong></div>
+    <div class="detail-item"><span>Location</span><strong>${esc(locName(r))}</strong></div><div class="detail-item"><span>Bin</span><strong>${esc(binName(r))}</strong></div><div class="detail-item"><span>Status</span><strong>${s}</strong></div>
+    <div class="detail-item"><span>Total</span><strong>${total(r).toLocaleString("en-IN")}</strong></div><div class="detail-item"><span>Available</span><strong>${n(r.available_qty).toLocaleString("en-IN")}</strong></div><div class="detail-item"><span>Reserved</span><strong>${n(r.reserved_qty).toLocaleString("en-IN")}</strong></div>
+    <div class="detail-item"><span>Picked</span><strong>${n(r.picked_qty).toLocaleString("en-IN")}</strong></div><div class="detail-item"><span>Packed</span><strong>${n(r.packed_qty).toLocaleString("en-IN")}</strong></div><div class="detail-item"><span>Dispatched</span><strong>${n(r.dispatched_qty).toLocaleString("en-IN")}</strong></div>
+    <div class="detail-item"><span>Damaged</span><strong>${n(r.damaged_qty).toLocaleString("en-IN")}</strong></div><div class="detail-item"><span>Quarantine</span><strong>${n(r.quarantine_qty).toLocaleString("en-IN")}</strong></div><div class="detail-item"><span>Returned</span><strong>${n(r.returned_qty).toLocaleString("en-IN")}</strong></div>
+    <div class="detail-item detail-wide"><span>Reorder Level</span><strong>${n(p?.reorder_level||r.reorder_level).toLocaleString("en-IN")}</strong></div>
+  </div>`;
+  openModal("detailModal");
+}
+function exportCSV(){
+  if(!inventoryData.length){showToast("No inventory records to export","error");return}
+  const header=["ID","SKU","Barcode","Product","Category","Brand","Location","Bin","Total","Available","Reserved","Picked","Packed","Dispatched","Damaged","Quarantine","Returned","Status"];
+  const rows=inventoryData.map(r=>[r.id,sku(r),barcode(r),pName(r),category(r),brand(r),locName(r),binName(r),total(r),n(r.available_qty),n(r.reserved_qty),n(r.picked_qty),n(r.packed_qty),n(r.dispatched_qty),n(r.damaged_qty),n(r.quarantine_qty),n(r.returned_qty),status(r)].map(v=>`"${String(v??"").replace(/"/g,'""')}"`));
+  const csv=[header,...rows].map(r=>r.join(",")).join("\n"),url=URL.createObjectURL(new Blob([csv],{type:"text/csv;charset=utf-8;"})),a=document.createElement("a");
+  a.href=url;a.download=`Zippzo_Inventory_${new Date().toISOString().slice(0,10)}.csv`;a.click();URL.revokeObjectURL(url);showToast("Inventory CSV exported","success");
+}
+["stockLocation","fromLocation","toLocation","adjustLocation"].forEach(id=>document.getElementById(id).addEventListener("change",function(){const map={stockLocation:"stockBin",fromLocation:"fromBin",toLocation:"toBin",adjustLocation:"adjustBin"};populateBins(map[id],this.value)}));
+document.querySelectorAll(".modal-overlay").forEach(m=>m.addEventListener("click",e=>{if(e.target===m)m.classList.remove("show")}));
+document.addEventListener("keydown",e=>{if(e.key==="Escape")document.querySelectorAll(".modal-overlay").forEach(x=>x.classList.remove("show"))});
+async function logout(){const t=getToken();try{if(t)await fetch(`${API_BASE}/api/auth/logout`,{method:"POST",headers:{"Content-Type":"application/json","Authorization":`Bearer ${t}`},body:JSON.stringify({session_token:t})})}catch(_){}localStorage.removeItem(TOKEN_KEY);localStorage.removeItem(USER_KEY);location.href="index.html"}
+(async()=>{try{await checkAuth();await loadData()}catch(e){console.error(e)}})();
+</script>
+</body>
+</html>

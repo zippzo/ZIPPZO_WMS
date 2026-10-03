@@ -1,0 +1,230 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1.0">
+<title>Zippzo HR Dashboard</title>
+<style>
+*{box-sizing:border-box}:root{--dark:#111827;--blue:#2563eb;--green:#16a34a;--orange:#ea580c;--red:#dc2626;--purple:#7c3aed;--muted:#64748b;--line:#e2e8f0;--bg:#f4f7fb}
+body{margin:0;background:var(--bg);color:#172033;font-family:Inter,Segoe UI,Arial,sans-serif}.top{height:68px;background:var(--dark);color:#fff;display:flex;align-items:center;gap:16px;padding:0 22px;position:sticky;top:0;z-index:20}.logo{font-size:25px;font-weight:900;letter-spacing:1px}.title{font-size:14px;color:#cbd5e1}.spacer{flex:1}.top button{background:#1f2937;border:1px solid #475569;color:#fff;border-radius:8px;padding:9px 13px;cursor:pointer}
+.layout{display:grid;grid-template-columns:235px 1fr;min-height:calc(100vh - 68px)}nav{background:#fff;border-right:1px solid var(--line);padding:14px 10px;position:sticky;top:68px;height:calc(100vh - 68px);overflow:auto}nav h4{font-size:10px;color:#94a3b8;text-transform:uppercase;margin:12px}nav a{display:block;text-decoration:none;color:#334155;padding:9px 12px;border-radius:8px;font-size:12px;margin:2px 0}nav a:hover,nav a.active{background:#eff6ff;color:#1d4ed8;font-weight:700}
+main{padding:22px;min-width:0}.head{display:flex;align-items:center;justify-content:space-between;gap:15px;margin-bottom:18px}.head h1{font-size:25px;margin:0}.sub{font-size:13px;color:var(--muted);margin-top:5px}.actions{display:flex;gap:8px;flex-wrap:wrap}.btn{border:1px solid var(--line);background:#fff;border-radius:8px;padding:9px 13px;cursor:pointer;font-size:12px}.btn.primary{background:var(--blue);border-color:var(--blue);color:#fff}
+.kpis{display:grid;grid-template-columns:repeat(8,1fr);gap:10px}.card{background:#fff;border:1px solid var(--line);border-radius:12px;padding:14px;box-shadow:0 1px 2px #00000008}.label{font-size:10px;color:var(--muted);text-transform:uppercase}.value{font-size:23px;font-weight:850;margin-top:6px}.note{font-size:10px;color:var(--muted);margin-top:4px}
+.section{margin-top:18px}.section-head{display:flex;align-items:center;justify-content:space-between;gap:10px;margin-bottom:10px}.section-head h2{font-size:16px;margin:0}.filters{display:flex;gap:8px;flex-wrap:wrap}.filters input,.filters select{height:37px;border:1px solid var(--line);border-radius:8px;background:#fff;padding:0 10px;font-size:12px;color:#172033}.filters .search{min-width:330px}
+.grid2{display:grid;grid-template-columns:1fr 1fr;gap:14px}.grid3{display:grid;grid-template-columns:repeat(3,1fr);gap:14px}.summary{display:grid;grid-template-columns:repeat(6,1fr);gap:10px}.summary strong{display:block;font-size:21px;margin-top:5px}.summary span{font-size:10px;color:var(--muted)}
+.table-wrap{overflow:auto;background:#fff;border:1px solid var(--line);border-radius:10px}.table{width:100%;border-collapse:collapse;font-size:12px}.table th{background:#f8fafc;color:#64748b;font-size:10px;text-transform:uppercase;text-align:left;position:sticky;top:0;z-index:2}.table th,.table td{padding:10px;border-bottom:1px solid #edf2f7;white-space:nowrap}.table tr:hover td{background:#f8fafc}
+.tag{display:inline-block;border-radius:999px;padding:4px 8px;font-size:10px;font-weight:700;background:#eef2ff;color:#3730a3}.tag.good{background:#f0fdf4;color:#15803d}.tag.warn{background:#fff7ed;color:#c2410c}.tag.bad{background:#fef2f2;color:#b91c1c}.tag.info{background:#eff6ff;color:#1d4ed8}.tag.purple{background:#f5f3ff;color:#6d28d9}.muted{color:var(--muted)}.empty{text-align:center;padding:30px;color:#94a3b8}
+.list{background:#fff;border:1px solid var(--line);border-radius:10px;overflow:hidden}.list-row{display:flex;justify-content:space-between;gap:10px;padding:11px 13px;border-bottom:1px solid #edf2f7;font-size:12px}.list-row:last-child{border:0}.list-row b{display:block}.progress{height:7px;width:100px;background:#e2e8f0;border-radius:99px;overflow:hidden;display:inline-block;vertical-align:middle}.progress i{display:block;height:100%;background:var(--blue)}
+.modal{display:none;position:fixed;inset:0;background:#0008;z-index:50;align-items:center;justify-content:center;padding:20px}.modal.show{display:flex}.modal-box{background:#fff;border-radius:14px;width:min(1150px,100%);max-height:90vh;overflow:auto;padding:20px}.modal-head{display:flex;justify-content:space-between;align-items:center}.modal-head h2{font-size:18px;margin:0}.close{border:0;background:#f1f5f9;border-radius:8px;padding:7px 10px;cursor:pointer}.detail-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:9px;margin-top:15px}.detail{border:1px solid var(--line);border-radius:8px;padding:10px}.detail small{display:block;color:var(--muted);font-size:10px}.detail b{display:block;margin-top:4px;font-size:12px;word-break:break-word}.timeline{margin-top:18px;border-left:2px solid #dbeafe;padding-left:18px}.timeline-item{position:relative;margin:0 0 15px}.timeline-item:before{content:"";position:absolute;left:-25px;top:2px;width:10px;height:10px;background:var(--blue);border-radius:50%}.timeline-item b{display:block;font-size:12px}.timeline-item span{font-size:10px;color:var(--muted)}
+.chart{height:180px;display:flex;align-items:end;gap:10px;padding:15px 8px 5px}.bar{flex:1;min-width:12px;background:#2563eb;border-radius:5px 5px 0 0;position:relative}.bar span{position:absolute;bottom:-18px;left:50%;transform:translateX(-50%);font-size:9px;color:var(--muted)}.bar em{position:absolute;top:-16px;left:50%;transform:translateX(-50%);font-style:normal;font-size:9px}
+.toast{position:fixed;right:20px;bottom:20px;background:#111827;color:#fff;padding:12px 15px;border-radius:8px;display:none;z-index:100;font-size:13px}.loading{opacity:.65;pointer-events:none}
+@media(max-width:1450px){.kpis{grid-template-columns:repeat(4,1fr)}.summary{grid-template-columns:repeat(3,1fr)}}@media(max-width:1050px){.grid2,.grid3{grid-template-columns:1fr}.detail-grid{grid-template-columns:repeat(2,1fr)}}@media(max-width:950px){.layout{grid-template-columns:1fr}nav{display:none}}@media(max-width:650px){main{padding:13px}.kpis,.summary{grid-template-columns:repeat(2,1fr)}.head{align-items:flex-start;flex-direction:column}.detail-grid{grid-template-columns:1fr}.filters .search{min-width:100%}}@media print{.top,nav,.actions,.filters,.no-print{display:none!important}.layout{display:block}main{padding:0}.card{box-shadow:none}}
+</style>
+
+<style id="zippzo-master-theme">
+/* ZIPPZO MASTER FRONTEND THEME — visual layer only */
+:root{
+ --z-purple:#331084;--z-dark:#24085F;--z-yellow:#FEB103;
+ --z-bg:#F5F6FB;--z-card:#FFFFFF;--z-text:#171A4A;--z-muted:#69708F;
+ --z-line:#E6E8F0;--z-shadow:0 5px 18px rgba(36,8,95,.07);
+}
+html,body{background:var(--z-bg)!important;color:var(--z-text)!important}
+body{font-family:Inter,Segoe UI,Arial,sans-serif!important}
+.topbar,.header,.top-header,.top-nav,.app-header{
+ background:linear-gradient(90deg,var(--z-dark),var(--z-purple))!important;
+ color:#fff!important;border-color:transparent!important;
+}
+.sidebar,.side-nav,.left-sidebar,.navigation{
+ background:linear-gradient(180deg,#25105F,#180743)!important;
+ color:#fff!important;border-color:transparent!important;
+}
+.brand{color:#fff!important}
+.sidebar .nav-button,.sidebar button,.side-nav button,.left-sidebar button,
+.navigation button,.nav-button{
+ color:#fff!important;background:transparent!important;border-radius:8px!important;
+ border-color:transparent!important;
+}
+.sidebar .nav-button:hover,.sidebar button:hover,.side-nav button:hover,
+.left-sidebar button:hover,.navigation button:hover,.nav-button:hover{
+ background:rgba(255,255,255,.09)!important;
+}
+.sidebar .nav-button.active,.sidebar .nav-button[aria-current="page"],
+.nav-button.active,.nav-button.selected,.nav-button.current{
+ background:var(--z-yellow)!important;color:#15112F!important;font-weight:900!important;
+}
+.sidebar-title,.section-title,.nav-section{
+ color:#B9A9E8!important;letter-spacing:.7px!important;font-weight:900!important;
+}
+.content,.main-content,.page-content,.workspace{background:var(--z-bg)!important}
+.card,.panel,.table-card,.summary-card,.kpi-card,.stat-card,.form-card,
+.modal-content,.toolbar,.filter-bar,.table-container{
+ background:#fff!important;border-color:var(--z-line)!important;
+ box-shadow:var(--z-shadow)!important;border-radius:12px!important;
+}
+.btn-primary,.primary-btn,.button-primary,.add-btn,.save-btn{
+ background:var(--z-yellow)!important;color:#17113B!important;border-color:var(--z-yellow)!important;
+}
+.btn-secondary,.secondary-btn{background:#fff!important;color:var(--z-text)!important;border-color:var(--z-line)!important}
+input,select,textarea{
+ border-color:#DFE2EB!important;border-radius:8px!important;background:#fff!important;color:var(--z-text)!important;
+}
+input:focus,select:focus,textarea:focus{
+ border-color:var(--z-purple)!important;box-shadow:0 0 0 3px rgba(51,16,132,.08)!important;
+}
+table{background:#fff!important}
+thead th{background:#F7F8FC!important;color:#626987!important}
+tbody td{border-color:#EDF0F5!important}
+tbody tr:hover td{background:#FAFAFF!important}
+.badge,.status-badge{border-radius:999px!important}
+.page-title,h1,h2{color:var(--z-text)!important}
+.muted,.subtitle,.page-subtitle,.help-text{color:var(--z-muted)!important}
+</style>
+
+
+<link rel="stylesheet" href="zippzo-standard.css">
+<script src="zippzo-standard.js" defer></script>
+</head>
+<body>
+<header class="top"><div class="logo">ZIPPZO</div><div class="title">HR & Admin Dashboard</div><div class="spacer"></div><span id="userName" class="title">Loading...</span><button onclick="loadAll()">↻ Refresh</button><button onclick="logout()">Logout</button></header>
+<div class="layout"><nav id="nav"></nav><main>
+<div class="head"><div><h1>HR & Admin Dashboard</h1><div class="sub">Employee master → Access → Attendance → Leave → Payroll → Performance → HR Reports</div></div><div class="actions"><button class="btn" onclick="printReport()">Print</button><button class="btn primary" onclick="loadAll()">Refresh Data</button></div></div>
+
+<div class="kpis">
+<div class="card"><div class="label">TOTAL EMPLOYEES</div><div class="value" id="kTotal">—</div><div class="note">Employee master</div></div>
+<div class="card"><div class="label">ACTIVE</div><div class="value" id="kActive">—</div><div class="note">Active employees</div></div>
+<div class="card"><div class="label">INACTIVE</div><div class="value" id="kInactive">—</div><div class="note">Inactive employees</div></div>
+<div class="card"><div class="label">ROLES</div><div class="value" id="kRoles">—</div><div class="note">Assigned roles</div></div>
+<div class="card"><div class="label">ATTENDANCE TODAY</div><div class="value" id="kAttendance">—</div><div class="note">Available if API exists</div></div>
+<div class="card"><div class="label">ON LEAVE</div><div class="value" id="kLeave">—</div><div class="note">Available if API exists</div></div>
+<div class="card"><div class="label">PAYROLL PENDING</div><div class="value" id="kPayroll">—</div><div class="note">Available if API exists</div></div>
+<div class="card"><div class="label">HR ALERTS</div><div class="value" id="kAlerts">—</div><div class="note">Missing/exception data</div></div>
+</div>
+
+<section class="section"><div class="card"><div class="section-head"><h2>HR Overview</h2><span class="muted" id="dataStatus">Checking live APIs...</span></div>
+<div class="grid3">
+<div><div class="label">Employee Status</div><div class="chart" id="statusChart"></div></div>
+<div><div class="label">Role Distribution</div><div class="chart" id="roleChart"></div></div>
+<div><div class="label">Department Distribution</div><div class="chart" id="deptChart"></div></div>
+</div></div></section>
+
+<section class="section"><div class="card"><div class="section-head"><h2>Employee Filters</h2><button class="btn" onclick="clearFilters()">Clear Filters</button></div>
+<div class="filters">
+<input class="search" id="search" placeholder="Employee ID / name / email / phone / role..." oninput="applyFilters()">
+<select id="status" onchange="applyFilters()"><option value="">All Status</option></select>
+<select id="role" onchange="applyFilters()"><option value="">All Roles</option></select>
+<select id="department" onchange="applyFilters()"><option value="">All Departments</option></select>
+<select id="location" onchange="applyFilters()"><option value="">All Locations</option></select>
+<select id="sort" onchange="applyFilters()"><option value="name">Name A-Z</option><option value="newest">Newest</option><option value="id">Employee ID</option><option value="role">Role</option></select>
+<select id="pageSize" onchange="applyFilters()"><option>25</option><option>50</option><option>100</option></select>
+</div></div></section>
+
+<section class="section summary">
+<div class="card"><div class="label">FILTERED</div><strong id="sTotal">0</strong><span>employees</span></div>
+<div class="card"><div class="label">ACTIVE</div><strong id="sActive">0</strong><span>employees</span></div>
+<div class="card"><div class="label">ROLES</div><strong id="sRoles">0</strong><span>unique roles</span></div>
+<div class="card"><div class="label">LOCATIONS</div><strong id="sLocations">0</strong><span>locations</span></div>
+<div class="card"><div class="label">DEPARTMENTS</div><strong id="sDepartments">0</strong><span>departments</span></div>
+<div class="card"><div class="label">ALERTS</div><strong id="sAlerts">0</strong><span>records needing review</span></div>
+</section>
+
+<section class="section grid2">
+<div class="card"><div class="section-head"><h2>HR Alerts</h2><span class="tag warn" id="alertCount">0</span></div><div class="list" id="alertList"></div></div>
+<div class="card"><div class="section-head"><h2>Admin Quick Access</h2></div>
+<div class="list">
+<div class="list-row"><div><b>Employee Management</b><span class="muted">Employee master and profiles</span></div><button class="btn" onclick="go('employees.html')">Open</button></div>
+<div class="list-row"><div><b>Attendance</b><span class="muted">Attendance and shifts</span></div><button class="btn" onclick="go('attendance.html')">Open</button></div>
+<div class="list-row"><div><b>Leave Management</b><span class="muted">Leave requests and approvals</span></div><button class="btn" onclick="go('leave-management.html')">Open</button></div>
+<div class="list-row"><div><b>Payroll</b><span class="muted">Salary and payroll records</span></div><button class="btn" onclick="go('payroll.html')">Open</button></div>
+<div class="list-row"><div><b>Access Control</b><span class="muted">Roles and permissions</span></div><button class="btn" onclick="go('access-control.html')">Open</button></div>
+</div></div>
+</section>
+
+<section class="section"><div class="section-head"><h2>Employee Master</h2><span class="muted" id="resultCount">0 employees</span></div>
+<div class="table-wrap"><table class="table"><thead><tr><th>Employee ID</th><th>Name</th><th>Designation</th><th>Role</th><th>Department</th><th>Location</th><th>Phone</th><th>Email</th><th>Status</th><th>Joined</th><th>Action</th></tr></thead><tbody id="body"></tbody></table></div>
+<div style="display:flex;justify-content:space-between;align-items:center;padding:11px 2px;font-size:11px;color:var(--muted)"><span id="pageInfo">Page 1</span><div id="pager" style="display:flex;gap:5px"></div></div></section>
+</main></div>
+
+<div class="modal" id="modal"><div class="modal-box"><div class="modal-head"><h2>Employee Details</h2><button class="close" onclick="closeModal()">✕</button></div><div id="detail"></div></div></div>
+<div class="toast" id="toast"></div>
+<script>
+const API=window.location.origin,TOKEN_KEY="zippzo_session_token";let token=localStorage.getItem(TOKEN_KEY),employees=[],filtered=[],roles=[],attendance=[],leaveRows=[],payroll=[];let page=1;
+const navLinks=[["index.html","Dashboard"],["hr-dashboard.html","HR Dashboard"],["employees.html","Employees"],["attendance.html","Attendance"],["shift-management.html","Shift Management"],["leave-management.html","Leave Management"],["payroll.html","Payroll"],["employee-documents.html","Employee Documents"],["employee-performance.html","Performance"],["hr-reports.html","HR Reports"],["products.html","Products"],["suppliers.html","Suppliers"],["locations.html","Locations"],["inventory.html","Inventory"],["stock-movements.html","Stock Movements"],["bins.html","Bins"],["purchase-orders.html","Purchase Orders"],["grn.html","GRN"],["putaway.html","Putaway"],["create-batch.html","Create Batch"],["picking.html","Picking"],["sorting.html","Sorting"],["grid-putaway.html","Grid Putaway"],["vehicle-arrival.html","Vehicle Arrival"],["dispatch.html","Dispatch"],["store-receiving.html","Store Receiving"],["orders.html","Orders"],["order-report.html","Order Report"],["access-control.html","Access Control"],["audit-logs.html","Audit Logs"],["system-settings.html","System Settings"]];
+function esc(v){return String(v??"").replace(/[&<>"']/g,m=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#039;"}[m]))}
+function num(v){return Number(v||0)}
+function arr(d){if(Array.isArray(d))return d;if(Array.isArray(d?.items))return d.items;if(Array.isArray(d?.data))return d.data;if(Array.isArray(d?.results))return d.results;return[]}
+function field(x,...keys){for(const k of keys)if(x?.[k]!==undefined&&x?.[k]!==null&&x?.[k]!=="")return x[k];return""}
+function toast(s){const x=document.getElementById("toast");x.textContent=s;x.style.display="block";clearTimeout(window.tt);window.tt=setTimeout(()=>x.style.display="none",3000)}
+async function api(path,opt={}){const h={"Content-Type":"application/json",...(opt.headers||{})};if(token)h.Authorization="Bearer "+token;const r=await fetch(API+path,{...opt,headers:h});if(r.status===401){localStorage.removeItem(TOKEN_KEY);localStorage.removeItem("zippzo_user");location.href="index.html";throw Error("Session expired")}const t=await r.text();let d={};try{d=t?JSON.parse(t):{}}catch{}if(!r.ok)throw Error(d.detail||d.message||"Request failed");return d}
+async function optional(paths){for(const p of paths){try{return await api(p)}catch{}}return[]}
+function nav(){document.getElementById("nav").innerHTML="<h4>HR & Admin</h4>"+navLinks.slice(0,10).map(x=>`<a href="${x[0]}" class="${location.pathname.endsWith(x[0])?"active":""}">${x[1]}</a>`).join("")+"<h4>Operations</h4>"+navLinks.slice(10).map(x=>`<a href="${x[0]}">${x[1]}</a>`).join("")}
+function name(x){return String(field(x,"name","full_name","employee_name")||"—")}
+function eid(x){return String(field(x,"employee_id","emp_id","code","id")||"—")}
+function role(x){return String(field(x,"role_name","role","designation")||"—")}
+function dept(x){return String(field(x,"department","department_name","team")||"—")}
+function loc(x){return String(field(x,"location_name","location","city","site")||"—")}
+function status(x){let s=field(x,"status","employment_status","active");if(s===true)return"ACTIVE";if(s===false)return"INACTIVE";return String(s||"ACTIVE").toUpperCase()}
+function designation(x){return String(field(x,"designation","job_title","position")||"—")}
+function phone(x){return String(field(x,"phone","mobile","mobile_number","contact_number")||"—")}
+function email(x){return String(field(x,"email","company_email")||"—")}
+function joined(x){return String(field(x,"joining_date","joined_at","date_of_joining","created_at")||"—")}
+function alertFor(x){return !name(x)||name(x)==="—"||!email(x)||email(x)==="—"||!role(x)||role(x)==="—"||status(x)==="INACTIVE"}
+function statusClass(s){return s==="ACTIVE"?"good":s==="INACTIVE"?"bad":"warn"}
+
+async function loadAll(){document.body.classList.add("loading");try{
+const [ed,rd,ad,ld,pd]=await Promise.all([
+optional(["/api/employees"]),
+optional(["/api/roles"]),
+optional(["/api/attendance/today","/api/attendance"]),
+optional(["/api/leave","/api/leave-management"]),
+optional(["/api/payroll","/api/payroll/records"])
+]);employees=arr(ed);roles=arr(rd);attendance=arr(ad);leaveRows=arr(ld);payroll=arr(pd);
+try{const me=await api("/api/auth/me");document.getElementById("userName").textContent=me.employee?.name||me.name||me.user?.name||"Zippzo User"}catch{}
+document.getElementById("dataStatus").textContent=`Live employee records: ${employees.length}`;
+buildFilters();page=1;applyFilters();renderKpis();toast("HR dashboard refreshed")
+}catch(e){toast(e.message||"Unable to load HR dashboard")}finally{document.body.classList.remove("loading")}}
+function fill(id,values,label){const el=document.getElementById(id),old=el.value;el.innerHTML=`<option value="">${label}</option>`+values.map(v=>`<option value="${esc(v)}">${esc(v)}</option>`).join("");if(values.includes(old))el.value=old}
+function buildFilters(){fill("status",[...new Set(employees.map(status))].sort(),"All Status");fill("role",[...new Set(employees.map(role).filter(x=>x!=="—"))].sort(),"All Roles");fill("department",[...new Set(employees.map(dept).filter(x=>x!=="—"))].sort(),"All Departments");fill("location",[...new Set(employees.map(loc).filter(x=>x!=="—"))].sort(),"All Locations")}
+function applyFilters(){const q=document.getElementById("search").value.toLowerCase().trim(),st=document.getElementById("status").value,ro=document.getElementById("role").value,de=document.getElementById("department").value,lo=document.getElementById("location").value;
+filtered=employees.filter(x=>{const b=JSON.stringify(x).toLowerCase();return(!q||b.includes(q))&&(!st||status(x)===st)&&(!ro||role(x)===ro)&&(!de||dept(x)===de)&&(!lo||loc(x)===lo)});
+const sort=document.getElementById("sort").value;filtered.sort((a,b)=>sort==="newest"?String(joined(b)).localeCompare(String(joined(a))):sort==="id"?eid(a).localeCompare(eid(b)):sort==="role"?role(a).localeCompare(role(b)):name(a).localeCompare(name(b)));page=1;render()}
+function renderKpis(){const active=employees.filter(x=>status(x)==="ACTIVE").length,inactive=employees.filter(x=>status(x)==="INACTIVE").length,roleCount=new Set(employees.map(role)).size;document.getElementById("kTotal").textContent=employees.length;document.getElementById("kActive").textContent=active;document.getElementById("kInactive").textContent=inactive;document.getElementById("kRoles").textContent=roleCount;document.getElementById("kAttendance").textContent=attendance.length||"—";document.getElementById("kLeave").textContent=leaveRows.length||"—";document.getElementById("kPayroll").textContent=payroll.length||"—";document.getElementById("kAlerts").textContent=employees.filter(alertFor).length;renderCharts()}
+function render(){document.getElementById("sTotal").textContent=filtered.length;document.getElementById("sActive").textContent=filtered.filter(x=>status(x)==="ACTIVE").length;document.getElementById("sRoles").textContent=new Set(filtered.map(role)).size;document.getElementById("sLocations").textContent=new Set(filtered.map(loc)).size;document.getElementById("sDepartments").textContent=new Set(filtered.map(dept)).size;document.getElementById("sAlerts").textContent=filtered.filter(alertFor).length;document.getElementById("resultCount").textContent=filtered.length+" employees";renderAlerts();renderTable();renderPager()}
+function renderCharts(){barChart("statusChart",[["Active",employees.filter(x=>status(x)==="ACTIVE").length],["Inactive",employees.filter(x=>status(x)==="INACTIVE").length]]);const rm={};employees.forEach(x=>rm[role(x)]=(rm[role(x)]||0)+1);barChart("roleChart",Object.entries(rm).sort((a,b)=>b[1]-a[1]).slice(0,6));const dm={};employees.forEach(x=>dm[dept(x)]=(dm[dept(x)]||0)+1);barChart("deptChart",Object.entries(dm).sort((a,b)=>b[1]-a[1]).slice(0,6))}
+function barChart(id,data){const el=document.getElementById(id),max=Math.max(1,...data.map(x=>x[1]));el.innerHTML=data.length?data.map(([l,v])=>`<div class="bar" style="height:${Math.max(8,v/max*135)}px"><em>${v}</em><span>${esc(String(l).slice(0,10))}</span></div>`).join(""):`<div class="empty">No data</div>`}
+function renderAlerts(){const a=filtered.filter(alertFor).slice(0,12);document.getElementById("alertCount").textContent=filtered.filter(alertFor).length;document.getElementById("alertList").innerHTML=a.length?a.map(x=>`<div class="list-row"><div><b>${esc(eid(x))} · ${esc(name(x))}</b><span class="muted">${!email(x)||email(x)==="—"?"Missing email · ":""}${!role(x)||role(x)==="—"?"Missing role · ":""}${status(x)==="INACTIVE"?"Inactive":"Review record"}</span></div><span class="tag ${statusClass(status(x))}">${esc(status(x))}</span></div>`).join(""):`<div class="empty">No HR alerts.</div>`}
+function renderTable(){const size=Number(document.getElementById("pageSize").value||25),pages=Math.max(1,Math.ceil(filtered.length/size));if(page>pages)page=pages;const d=filtered.slice((page-1)*size,page*size);document.getElementById("body").innerHTML=d.length?d.map((x,i)=>`<tr><td><b>${esc(eid(x))}</b></td><td>${esc(name(x))}</td><td>${esc(designation(x))}</td><td>${esc(role(x))}</td><td>${esc(dept(x))}</td><td>${esc(loc(x))}</td><td>${esc(phone(x))}</td><td>${esc(email(x))}</td><td><span class="tag ${statusClass(status(x))}">${esc(status(x))}</span></td><td>${esc(joined(x))}</td><td><button class="btn" onclick="details(${(page-1)*size+i})">View</button></td></tr>`).join(""):`<tr><td colspan="11" class="empty">No employees match the selected filters.</td></tr>`}
+function renderPager(){const size=Number(document.getElementById("pageSize").value||25),pages=Math.max(1,Math.ceil(filtered.length/size));document.getElementById("pageInfo").textContent=`Page ${page} of ${pages} · ${filtered.length} employees`;let b="",s=Math.max(1,page-2),e=Math.min(pages,s+4);if(page>1)b+=`<button class="btn" onclick="gotoPage(${page-1})">‹</button>`;for(let p=s;p<=e;p++)b+=`<button class="btn ${p===page?"primary":""}" onclick="gotoPage(${p})">${p}</button>`;if(page<pages)b+=`<button class="btn" onclick="gotoPage(${page+1})">›</button>`;document.getElementById("pager").innerHTML=b}
+function gotoPage(p){page=p;renderTable();renderPager()}
+function D(a,b){return`<div class="detail"><small>${esc(a)}</small><b>${esc(b??"—")}</b></div>`}
+function details(i){const x=filtered[i];if(!x)return;document.getElementById("detail").innerHTML=`<div class="detail-grid">${D("Employee ID",eid(x))}${D("Name",name(x))}${D("Designation",designation(x))}${D("Role",role(x))}${D("Department",dept(x))}${D("Location",loc(x))}${D("Phone",phone(x))}${D("Email",email(x))}${D("Status",status(x))}${D("Joining Date",joined(x))}${D("Employee Database ID",field(x,"id")||"—")}${D("Manager",field(x,"manager_name","manager","reporting_manager")||"—")}${D("Employment Type",field(x,"employment_type","type")||"—")}${D("Shift",field(x,"shift_name","shift")||"—")}${D("Blood Group",field(x,"blood_group")||"—")}${D("Created",field(x,"created_at")||"—")}</div><div class="timeline"><div class="timeline-item"><b>Employee Master</b><span>${esc(name(x))} · ${esc(eid(x))}</span></div><div class="timeline-item"><b>Role & Access</b><span>${esc(role(x))} · ${esc(dept(x))}</span></div><div class="timeline-item"><b>Work Location</b><span>${esc(loc(x))}</span></div><div class="timeline-item"><b>Employment Status</b><span>${esc(status(x))}</span></div></div>`;document.getElementById("modal").classList.add("show")}
+function closeModal(){document.getElementById("modal").classList.remove("show")}
+function clearFilters(){document.getElementById("search").value="";["status","role","department","location"].forEach(id=>document.getElementById(id).value="");document.getElementById("sort").value="name";document.getElementById("pageSize").value="25";applyFilters()}
+function go(p){location.href=p}
+function printReport(){window.print()}
+async function logout(){try{if(token)await api("/api/auth/logout",{method:"POST",body:JSON.stringify({session_token:token})})}catch{}localStorage.removeItem(TOKEN_KEY);localStorage.removeItem("zippzo_user");location.href="index.html"}
+document.getElementById("modal").addEventListener("click",e=>{if(e.target.id==="modal")closeModal()});(async()=>{nav();await loadAll()})();
+</script>
+
+<script id="zippzo-master-frontend">
+document.addEventListener("DOMContentLoaded", function(){
+  // Hide the retired Dropping module everywhere.
+  document.querySelectorAll("a,button").forEach(function(el){
+    const t=(el.textContent||"").trim().toLowerCase();
+    if(t==="dropping" || t.includes("dropping")) el.style.display="none";
+  });
+
+  // Use the real Zippzo logo wherever a common brand element exists.
+  document.querySelectorAll(".brand,.logo,.brand-logo").forEach(function(el){
+    if(!el.querySelector("img")){
+      const img=document.createElement("img");
+      img.src="zippzo-logo.jpg";
+      img.alt="Zippzo";
+      img.style.cssText="width:148px;max-height:55px;object-fit:contain;object-position:left center;";
+      el.prepend(img);
+    }
+  });
+});
+</script>
+
+</body>
+</html>

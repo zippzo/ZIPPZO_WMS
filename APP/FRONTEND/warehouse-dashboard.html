@@ -1,0 +1,225 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1.0">
+<title>Zippzo Warehouse Control Tower</title>
+<style>
+*{box-sizing:border-box}body{margin:0;font-family:Inter,Arial,sans-serif;background:#f4f7fb;color:#172033}
+:root{--primary:#111827;--accent:#f59e0b;--blue:#2563eb;--green:#16a34a;--red:#dc2626;--muted:#64748b;--line:#e2e8f0;--card:#fff}
+.top{height:68px;background:var(--primary);color:#fff;display:flex;align-items:center;padding:0 24px;gap:18px;position:sticky;top:0;z-index:10}
+.logo{font-size:25px;font-weight:900;letter-spacing:1px}.title{font-size:15px;color:#cbd5e1}.spacer{flex:1}.top button{border:1px solid #475569;background:#1f2937;color:#fff;border-radius:8px;padding:9px 13px;cursor:pointer}
+.layout{display:grid;grid-template-columns:230px 1fr;min-height:calc(100vh - 68px)}
+nav{background:#fff;border-right:1px solid var(--line);padding:16px 10px;position:sticky;top:68px;height:calc(100vh - 68px);overflow:auto}
+nav h4{margin:10px 12px;color:#94a3b8;font-size:11px;text-transform:uppercase}
+nav a{display:block;text-decoration:none;color:#334155;padding:10px 12px;border-radius:8px;font-size:13px;margin:2px 0}
+nav a:hover,nav a.active{background:#fff7ed;color:#c2410c;font-weight:700}
+main{padding:22px;min-width:0}.head{display:flex;justify-content:space-between;gap:15px;align-items:center;margin-bottom:18px}.head h1{margin:0;font-size:25px}.sub{color:var(--muted);font-size:13px;margin-top:4px}
+.actions{display:flex;gap:8px}.btn{border:1px solid var(--line);background:#fff;border-radius:8px;padding:9px 13px;cursor:pointer}.btn.primary{background:var(--blue);border-color:var(--blue);color:#fff}.btn:hover{filter:brightness(.97)}
+.grid{display:grid;grid-template-columns:repeat(6,minmax(130px,1fr));gap:12px}.card{background:var(--card);border:1px solid var(--line);border-radius:12px;padding:15px;box-shadow:0 1px 2px #00000008}.kpi-label{font-size:12px;color:var(--muted)}.kpi{font-size:25px;font-weight:800;margin-top:7px}.kpi-note{font-size:11px;color:var(--muted);margin-top:5px}
+.section{margin-top:18px}.section-title{display:flex;justify-content:space-between;align-items:center;margin-bottom:10px}.section-title h2{font-size:16px;margin:0}.muted{color:var(--muted)}
+.ops{display:grid;grid-template-columns:repeat(4,1fr);gap:12px}.op{position:relative}.op strong{font-size:22px;display:block;margin:5px 0}.bar{height:7px;background:#e2e8f0;border-radius:99px;overflow:hidden;margin-top:10px}.bar i{display:block;height:100%;background:var(--blue);width:0}.tag{display:inline-block;border-radius:99px;padding:4px 8px;font-size:10px;font-weight:700;background:#eef2ff;color:#3730a3}.tag.warn{background:#fff7ed;color:#c2410c}.tag.good{background:#f0fdf4;color:#15803d}.tag.bad{background:#fef2f2;color:#b91c1c}
+.columns{display:grid;grid-template-columns:1.2fr .8fr;gap:14px}.table-wrap{overflow:auto;border:1px solid var(--line);border-radius:10px}.table{width:100%;border-collapse:collapse;font-size:12px;background:#fff}.table th{background:#f8fafc;color:#64748b;text-align:left;font-size:11px;text-transform:uppercase}.table th,.table td{padding:10px;border-bottom:1px solid #edf2f7;white-space:nowrap}.table tr:last-child td{border-bottom:0}
+.alert{display:flex;justify-content:space-between;gap:10px;padding:11px;border-bottom:1px solid #edf2f7;font-size:12px}.alert:last-child{border:0}.alert b{display:block;margin-bottom:3px}
+.flow{display:grid;grid-template-columns:repeat(8,1fr);gap:7px}.flowbox{background:#fff;border:1px solid var(--line);border-radius:9px;padding:12px 7px;text-align:center;position:relative}.flowbox:not(:last-child):after{content:"›";position:absolute;right:-9px;top:18px;color:#94a3b8;font-size:20px;font-weight:800;z-index:2}.flowbox .n{font-size:19px;font-weight:800}.flowbox small{color:var(--muted);font-size:10px}
+.filters{display:flex;gap:8px;flex-wrap:wrap}.filters input,.filters select{padding:9px;border:1px solid var(--line);border-radius:8px;background:#fff;font-size:12px}
+.empty{text-align:center;color:#94a3b8;padding:25px}
+.toast{position:fixed;right:20px;bottom:20px;background:#111827;color:#fff;padding:12px 15px;border-radius:8px;display:none;z-index:30;font-size:13px}
+.loading{opacity:.6}
+@media(max-width:1100px){.grid{grid-template-columns:repeat(3,1fr)}.ops{grid-template-columns:repeat(2,1fr)}.flow{grid-template-columns:repeat(4,1fr)}.columns{grid-template-columns:1fr}}
+@media(max-width:750px){.layout{grid-template-columns:1fr}nav{display:none}.grid{grid-template-columns:repeat(2,1fr)}main{padding:14px}.head{align-items:flex-start;flex-direction:column}.flow{grid-template-columns:repeat(2,1fr)}.flowbox:not(:last-child):after{display:none}}
+</style>
+
+<link rel="stylesheet" href="zippzo-standard.css">
+<script src="zippzo-standard.js" defer></script>
+</head>
+<body>
+<header class="top">
+  <div class="logo">ZIPPZO</div><div class="title">Warehouse Control Tower</div><div class="spacer"></div>
+  <span id="userName" class="title">Loading...</span>
+  <button onclick="refreshAll()">↻ Refresh</button><button onclick="logout()">Logout</button>
+</header>
+
+<div class="layout">
+<nav id="nav"></nav>
+<main>
+  <div class="head">
+    <div><h1>Warehouse Control Tower</h1><div class="sub">Real-time operational overview across inbound, inventory, fulfillment and dispatch.</div></div>
+    <div class="actions"><button class="btn" onclick="exportCSV()">Export CSV</button><button class="btn primary" onclick="refreshAll()">Refresh Data</button></div>
+  </div>
+
+  <div class="grid" id="kpis">
+    <div class="card"><div class="kpi-label">Total Orders</div><div class="kpi" id="kOrders">—</div><div class="kpi-note">All current orders</div></div>
+    <div class="card"><div class="kpi-label">Open Orders</div><div class="kpi" id="kOpen">—</div><div class="kpi-note">Not delivered/cancelled</div></div>
+    <div class="card"><div class="kpi-label">Inventory SKUs</div><div class="kpi" id="kSku">—</div><div class="kpi-note">Inventory records</div></div>
+    <div class="card"><div class="kpi-label">Low Stock</div><div class="kpi" id="kLow">—</div><div class="kpi-note">At/below reorder level</div></div>
+    <div class="card"><div class="kpi-label">Putaway Pending</div><div class="kpi" id="kPut">—</div><div class="kpi-note">Awaiting completion</div></div>
+    <div class="card"><div class="kpi-label">Stock Available</div><div class="kpi" id="kStock">—</div><div class="kpi-note">Available units</div></div>
+  </div>
+
+  <section class="section">
+    <div class="section-title"><h2>End-to-End Warehouse Flow</h2><span class="tag good" id="lastRefresh">Not refreshed</span></div>
+    <div class="flow">
+      <div class="flowbox"><small>INBOUND</small><div class="n" id="fGRN">—</div><small>GRN</small></div>
+      <div class="flowbox"><small>PUTAWAY</small><div class="n" id="fPut">—</div><small>Tasks</small></div>
+      <div class="flowbox"><small>INVENTORY</small><div class="n" id="fInv">—</div><small>Records</small></div>
+      <div class="flowbox"><small>ORDERS</small><div class="n" id="fOrd">—</div><small>Open</small></div>
+      <div class="flowbox"><small>PICKING</small><div class="n" id="fPick">—</div><small>Tasks</small></div>
+      <div class="flowbox"><small>SORTING</small><div class="n" id="fSort">—</div><small>Tasks</small></div>
+      <div class="flowbox"><small>GRID</small><div class="n" id="fGrid">—</div><small>Tasks</small></div>
+      <div class="flowbox"><small>DISPATCH</small><div class="n" id="fDisp">—</div><small>Records</small></div>
+    </div>
+  </section>
+
+  <section class="section">
+    <div class="section-title"><h2>Operational Queues</h2></div>
+    <div class="ops">
+      <div class="card op"><span class="tag">INBOUND</span><strong id="opInbound">—</strong><span class="muted">GRNs / receipts</span><div class="bar"><i id="barInbound"></i></div></div>
+      <div class="card op"><span class="tag warn">PUTAWAY</span><strong id="opPut">—</strong><span class="muted">Pending tasks</span><div class="bar"><i id="barPut"></i></div></div>
+      <div class="card op"><span class="tag">FULFILLMENT</span><strong id="opFulfill">—</strong><span class="muted">Open customer orders</span><div class="bar"><i id="barFulfill"></i></div></div>
+      <div class="card op"><span class="tag good">INVENTORY</span><strong id="opStock">—</strong><span class="muted">Available units</span><div class="bar"><i id="barStock"></i></div></div>
+    </div>
+  </section>
+
+  <section class="section columns">
+    <div class="card">
+      <div class="section-title"><h2>Recent Orders</h2><button class="btn" onclick="location.href='orders.html'">Open Orders</button></div>
+      <div class="filters"><input id="orderSearch" placeholder="Search order/customer..." oninput="renderOrders()"><select id="orderStatus" onchange="renderOrders()"><option value="">All status</option></select></div>
+      <div class="table-wrap" style="margin-top:10px"><table class="table"><thead><tr><th>Order</th><th>Customer</th><th>Status</th><th>Total</th><th>Location</th></tr></thead><tbody id="ordersBody"></tbody></table></div>
+    </div>
+    <div class="card">
+      <div class="section-title"><h2>Operational Alerts</h2></div>
+      <div id="alerts"></div>
+    </div>
+  </section>
+
+  <section class="section columns">
+    <div class="card">
+      <div class="section-title"><h2>Inventory Snapshot</h2><button class="btn" onclick="location.href='inventory.html'">Open Inventory</button></div>
+      <div class="filters"><input id="invSearch" placeholder="Search SKU/product/location..." oninput="renderInventory()"></div>
+      <div class="table-wrap" style="margin-top:10px"><table class="table"><thead><tr><th>SKU</th><th>Product</th><th>Location</th><th>Available</th><th>Reserved</th><th>Status</th></tr></thead><tbody id="invBody"></tbody></table></div>
+    </div>
+    <div class="card">
+      <div class="section-title"><h2>Module Status</h2></div>
+      <div id="moduleStatus"></div>
+    </div>
+  </section>
+</main>
+</div>
+<div id="toast" class="toast"></div>
+
+<script>
+const API=window.location.origin;
+const TOKEN_KEY="zippzo_session_token";
+const USER_KEY="zippzo_user";
+let token=localStorage.getItem(TOKEN_KEY);
+let orders=[], inventory=[], putaway=[], grns=[], picking=[], sorting=[], grid=[], dispatch=[];
+
+function esc(v){return String(v??"").replace(/[&<>"']/g,m=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#039;"}[m]));}
+function money(v){return "₹"+Number(v||0).toLocaleString("en-IN",{minimumFractionDigits:2,maximumFractionDigits:2});}
+function showToast(msg){const x=document.getElementById("toast");x.textContent=msg;x.style.display="block";clearTimeout(window.tt);window.tt=setTimeout(()=>x.style.display="none",2600);}
+async function api(path,opt={}){const h={"Content-Type":"application/json",...(opt.headers||{})};if(token)h.Authorization="Bearer "+token;const r=await fetch(API+path,{...opt,headers:h});if(r.status===401){localStorage.removeItem(TOKEN_KEY);localStorage.removeItem(USER_KEY);location.href="index.html";throw new Error("Session expired");}const t=await r.text();let d={};try{d=t?JSON.parse(t):{}}catch{d={raw:t}}if(!r.ok)throw new Error(d.detail||d.message||"Request failed");return d;}
+async function tryApi(paths){let last;for(const p of paths){try{return await api(p)}catch(e){last=e}}throw last||new Error("API unavailable");}
+function arr(d){if(Array.isArray(d))return d;if(Array.isArray(d?.items))return d.items;if(Array.isArray(d?.data))return d.data;if(Array.isArray(d?.results))return d.results;return [];}
+function statusClass(s){s=String(s||"").toUpperCase();if(["COMPLETED","DELIVERED","RECEIVED","READY","ACTIVE"].includes(s))return"good";if(["CANCELLED","DAMAGED","ERROR","HOLD"].includes(s))return"bad";if(["PENDING","NEW","ASSIGNED","IN_PROGRESS","PICKING","PACKING"].includes(s))return"warn";return"";}
+function countOpen(a){return a.filter(x=>!["DELIVERED","CANCELLED","COMPLETED","RECEIVED"].includes(String(x.status||"").toUpperCase())).length;}
+
+async function loadNav(){
+ const links=[
+ ["index.html","Dashboard"],["products.html","Products"],["suppliers.html","Suppliers"],["locations.html","Locations"],
+ ["inventory.html","Inventory"],["stock-movements.html","Stock Movements"],["bins.html","Bins"],["purchase-orders.html","Purchase Orders"],
+ ["grn.html","GRN"],["putaway.html","Putaway"],["create-batch.html","Create Batch"],["picking.html","Picking"],["sorting.html","Sorting"],
+ ["grid-putaway.html","Grid Putaway"],["vehicle-arrival.html","Vehicle Arrival"],["dispatch.html","Dispatch"],["store-receiving.html","Store Receiving"],
+ ["orders.html","Orders"],["picking-ipp.html","Picking IPP"],["sorting-ipp.html","Sorting IPP"],["access-control.html","Access Control"],
+ ["audit-logs.html","Audit Logs"],["system-settings.html","System Settings"]
+ ];
+ document.getElementById("nav").innerHTML="<h4>Operations</h4>"+links.map(x=>`<a href="${x[0]}" class="${location.pathname.endsWith(x[0])?'active':''}">${x[1]}</a>`).join("");
+}
+
+async function loadData(){
+ const jobs=[
+  tryApi(["/api/orders"]).then(d=>orders=arr(d)).catch(()=>orders=[]),
+  tryApi(["/api/inventory"]).then(d=>inventory=arr(d)).catch(()=>inventory=[]),
+  tryApi(["/api/putaway"]).then(d=>putaway=arr(d)).catch(()=>putaway=[]),
+  tryApi(["/api/grn"]).then(d=>grns=arr(d)).catch(()=>grns=[]),
+  tryApi(["/api/picking","/api/picking/tasks","/api/picking-tasks"]).then(d=>picking=arr(d)).catch(()=>picking=[]),
+  tryApi(["/api/sorting"]).then(d=>sorting=arr(d)).catch(()=>sorting=[]),
+  tryApi(["/api/grid-putaway","/api/grid-putaway/tasks"]).then(d=>grid=arr(d)).catch(()=>grid=[]),
+  tryApi(["/api/dispatch","/api/dispatches","/api/store-dispatches"]).then(d=>dispatch=arr(d)).catch(()=>dispatch=[])
+ ];
+ await Promise.all(jobs);
+}
+
+function renderKPIs(){
+ const open=countOpen(orders);
+ const low=inventory.filter(x=>Number(x.available_qty??0)<=Number(x.reorder_level??20)).length;
+ const stock=inventory.reduce((n,x)=>n+Number(x.available_qty||0),0);
+ const pending=putaway.filter(x=>!["COMPLETED","CANCELLED"].includes(String(x.status||"").toUpperCase())).length;
+ [["kOrders",orders.length],["kOpen",open],["kSku",inventory.length],["kLow",low],["kPut",pending],["kStock",stock],["fGRN",grns.length],["fPut",pending],["fInv",inventory.length],["fOrd",open],["fPick",picking.length],["fSort",sorting.length],["fGrid",grid.length],["fDisp",dispatch.length],["opInbound",grns.length],["opPut",pending],["opFulfill",open],["opStock",stock]].forEach(([id,v])=>document.getElementById(id).textContent=Number(v).toLocaleString("en-IN"));
+ ["barInbound","barPut","barFulfill","barStock"].forEach((id,i)=>document.getElementById(id).style.width=Math.min(100,[grns.length,pending,open,stock][i]%101)+"%");
+}
+
+function renderOrders(){
+ const q=document.getElementById("orderSearch").value.toLowerCase(), s=document.getElementById("orderStatus").value;
+ let a=orders.filter(o=>(!q||JSON.stringify(o).toLowerCase().includes(q))&&(!s||String(o.status||"").toUpperCase()===s)).slice(-20).reverse();
+ document.getElementById("ordersBody").innerHTML=a.length?a.map(o=>`<tr><td><b>${esc(o.order_number||o.order_no||("#"+o.id))}</b></td><td>${esc(o.customer_name||o.customer||"—")}</td><td><span class="tag ${statusClass(o.status)}">${esc(o.status||"—")}</span></td><td>${money(o.total_amount??o.total??0)}</td><td>${esc(o.location_name||o.location_code||o.city||"—")}</td></tr>`).join(""):`<tr><td colspan="5" class="empty">No orders found</td></tr>`;
+}
+
+function renderInventory(){
+ const q=document.getElementById("invSearch").value.toLowerCase();
+ let a=inventory.filter(x=>!q||JSON.stringify(x).toLowerCase().includes(q)).slice(0,25);
+ document.getElementById("invBody").innerHTML=a.length?a.map(x=>{
+   const av=Number(x.available_qty||0),rl=Number(x.reorder_level??20);
+   return `<tr><td>${esc(x.sku||"—")}</td><td>${esc(x.product_name||x.name||"—")}</td><td>${esc(x.location_name||x.location_code||"—")}</td><td><b>${av}</b></td><td>${Number(x.reserved_qty||0)}</td><td><span class="tag ${av<=rl?'warn':'good'}">${av<=rl?'LOW':'OK'}</span></td></tr>`;
+ }).join(""):`<tr><td colspan="6" class="empty">No inventory found</td></tr>`;
+}
+
+function renderAlerts(){
+ const low=inventory.filter(x=>Number(x.available_qty||0)<=Number(x.reorder_level??20)).slice(0,5);
+ const pending=putaway.filter(x=>!["COMPLETED","CANCELLED"].includes(String(x.status||"").toUpperCase())).slice(0,5);
+ const a=[];
+ low.forEach(x=>a.push(`<div class="alert"><div><b>Low stock</b>${esc(x.product_name||x.sku||"Item")} — ${Number(x.available_qty||0)} available</div><span class="tag warn">STOCK</span></div>`));
+ pending.forEach(x=>a.push(`<div class="alert"><div><b>Putaway pending</b>${esc(x.task_number||("#"+x.id))} — ${Number(x.quantity||0)} units</div><span class="tag warn">PUTAWAY</span></div>`));
+ if(!a.length)a.push(`<div class="empty">No active operational alerts.</div>`);
+ document.getElementById("alerts").innerHTML=a.join("");
+}
+
+function renderModules(){
+ const mods=[
+ ["Inbound / GRN",grns.length,"grn.html"],["Putaway",putaway.length,"putaway.html"],["Inventory",inventory.length,"inventory.html"],
+ ["Orders",orders.length,"orders.html"],["Picking",picking.length,"picking.html"],["Sorting",sorting.length,"sorting.html"],
+ ["Grid Putaway",grid.length,"grid-putaway.html"],["Dispatch",dispatch.length,"dispatch.html"]
+ ];
+ document.getElementById("moduleStatus").innerHTML=mods.map(m=>`<div class="alert"><div><b>${m[0]}</b><span class="muted">${m[1].toLocaleString("en-IN")} records loaded</span></div><button class="btn" onclick="location.href='${m[2]}'">Open</button></div>`).join("");
+}
+
+function setFilters(){
+ const vals=[...new Set(orders.map(o=>String(o.status||"").toUpperCase()).filter(Boolean))].sort();
+ document.getElementById("orderStatus").innerHTML='<option value="">All status</option>'+vals.map(v=>`<option>${esc(v)}</option>`).join("");
+}
+
+async function refreshAll(){
+ document.body.classList.add("loading");
+ try{
+  await loadData();setFilters();renderKPIs();renderOrders();renderInventory();renderAlerts();renderModules();
+  document.getElementById("lastRefresh").textContent="Updated "+new Date().toLocaleTimeString("en-IN");
+  showToast("Warehouse data refreshed");
+ }catch(e){showToast(e.message||"Refresh failed");}
+ finally{document.body.classList.remove("loading");}
+}
+
+function exportCSV(){
+ const rows=[["Module","Records"],["GRN",grns.length],["Putaway",putaway.length],["Inventory",inventory.length],["Orders",orders.length],["Picking",picking.length],["Sorting",sorting.length],["Grid Putaway",grid.length],["Dispatch",dispatch.length]];
+ const csv=rows.map(r=>r.map(v=>`"${String(v).replaceAll('"','""')}"`).join(",")).join("\n");
+ const a=document.createElement("a");a.href=URL.createObjectURL(new Blob([csv],{type:"text/csv"}));a.download="zippzo_warehouse_control_tower.csv";a.click();
+}
+async function logout(){try{if(token)await api("/api/auth/logout",{method:"POST",body:JSON.stringify({session_token:token})});}catch{}localStorage.removeItem(TOKEN_KEY);localStorage.removeItem(USER_KEY);location.href="index.html";}
+
+(async()=>{
+ await loadNav();
+ try{const me=await api("/api/auth/me");document.getElementById("userName").textContent=me.employee?.name||me.name||me.user?.name||"Zippzo User";}catch{}
+ await refreshAll();
+})();
+</script>
+</body>
+</html>

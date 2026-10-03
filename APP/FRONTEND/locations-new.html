@@ -1,0 +1,367 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="theme-color" content="#111827">
+<title>Zippzo WMS — Location Master</title>
+<link rel="stylesheet" href="style.css">
+<style>
+.locations-page{max-width:1800px;margin:0 auto}
+.page-header{display:flex;justify-content:space-between;align-items:flex-start;gap:15px;margin-bottom:18px}
+.page-title{margin:0;font-size:27px;font-weight:900}.page-subtitle{margin:5px 0 0;color:#64748b;font-size:13px}
+.header-actions{display:flex;gap:8px;align-items:center;flex-wrap:wrap}
+.btn{border:1px solid #dbe1e8;background:#fff;color:#263244;border-radius:8px;padding:9px 12px;font-weight:800;cursor:pointer}
+.btn:hover{background:#f8fafc}.btn-primary{background:#111827;color:#fff;border-color:#111827}.btn-primary:hover{background:#000}
+.btn-danger{background:#dc2626;color:#fff;border-color:#dc2626}.btn-secondary{background:#f8fafc}
+.system-status{display:flex;align-items:center;gap:6px;color:#166534;font-size:11px;font-weight:800;background:#f0fdf4;border:1px solid #bbf7d0;padding:8px 10px;border-radius:8px}.status-dot{width:8px;height:8px;border-radius:50%;background:#22c55e}
+.summary-grid{display:grid;grid-template-columns:repeat(7,minmax(0,1fr));gap:12px;margin-bottom:16px}
+.summary-card{background:#fff;border:1px solid #e5e7eb;border-radius:12px;padding:15px;box-shadow:0 4px 15px rgba(0,0,0,.04)}
+.summary-label{font-size:10px;color:#64748b;text-transform:uppercase;font-weight:900;letter-spacing:.4px}.summary-value{font-size:25px;font-weight:900;margin-top:6px}.summary-meta{font-size:10px;color:#94a3b8;margin-top:4px}
+.form-panel,.table-card{background:#fff;border:1px solid #e5e7eb;border-radius:12px;box-shadow:0 4px 15px rgba(0,0,0,.04);margin-bottom:15px}
+.form-panel{display:none}.panel-header{padding:14px 16px;border-bottom:1px solid #e5e7eb;display:flex;justify-content:space-between;align-items:center}.panel-header strong{font-size:14px}
+.form-body{padding:17px}.form-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:13px}.form-group{display:flex;flex-direction:column;gap:5px}.form-group.full{grid-column:1/-1}.form-label{font-size:11px;font-weight:800;color:#344054}.required{color:#dc2626}
+.form-control{width:100%;height:41px;box-sizing:border-box;border:1px solid #d1d5db;border-radius:8px;padding:0 11px;outline:none;background:#fff}.form-control:focus{border-color:#2563eb;box-shadow:0 0 0 3px rgba(37,99,235,.1)}
+textarea.form-control{height:76px;padding-top:10px;resize:vertical}.form-footer{padding:13px 17px;border-top:1px solid #e5e7eb;display:flex;justify-content:flex-end;gap:8px}
+.toolbar{padding:13px 15px;border-bottom:1px solid #e5e7eb;display:grid;grid-template-columns:2fr 1fr 1fr 1fr auto auto;gap:8px}
+.toolbar input,.toolbar select{width:100%;height:40px;border:1px solid #d1d5db;border-radius:8px;padding:0 11px;background:#fff;outline:none}.toolbar input:focus,.toolbar select:focus{border-color:#111827}
+.table-header{padding:13px 15px;border-bottom:1px solid #e5e7eb;display:flex;justify-content:space-between;align-items:center;gap:10px}.table-header strong{font-size:14px}.table-header span{font-size:11px;color:#64748b}
+.table-wrapper{overflow:auto}table{width:100%;min-width:1450px;border-collapse:collapse}
+th{background:#f8fafc;color:#64748b;font-size:10px;text-align:left;padding:11px 12px;border-bottom:1px solid #e5e7eb;white-space:nowrap;position:sticky;top:0;z-index:1}
+td{padding:11px 12px;border-bottom:1px solid #f1f5f9;font-size:12px;white-space:nowrap}tbody tr:hover td{background:#fafafa}
+.location-name{font-weight:800}.location-code{color:#2563eb;font-size:10px;margin-top:3px}.muted{color:#64748b}
+.badge{display:inline-flex;padding:4px 8px;border-radius:999px;font-size:10px;font-weight:800}.badge-active{background:#dcfce7;color:#166534}.badge-inactive{background:#f1f5f9;color:#64748b}
+.badge-warehouse{background:#eff6ff;color:#1d4ed8}.badge-dark{background:#f5f3ff;color:#6d28d9}.badge-cross{background:#fff7ed;color:#c2410c}.badge-office{background:#f0fdf4;color:#15803d}
+.actions{display:flex;gap:6px}.action-btn{border:1px solid #d1d5db;background:#fff;padding:6px 9px;border-radius:7px;cursor:pointer;font-size:11px;font-weight:700}.action-btn:hover{background:#f8fafc}
+.empty{text-align:center;padding:45px;color:#64748b}.loading{text-align:center;padding:35px;color:#64748b}
+.toast{position:fixed;right:22px;bottom:22px;background:#101828;color:#fff;padding:12px 16px;border-radius:9px;font-size:12px;display:none;z-index:2000;box-shadow:0 10px 30px rgba(0,0,0,.2)}.toast.show{display:block}
+.modal-overlay{position:fixed;inset:0;background:rgba(15,23,42,.58);display:none;align-items:center;justify-content:center;z-index:1000;padding:20px}.modal-overlay.show{display:flex}
+.modal{background:#fff;width:min(760px,100%);max-height:92vh;overflow:auto;border-radius:15px;box-shadow:0 25px 70px rgba(0,0,0,.25)}.modal-header{padding:19px 21px;border-bottom:1px solid #e5e7eb;display:flex;justify-content:space-between;align-items:center}.modal-header h2{margin:0;font-size:19px}.close-btn{border:0;background:#f1f5f9;font-size:22px;border-radius:8px;padding:4px 11px;cursor:pointer}.modal-body{padding:20px}
+.detail-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:9px}.detail-item{border:1px solid #e5e7eb;border-radius:8px;padding:10px}.detail-item span{display:block;color:#64748b;font-size:9px;text-transform:uppercase;font-weight:800}.detail-item strong{display:block;margin-top:3px;font-size:12px}
+.modal-footer{padding:14px 20px;border-top:1px solid #e5e7eb;display:flex;justify-content:flex-end;gap:8px}
+@media(max-width:1300px){.summary-grid{grid-template-columns:repeat(4,1fr)}.form-grid{grid-template-columns:repeat(2,1fr)}.toolbar{grid-template-columns:2fr 1fr 1fr}}
+@media(max-width:800px){.summary-grid{grid-template-columns:repeat(2,1fr)}.page-header{flex-direction:column}.toolbar{grid-template-columns:1fr}.form-grid{grid-template-columns:1fr}.form-group.full{grid-column:auto}}
+@media(max-width:480px){.summary-grid{grid-template-columns:1fr}}
+</style>
+
+<style id="zippzo-master-theme">
+/* ZIPPZO MASTER FRONTEND THEME — visual layer only */
+:root{
+ --z-purple:#331084;--z-dark:#24085F;--z-yellow:#FEB103;
+ --z-bg:#F5F6FB;--z-card:#FFFFFF;--z-text:#171A4A;--z-muted:#69708F;
+ --z-line:#E6E8F0;--z-shadow:0 5px 18px rgba(36,8,95,.07);
+}
+html,body{background:var(--z-bg)!important;color:var(--z-text)!important}
+body{font-family:Inter,Segoe UI,Arial,sans-serif!important}
+.topbar,.header,.top-header,.top-nav,.app-header{
+ background:linear-gradient(90deg,var(--z-dark),var(--z-purple))!important;
+ color:#fff!important;border-color:transparent!important;
+}
+.sidebar,.side-nav,.left-sidebar,.navigation{
+ background:linear-gradient(180deg,#25105F,#180743)!important;
+ color:#fff!important;border-color:transparent!important;
+}
+.brand{color:#fff!important}
+.sidebar .nav-button,.sidebar button,.side-nav button,.left-sidebar button,
+.navigation button,.nav-button{
+ color:#fff!important;background:transparent!important;border-radius:8px!important;
+ border-color:transparent!important;
+}
+.sidebar .nav-button:hover,.sidebar button:hover,.side-nav button:hover,
+.left-sidebar button:hover,.navigation button:hover,.nav-button:hover{
+ background:rgba(255,255,255,.09)!important;
+}
+.sidebar .nav-button.active,.sidebar .nav-button[aria-current="page"],
+.nav-button.active,.nav-button.selected,.nav-button.current{
+ background:var(--z-yellow)!important;color:#15112F!important;font-weight:900!important;
+}
+.sidebar-title,.section-title,.nav-section{
+ color:#B9A9E8!important;letter-spacing:.7px!important;font-weight:900!important;
+}
+.content,.main-content,.page-content,.workspace{background:var(--z-bg)!important}
+.card,.panel,.table-card,.summary-card,.kpi-card,.stat-card,.form-card,
+.modal-content,.toolbar,.filter-bar,.table-container{
+ background:#fff!important;border-color:var(--z-line)!important;
+ box-shadow:var(--z-shadow)!important;border-radius:12px!important;
+}
+.btn-primary,.primary-btn,.button-primary,.add-btn,.save-btn{
+ background:var(--z-yellow)!important;color:#17113B!important;border-color:var(--z-yellow)!important;
+}
+.btn-secondary,.secondary-btn{background:#fff!important;color:var(--z-text)!important;border-color:var(--z-line)!important}
+input,select,textarea{
+ border-color:#DFE2EB!important;border-radius:8px!important;background:#fff!important;color:var(--z-text)!important;
+}
+input:focus,select:focus,textarea:focus{
+ border-color:var(--z-purple)!important;box-shadow:0 0 0 3px rgba(51,16,132,.08)!important;
+}
+table{background:#fff!important}
+thead th{background:#F7F8FC!important;color:#626987!important}
+tbody td{border-color:#EDF0F5!important}
+tbody tr:hover td{background:#FAFAFF!important}
+.badge,.status-badge{border-radius:999px!important}
+.page-title,h1,h2{color:var(--z-text)!important}
+.muted,.subtitle,.page-subtitle,.help-text{color:var(--z-muted)!important}
+</style>
+
+
+<link rel="stylesheet" href="zippzo-standard.css">
+<script src="zippzo-standard.js" defer></script>
+</head>
+<body>
+
+<header class="topbar">
+  <div class="brand">ZIPPZO <span>WMS</span></div>
+  <div class="top-user"><span id="userName">Loading...</span><button class="btn btn-danger" onclick="logout()">Logout</button></div>
+</header>
+
+<div class="layout">
+<aside class="sidebar">
+  <div class="sidebar-title">MAIN</div><button class="nav-button" onclick="location.href='index.html'">Dashboard</button>
+  <div class="sidebar-title">MASTER DATA</div><button class="nav-button" onclick="location.href='products.html'">Products</button><button class="nav-button" onclick="location.href='suppliers.html'">Suppliers</button><button class="nav-button active">Locations</button><button class="nav-button" onclick="location.href='hr-dashboard.html'">HR Dashboard</button><button class="nav-button" onclick="location.href='hr-live.html'">HR Live</button><button class="nav-button" onclick="location.href='employees.html'">Employees</button>
+  <div class="sidebar-title">WAREHOUSE</div><button class="nav-button" onclick="location.href='inventory.html'">Inventory</button><button class="nav-button" onclick="location.href='bins.html'">Bins</button><button class="nav-button" onclick="location.href='stock-movements.html'">Stock Movements</button>
+  <div class="sidebar-title">INBOUND</div><button class="nav-button" onclick="location.href='purchase-orders.html'">Purchase Orders</button><button class="nav-button" onclick="location.href='grn.html'">GRN</button><button class="nav-button" onclick="location.href='putaway.html'">Putaway</button><button class="nav-button" onclick="location.href='grid-putaway.html'">Grid Putaway</button>
+  <div class="sidebar-title">ORDERS</div><button class="nav-button" onclick="location.href='orders.html'">Orders</button><button class="nav-button" onclick="location.href='create-batch.html'">Create Batch</button><button class="nav-button" onclick="location.href='picking.html'">Picking</button><button class="nav-button" onclick="location.href='sorting.html'">Sorting</button><button class="nav-button" onclick="location.href='dispatch.html'">Dispatch</button>
+  <div class="sidebar-title">DELIVERY</div><button class="nav-button" onclick="location.href='riders.html'">Riders — Dark Store</button>
+  <div class="sidebar-title">REPORTS</div><button class="nav-button" onclick="location.href='stock-report.html'">Stock Report</button><button class="nav-button" onclick="location.href='grn-report.html'">GRN Report</button><button class="nav-button" onclick="location.href='putaway-report.html'">Putaway Report</button><button class="nav-button" onclick="location.href='order-report.html'">Order Report</button><button class="nav-button" onclick="location.href='picking-report.html'">Picking Report</button><button class="nav-button" onclick="location.href='sorting-report.html'">Sorting Report</button><button class="nav-button" onclick="location.href='picking-ipp.html'">Picking IPP</button><button class="nav-button" onclick="location.href='sorting-ipp.html'">Sorting IPP</button><button class="nav-button" onclick="location.href='delivery-report.html'">Delivery Report</button>
+</aside>
+
+<main class="content">
+<div class="locations-page">
+  <div class="page-header">
+    <div><div class="page-title">Location Master</div><div class="page-subtitle">Manage Zippzo warehouses, dark stores, cross-docks and operating locations.</div></div>
+    <div class="header-actions"><div class="system-status"><span class="status-dot"></span><span id="systemStatus">Live Database</span></div><button class="btn btn-secondary" onclick="exportCSV()">Export CSV</button><button class="btn btn-primary" onclick="openLocationForm()">+ Add Location</button></div>
+  </div>
+
+  <div class="summary-grid">
+    <div class="summary-card"><div class="summary-label">Total Locations</div><div id="totalLocations" class="summary-value">0</div><div class="summary-meta">All registered locations</div></div>
+    <div class="summary-card"><div class="summary-label">Active</div><div id="activeLocations" class="summary-value">0</div><div class="summary-meta">Currently operational</div></div>
+    <div class="summary-card"><div class="summary-label">Inactive</div><div id="inactiveLocations" class="summary-value">0</div><div class="summary-meta">Disabled locations</div></div>
+    <div class="summary-card"><div class="summary-label">Warehouses</div><div id="warehouseCount" class="summary-value">0</div><div class="summary-meta">Central warehouse nodes</div></div>
+    <div class="summary-card"><div class="summary-label">Dark Stores</div><div id="darkStoreCount" class="summary-value">0</div><div class="summary-meta">Customer fulfillment nodes</div></div>
+    <div class="summary-card"><div class="summary-label">Cross Docks</div><div id="crossDockCount" class="summary-value">0</div><div class="summary-meta">Transfer/sort nodes</div></div>
+    <div class="summary-card"><div class="summary-label">Capacity</div><div id="totalCapacity" class="summary-value">0</div><div class="summary-meta">Registered capacity units</div></div>
+  </div>
+
+  <section class="form-panel" id="locationFormPanel">
+    <div class="panel-header"><strong id="formTitle">Add New Location</strong><button class="btn btn-secondary" onclick="closeLocationForm()">Close</button></div>
+    <form id="locationForm" onsubmit="saveLocation(event)">
+      <div class="form-body">
+        <input type="hidden" id="editId">
+        <div class="form-grid">
+          <div class="form-group"><label class="form-label">Location Code <span class="required">*</span></label><input id="locationCode" class="form-control" placeholder="WH-BVR-001" required></div>
+          <div class="form-group"><label class="form-label">Location Name <span class="required">*</span></label><input id="locationName" class="form-control" placeholder="Zippzo Central Warehouse" required></div>
+          <div class="form-group"><label class="form-label">Location Type <span class="required">*</span></label><select id="locationType" class="form-control" required><option value="DARK_STORE">Dark Store</option><option value="WAREHOUSE">Warehouse</option><option value="CROSS_DOCK">Cross Dock</option><option value="OFFICE">Office</option></select></div>
+          <div class="form-group"><label class="form-label">Manager Name</label><input id="managerName" class="form-control" placeholder="Location Manager"></div>
+          <div class="form-group full"><label class="form-label">Address</label><textarea id="address" class="form-control" placeholder="Full location address"></textarea></div>
+          <div class="form-group"><label class="form-label">City</label><input id="city" class="form-control" placeholder="Bhimavaram"></div>
+          <div class="form-group"><label class="form-label">State</label><input id="state" class="form-control" value="Andhra Pradesh"></div>
+          <div class="form-group"><label class="form-label">Pincode</label><input id="pincode" class="form-control" inputmode="numeric" maxlength="6" placeholder="534201"></div>
+          <div class="form-group"><label class="form-label">Capacity</label><input id="capacity" type="number" min="0" class="form-control" value="0"></div>
+          <div class="form-group"><label class="form-label">Status</label><select id="active" class="form-control"><option value="true">Active</option><option value="false">Inactive</option></select></div>
+        </div>
+      </div>
+      <div class="form-footer"><button type="button" class="btn btn-secondary" onclick="closeLocationForm()">Cancel</button><button type="submit" id="saveBtn" class="btn btn-primary">Save Location</button></div>
+    </form>
+  </section>
+
+  <section class="table-card">
+    <div class="toolbar">
+      <input id="searchLocation" type="text" placeholder="Search code, name, city, state, manager..." oninput="filterLocations()">
+      <select id="typeFilter" onchange="filterLocations()"><option value="">All Types</option><option value="WAREHOUSE">Warehouse</option><option value="DARK_STORE">Dark Store</option><option value="CROSS_DOCK">Cross Dock</option><option value="OFFICE">Office</option></select>
+      <select id="statusFilter" onchange="filterLocations()"><option value="">All Status</option><option value="ACTIVE">Active</option><option value="INACTIVE">Inactive</option></select>
+      <select id="cityFilter" onchange="filterLocations()"><option value="">All Cities</option></select>
+      <button class="btn btn-secondary" onclick="clearFilters()">Clear</button><button class="btn btn-secondary" onclick="loadLocations()">↻ Refresh</button>
+    </div>
+    <div class="table-header"><div><strong>Location Directory</strong> <span id="resultCount">0 locations</span></div><span id="syncStatus">Loading...</span></div>
+    <div class="table-wrapper">
+      <table>
+        <thead><tr><th>ID</th><th>LOCATION</th><th>TYPE</th><th>ADDRESS</th><th>CITY</th><th>STATE</th><th>PINCODE</th><th>MANAGER</th><th>CAPACITY</th><th>STATUS</th><th>ACTIONS</th></tr></thead>
+        <tbody id="locationsTable"><tr><td colspan="11" class="loading">Loading locations...</td></tr></tbody>
+      </table>
+    </div>
+  </section>
+</div>
+</main>
+</div>
+
+<div class="modal-overlay" id="detailModal">
+<div class="modal">
+  <div class="modal-header"><h2>Location Details</h2><button class="close-btn" onclick="closeDetail()">×</button></div>
+  <div class="modal-body" id="detailBody"></div>
+  <div class="modal-footer"><button class="btn btn-secondary" onclick="closeDetail()">Close</button></div>
+</div>
+</div>
+
+<div class="toast" id="toast"></div>
+
+<script>
+"use strict";
+const API_BASE=window.location.origin,TOKEN_KEY="zippzo_session_token",USER_KEY="zippzo_user";
+let allLocations=[];
+
+function getToken(){return localStorage.getItem(TOKEN_KEY)}
+function esc(v){return String(v??"").replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#039;"}[c]))}
+function activeValue(x){return x.active!==false&&x.active!==0&&x.active!=="false"}
+function typeLabel(t){return String(t||"").replaceAll("_"," ").replace(/\b\w/g,c=>c.toUpperCase())}
+function typeBadge(t){const x=String(t||"").toUpperCase();return x==="WAREHOUSE"?"badge-warehouse":x==="DARK_STORE"?"badge-dark":x==="CROSS_DOCK"?"badge-cross":"badge-office"}
+
+async function api(path,options={}){
+  const token=getToken(),headers={...(options.headers||{})};
+  if(options.body&&!headers["Content-Type"])headers["Content-Type"]="application/json";
+  if(token)headers.Authorization=`Bearer ${token}`;
+  const response=await fetch(API_BASE+path,{...options,headers});
+  if(response.status===401){localStorage.removeItem(TOKEN_KEY);localStorage.removeItem(USER_KEY);location.href="index.html";throw new Error("Session expired")}
+  const contentType=response.headers.get("content-type")||"";let data=null;
+  try{data=contentType.includes("application/json")?await response.json():await response.text()}catch(_){}
+  if(!response.ok)throw new Error(data?.detail||data?.message||data||`Request failed: ${response.status}`);
+  return data;
+}
+function showToast(message){const t=document.getElementById("toast");t.textContent=message;t.classList.add("show");clearTimeout(window.toastTimer);window.toastTimer=setTimeout(()=>t.classList.remove("show"),3000)}
+
+async function checkAuth(){
+  const user=await api("/api/auth/me");localStorage.setItem(USER_KEY,JSON.stringify(user));
+  document.getElementById("userName").textContent=user.name||user.full_name||user.employee_id||user.email||"Zippzo User";
+}
+async function loadLocations(){
+  document.getElementById("syncStatus").textContent="Refreshing...";
+  try{
+    const data=await api("/api/locations");
+    allLocations=Array.isArray(data)?data:(Array.isArray(data?.locations)?data.locations:Array.isArray(data?.items)?data.items:[]);
+    buildCityFilter();updateSummary();renderLocations(filterData());
+    document.getElementById("syncStatus").textContent=`Live · ${new Date().toLocaleTimeString("en-IN")}`;
+    document.getElementById("systemStatus").textContent="Live Database";
+  }catch(e){
+    document.getElementById("locationsTable").innerHTML=`<tr><td colspan="11" class="empty">${esc(e.message)}</td></tr>`;
+    document.getElementById("syncStatus").textContent="Connection error";document.getElementById("systemStatus").textContent="Connection Error";showToast(e.message);
+  }
+}
+function updateSummary(){
+  const total=allLocations.length,active=allLocations.filter(activeValue).length;
+  const count=t=>allLocations.filter(x=>String(x.location_type||"").toUpperCase()===t).length;
+  const capacity=allLocations.reduce((sum,x)=>sum+(Number(x.capacity)||0),0);
+  document.getElementById("totalLocations").textContent=total;document.getElementById("activeLocations").textContent=active;
+  document.getElementById("inactiveLocations").textContent=total-active;document.getElementById("warehouseCount").textContent=count("WAREHOUSE");
+  document.getElementById("darkStoreCount").textContent=count("DARK_STORE");document.getElementById("crossDockCount").textContent=count("CROSS_DOCK");
+  document.getElementById("totalCapacity").textContent=capacity.toLocaleString("en-IN");
+}
+function buildCityFilter(){
+  const select=document.getElementById("cityFilter"),old=select.value;
+  const cities=[...new Set(allLocations.map(x=>x.city).filter(Boolean))].sort();
+  select.innerHTML='<option value="">All Cities</option>'+cities.map(c=>`<option value="${esc(c)}">${esc(c)}</option>`).join("");select.value=old;
+}
+function filterData(){
+  const q=document.getElementById("searchLocation").value.trim().toLowerCase(),type=document.getElementById("typeFilter").value,status=document.getElementById("statusFilter").value,city=document.getElementById("cityFilter").value;
+  return allLocations.filter(x=>{
+    const text=[x.code,x.location_code,x.name,x.location_name,x.city,x.state,x.manager_name,x.address,x.pincode].join(" ").toLowerCase();
+    return(!q||text.includes(q))&&(!type||String(x.location_type||"").toUpperCase()===type)&&(!status||(status==="ACTIVE"?activeValue(x):!activeValue(x)))&&(!city||x.city===city);
+  });
+}
+function filterLocations(){renderLocations(filterData())}
+function clearFilters(){document.getElementById("searchLocation").value="";document.getElementById("typeFilter").value="";document.getElementById("statusFilter").value="";document.getElementById("cityFilter").value="";renderLocations(allLocations)}
+function renderLocations(locations){
+  document.getElementById("resultCount").textContent=`${locations.length} location${locations.length===1?"":"s"}`;
+  const table=document.getElementById("locationsTable");
+  if(!locations.length){table.innerHTML='<tr><td colspan="11" class="empty">No locations found.</td></tr>';return}
+  table.innerHTML=locations.map(x=>{
+    const code=x.location_code||x.code||"—",name=x.location_name||x.name||"—",type=String(x.location_type||"").toUpperCase(),active=activeValue(x);
+    return `<tr>
+      <td>${Number(x.id)||"—"}</td>
+      <td><div class="location-name">${esc(name)}</div><div class="location-code">${esc(code)}</div></td>
+      <td><span class="badge ${typeBadge(type)}">${esc(typeLabel(type)||"Unknown")}</span></td>
+      <td title="${esc(x.address||"")}">${esc(x.address||"—")}</td>
+      <td>${esc(x.city||"—")}</td><td>${esc(x.state||"—")}</td><td>${esc(x.pincode||"—")}</td>
+      <td>${esc(x.manager_name||"—")}</td><td>${(Number(x.capacity)||0).toLocaleString("en-IN")}</td>
+      <td><span class="badge ${active?"badge-active":"badge-inactive"}">${active?"ACTIVE":"INACTIVE"}</span></td>
+      <td><div class="actions"><button class="action-btn" onclick="editLocation(${Number(x.id)})">Edit</button><button class="action-btn" onclick="viewLocation(${Number(x.id)})">View</button></div></td>
+    </tr>`;
+  }).join("");
+}
+function resetForm(){
+  document.getElementById("locationForm").reset();document.getElementById("editId").value="";document.getElementById("state").value="Andhra Pradesh";
+  document.getElementById("active").value="true";document.getElementById("capacity").value="0";
+}
+function openLocationForm(){
+  resetForm();document.getElementById("formTitle").textContent="Add New Location";document.getElementById("saveBtn").textContent="Save Location";
+  const p=document.getElementById("locationFormPanel");p.style.display="block";p.scrollIntoView({behavior:"smooth",block:"start"});
+}
+function closeLocationForm(){document.getElementById("locationFormPanel").style.display="none"}
+function editLocation(id){
+  const x=allLocations.find(v=>Number(v.id)===Number(id));if(!x)return;
+  document.getElementById("editId").value=x.id||"";document.getElementById("locationCode").value=x.location_code||x.code||"";
+  document.getElementById("locationName").value=x.location_name||x.name||"";document.getElementById("locationType").value=x.location_type||"DARK_STORE";
+  document.getElementById("managerName").value=x.manager_name||"";document.getElementById("address").value=x.address||"";
+  document.getElementById("city").value=x.city||"";document.getElementById("state").value=x.state||"Andhra Pradesh";document.getElementById("pincode").value=x.pincode||"";
+  document.getElementById("capacity").value=Number(x.capacity)||0;document.getElementById("active").value=activeValue(x)?"true":"false";
+  document.getElementById("formTitle").textContent="Edit Location";document.getElementById("saveBtn").textContent="Update Location";
+  const p=document.getElementById("locationFormPanel");p.style.display="block";p.scrollIntoView({behavior:"smooth",block:"start"});
+}
+async function saveLocation(event){
+  event.preventDefault();const form=document.getElementById("locationForm");if(!form.checkValidity()){form.reportValidity();return}
+  const id=document.getElementById("editId").value,btn=document.getElementById("saveBtn");btn.disabled=true;btn.textContent="Saving...";
+  const data={
+    code:document.getElementById("locationCode").value.trim(),name:document.getElementById("locationName").value.trim(),
+    location_type:document.getElementById("locationType").value,address:document.getElementById("address").value.trim(),
+    city:document.getElementById("city").value.trim(),state:document.getElementById("state").value.trim(),
+    pincode:document.getElementById("pincode").value.trim(),manager_name:document.getElementById("managerName").value.trim(),
+    capacity:Number(document.getElementById("capacity").value)||0,active:document.getElementById("active").value==="true"
+  };
+  try{
+    if(id)await api(`/api/locations/${id}`,{method:"PUT",body:JSON.stringify(data)});
+    else await api("/api/locations",{method:"POST",body:JSON.stringify(data)});
+    closeLocationForm();showToast(id?"Location updated successfully":"Location created successfully");await loadLocations();
+  }catch(e){showToast(e.message)}finally{btn.disabled=false;btn.textContent=id?"Update Location":"Save Location"}
+}
+function viewLocation(id){
+  const x=allLocations.find(v=>Number(v.id)===Number(id));if(!x)return;
+  document.getElementById("detailBody").innerHTML=`<div class="detail-grid">
+    <div class="detail-item"><span>Location Name</span><strong>${esc(x.location_name||x.name||"—")}</strong></div>
+    <div class="detail-item"><span>Location Code</span><strong>${esc(x.location_code||x.code||"—")}</strong></div>
+    <div class="detail-item"><span>Type</span><strong>${esc(typeLabel(x.location_type)||"—")}</strong></div>
+    <div class="detail-item"><span>Status</span><strong>${activeValue(x)?"ACTIVE":"INACTIVE"}</strong></div>
+    <div class="detail-item"><span>Manager</span><strong>${esc(x.manager_name||"—")}</strong></div>
+    <div class="detail-item"><span>Capacity</span><strong>${(Number(x.capacity)||0).toLocaleString("en-IN")}</strong></div>
+    <div class="detail-item"><span>City</span><strong>${esc(x.city||"—")}</strong></div>
+    <div class="detail-item"><span>State</span><strong>${esc(x.state||"—")}</strong></div>
+    <div class="detail-item"><span>Pincode</span><strong>${esc(x.pincode||"—")}</strong></div>
+    <div class="detail-item"><span>Location ID</span><strong>${esc(x.id||"—")}</strong></div>
+    <div class="detail-item" style="grid-column:1/-1"><span>Address</span><strong>${esc(x.address||"—")}</strong></div>
+  </div>`;
+  document.getElementById("detailModal").classList.add("show");
+}
+function closeDetail(){document.getElementById("detailModal").classList.remove("show")}
+function exportCSV(){
+  if(!allLocations.length){showToast("No locations to export");return}
+  const header=["ID","Location Code","Location Name","Type","Address","City","State","Pincode","Manager","Capacity","Status"];
+  const rows=allLocations.map(x=>[x.id,x.location_code||x.code||"",x.location_name||x.name||"",x.location_type||"",x.address||"",x.city||"",x.state||"",x.pincode||"",x.manager_name||"",x.capacity||0,activeValue(x)?"ACTIVE":"INACTIVE"].map(v=>`"${String(v).replace(/"/g,'""')}"`));
+  const csv=[header,...rows].map(r=>r.join(",")).join("\n"),url=URL.createObjectURL(new Blob([csv],{type:"text/csv;charset=utf-8;"})),a=document.createElement("a");
+  a.href=url;a.download=`Zippzo_Locations_${new Date().toISOString().slice(0,10)}.csv`;a.click();URL.revokeObjectURL(url);showToast("Location CSV exported");
+}
+document.getElementById("detailModal").addEventListener("click",e=>{if(e.target.id==="detailModal")closeDetail()});
+document.addEventListener("keydown",e=>{if(e.key==="Escape"){closeDetail();closeLocationForm()}});
+async function logout(){const t=getToken();try{if(t)await fetch(`${API_BASE}/api/auth/logout`,{method:"POST",headers:{"Content-Type":"application/json","Authorization":`Bearer ${t}`},body:JSON.stringify({session_token:t})})}catch(_){}localStorage.removeItem(TOKEN_KEY);localStorage.removeItem(USER_KEY);location.href="index.html"}
+(async()=>{try{await checkAuth();await loadLocations()}catch(e){console.error(e)}})();
+</script>
+
+<script id="zippzo-master-frontend">
+document.addEventListener("DOMContentLoaded", function(){
+  // Hide the retired Dropping module everywhere.
+  document.querySelectorAll("a,button").forEach(function(el){
+    const t=(el.textContent||"").trim().toLowerCase();
+    if(t==="dropping" || t.includes("dropping")) el.style.display="none";
+  });
+
+  // Use the real Zippzo logo wherever a common brand element exists.
+  document.querySelectorAll(".brand,.logo,.brand-logo").forEach(function(el){
+    if(!el.querySelector("img")){
+      const img=document.createElement("img");
+      img.src="zippzo-logo.jpg";
+      img.alt="Zippzo";
+      img.style.cssText="width:148px;max-height:55px;object-fit:contain;object-position:left center;";
+      el.prepend(img);
+    }
+  });
+});
+</script>
+
+</body>
+</html>

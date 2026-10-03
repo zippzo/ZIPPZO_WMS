@@ -1,0 +1,1904 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1.0">
+<title>Zippzo Delivery Report</title>
+
+<style>
+*{box-sizing:border-box}
+
+body{
+    margin:0;
+    font-family:Arial,Helvetica,sans-serif;
+    background:#f5f7fb;
+    color:#172033;
+}
+
+.topbar{
+    height:64px;
+    background:#111827;
+    color:#fff;
+    display:flex;
+    align-items:center;
+    justify-content:space-between;
+    padding:0 22px;
+    position:sticky;
+    top:0;
+    z-index:30;
+}
+
+.brand{
+    font-size:22px;
+    font-weight:800;
+    letter-spacing:1px;
+}
+
+.top-user{
+    font-size:13px;
+}
+
+.layout{
+    display:flex;
+    min-height:calc(100vh - 64px);
+}
+
+.sidebar{
+    width:245px;
+    background:#172033;
+    color:#dbe4f0;
+    padding:18px 12px;
+    position:sticky;
+    top:64px;
+    height:calc(100vh - 64px);
+    overflow:auto;
+}
+
+.sidebar-title{
+    font-size:11px;
+    color:#91a0b5;
+    text-transform:uppercase;
+    margin:18px 10px 7px;
+}
+
+.nav-button{
+    width:100%;
+    display:block;
+    border:0;
+    background:transparent;
+    color:#dbe4f0;
+    text-align:left;
+    padding:10px 12px;
+    border-radius:8px;
+    margin:2px 0;
+    cursor:pointer;
+}
+
+.nav-button:hover{
+    background:#26334a;
+}
+
+.nav-button.active{
+    background:#fff;
+    color:#111827;
+    font-weight:700;
+}
+
+.content{
+    flex:1;
+    min-width:0;
+    padding:24px;
+}
+
+.page-header{
+    display:flex;
+    justify-content:space-between;
+    align-items:flex-start;
+    gap:20px;
+    margin-bottom:18px;
+}
+
+.page-title{
+    margin:0;
+    font-size:28px;
+}
+
+.page-subtitle{
+    margin:6px 0 0;
+    color:#667085;
+}
+
+.actions{
+    display:flex;
+    gap:8px;
+    flex-wrap:wrap;
+}
+
+.btn{
+    border:0;
+    border-radius:8px;
+    padding:10px 14px;
+    cursor:pointer;
+    font-weight:700;
+    background:#111827;
+    color:#fff;
+}
+
+.btn.secondary{
+    background:#eef2f6;
+    color:#172033;
+}
+
+.btn.small{
+    padding:7px 10px;
+    font-size:12px;
+}
+
+.cards{
+    display:grid;
+    grid-template-columns:repeat(8,minmax(110px,1fr));
+    gap:12px;
+    margin-bottom:18px;
+}
+
+.card{
+    background:#fff;
+    border:1px solid #e5e9f0;
+    border-radius:12px;
+    padding:14px;
+    box-shadow:0 2px 8px rgba(16,24,40,.04);
+}
+
+.card-label{
+    font-size:11px;
+    color:#667085;
+}
+
+.card-value{
+    margin-top:5px;
+    font-size:22px;
+    font-weight:800;
+}
+
+.section{
+    background:#fff;
+    border:1px solid #e5e9f0;
+    border-radius:12px;
+    padding:18px;
+    margin-bottom:18px;
+    box-shadow:0 2px 8px rgba(16,24,40,.04);
+}
+
+.section h2{
+    margin:0 0 14px;
+    font-size:17px;
+}
+
+.filters{
+    display:grid;
+    grid-template-columns:2fr repeat(6,1fr);
+    gap:10px;
+}
+
+.filters input,
+.filters select{
+    width:100%;
+    padding:10px;
+    border:1px solid #d0d5dd;
+    border-radius:8px;
+    background:#fff;
+}
+
+.summary-grid{
+    display:grid;
+    grid-template-columns:repeat(6,1fr);
+    gap:10px;
+}
+
+.summary-box{
+    padding:13px;
+    background:#f8fafc;
+    border-radius:9px;
+}
+
+.summary-box small{
+    display:block;
+    color:#667085;
+}
+
+.summary-box b{
+    display:block;
+    margin-top:5px;
+    font-size:18px;
+}
+
+.table-container{
+    overflow:auto;
+    border:1px solid #e5e9f0;
+    border-radius:10px;
+}
+
+table{
+    width:100%;
+    min-width:2600px;
+    border-collapse:collapse;
+    background:#fff;
+}
+
+th,td{
+    padding:10px;
+    border-bottom:1px solid #edf0f4;
+    text-align:left;
+    font-size:12px;
+    white-space:nowrap;
+}
+
+th{
+    background:#f8fafc;
+    color:#475467;
+    font-size:10px;
+    text-transform:uppercase;
+    position:sticky;
+    top:0;
+    z-index:2;
+}
+
+.badge{
+    display:inline-flex;
+    padding:4px 8px;
+    border-radius:999px;
+    font-size:10px;
+    font-weight:800;
+}
+
+.good{
+    background:#ecfdf3;
+    color:#047857;
+}
+
+.pending{
+    background:#fff7ed;
+    color:#9a3412;
+}
+
+.info{
+    background:#eff6ff;
+    color:#1d4ed8;
+}
+
+.hold{
+    background:#f3f4f6;
+    color:#475467;
+}
+
+.danger{
+    background:#fef2f2;
+    color:#b42318;
+}
+
+.alert{
+    display:none;
+    padding:11px 13px;
+    border-radius:8px;
+    margin-bottom:12px;
+}
+
+.alert.show{
+    display:block;
+}
+
+.alert.ok{
+    background:#ecfdf3;
+    color:#027a48;
+}
+
+.alert.error{
+    background:#fef3f2;
+    color:#b42318;
+}
+
+.empty{
+    padding:30px;
+    text-align:center;
+    color:#667085;
+}
+
+.progress{
+    width:90px;
+    height:7px;
+    background:#e5e7eb;
+    border-radius:999px;
+    overflow:hidden;
+    display:inline-block;
+    vertical-align:middle;
+}
+
+.progress span{
+    display:block;
+    height:100%;
+    background:#111827;
+}
+
+.modal{
+    position:fixed;
+    inset:0;
+    background:rgba(15,23,42,.55);
+    display:none;
+    align-items:center;
+    justify-content:center;
+    padding:20px;
+    z-index:100;
+}
+
+.modal.show{
+    display:flex;
+}
+
+.modal-box{
+    width:min(1200px,100%);
+    max-height:92vh;
+    overflow:auto;
+    background:#fff;
+    border-radius:14px;
+    padding:20px;
+}
+
+.modal-head{
+    display:flex;
+    justify-content:space-between;
+    align-items:center;
+    margin-bottom:16px;
+}
+
+.modal-head h2{
+    margin:0;
+}
+
+.close{
+    border:0;
+    background:#eef2f6;
+    border-radius:8px;
+    padding:8px 12px;
+    cursor:pointer;
+}
+
+.detail-grid{
+    display:grid;
+    grid-template-columns:repeat(4,1fr);
+    gap:10px;
+}
+
+.detail{
+    background:#f8fafc;
+    padding:10px;
+    border-radius:8px;
+}
+
+.detail small{
+    display:block;
+    color:#667085;
+}
+
+.detail b{
+    display:block;
+    margin-top:4px;
+}
+
+@media(max-width:1400px){
+    .cards{
+        grid-template-columns:repeat(4,1fr);
+    }
+
+    .filters{
+        grid-template-columns:repeat(3,1fr);
+    }
+
+    .summary-grid{
+        grid-template-columns:repeat(3,1fr);
+    }
+
+    .detail-grid{
+        grid-template-columns:repeat(2,1fr);
+    }
+}
+
+@media(max-width:760px){
+    .sidebar{
+        display:none;
+    }
+
+    .content{
+        padding:14px;
+    }
+
+    .cards{
+        grid-template-columns:repeat(2,1fr);
+    }
+
+    .filters,
+    .summary-grid,
+    .detail-grid{
+        grid-template-columns:1fr;
+    }
+}
+
+@media print{
+    .sidebar,
+    .topbar,
+    .actions,
+    .filters{
+        display:none!important;
+    }
+
+    .content{
+        padding:0;
+    }
+
+    .section{
+        box-shadow:none;
+    }
+}
+</style>
+
+<link rel="stylesheet" href="zippzo-standard.css">
+<script src="zippzo-standard.js" defer></script>
+</head>
+
+<body>
+
+<header class="topbar">
+    <div class="brand">ZIPPZO</div>
+    <div class="top-user" id="topUser">Delivery Report</div>
+</header>
+
+<div class="layout">
+
+<aside class="sidebar">
+
+<div class="sidebar-title">Main</div>
+
+<button class="nav-button" onclick="go('index.html')">
+Dashboard
+</button>
+
+<div class="sidebar-title">Master Data</div>
+
+<button class="nav-button" onclick="go('products.html')">Products</button>
+<button class="nav-button" onclick="go('suppliers.html')">Suppliers</button>
+<button class="nav-button" onclick="go('locations.html')">Locations</button>
+<button class="nav-button" onclick="go('employees.html')">Employees</button>
+
+<div class="sidebar-title">Warehouse</div>
+
+<button class="nav-button" onclick="go('inventory.html')">Inventory</button>
+<button class="nav-button" onclick="go('bins.html')">Bins</button>
+<button class="nav-button" onclick="go('stock-movements.html')">Stock Movements</button>
+
+<div class="sidebar-title">Inbound</div>
+
+<button class="nav-button" onclick="go('purchase-orders.html')">Purchase Orders</button>
+<button class="nav-button" onclick="go('grn.html')">GRN</button>
+<button class="nav-button" onclick="go('putaway.html')">Putaway</button>
+<button class="nav-button" onclick="go('grid-putaway.html')">Grid Putaway</button>
+
+<div class="sidebar-title">Orders</div>
+
+<button class="nav-button" onclick="go('orders.html')">Orders</button>
+<button class="nav-button" onclick="go('create-batch.html')">Create Batch</button>
+<button class="nav-button" onclick="go('picking.html')">Picking</button>
+<button class="nav-button" onclick="go('sorting.html')">Sorting</button>
+
+<div class="sidebar-title">Dispatch</div>
+
+<button class="nav-button" onclick="go('vehicle-arrival.html')">Vehicle Arrival</button>
+<button class="nav-button" onclick="go('dispatch.html')">Dispatch</button>
+<button class="nav-button" onclick="go('store-receiving.html')">Store Receiving</button>
+
+<div class="sidebar-title">Reports</div>
+
+<button class="nav-button" onclick="go('stock-report.html')">Stock Report</button>
+<button class="nav-button" onclick="go('grn-report.html')">GRN Report</button>
+<button class="nav-button" onclick="go('putaway-report.html')">Putaway Report</button>
+<button class="nav-button" onclick="go('order-report.html')">Order Report</button>
+<button class="nav-button" onclick="go('picking-report.html')">Picking Report</button>
+<button class="nav-button" onclick="go('sorting-report.html')">Sorting Report</button>
+<button class="nav-button active">Delivery Report</button>
+<button class="nav-button" onclick="go('picking-ipp.html')">Picking IPP</button>
+<button class="nav-button" onclick="go('sorting-ipp.html')">Sorting IPP</button>
+
+<div class="sidebar-title">Session</div>
+
+<button class="nav-button" onclick="logout()">Logout</button>
+
+</aside>
+
+<main class="content">
+
+<div class="page-header">
+
+<div>
+<h1 class="page-title">Delivery Report</h1>
+
+<p class="page-subtitle">
+Dispatch → Rider → Customer → Delivered control report.
+</p>
+</div>
+
+<div class="actions">
+
+<button class="btn secondary" onclick="loadAll()">
+Refresh
+</button>
+
+<button class="btn secondary" onclick="exportCSV()">
+Export CSV
+</button>
+
+<button class="btn" onclick="window.print()">
+Print
+</button>
+
+</div>
+
+</div>
+
+<div id="alert" class="alert"></div>
+
+<div class="cards">
+
+<div class="card">
+<div class="card-label">Total Deliveries</div>
+<div class="card-value" id="kTotal">0</div>
+</div>
+
+<div class="card">
+<div class="card-label">Ready</div>
+<div class="card-value" id="kReady">0</div>
+</div>
+
+<div class="card">
+<div class="card-label">Assigned</div>
+<div class="card-value" id="kAssigned">0</div>
+</div>
+
+<div class="card">
+<div class="card-label">Out for Delivery</div>
+<div class="card-value" id="kOut">0</div>
+</div>
+
+<div class="card">
+<div class="card-label">Delivered</div>
+<div class="card-value" id="kDelivered">0</div>
+</div>
+
+<div class="card">
+<div class="card-label">Cancelled</div>
+<div class="card-value" id="kCancelled">0</div>
+</div>
+
+<div class="card">
+<div class="card-label">Order Value</div>
+<div class="card-value" id="kValue">₹0</div>
+</div>
+
+<div class="card">
+<div class="card-label">Delivery Rate</div>
+<div class="card-value" id="kRate">0%</div>
+</div>
+
+</div>
+
+<section class="section">
+
+<h2>Delivery Filters</h2>
+
+<div class="filters">
+
+<input
+id="search"
+placeholder="Search order, customer, phone, rider, SKU..."
+oninput="render()"
+>
+
+<select id="statusFilter" onchange="render()">
+<option value="">All Status</option>
+<option value="READY">Ready</option>
+<option value="ASSIGNED">Assigned</option>
+<option value="OUT_FOR_DELIVERY">Out for Delivery</option>
+<option value="DISPATCHED">Dispatched</option>
+<option value="DELIVERED">Delivered</option>
+<option value="CANCELLED">Cancelled</option>
+</select>
+
+<select id="paymentFilter" onchange="render()">
+<option value="">All Payment Modes</option>
+<option value="COD">COD</option>
+<option value="ONLINE">Online</option>
+<option value="UPI">UPI</option>
+<option value="CARD">Card</option>
+</select>
+
+<select id="locationFilter" onchange="render()">
+<option value="">All Locations</option>
+</select>
+
+<select id="riderFilter" onchange="render()">
+<option value="">All Riders</option>
+</select>
+
+<select id="valueFilter" onchange="render()">
+<option value="">All Order Values</option>
+<option value="low">Below ₹100</option>
+<option value="medium">₹100–₹500</option>
+<option value="high">Above ₹500</option>
+</select>
+
+<select id="dateFilter" onchange="render()">
+<option value="">All Dates</option>
+<option value="today">Today</option>
+<option value="7">Last 7 Days</option>
+<option value="30">Last 30 Days</option>
+</select>
+
+</div>
+
+</section>
+
+<section class="section">
+
+<h2>Delivery Summary</h2>
+
+<div class="summary-grid">
+
+<div class="summary-box">
+<small>Total Riders</small>
+<b id="sRiders">0</b>
+</div>
+
+<div class="summary-box">
+<small>Orders / Rider</small>
+<b id="sOrdersRider">0</b>
+</div>
+
+<div class="summary-box">
+<small>Delivered / Rider</small>
+<b id="sDeliveredRider">0</b>
+</div>
+
+<div class="summary-box">
+<small>COD Orders</small>
+<b id="sCod">0</b>
+</div>
+
+<div class="summary-box">
+<small>Online Orders</small>
+<b id="sOnline">0</b>
+</div>
+
+<div class="summary-box">
+<small>Average Order Value</small>
+<b id="sAverage">₹0</b>
+</div>
+
+</div>
+
+</section>
+
+<section class="section">
+
+<h2>Delivery Records</h2>
+
+<div class="table-container">
+
+<table>
+
+<thead>
+
+<tr>
+
+<th>Order</th>
+<th>Customer</th>
+<th>Phone</th>
+<th>Location</th>
+<th>Address</th>
+<th>Rider</th>
+<th>Payment</th>
+<th>Order Value</th>
+<th>Delivery Charge</th>
+<th>Handling</th>
+<th>Total</th>
+<th>Status</th>
+<th>Created</th>
+<th>Assigned</th>
+<th>Dispatch</th>
+<th>Delivered</th>
+<th>Last Touch Employee</th>
+<th>Last Touch</th>
+<th>Action</th>
+
+</tr>
+
+</thead>
+
+<tbody id="reportBody">
+
+<tr>
+<td colspan="19" class="empty">
+Loading delivery report...
+</td>
+</tr>
+
+</tbody>
+
+</table>
+
+</div>
+
+</section>
+
+</main>
+</div>
+
+<div class="modal" id="modal">
+
+<div class="modal-box">
+
+<div class="modal-head">
+
+<h2 id="modalTitle">
+Delivery Details
+</h2>
+
+<button class="close" onclick="closeModal()">
+Close
+</button>
+
+</div>
+
+<div id="modalBody"></div>
+
+</div>
+
+</div>
+
+<script>
+
+const API=window.location.origin;
+
+const TOKEN_KEY="zippzo_session_token";
+
+const USER_KEY="zippzo_user";
+
+let records=[];
+
+
+function token(){
+    return localStorage.getItem(TOKEN_KEY)||"";
+}
+
+
+function headers(){
+
+    const h={};
+
+    const t=token();
+
+    if(t){
+        h.Authorization="Bearer "+t;
+    }
+
+    return h;
+}
+
+
+async function api(path){
+
+    const response=
+        await fetch(
+            API+path,
+            {
+                headers:headers()
+            }
+        );
+
+    const text=
+        await response.text();
+
+    let data={};
+
+    try{
+        data=text?JSON.parse(text):{};
+    }catch{
+        data={detail:text};
+    }
+
+    if(response.status===401){
+        throw new Error("Authorization required");
+    }
+
+    if(!response.ok){
+        throw new Error(
+            data.detail||
+            data.message||
+            `HTTP ${response.status}`
+        );
+    }
+
+    return data;
+}
+
+
+function arr(data){
+
+    if(Array.isArray(data)){
+        return data;
+    }
+
+    return data?.items||
+           data?.data||
+           data?.results||
+           data?.orders||
+           [];
+}
+
+
+function pick(obj,...keys){
+
+    for(const key of keys){
+
+        if(
+            obj?.[key]!==undefined &&
+            obj?.[key]!==null
+        ){
+            return obj[key];
+        }
+
+    }
+
+    return "";
+}
+
+
+function esc(value){
+
+    return String(value??"")
+        .replace(
+            /[&<>"']/g,
+            m=>({
+                "&":"&amp;",
+                "<":"&lt;",
+                ">":"&gt;",
+                '"':"&quot;",
+                "'":"&#39;"
+            }[m])
+        );
+}
+
+
+function go(page){
+    window.location.href=page;
+}
+
+
+function show(message,type="ok"){
+
+    const box=
+        document.getElementById("alert");
+
+    box.textContent=message;
+
+    box.className=
+        "alert show "+
+        (
+            type==="error"
+                ?"error"
+                :"ok"
+        );
+
+    setTimeout(
+        ()=>{
+            box.className="alert";
+        },
+        3500
+    );
+}
+
+
+function dateObject(value){
+
+    if(!value){
+        return null;
+    }
+
+    const d=new Date(value);
+
+    return Number.isNaN(d.getTime())
+        ?null
+        :d;
+}
+
+
+function formatDate(value){
+
+    const d=dateObject(value);
+
+    if(!d){
+        return value||"";
+    }
+
+    return d.toLocaleDateString("en-IN");
+}
+
+
+function formatTime(value){
+
+    const d=dateObject(value);
+
+    if(!d){
+        return value||"";
+    }
+
+    return d.toLocaleTimeString(
+        "en-IN",
+        {
+            hour:"2-digit",
+            minute:"2-digit",
+            second:"2-digit",
+            hour12:false
+        }
+    );
+}
+
+
+function money(value){
+
+    const n=Number(value||0);
+
+    return "₹"+
+        n.toLocaleString(
+            "en-IN",
+            {
+                minimumFractionDigits:2,
+                maximumFractionDigits:2
+            }
+        );
+}
+
+
+function normalize(row){
+
+    const subtotal=Number(
+        pick(
+            row,
+            "subtotal",
+            "sub_total"
+        )||0
+    );
+
+    const deliveryCharge=Number(
+        pick(
+            row,
+            "delivery_charge",
+            "deliveryCharge"
+        )||0
+    );
+
+    const handlingCharge=Number(
+        pick(
+            row,
+            "handling_charge",
+            "handlingCharge"
+        )||0
+    );
+
+    const discount=Number(
+        pick(
+            row,
+            "discount"
+        )||0
+    );
+
+    const total=Number(
+        pick(
+            row,
+            "total_amount",
+            "total",
+            "grand_total"
+        )||(
+            subtotal+
+            deliveryCharge+
+            handlingCharge-
+            discount
+        )
+    );
+
+    return {
+
+        raw:row,
+
+        id:pick(
+            row,
+            "id",
+            "order_id"
+        ),
+
+        order:pick(
+            row,
+            "order_number",
+            "order_no",
+            "number"
+        )||(
+            "ORD-"+
+            pick(row,"id","order_id")
+        ),
+
+        customer:pick(
+            row,
+            "customer_name",
+            "name"
+        ),
+
+        phone:pick(
+            row,
+            "customer_phone",
+            "phone",
+            "mobile"
+        ),
+
+        location:pick(
+            row,
+            "location_name",
+            "store_name",
+            "destination_store",
+            "location",
+            "location_id"
+        ),
+
+        address:pick(
+            row,
+            "delivery_address",
+            "address"
+        ),
+
+        rider:pick(
+            row,
+            "rider_name",
+            "delivery_partner_name",
+            "assigned_rider_name",
+            "rider",
+            "rider_id"
+        )||"Unassigned",
+
+        payment:String(
+            pick(
+                row,
+                "payment_mode",
+                "payment_method"
+            )||""
+        ).toUpperCase(),
+
+        subtotal,
+
+        deliveryCharge,
+
+        handlingCharge,
+
+        discount,
+
+        total,
+
+        status:String(
+            pick(
+                row,
+                "status"
+            )||""
+        ).toUpperCase(),
+
+        created:pick(
+            row,
+            "created_at",
+            "created_date",
+            "created_time"
+        ),
+
+        assignedAt:pick(
+            row,
+            "assigned_at",
+            "rider_assigned_at"
+        ),
+
+        dispatchAt:pick(
+            row,
+            "dispatched_at",
+            "dispatch_time",
+            "out_for_delivery_at"
+        ),
+
+        deliveredAt:pick(
+            row,
+            "delivered_at",
+            "completed_at",
+            "delivery_completed_at"
+        ),
+
+        lastTouchEmployee:pick(
+            row,
+            "last_touch_employee_name",
+            "last_touched_by_name",
+            "last_action_employee_name",
+            "updated_by_name",
+            "modified_by_name",
+            "completed_by_name",
+            "assigned_employee_name",
+            "employee_name"
+        )||"—",
+
+        updatedAt:pick(
+            row,
+            "updated_at",
+            "last_touched_at",
+            "modified_at",
+            "delivered_at",
+            "dispatched_at",
+            "assigned_at",
+            "created_at"
+        )
+
+    };
+}
+
+
+function statusClass(status){
+
+    status=String(status||"").toUpperCase();
+
+    if(status==="DELIVERED"){
+        return "good";
+    }
+
+    if(
+        status==="READY"||
+        status==="ASSIGNED"||
+        status==="DISPATCHED"||
+        status==="OUT_FOR_DELIVERY"
+    ){
+        return "info";
+    }
+
+    if(status==="CANCELLED"){
+        return "danger";
+    }
+
+    return "pending";
+}
+
+
+function fillFilter(id,label,values){
+
+    const el=
+        document.getElementById(id);
+
+    const old=el.value;
+
+    const unique=[
+        ...new Set(
+            values
+                .filter(Boolean)
+                .map(String)
+        )
+    ].sort();
+
+    el.innerHTML=
+        `<option value="">${label}</option>`+
+        unique.map(
+            value=>
+                `<option value="${esc(value)}">
+                ${esc(value)}
+                </option>`
+        ).join("");
+
+    el.value=old;
+}
+
+
+function render(){
+
+    const data=
+        records.map(normalize);
+
+    fillFilter(
+        "locationFilter",
+        "All Locations",
+        data.map(x=>x.location)
+    );
+
+    fillFilter(
+        "riderFilter",
+        "All Riders",
+        data.map(x=>x.rider)
+    );
+
+    const search=
+        document.getElementById("search")
+        .value
+        .toLowerCase()
+        .trim();
+
+    const status=
+        document.getElementById("statusFilter").value;
+
+    const payment=
+        document.getElementById("paymentFilter").value;
+
+    const location=
+        document.getElementById("locationFilter").value;
+
+    const rider=
+        document.getElementById("riderFilter").value;
+
+    const valueFilter=
+        document.getElementById("valueFilter").value;
+
+    const dateFilter=
+        document.getElementById("dateFilter").value;
+
+    const now=new Date();
+
+    const filtered=
+        data.filter(x=>{
+
+            const searchable=[
+                x.order,
+                x.customer,
+                x.phone,
+                x.location,
+                x.address,
+                x.rider,
+                x.payment,
+                x.status
+            ]
+            .join(" ")
+            .toLowerCase();
+
+            if(
+                search &&
+                !searchable.includes(search)
+            ){
+                return false;
+            }
+
+            if(
+                status &&
+                x.status!==status
+            ){
+                return false;
+            }
+
+            if(
+                payment &&
+                x.payment!==payment
+            ){
+                return false;
+            }
+
+            if(
+                location &&
+                String(x.location)!==
+                location
+            ){
+                return false;
+            }
+
+            if(
+                rider &&
+                x.rider!==rider
+            ){
+                return false;
+            }
+
+            if(valueFilter==="low" && x.total>=100){
+                return false;
+            }
+
+            if(
+                valueFilter==="medium" &&
+                (
+                    x.total<100||
+                    x.total>500
+                )
+            ){
+                return false;
+            }
+
+            if(
+                valueFilter==="high" &&
+                x.total<=500
+            ){
+                return false;
+            }
+
+            if(dateFilter){
+
+                const d=dateObject(x.created);
+
+                if(!d){
+                    return false;
+                }
+
+                const start=new Date(now);
+
+                start.setHours(0,0,0,0);
+
+                if(dateFilter==="today"){
+
+                    if(d<start){
+                        return false;
+                    }
+
+                }else{
+
+                    const cutoff=
+                        new Date(
+                            now.getTime()-
+                            Number(dateFilter)*
+                            86400000
+                        );
+
+                    if(d<cutoff){
+                        return false;
+                    }
+
+                }
+
+            }
+
+            return true;
+
+        });
+
+    updateKpis(filtered);
+
+    renderTable(filtered);
+}
+
+
+function updateKpis(data){
+
+    const total=data.length;
+
+    const ready=
+        data.filter(
+            x=>x.status==="READY"
+        ).length;
+
+    const assigned=
+        data.filter(
+            x=>x.status==="ASSIGNED"
+        ).length;
+
+    const out=
+        data.filter(
+            x=>
+                x.status==="OUT_FOR_DELIVERY"||
+                x.status==="DISPATCHED"
+        ).length;
+
+    const delivered=
+        data.filter(
+            x=>x.status==="DELIVERED"
+        ).length;
+
+    const cancelled=
+        data.filter(
+            x=>x.status==="CANCELLED"
+        ).length;
+
+    const value=
+        data.reduce(
+            (sum,x)=>sum+x.total,
+            0
+        );
+
+    const rate=
+        total
+            ?delivered/total*100
+            :0;
+
+    document.getElementById("kTotal").textContent=total;
+    document.getElementById("kReady").textContent=ready;
+    document.getElementById("kAssigned").textContent=assigned;
+    document.getElementById("kOut").textContent=out;
+    document.getElementById("kDelivered").textContent=delivered;
+    document.getElementById("kCancelled").textContent=cancelled;
+    document.getElementById("kValue").textContent=money(value);
+    document.getElementById("kRate").textContent=
+        rate.toFixed(1)+"%";
+
+    const riders=
+        new Set(
+            data
+                .map(x=>x.rider)
+                .filter(
+                    x=>x &&
+                    x!=="Unassigned"
+                )
+        );
+
+    const cod=
+        data.filter(
+            x=>x.payment==="COD"
+        ).length;
+
+    const online=
+        data.filter(
+            x=>
+                x.payment==="ONLINE"||
+                x.payment==="UPI"||
+                x.payment==="CARD"
+        ).length;
+
+    document.getElementById("sRiders").textContent=
+        riders.size;
+
+    document.getElementById("sOrdersRider").textContent=
+        riders.size
+            ?(
+                total/
+                riders.size
+            ).toFixed(1)
+            :"0";
+
+    document.getElementById("sDeliveredRider").textContent=
+        riders.size
+            ?(
+                delivered/
+                riders.size
+            ).toFixed(1)
+            :"0";
+
+    document.getElementById("sCod").textContent=
+        cod;
+
+    document.getElementById("sOnline").textContent=
+        online;
+
+    document.getElementById("sAverage").textContent=
+        total
+            ?money(value/total)
+            :money(0);
+}
+
+
+function renderTable(data){
+
+    const body=
+        document.getElementById("reportBody");
+
+    if(!data.length){
+
+        body.innerHTML=
+            `<tr>
+            <td colspan="19" class="empty">
+            No delivery records found.
+            </td>
+            </tr>`;
+
+        return;
+    }
+
+    body.innerHTML=
+        data.map(x=>`
+
+<tr>
+
+<td>
+<b>${esc(x.order)}</b>
+</td>
+
+<td>${esc(x.customer)}</td>
+
+<td>${esc(x.phone)}</td>
+
+<td>${esc(x.location)}</td>
+
+<td>${esc(x.address)}</td>
+
+<td>${esc(x.rider)}</td>
+
+<td>
+<span class="badge info">
+${esc(x.payment)}
+</span>
+</td>
+
+<td>${money(x.subtotal)}</td>
+
+<td>${money(x.deliveryCharge)}</td>
+
+<td>${money(x.handlingCharge)}</td>
+
+<td><b>${money(x.total)}</b></td>
+
+<td>
+<span class="badge ${statusClass(x.status)}">
+${esc(x.status)}
+</span>
+</td>
+
+<td>
+${esc(formatDate(x.created))}
+<br>
+${esc(formatTime(x.created))}
+</td>
+
+<td>
+${esc(formatTime(x.assignedAt))}
+</td>
+
+<td>
+${esc(formatTime(x.dispatchAt))}
+</td>
+
+<td>
+${esc(formatTime(x.deliveredAt))}
+</td>
+
+<td>
+${esc(x.lastTouchEmployee)}
+</td>
+
+<td>
+${esc(formatDate(x.updatedAt))}
+<br>
+${esc(formatTime(x.updatedAt))}
+</td>
+
+<td>
+
+<button
+class="btn small secondary"
+onclick="showDetail(${JSON.stringify(x.id)})">
+View
+</button>
+
+</td>
+
+</tr>
+
+`).join("");
+}
+
+
+function detail(title,value){
+
+    return `
+<div class="detail">
+<small>${esc(title)}</small>
+<b>${esc(value??"—")}</b>
+</div>
+`;
+}
+
+
+function showDetail(id){
+
+    const order=
+        records
+            .map(normalize)
+            .find(
+                x=>
+                    String(x.id)===
+                    String(id)
+            );
+
+    if(!order){
+        return;
+    }
+
+    document.getElementById("modalTitle")
+        .textContent=
+        order.order+
+        " — Delivery Details";
+
+    document.getElementById("modalBody")
+        .innerHTML=`
+
+<div class="detail-grid">
+
+${detail("Order",order.order)}
+
+${detail("Customer",order.customer)}
+
+${detail("Phone",order.phone)}
+
+${detail("Location",order.location)}
+
+${detail("Delivery Address",order.address)}
+
+${detail("Rider",order.rider)}
+
+${detail("Payment Mode",order.payment)}
+
+${detail("Subtotal",money(order.subtotal))}
+
+${detail("Delivery Charge",money(order.deliveryCharge))}
+
+${detail("Handling Charge",money(order.handlingCharge))}
+
+${detail("Discount",money(order.discount))}
+
+${detail("Total",money(order.total))}
+
+${detail("Status",order.status)}
+
+${detail("Created Date",formatDate(order.created))}
+
+${detail("Created Time",formatTime(order.created))}
+
+${detail("Assigned Time",formatTime(order.assignedAt))}
+
+${detail("Dispatch Time",formatTime(order.dispatchAt))}
+
+${detail("Delivered Time",formatTime(order.deliveredAt))}
+
+${detail(
+    "Last Touch Employee",
+    order.lastTouchEmployee
+)}
+
+${detail(
+    "Last Touch Date",
+    formatDate(order.updatedAt)
+)}
+
+${detail(
+    "Last Touch Time",
+    formatTime(order.updatedAt)
+)}
+
+</div>
+`;
+
+    document.getElementById("modal")
+        .classList.add("show");
+}
+
+
+function closeModal(){
+
+    document.getElementById("modal")
+        .classList.remove("show");
+}
+
+
+function exportCSV(){
+
+    const data=
+        records.map(normalize);
+
+    if(!data.length){
+
+        show(
+            "No delivery records to export.",
+            "error"
+        );
+
+        return;
+    }
+
+    const header=[
+        "Order",
+        "Customer",
+        "Phone",
+        "Location",
+        "Address",
+        "Rider",
+        "Payment",
+        "Subtotal",
+        "Delivery Charge",
+        "Handling Charge",
+        "Discount",
+        "Total",
+        "Status",
+        "Created Date",
+        "Created Time",
+        "Assigned Time",
+        "Dispatch Time",
+        "Delivered Time",
+        "Last Touch Employee",
+        "Last Touch Date",
+        "Last Touch Time"
+    ];
+
+    const rows=[
+        header,
+
+        ...data.map(x=>[
+            x.order,
+            x.customer,
+            x.phone,
+            x.location,
+            x.address,
+            x.rider,
+            x.payment,
+            x.subtotal,
+            x.deliveryCharge,
+            x.handlingCharge,
+            x.discount,
+            x.total,
+            x.status,
+            formatDate(x.created),
+            formatTime(x.created),
+            formatTime(x.assignedAt),
+            formatTime(x.dispatchAt),
+            formatTime(x.deliveredAt),
+            x.lastTouchEmployee,
+            formatDate(x.updatedAt),
+            formatTime(x.updatedAt)
+        ])
+    ];
+
+    const csv=
+        rows
+            .map(
+                row=>
+                    row
+                        .map(
+                            value=>
+                                `"${String(
+                                    value??""
+                                ).replace(
+                                    /"/g,
+                                    '""'
+                                )}"`
+                        )
+                        .join(",")
+            )
+            .join("\n");
+
+    const blob=
+        new Blob(
+            [csv],
+            {
+                type:
+                    "text/csv;charset=utf-8"
+            }
+        );
+
+    const url=
+        URL.createObjectURL(blob);
+
+    const link=
+        document.createElement("a");
+
+    link.href=url;
+
+    link.download=
+        "zippzo_delivery_report.csv";
+
+    document.body.appendChild(link);
+
+    link.click();
+
+    link.remove();
+
+    URL.revokeObjectURL(url);
+}
+
+
+async function loadAll(){
+
+    try{
+
+        records=
+            arr(
+                await api(
+                    "/api/orders"
+                )
+            );
+
+        render();
+
+    }catch(error){
+
+        records=[];
+
+        render();
+
+        show(
+            error.message||
+            "Unable to load delivery report.",
+            "error"
+        );
+    }
+}
+
+
+async function logout(){
+
+    try{
+
+        if(token()){
+
+            await fetch(
+                API+
+                "/api/auth/logout",
+                {
+                    method:"POST",
+                    headers:{
+                        ...headers(),
+                        "Content-Type":
+                            "application/json"
+                    },
+                    body:
+                        JSON.stringify({
+                            session_token:
+                                token()
+                        })
+                }
+            );
+
+        }
+
+    }catch(error){
+
+        console.log(
+            "Logout error",
+            error
+        );
+    }
+
+    localStorage.removeItem(
+        TOKEN_KEY
+    );
+
+    localStorage.removeItem(
+        USER_KEY
+    );
+
+    window.location.href=
+        "index.html";
+}
+
+
+try{
+
+    const user=
+        JSON.parse(
+            localStorage.getItem(
+                USER_KEY
+            )||"null"
+        );
+
+    document.getElementById(
+        "topUser"
+    ).textContent=
+        user
+            ?(
+                user.full_name||
+                user.name||
+                user.employee_id||
+                "Delivery Report"
+            )
+            :"Delivery Report";
+
+}catch(error){
+
+    console.log(
+        "User display error",
+        error
+    );
+}
+
+
+loadAll();
+
+setInterval(
+    loadAll,
+    10000
+);
+
+</script>
+
+</body>
+</html>

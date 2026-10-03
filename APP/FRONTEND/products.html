@@ -1,0 +1,300 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="theme-color" content="#111827">
+<title>Zippzo WMS — Product Master</title>
+<link rel="stylesheet" href="style.css">
+<style>
+.product-page{max-width:1800px;margin:0 auto}
+.product-header{display:flex;justify-content:space-between;align-items:flex-start;gap:16px;margin-bottom:18px}
+.product-header h1{margin:0;font-size:27px}.product-header p{margin:5px 0 0;color:#64748b;font-size:13px}
+.header-actions,.actions{display:flex;gap:8px;flex-wrap:wrap}
+.btn{border:1px solid #dbe1e8;background:#fff;color:#263244;border-radius:8px;padding:9px 12px;font-weight:800;cursor:pointer}
+.btn:hover{background:#f8fafc}.btn-primary{background:#111827;color:#fff;border-color:#111827}.btn-primary:hover{background:#000}
+.btn-danger{background:#dc2626;color:#fff;border-color:#dc2626}.btn-secondary{background:#f8fafc}
+.summary-grid{display:grid;grid-template-columns:repeat(6,minmax(0,1fr));gap:12px;margin-bottom:16px}
+.summary-card{background:#fff;border:1px solid #e5e7eb;border-radius:12px;padding:15px;box-shadow:0 4px 15px rgba(0,0,0,.04)}
+.summary-label{font-size:10px;color:#64748b;text-transform:uppercase;font-weight:900;letter-spacing:.4px}
+.summary-value{font-size:25px;font-weight:900;margin-top:6px}
+.summary-meta{font-size:10px;color:#94a3b8;margin-top:4px}
+.toolbar{background:#fff;border:1px solid #e5e7eb;border-radius:12px;padding:13px;margin-bottom:15px;display:grid;grid-template-columns:2.3fr 1fr 1fr 1fr 1fr auto;gap:8px}
+.toolbar input,.toolbar select,.product-form input,.product-form select{width:100%;box-sizing:border-box;padding:10px 11px;border:1px solid #d1d5db;border-radius:8px;background:#fff;outline:none}
+.toolbar input:focus,.toolbar select:focus,.product-form input:focus,.product-form select:focus{border-color:#111827;box-shadow:0 0 0 2px rgba(17,24,39,.06)}
+.table-card{background:#fff;border:1px solid #e5e7eb;border-radius:12px;overflow:hidden;box-shadow:0 4px 15px rgba(0,0,0,.04)}
+.table-head{display:flex;justify-content:space-between;align-items:center;padding:13px 15px;border-bottom:1px solid #e5e7eb;gap:10px}
+.table-head strong{font-size:14px}.table-head span{font-size:11px;color:#64748b}
+.table-wrap{overflow:auto}.product-table{width:100%;border-collapse:collapse;min-width:1450px}
+.product-table th,.product-table td{padding:10px 11px;border-bottom:1px solid #edf0f3;text-align:left;white-space:nowrap}
+.product-table th{background:#f8fafc;font-size:10px;text-transform:uppercase;color:#64748b;position:sticky;top:0;z-index:1}
+.product-table td{font-size:12px}.product-table tr:hover td{background:#fafafa}
+.badge{display:inline-flex;padding:4px 8px;border-radius:999px;font-size:10px;font-weight:800}
+.badge.active{background:#dcfce7;color:#166534}.badge.inactive{background:#fee2e2;color:#991b1b}
+.badge.low{background:#fef3c7;color:#92400e}.badge.out{background:#fee2e2;color:#991b1b}.badge.ok{background:#dcfce7;color:#166534}
+.btn-small{padding:6px 9px;border:0;border-radius:7px;cursor:pointer;font-size:11px;font-weight:800}
+.btn-edit{background:#e0f2fe;color:#075985}.btn-delete{background:#fee2e2;color:#991b1b}
+.message{display:none;margin-bottom:14px;padding:10px 12px;border-radius:8px;font-size:12px}.message.show{display:block}.message.success{background:#dcfce7;color:#166534}.message.error{background:#fee2e2;color:#991b1b}
+.empty{text-align:center;padding:38px;color:#64748b}
+.modal-backdrop{position:fixed;inset:0;background:rgba(15,23,42,.58);display:none;align-items:center;justify-content:center;padding:20px;z-index:1000}
+.modal-backdrop.show{display:flex}.product-modal{background:#fff;width:min(950px,100%);max-height:92vh;overflow:auto;border-radius:15px;padding:21px;box-shadow:0 25px 70px rgba(0,0,0,.25)}
+.modal-head{display:flex;justify-content:space-between;align-items:center;margin-bottom:16px}.modal-head h2{margin:0;font-size:19px}.close-btn{border:0;background:#f1f5f9;border-radius:8px;padding:7px 11px;cursor:pointer;font-size:18px}
+.product-form{display:grid;grid-template-columns:repeat(3,1fr);gap:12px}.product-form label{display:block;font-size:10px;font-weight:800;color:#475569;margin-bottom:5px}
+.form-actions{grid-column:1/-1;display:flex;justify-content:flex-end;gap:8px;margin-top:5px}.check-row{display:flex;align-items:center;gap:7px;padding-top:22px}.check-row label{margin:0}
+.inventory-note{font-size:10px;color:#64748b;padding:10px 15px;border-top:1px solid #e5e7eb}
+@media(max-width:1250px){.summary-grid{grid-template-columns:repeat(3,1fr)}.toolbar{grid-template-columns:2fr 1fr 1fr}.toolbar .wide{grid-column:span 2}}
+@media(max-width:800px){.summary-grid{grid-template-columns:repeat(2,1fr)}.product-header{flex-direction:column}.toolbar{grid-template-columns:1fr}.toolbar .wide{grid-column:auto}.product-form{grid-template-columns:1fr}}
+@media(max-width:480px){.summary-grid{grid-template-columns:1fr}}
+</style>
+
+<link rel="stylesheet" href="zippzo-standard.css">
+<script src="zippzo-standard.js" defer></script>
+</head>
+<body>
+
+<header class="topbar">
+  <div class="brand">ZIPPZO <span>WMS</span></div>
+  <div class="top-user"><span id="userName">Loading...</span><button class="btn btn-danger" onclick="logout()">Logout</button></div>
+</header>
+
+<div class="layout">
+<aside class="sidebar">
+  <div class="sidebar-title">MAIN</div>
+  <button class="nav-button" onclick="location.href='index.html'">Dashboard</button>
+  <div class="sidebar-title">MASTER DATA</div>
+  <button class="nav-button active">Products</button>
+  <button class="nav-button" onclick="location.href='suppliers.html'">Suppliers</button>
+  <button class="nav-button" onclick="location.href='locations.html'">Locations</button>
+  <button class="nav-button" onclick="location.href='hr-dashboard.html'">HR Dashboard</button>
+  <button class="nav-button" onclick="location.href='hr-live.html'">HR Live</button>
+  <button class="nav-button" onclick="location.href='employees.html'">Employees</button>
+  <div class="sidebar-title">WAREHOUSE</div>
+  <button class="nav-button" onclick="location.href='inventory.html'">Inventory</button>
+  <button class="nav-button" onclick="location.href='bins.html'">Bins</button>
+  <button class="nav-button" onclick="location.href='stock-movements.html'">Stock Movements</button>
+  <div class="sidebar-title">INBOUND</div>
+  <button class="nav-button" onclick="location.href='purchase-orders.html'">Purchase Orders</button>
+  <button class="nav-button" onclick="location.href='grn.html'">GRN</button>
+  <button class="nav-button" onclick="location.href='putaway.html'">Putaway</button>
+  <button class="nav-button" onclick="location.href='grid-putaway.html'">Grid Putaway</button>
+  <div class="sidebar-title">ORDERS</div>
+  <button class="nav-button" onclick="location.href='orders.html'">Orders</button>
+  <button class="nav-button" onclick="location.href='create-batch.html'">Create Batch</button>
+  <button class="nav-button" onclick="location.href='picking.html'">Picking</button>
+  <button class="nav-button" onclick="location.href='sorting.html'">Sorting</button>
+  <button class="nav-button" onclick="location.href='dropping.html'">Dropping</button>
+  <button class="nav-button" onclick="location.href='dispatch.html'">Dispatch</button>
+  <div class="sidebar-title">DELIVERY</div>
+  <button class="nav-button" onclick="location.href='riders.html'">Riders — Dark Store</button>
+  <div class="sidebar-title">REPORTS</div>
+  <button class="nav-button" onclick="location.href='stock-report.html'">Stock Report</button>
+  <button class="nav-button" onclick="location.href='grn-report.html'">GRN Report</button>
+  <button class="nav-button" onclick="location.href='putaway-report.html'">Putaway Report</button>
+  <button class="nav-button" onclick="location.href='order-report.html'">Order Report</button>
+  <button class="nav-button" onclick="location.href='picking-report.html'">Picking Report</button>
+  <button class="nav-button" onclick="location.href='sorting-report.html'">Sorting Report</button>
+  <button class="nav-button" onclick="location.href='picking-ipp.html'">Picking IPP</button>
+  <button class="nav-button" onclick="location.href='sorting-ipp.html'">Sorting IPP</button>
+  <button class="nav-button" onclick="location.href='delivery-report.html'">Delivery Report</button>
+</aside>
+
+<main class="content">
+<div class="product-page">
+  <div class="product-header">
+    <div><h1>Product Master</h1><p>Central SKU, barcode, pricing, GST and stock-control master for Zippzo.</p></div>
+    <div class="header-actions">
+      <button class="btn btn-secondary" onclick="exportCSV()">Export Current View</button>
+      <button class="btn btn-primary" onclick="openProductModal()">+ Add Product</button>
+    </div>
+  </div>
+
+  <div id="message" class="message"></div>
+
+  <div class="summary-grid">
+    <div class="summary-card"><div class="summary-label">Total Products</div><div id="totalProducts" class="summary-value">0</div><div class="summary-meta">Live product master</div></div>
+    <div class="summary-card"><div class="summary-label">Active</div><div id="activeProducts" class="summary-value">0</div><div class="summary-meta">Sellable master records</div></div>
+    <div class="summary-card"><div class="summary-label">Inactive</div><div id="inactiveProducts" class="summary-value">0</div><div class="summary-meta">Disabled records</div></div>
+    <div class="summary-card"><div class="summary-label">Low Stock</div><div id="lowStock" class="summary-value">0</div><div class="summary-meta">At/below reorder level</div></div>
+    <div class="summary-card"><div class="summary-label">Out of Stock</div><div id="outStock" class="summary-value">0</div><div class="summary-meta">Zero available quantity</div></div>
+    <div class="summary-card"><div class="summary-label">Categories</div><div id="categoryCount" class="summary-value">0</div><div class="summary-meta">Distinct product categories</div></div>
+  </div>
+
+  <div class="toolbar">
+    <input id="searchInput" class="wide" type="text" placeholder="Search SKU, barcode, product, category, brand..." oninput="applyFilters()">
+    <select id="categoryFilter" onchange="applyFilters()"><option value="">All Categories</option></select>
+    <select id="brandFilter" onchange="applyFilters()"><option value="">All Brands</option></select>
+    <select id="statusFilter" onchange="applyFilters()"><option value="">All Status</option><option value="active">Active</option><option value="inactive">Inactive</option></select>
+    <select id="stockFilter" onchange="applyFilters()"><option value="">All Stock</option><option value="out">Out of Stock</option><option value="low">Low Stock</option><option value="healthy">Healthy</option></select>
+    <button class="btn btn-secondary" onclick="clearFilters()">Clear</button>
+  </div>
+
+  <div class="table-card">
+    <div class="table-head"><div><strong>Product Catalogue</strong> <span id="resultCount">0 records</span></div><span id="refreshState">Live database</span></div>
+    <div class="table-wrap">
+      <table class="product-table">
+        <thead><tr>
+          <th>ID</th><th>SKU</th><th>Barcode</th><th>Product</th><th>Category</th><th>Brand</th>
+          <th>MRP</th><th>Selling</th><th>Purchase</th><th>GST</th><th>UOM</th><th>Weight</th>
+          <th>Reorder</th><th>Stock</th><th>Status</th><th>Actions</th>
+        </tr></thead>
+        <tbody id="productTableBody"><tr><td colspan="16" class="empty">Loading products...</td></tr></tbody>
+      </table>
+    </div>
+    <div class="inventory-note">Stock shown here is used when the product API provides inventory quantity. The product master itself never invents stock values.</div>
+  </div>
+</div>
+</main>
+</div>
+
+<div id="productModal" class="modal-backdrop">
+  <div class="product-modal">
+    <div class="modal-head"><h2 id="modalTitle">Add Product</h2><button class="close-btn" onclick="closeProductModal()">×</button></div>
+    <form id="productForm" class="product-form" onsubmit="saveProduct(event)">
+      <input type="hidden" id="productId">
+      <div><label>SKU *</label><input id="sku" required></div>
+      <div><label>Barcode</label><input id="barcode"></div>
+      <div><label>Product Name *</label><input id="name" required></div>
+      <div><label>Category</label><input id="category"></div>
+      <div><label>Brand</label><input id="brand"></div>
+      <div><label>UOM</label><input id="uom" value="PCS"></div>
+      <div><label>MRP</label><input id="mrp" type="number" step="0.01" min="0"></div>
+      <div><label>Selling Price</label><input id="selling_price" type="number" step="0.01" min="0"></div>
+      <div><label>Purchase Price</label><input id="purchase_price" type="number" step="0.01" min="0"></div>
+      <div><label>GST %</label><input id="gst_percent" type="number" step="0.01" min="0"></div>
+      <div><label>Weight</label><input id="weight" type="number" step="0.01" min="0"></div>
+      <div><label>Reorder Level</label><input id="reorder_level" type="number" step="1" min="0" value="0"></div>
+      <div><label>Minimum Stock</label><input id="minimum_stock" type="number" step="1" min="0" value="0"></div>
+      <div><label>Maximum Stock</label><input id="maximum_stock" type="number" step="1" min="0" value="0"></div>
+      <div class="check-row"><input id="active" type="checkbox" checked><label for="active">Active Product</label></div>
+      <div class="form-actions"><button type="button" class="btn btn-secondary" onclick="closeProductModal()">Cancel</button><button type="submit" class="btn btn-primary" id="saveBtn">Save Product</button></div>
+    </form>
+  </div>
+</div>
+
+<script>
+"use strict";
+const API_BASE=window.location.origin,TOKEN_KEY="zippzo_session_token",USER_KEY="zippzo_user";
+let products=[],filteredProducts=[],editingId=null;
+
+function token(){return localStorage.getItem(TOKEN_KEY)}
+function headers(json=false){const h={};const t=token();if(json)h["Content-Type"]="application/json";if(t)h.Authorization=`Bearer ${t}`;return h}
+async function api(path,options={}){
+  const response=await fetch(API_BASE+path,{...options,headers:{...headers(Boolean(options.body)),...(options.headers||{})}});
+  if(response.status===401){localStorage.removeItem(TOKEN_KEY);localStorage.removeItem(USER_KEY);location.href="index.html";throw new Error("Session expired. Please login again.")}
+  const type=response.headers.get("content-type")||"";let data=null;
+  if(type.includes("application/json")){try{data=await response.json()}catch(_){}}
+  else{try{data=await response.text()}catch(_){}}
+  if(!response.ok){const detail=data&&typeof data==="object"?(data.detail||data.message):data;throw new Error(detail||`Request failed: ${response.status}`)}
+  return data;
+}
+function esc(v){return String(v??"").replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#039;"}[c]))}
+function money(v){return `₹${Number(v||0).toFixed(2)}`}
+function num(v){const n=Number(v);return Number.isFinite(n)?n:0}
+function showMessage(text,error=false){const e=document.getElementById("message");e.textContent=text;e.className=`message show ${error?"error":"success"}`;clearTimeout(window.messageTimer);window.messageTimer=setTimeout(()=>e.classList.remove("show"),3500)}
+
+async function checkAuth(){
+  const user=await api("/api/auth/me");localStorage.setItem(USER_KEY,JSON.stringify(user));
+  document.getElementById("userName").textContent=user.name||user.full_name||user.employee_id||user.email||"Zippzo User";
+}
+async function loadProducts(){
+  document.getElementById("refreshState").textContent="Refreshing...";
+  try{
+    const data=await api("/api/products");
+    products=Array.isArray(data)?data:(Array.isArray(data?.products)?data.products:Array.isArray(data?.items)?data.items:[]);
+    buildFilters();applyFilters();document.getElementById("refreshState").textContent=`Live · ${new Date().toLocaleTimeString("en-IN")}`;
+  }catch(e){
+    document.getElementById("productTableBody").innerHTML=`<tr><td colspan="16" class="empty">${esc(e.message)}</td></tr>`;
+    showMessage(e.message,true);document.getElementById("refreshState").textContent="Connection error";
+  }
+}
+function buildFilters(){
+  const categories=[...new Set(products.map(p=>p.category).filter(Boolean))].sort();
+  const brands=[...new Set(products.map(p=>p.brand).filter(Boolean))].sort();
+  const cat=document.getElementById("categoryFilter"),brand=document.getElementById("brandFilter"),cv=cat.value,bv=brand.value;
+  cat.innerHTML='<option value="">All Categories</option>'+categories.map(x=>`<option value="${esc(x)}">${esc(x)}</option>`).join("");
+  brand.innerHTML='<option value="">All Brands</option>'+brands.map(x=>`<option value="${esc(x)}">${esc(x)}</option>`).join("");
+  cat.value=cv;brand.value=bv;
+}
+function stockState(p){
+  const stock=num(p.available_qty??p.stock??p.quantity??0),reorder=num(p.reorder_level);
+  if(stock<=0)return"out";if(reorder>0&&stock<=reorder)return"low";return"healthy";
+}
+function applyFilters(){
+  const q=document.getElementById("searchInput").value.trim().toLowerCase(),category=document.getElementById("categoryFilter").value,brand=document.getElementById("brandFilter").value,status=document.getElementById("statusFilter").value,stockFilter=document.getElementById("stockFilter").value;
+  filteredProducts=products.filter(p=>{
+    const hay=[p.sku,p.barcode,p.name,p.product_name,p.category,p.brand,p.uom].join(" ").toLowerCase(),active=p.active!==false,state=stockState(p);
+    return(!q||hay.includes(q))&&(!category||p.category===category)&&(!brand||p.brand===brand)&&(!status||(status==="active"?active:!active))&&(!stockFilter||state===stockFilter);
+  });
+  updateSummary();renderProducts();
+}
+function updateSummary(){
+  const active=products.filter(p=>p.active!==false),inactive=products.length-active.length;
+  const low=products.filter(p=>stockState(p)==="low").length,out=products.filter(p=>stockState(p)==="out").length;
+  document.getElementById("totalProducts").textContent=products.length;
+  document.getElementById("activeProducts").textContent=active.length;
+  document.getElementById("inactiveProducts").textContent=inactive;
+  document.getElementById("lowStock").textContent=low;
+  document.getElementById("outStock").textContent=out;
+  document.getElementById("categoryCount").textContent=new Set(products.map(p=>p.category).filter(Boolean)).size;
+}
+function renderProducts(){
+  const body=document.getElementById("productTableBody");
+  document.getElementById("resultCount").textContent=`${filteredProducts.length} of ${products.length} records`;
+  if(!filteredProducts.length){body.innerHTML='<tr><td colspan="16" class="empty">No products found.</td></tr>';return}
+  body.innerHTML=filteredProducts.map(p=>{
+    const state=stockState(p),active=p.active!==false,stock=num(p.available_qty??p.stock??p.quantity??0);
+    return `<tr>
+      <td>${esc(p.id)}</td><td><strong>${esc(p.sku)}</strong></td><td>${esc(p.barcode)}</td><td><strong>${esc(p.name||p.product_name)}</strong></td>
+      <td>${esc(p.category)}</td><td>${esc(p.brand)}</td><td>${money(p.mrp)}</td><td>${money(p.selling_price)}</td><td>${money(p.purchase_price)}</td>
+      <td>${num(p.gst_percent)}%</td><td>${esc(p.uom)}</td><td>${num(p.weight)}</td><td>${num(p.reorder_level)}</td>
+      <td><span class="badge ${state==="out"?"out":state==="low"?"low":"ok"}">${stock.toLocaleString("en-IN")}</span></td>
+      <td><span class="badge ${active?"active":"inactive"}">${active?"ACTIVE":"INACTIVE"}</span></td>
+      <td><div class="actions"><button class="btn-small btn-edit" onclick="editProduct(${num(p.id)})">Edit</button><button class="btn-small btn-delete" onclick="deleteProduct(${num(p.id)})">Delete</button></div></td>
+    </tr>`;
+  }).join("");
+}
+function clearFilters(){["searchInput","categoryFilter","brandFilter","statusFilter","stockFilter"].forEach(id=>document.getElementById(id).value="");applyFilters()}
+function openProductModal(product=null){
+  document.getElementById("productForm").reset();document.getElementById("productModal").classList.add("show");
+  editingId=product?num(product.id):null;document.getElementById("modalTitle").textContent=product?"Edit Product":"Add Product";document.getElementById("saveBtn").textContent=product?"Update Product":"Save Product";
+  if(product){
+    ["sku","barcode","name","category","brand","uom","mrp","selling_price","purchase_price","gst_percent","weight","reorder_level","minimum_stock","maximum_stock"].forEach(id=>{if(document.getElementById(id))document.getElementById(id).value=product[id]??""});
+    document.getElementById("active").checked=product.active!==false;
+  }else{document.getElementById("uom").value="PCS";document.getElementById("active").checked=true}
+}
+function closeProductModal(){document.getElementById("productModal").classList.remove("show");editingId=null}
+function formPayload(){return{
+  sku:document.getElementById("sku").value.trim(),barcode:document.getElementById("barcode").value.trim(),name:document.getElementById("name").value.trim(),
+  category:document.getElementById("category").value.trim(),brand:document.getElementById("brand").value.trim(),uom:document.getElementById("uom").value.trim()||"PCS",
+  mrp:num(document.getElementById("mrp").value),selling_price:num(document.getElementById("selling_price").value),purchase_price:num(document.getElementById("purchase_price").value),
+  gst_percent:num(document.getElementById("gst_percent").value),weight:num(document.getElementById("weight").value),reorder_level:num(document.getElementById("reorder_level").value),
+  minimum_stock:num(document.getElementById("minimum_stock").value),maximum_stock:num(document.getElementById("maximum_stock").value),active:document.getElementById("active").checked
+}}
+async function saveProduct(event){
+  event.preventDefault();const payload=formPayload();if(!payload.sku||!payload.name){showMessage("SKU and Product Name are required.",true);return}
+  const btn=document.getElementById("saveBtn");btn.disabled=true;btn.textContent="Saving...";
+  try{
+    if(editingId)await api(`/api/products/${editingId}`,{method:"PUT",body:JSON.stringify(payload)});
+    else await api("/api/products",{method:"POST",body:JSON.stringify(payload)});
+    showMessage(editingId?"Product updated successfully.":"Product created successfully.");closeProductModal();await loadProducts();
+  }catch(e){showMessage(e.message,true)}finally{btn.disabled=false;btn.textContent=editingId?"Update Product":"Save Product"}
+}
+function editProduct(id){const p=products.find(x=>num(x.id)===num(id));if(p)openProductModal(p);else showMessage("Product not found.",true)}
+async function deleteProduct(id){
+  const p=products.find(x=>num(x.id)===num(id));if(!p)return;
+  if(!confirm(`Delete product "${p.name||p.product_name}"?`))return;
+  try{await api(`/api/products/${id}`,{method:"DELETE"});showMessage("Product deleted successfully.");await loadProducts()}catch(e){showMessage(e.message,true)}
+}
+function exportCSV(){
+  if(!filteredProducts.length){showMessage("No products available to export.",true);return}
+  const cols=["id","sku","barcode","name","category","brand","uom","mrp","selling_price","purchase_price","gst_percent","weight","reorder_level","minimum_stock","maximum_stock","active"];
+  const csv=[cols.join(","),...filteredProducts.map(p=>cols.map(k=>`"${String(p[k]??"").replace(/"/g,'""')}"`).join(","))].join("\n");
+  const url=URL.createObjectURL(new Blob([csv],{type:"text/csv;charset=utf-8;"})),a=document.createElement("a");a.href=url;a.download=`zippzo-products-${new Date().toISOString().slice(0,10)}.csv`;a.click();URL.revokeObjectURL(url);
+}
+async function logout(){const t=token();try{if(t)await fetch(`${API_BASE}/api/auth/logout`,{method:"POST",headers:headers(true),body:JSON.stringify({session_token:t})})}catch(_){}localStorage.removeItem(TOKEN_KEY);localStorage.removeItem(USER_KEY);location.href="index.html"}
+document.getElementById("productModal").addEventListener("click",e=>{if(e.target.id==="productModal")closeProductModal()});
+document.addEventListener("keydown",e=>{if(e.key==="Escape")closeProductModal()});
+(async function(){try{await checkAuth();await loadProducts()}catch(e){console.error(e)}})();
+</script>
+</body>
+</html>
