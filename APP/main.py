@@ -4020,6 +4020,119 @@ def get_putaway_audits(
         result.append(item)
 
     return result
+
+class EmployeeCreateRequest(BaseModel):
+    employee_id: str
+    name: str
+    designation: str | None = None
+    role: str = "EMPLOYEE"
+    department: str | None = None
+    location: str | None = None
+    employment_type: str | None = None
+    status: str = "ACTIVE"
+    joining_date: str | None = None
+    phone: str
+    email: str
+    manager_name: str | None = None
+    shift_name: str | None = None
+    blood_group: str | None = None
+    address: str | None = None
+    remarks: str | None = None
+
+
+@app.post("/api/employees")
+def create_employee(
+    data: EmployeeCreateRequest,
+    db: Session = Depends(get_db)
+):
+    employee_id = data.employee_id.strip()
+    full_name = data.name.strip()
+    email = data.email.strip()
+    mobile = data.phone.strip()
+
+    if not employee_id or not full_name or not email or not mobile:
+        raise HTTPException(
+            status_code=400,
+            detail="Employee ID, name, email and phone are required"
+        )
+
+    existing_id = (
+        db.query(Employee)
+        .filter(Employee.employee_id == employee_id)
+        .first()
+    )
+
+    if existing_id:
+        raise HTTPException(
+            status_code=409,
+            detail="Employee ID already exists"
+        )
+
+    existing_email = (
+        db.query(Employee)
+        .filter(Employee.email == email)
+        .first()
+    )
+
+    if existing_email:
+        raise HTTPException(
+            status_code=409,
+            detail="Email already exists"
+        )
+
+    existing_mobile = (
+        db.query(Employee)
+        .filter(Employee.mobile == mobile)
+        .first()
+    )
+
+    if existing_mobile:
+        raise HTTPException(
+            status_code=409,
+            detail="Mobile number already exists"
+        )
+
+    now = datetime.now().isoformat()
+
+    employee = Employee(
+        employee_id=employee_id,
+        full_name=full_name,
+        email=email,
+        mobile=mobile,
+        password_hash=None,
+        role=data.role.strip() or "EMPLOYEE",
+        department=data.department.strip() if data.department else None,
+        location_id=None,
+        status=data.status.strip().upper() if data.status else "ACTIVE",
+        email_verified=False,
+        mobile_verified=False,
+        created_at=now,
+        updated_at=now,
+    )
+
+    db.add(employee)
+    db.commit()
+    db.refresh(employee)
+
+    return {
+        "success": True,
+        "message": "Employee created successfully",
+        "employee": {
+            "id": employee.id,
+            "employee_id": employee.employee_id,
+            "full_name": employee.full_name,
+            "email": employee.email,
+            "mobile": employee.mobile,
+            "role": employee.role,
+            "department": employee.department,
+            "location_id": employee.location_id,
+            "status": employee.status,
+            "created_at": employee.created_at,
+            "updated_at": employee.updated_at,
+        }
+    }
+
+
 @app.get("/api/employees")
 def get_employees(
     db: Session = Depends(get_db)
