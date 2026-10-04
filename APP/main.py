@@ -4136,6 +4136,86 @@ def create_employee(
     }
 
 
+
+class EmployeePasswordRequest(BaseModel):
+    password: str
+    confirm_password: str
+
+
+@app.put("/api/employees/{employee_id}/password")
+def set_employee_password(
+    employee_id: int,
+    data: EmployeePasswordRequest,
+    db: Session = Depends(get_db),
+    employee: Employee = Depends(get_current_employee),
+):
+    current_role = str(employee.role or "").upper().replace(" ", "_")
+
+    if current_role != "SUPER_ADMIN":
+        raise HTTPException(
+            status_code=403,
+            detail="Only Super Admin can set or reset employee passwords"
+        )
+
+    password = data.password.strip()
+    confirm_password = data.confirm_password.strip()
+
+    if not password:
+        raise HTTPException(
+            status_code=400,
+            detail="Password is required"
+        )
+
+    if len(password) < 8:
+        raise HTTPException(
+            status_code=400,
+            detail="Password must be at least 8 characters"
+        )
+
+    if password != confirm_password:
+        raise HTTPException(
+            status_code=400,
+            detail="Passwords do not match"
+        )
+
+    target = (
+        db.query(Employee)
+        .filter(Employee.id == employee_id)
+        .first()
+    )
+
+    if not target:
+        raise HTTPException(
+            status_code=404,
+            detail="Employee not found"
+        )
+
+    target.password_hash = hash_password(password)
+    target.updated_at = now()
+
+    create_audit_log(
+        db=db,
+        employee=employee,
+        action="PASSWORD_RESET",
+        module="EMPLOYEE_MASTER",
+        reference_id=target.id,
+        description=f"Password set/reset for employee {target.employee_id}",
+    )
+
+    db.commit()
+
+    return {
+        "success": True,
+        "message": "Employee password set successfully",
+        "employee": {
+            "id": target.id,
+            "employee_id": target.employee_id,
+            "full_name": target.full_name,
+            "status": target.status,
+        },
+    }
+
+
 @app.get("/api/employees")
 def get_employees(
     db: Session = Depends(get_db)
