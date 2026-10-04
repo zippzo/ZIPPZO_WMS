@@ -1,5 +1,6 @@
 ﻿import os
 import hashlib
+from datetime import datetime
 
 from .database import SessionLocal
 from .models import Employee
@@ -27,6 +28,7 @@ def ensure_admin():
     ).lower() == "true"
 
     db = SessionLocal()
+    now = datetime.now()
 
     try:
         employee = (
@@ -43,6 +45,7 @@ def ensure_admin():
             employee.status = "ACTIVE"
             employee.email_verified = True
             employee.mobile_verified = True
+            employee.updated_at = now
 
             if reset_password or not employee.password_hash:
                 employee.password_hash = hash_password(password)
@@ -62,6 +65,8 @@ def ensure_admin():
                 status="ACTIVE",
                 email_verified=True,
                 mobile_verified=True,
+                created_at=now,
+                updated_at=now,
             )
 
             db.add(employee)
