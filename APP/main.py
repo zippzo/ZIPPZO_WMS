@@ -47,6 +47,9 @@ BinInventory,
 # =========================================================
 
 Base.metadata.create_all(bind=engine)
+
+from .seed_admin import ensure_admin
+ensure_admin()
 from .workflow_v4_router import secure_router
 
 # =========================================================
