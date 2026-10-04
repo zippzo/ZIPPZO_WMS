@@ -4168,6 +4168,93 @@ def get_employees(
     ]
 
 
+class EmployeeRoleAssignRequest(BaseModel):
+    employee_id: int
+    role_id: int
+
+
+@app.put("/api/employees/{employee_id}/role")
+def assign_employee_role(
+    employee_id: int,
+    data: EmployeeRoleAssignRequest,
+    db: Session = Depends(get_db),
+    employee: Employee = Depends(get_current_employee),
+):
+    current_role = str(employee.role or "").upper().replace(" ", "_")
+
+    if current_role not in {"SUPER_ADMIN", "ADMIN"}:
+        raise HTTPException(
+            status_code=403,
+            detail="Only Super Admin or Admin can assign employee roles"
+        )
+
+    if data.employee_id != employee_id:
+        raise HTTPException(
+            status_code=400,
+            detail="Employee ID mismatch"
+        )
+
+    target = (
+        db.query(Employee)
+        .filter(Employee.id == employee_id)
+        .first()
+    )
+
+    if not target:
+        raise HTTPException(
+            status_code=404,
+            detail="Employee not found"
+        )
+
+    role = (
+        db.query(Role)
+        .filter(
+            Role.id == data.role_id,
+            Role.active == True
+        )
+        .first()
+    )
+
+    if not role:
+        raise HTTPException(
+            status_code=404,
+            detail="Active role not found"
+        )
+
+    old_role = target.role
+    target.role = role.role_code
+    target.updated_at = now()
+
+    create_audit_log(
+        db=db,
+        employee=employee,
+        action="ASSIGN",
+        module="ACCESS_CONTROL",
+        reference_id=target.id,
+        description=(
+            f"Changed employee {target.employee_id} role "
+            f"from {old_role or 'NONE'} to {role.role_code}"
+        ),
+    )
+
+    db.commit()
+    db.refresh(target)
+
+    return {
+        "success": True,
+        "message": "Employee role assigned successfully",
+        "employee": {
+            "id": target.id,
+            "employee_id": target.employee_id,
+            "full_name": target.full_name,
+            "role": target.role,
+            "role_name": role.role_name,
+            "status": target.status,
+            "updated_at": target.updated_at,
+        },
+    }
+
+
 # =========================================================
 # ROLES
 # =========================================================
